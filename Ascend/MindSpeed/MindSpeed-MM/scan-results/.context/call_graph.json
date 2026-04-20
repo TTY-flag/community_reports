@@ -1,0 +1,470 @@
+{
+  "functions": {
+    "pretrain@mindspeed_mm/training.py:86": {
+      "defined_at": 86,
+      "calls": [
+        "initialize_megatron",
+        "get_args@mindspeed_mm/training.py",
+        "merge_mm_args@mindspeed_mm/configs/config.py",
+        "PatchesManager.apply_patches_from_config",
+        "build_train_valid_test_data_iterators",
+        "setup_model_and_optimizer",
+        "save_checkpoint"
+      ],
+      "called_by": [
+        "main@pretrain_vlm.py:256",
+        "main@pretrain_qwen2vl.py",
+        "main@pretrain_internvl.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "核心训练入口函数，接收命令行参数和配置文件"
+    },
+    "merge_mm_args@mindspeed_mm/configs/config.py:140": {
+      "defined_at": 140,
+      "calls": [
+        "args_external_path_checker@mindspeed_mm/configs/config.py:147",
+        "MMConfig@mindspeed_mm/configs/config.py:67"
+      ],
+      "called_by": [
+        "pretrain@mindspeed_mm/training.py:159"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "合并多模态配置参数，加载外部配置文件"
+    },
+    "MMConfig@mindspeed_mm/configs/config.py:67": {
+      "defined_at": 67,
+      "calls": [
+        "read_json@mindspeed_mm/configs/config.py:105",
+        "yaml.safe_load"
+      ],
+      "called_by": [
+        "merge_mm_args@mindspeed_mm/configs/config.py:144"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "加载 JSON/YAML 配置文件"
+    },
+    "args_external_path_checker@mindspeed_mm/configs/config.py:147": {
+      "defined_at": 147,
+      "calls": [
+        "file_legality_checker@mindspeed_mm/configs/config.py:218"
+      ],
+      "called_by": [
+        "merge_mm_args@mindspeed_mm/configs/config.py:133"
+      ],
+      "receives_external_input": false,
+      "risk": "Low",
+      "description": "验证所有文件路径参数的安全性"
+    },
+    "file_legality_checker@mindspeed_mm/configs/config.py:218": {
+      "defined_at": 218,
+      "calls": [
+        "normalize_path@mindspeed_mm/utils/security_utils/validate_path.py:5",
+        "os.path.exists",
+        "os.path.realpath"
+      ],
+      "called_by": [
+        "args_external_path_checker@mindspeed_mm/configs/config.py:163"
+      ],
+      "receives_external_input": false,
+      "risk": "Low",
+      "description": "检查符号链接和路径穿越"
+    },
+    "get_sys_args_from_yaml@mindspeed_mm/configs/read_yaml_config.py:9": {
+      "defined_at": 9,
+      "calls": [
+        "yaml.safe_load",
+        "flatten_config"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Low",
+      "description": "从 YAML 文件读取系统参数，使用安全加载"
+    },
+    "VLMModel@mindspeed_mm/models/vlm_model.py:47": {
+      "defined_at": 47,
+      "calls": [
+        "VisionModel@mindspeed_mm/models/vision",
+        "AudioModel@mindspeed_mm/models/audio",
+        "MMGPTModel@mindspeed_mm/models/common/mm_gpt_model.py"
+      ],
+      "called_by": [
+        "model_provider@pretrain_vlm.py:35"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "多模态模型构建，处理图像/音频/文本输入"
+    },
+    "model_provider@pretrain_vlm.py:35": {
+      "defined_at": 35,
+      "calls": [
+        "VLMModel@mindspeed_mm/models/vlm_model.py:47",
+        "get_model_config@mindspeed_mm/utils/transformer_model_config.py"
+      ],
+      "called_by": [
+        "pretrain@mindspeed_mm/training.py:96"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "模型提供者函数，构建 VLM 模型"
+    },
+    "train_valid_test_datasets_provider@pretrain_vlm.py:199": {
+      "defined_at": 199,
+      "calls": [
+        "build_mm_dataset@mindspeed_mm/data",
+        "build_mm_dataloader@mindspeed_mm/data"
+      ],
+      "called_by": [
+        "pretrain@mindspeed_mm/training.py:96"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "数据集提供者函数，加载训练数据"
+    },
+    "DataFileReader@mindspeed_mm/data/data_utils/utils.py:63": {
+      "defined_at": 63,
+      "calls": [
+        "get_datasamples@mindspeed_mm/data/data_utils/utils.py:90",
+        "get_cap_list@mindspeed_mm/data/data_utils/utils.py:112",
+        "orjson_load",
+        "pd.read_csv",
+        "pd.read_parquet"
+      ],
+      "called_by": [
+        "MMBaseDataset@mindspeed_mm/data/datasets/mm_base_dataset.py:12"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "数据文件读取器，加载 CSV/JSON/Parquet 文件"
+    },
+    "MMBaseDataset@mindspeed_mm/data/datasets/mm_base_dataset.py:12": {
+      "defined_at": 12,
+      "calls": [
+        "DataFileReader@mindspeed_mm/data/data_utils/utils.py:63"
+      ],
+      "called_by": [
+        "build_mm_dataset@mindspeed_mm/data"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "基础数据集类，处理用户数据文件"
+    },
+    "safe_load_config_with_retry@bridge/models/hf_pretrained/safe_config_loader.py:31": {
+      "defined_at": 31,
+      "calls": [
+        "AutoConfig.from_pretrained@transformers",
+        "filelock.FileLock"
+      ],
+      "called_by": [
+        "AutoBridge@bridge/models/conversion/auto_bridge.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "加载 HuggingFace 模型配置，支持 trust_remote_code"
+    },
+    "load_model@bridge/models/hf_pretrained/causal_lm.py:95": {
+      "defined_at": 95,
+      "calls": [
+        "AutoModelForCausalLM.from_pretrained@transformers",
+        "StateDictDirectory.load@bridge/models/hf_pretrained/state.py"
+      ],
+      "called_by": [
+        "PreTrainedCausalLM.load@bridge/models/hf_pretrained/causal_lm.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "加载模型权重，支持 safetensors 和本地文件"
+    },
+    "StateDictDirectory@bridge/models/hf_pretrained/state.py:253": {
+      "defined_at": 253,
+      "calls": [
+        "safe_open@safetensors",
+        "file_glob"
+      ],
+      "called_by": [
+        "load_model@bridge/models/hf_pretrained/causal_lm.py:95"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "从 safetensors 文件加载模型权重"
+    },
+    "AutoBridge@bridge/models/conversion/auto_bridge.py:57": {
+      "defined_at": 57,
+      "calls": [
+        "PreTrainedCausalLM.from_pretrained@bridge/models/hf_pretrained/causal_lm.py:132",
+        "safe_load_config_with_retry@bridge/models/hf_pretrained/safe_config_loader.py:31"
+      ],
+      "called_by": [
+        "convert_cli.py@checkpoint/convert_cli.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "自动模型桥接转换入口"
+    },
+    "acquire_exitcode@ci/access_control_test.py:79": {
+      "defined_at": 79,
+      "calls": [
+        "subprocess.Popen",
+        "shlex.split"
+      ],
+      "called_by": [
+        "run_ut_tests@ci/access_control_test.py",
+        "run_st_tests@ci/access_control_test.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Low",
+      "description": "CI 测试 subprocess 调用（非生产路径）"
+    },
+    "inject_verl_plugin@verl_plugin/setup.py:72": {
+      "defined_at": 72,
+      "calls": [
+        "inject_seed_code_to_fsdp_workers@verl_plugin/setup.py:15",
+        "os.path.exists",
+        "os.environ.get"
+      ],
+      "called_by": [
+        "setup@verl_plugin/setup.py"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "插件安装脚本，注入代码到 verl 包（仅安装阶段）"
+    },
+    "_add_security_args@mindspeed_mm/arguments.py:174": {
+      "defined_at": 174,
+      "calls": [],
+      "called_by": [
+        "process_args@mindspeed_mm/arguments.py:31"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "添加 trust-remote-code 安全参数"
+    },
+    "normalize_path@mindspeed_mm/utils/security_utils/validate_path.py:5": {
+      "defined_at": 5,
+      "calls": [
+        "Path.is_symlink",
+        "Path.resolve",
+        "Path.absolute"
+      ],
+      "called_by": [
+        "file_legality_checker@mindspeed_mm/configs/config.py:235"
+      ],
+      "receives_external_input": false,
+      "risk": "Low",
+      "description": "路径规范化，检测符号链接"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "sys.argv@pretrain_vlm.py:256",
+      "path": [
+        "main@pretrain_vlm.py:256",
+        "pretrain@mindspeed_mm/training.py:86",
+        "merge_mm_args@mindspeed_mm/configs/config.py:140",
+        "MMConfig@mindspeed_mm/configs/config.py:67",
+        "yaml.safe_load@mindspeed_mm/configs/config.py:86"
+      ],
+      "sink": "config_dict@mindspeed_mm/configs/config.py:87",
+      "sink_type": "config_loading",
+      "description": "命令行参数 -> 配置文件加载（安全：yaml.safe_load）"
+    },
+    {
+      "source": "args.mm_model@mindspeed_mm/configs/config.py:143",
+      "path": [
+        "MMConfig@mindspeed_mm/configs/config.py:67",
+        "ConfigReader@mindspeed_mm/configs/config.py:10",
+        "VLMModel@mindspeed_mm/models/vlm_model.py:47",
+        "VisionModel@mindspeed_mm/models/vision/vision_model.py",
+        "AutoConfig.from_pretrained@transformers"
+      ],
+      "sink": "model_config@mindspeed_mm/models",
+      "sink_type": "model_loading",
+      "description": "配置文件 -> 模型配置加载（风险：trust_remote_code）"
+    },
+    {
+      "source": "args.mm_data@mindspeed_mm/configs/config.py:143",
+      "path": [
+        "MMConfig@mindspeed_mm/configs/config.py:67",
+        "train_valid_test_datasets_provider@pretrain_vlm.py:199",
+        "build_mm_dataset@mindspeed_mm/data",
+        "MMBaseDataset@mindspeed_mm/data/datasets/mm_base_dataset.py:12",
+        "DataFileReader@mindspeed_mm/data/data_utils/utils.py:63",
+        "pd.read_csv/pd.read_parquet/orjson_load"
+      ],
+      "sink": "data_samples@mindspeed_mm/data/datasets/mm_base_dataset.py:33",
+      "sink_type": "data_loading",
+      "description": "配置文件 -> 数据集加载（CSV/JSON/Parquet）"
+    },
+    {
+      "source": "model_name_or_path@bridge/models/hf_pretrained/causal_lm.py:95",
+      "path": [
+        "PreTrainedCausalLM.load@bridge/models/hf_pretrained/causal_lm.py",
+        "AutoModelForCausalLM.from_pretrained@bridge/models/hf_pretrained/causal_lm.py:95",
+        "StateDictDirectory@bridge/models/hf_pretrained/state.py:253",
+        "safe_open@safetensors@bridge/models/hf_pretrained/state.py:332"
+      ],
+      "sink": "model_weights@bridge/models/hf_pretrained/state.py",
+      "sink_type": "model_weights_loading",
+      "description": "模型路径 -> safetensors 权重加载（相对安全）"
+    },
+    {
+      "source": "--trust-remote-code@mindspeed_mm/arguments.py:177",
+      "path": [
+        "process_args@mindspeed_mm/arguments.py:31",
+        "_add_security_args@mindspeed_mm/arguments.py:174",
+        "safe_load_config_with_retry@bridge/models/hf_pretrained/safe_config_loader.py:31",
+        "AutoConfig.from_pretrained@transformers@bridge/models/hf_pretrained/safe_config_loader.py:57"
+      ],
+      "sink": "remote_code_execution@transformers",
+      "sink_type": "code_execution",
+      "description": "trust-remote-code 参数 -> 远程代码加载（高风险）"
+    },
+    {
+      "source": "file_path@mindspeed_mm/configs/config.py:218",
+      "path": [
+        "args_external_path_checker@mindspeed_mm/configs/config.py:147",
+        "file_legality_checker@mindspeed_mm/configs/config.py:218",
+        "normalize_path@mindspeed_mm/utils/security_utils/validate_path.py:5",
+        "is_symlink/path_traversal_check"
+      ],
+      "sink": "validation_result@mindspeed_mm/configs/config.py:256",
+      "sink_type": "security_check",
+      "description": "文件路径 -> 安全验证（符号链接和路径穿越检测）"
+    },
+    {
+      "source": "data_path@mindspeed_mm/data/data_utils/utils.py:77",
+      "path": [
+        "DataFileReader@mindspeed_mm/data/data_utils/utils.py:63",
+        "get_datasamples@mindspeed_mm/data/data_utils/utils.py:90"
+      ],
+      "sink": "pd.read_csv/orjson_load/pd.read_parquet@mindspeed_mm/data/data_utils/utils.py",
+      "sink_type": "file_reading",
+      "description": "数据文件路径 -> 文件读取（CSV/JSON/Parquet）"
+    }
+  ],
+  "cross_module_calls": [
+    {
+      "caller_module": "pretrain_vlm.py",
+      "caller_function": "main",
+      "callee_module": "mindspeed_mm/training.py",
+      "callee_function": "pretrain",
+      "description": "训练脚本入口 -> 核心训练流程"
+    },
+    {
+      "caller_module": "mindspeed_mm/training.py",
+      "caller_function": "pretrain",
+      "callee_module": "mindspeed_mm/configs/config.py",
+      "callee_function": "merge_mm_args",
+      "description": "训练流程 -> 配置合并"
+    },
+    {
+      "caller_module": "mindspeed_mm/configs/config.py",
+      "caller_function": "merge_mm_args",
+      "callee_module": "mindspeed_mm/utils/security_utils/validate_path.py",
+      "callee_function": "normalize_path",
+      "description": "配置加载 -> 路径安全验证"
+    },
+    {
+      "caller_module": "mindspeed_mm/training.py",
+      "caller_function": "pretrain",
+      "callee_module": "pretrain_vlm.py",
+      "callee_function": "train_valid_test_datasets_provider",
+      "description": "训练流程 -> 数据集加载"
+    },
+    {
+      "caller_module": "pretrain_vlm.py",
+      "caller_function": "train_valid_test_datasets_provider",
+      "callee_module": "mindspeed_mm/data",
+      "callee_function": "build_mm_dataset",
+      "description": "数据集提供者 -> 数据集构建"
+    },
+    {
+      "caller_module": "mindspeed_mm/data",
+      "caller_function": "build_mm_dataset",
+      "callee_module": "mindspeed_mm/data/data_utils/utils.py",
+      "callee_function": "DataFileReader",
+      "description": "数据集构建 -> 文件读取"
+    },
+    {
+      "caller_module": "checkpoint/convert_cli.py",
+      "caller_function": "main",
+      "callee_module": "bridge/models/conversion/auto_bridge.py",
+      "callee_function": "AutoBridge",
+      "description": "权重转换入口 -> 模型桥接"
+    },
+    {
+      "caller_module": "bridge/models/conversion/auto_bridge.py",
+      "caller_function": "AutoBridge",
+      "callee_module": "bridge/models/hf_pretrained/causal_lm.py",
+      "callee_function": "PreTrainedCausalLM.from_pretrained",
+      "description": "模型桥接 -> HuggingFace 模型加载"
+    },
+    {
+      "caller_module": "bridge/models/hf_pretrained/causal_lm.py",
+      "caller_function": "load_model",
+      "callee_module": "bridge/models/hf_pretrained/state.py",
+      "callee_function": "StateDictDirectory",
+      "description": "模型加载 -> safetensors 权重读取"
+    }
+  ],
+  "risk_functions": [
+    {
+      "function": "AutoConfig.from_pretrained@transformers",
+      "file": "bridge/models/hf_pretrained/safe_config_loader.py",
+      "line": 57,
+      "risk": "High",
+      "reason": "加载外部模型配置，支持 trust_remote_code 可能导致远程代码执行"
+    },
+    {
+      "function": "AutoModelForCausalLM.from_pretrained@transformers",
+      "file": "bridge/models/hf_pretrained/causal_lm.py",
+      "line": 95,
+      "risk": "High",
+      "reason": "加载外部模型权重，路径由用户控制"
+    },
+    {
+      "function": "yaml.safe_load@yaml",
+      "file": "mindspeed_mm/configs/config.py",
+      "line": 86,
+      "risk": "Low",
+      "reason": "安全加载 YAML（不执行任意代码）"
+    },
+    {
+      "function": "pd.read_csv/pd.read_parquet@pandas",
+      "file": "mindspeed_mm/data/data_utils/utils.py",
+      "line": 92,
+      "risk": "Low",
+      "reason": "读取结构化数据文件，无代码执行风险"
+    },
+    {
+      "function": "torch.load@torch",
+      "file": "tests/ut/models/audio_encoder/test_audio_encoder_processor.py",
+      "line": 41,
+      "risk": "Low",
+      "reason": "仅在测试代码中使用，非生产路径"
+    },
+    {
+      "function": "pickle@stdlib",
+      "file": "examples/diffsynth/qwen_image_edit/qwen_image_edit_patch.py",
+      "line": 4,
+      "risk": "Medium",
+      "reason": "pickle 模块导入，潜在反序列化风险"
+    },
+    {
+      "function": "subprocess.Popen@stdlib",
+      "file": "ci/access_control_test.py",
+      "line": 82,
+      "risk": "Low",
+      "reason": "CI 测试脚本，非生产运行时入口"
+    },
+    {
+      "function": "subprocess.Popen@stdlib",
+      "file": "verl_plugin/setup.py",
+      "line": 82,
+      "risk": "Low",
+      "reason": "插件安装脚本，仅安装阶段执行"
+    }
+  ]
+}

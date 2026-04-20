@@ -1,0 +1,335 @@
+{
+  "project_name": "MindSpeed-LLM",
+  "project_type": "LLM Training Framework",
+  "languages": {
+    "python": {
+      "file_count": 507,
+      "percentage": 99.8
+    },
+    "cpp": {
+      "file_count": 1,
+      "percentage": 0.2
+    }
+  },
+  "root_directory": "/home/pwn20tty/Desktop/opencode_project/shenteng/MindSpeed/MindSpeed-LLM",
+  "entry_points": [
+    {
+      "name": "pretrain_gpt.py",
+      "path": "pretrain_gpt.py",
+      "type": "training",
+      "description": "GPT model pretraining entry point",
+      "risk_level": "medium",
+      "security_notes": [
+        "Accepts command line arguments for data paths, model config",
+        "Loads checkpoints via megatron framework",
+        "No direct unsafe deserialization patterns detected"
+      ]
+    },
+    {
+      "name": "evaluation.py",
+      "path": "evaluation.py",
+      "type": "evaluation",
+      "description": "Model evaluation entry point for various benchmarks",
+      "risk_level": "high",
+      "security_notes": [
+        "Uses AutoTokenizer with trust_remote_code=True (potential code execution)",
+        "Loads models from arbitrary paths via args.load",
+        "Executes evaluation tasks that may involve external data"
+      ]
+    },
+    {
+      "name": "inference.py",
+      "path": "inference.py",
+      "type": "inference",
+      "description": "Model inference entry point",
+      "risk_level": "medium",
+      "security_notes": [
+        "Loads models from checkpoint paths",
+        "Uses task_factory for inference tasks"
+      ]
+    },
+    {
+      "name": "preprocess_data.py",
+      "path": "preprocess_data.py",
+      "type": "data_preprocessing",
+      "description": "Data preprocessing for training",
+      "risk_level": "medium",
+      "security_notes": [
+        "Uses nltk.load() which uses pickle (potential security risk)",
+        "Processes JSON/YAML configuration files",
+        "Handles external dataset inputs"
+      ]
+    },
+    {
+      "name": "convert_ckpt.py",
+      "path": "convert_ckpt.py",
+      "type": "checkpoint_conversion",
+      "description": "Checkpoint format conversion",
+      "risk_level": "high",
+      "security_notes": [
+        "Dynamic module loading via importlib.import_module",
+        "Processes checkpoint files from arbitrary paths",
+        "May load untrusted checkpoint files"
+      ]
+    },
+    {
+      "name": "rlhf_gpt.py",
+      "path": "rlhf_gpt.py",
+      "type": "rlhf_training",
+      "description": "RLHF (Reinforcement Learning from Human Feedback) training",
+      "risk_level": "medium",
+      "security_notes": [
+        "Uses hydra for configuration",
+        "Ray distributed training framework",
+        "Loads tokenizer and models from paths"
+      ]
+    }
+  ],
+  "modules": {
+    "mindspeed_llm/core": {
+      "description": "Core model architecture and datasets",
+      "submodules": [
+        "datasets",
+        "models",
+        "transformer",
+        "tensor_parallel",
+        "pipeline_parallel",
+        "optimizer",
+        "high_availability"
+      ],
+      "risk_level": "high",
+      "security_notes": [
+        "datasets/helpers.py uses importlib for dynamic loading",
+        "high_availability modules use torch.load with weights_only=False",
+        "Contains data preprocessing with potential input validation issues"
+      ]
+    },
+    "mindspeed_llm/tasks": {
+      "description": "Task-specific implementations",
+      "submodules": [
+        "checkpoint",
+        "evaluation",
+        "inference",
+        "preprocess",
+        "posttrain"
+      ],
+      "risk_level": "high",
+      "security_notes": [
+        "checkpoint conversion uses torch.load with weights_only=False (pickle vulnerability)",
+        "evaluation/human_utils.py uses exec() for code evaluation",
+        "posttrain modules handle training data"
+      ]
+    },
+    "mindspeed_llm/training": {
+      "description": "Training utilities and initialization",
+      "submodules": [
+        "tokenizer",
+        "arguments",
+        "checkpointing",
+        "training",
+        "utils"
+      ],
+      "risk_level": "medium",
+      "security_notes": [
+        "Handles training arguments and checkpoint loading",
+        "tokenizer modules may load external tokenizer files"
+      ]
+    },
+    "mindspeed_llm/fsdp2": {
+      "description": "FSDP2 distributed training implementation",
+      "submodules": [
+        "data",
+        "checkpoint",
+        "distributed",
+        "models",
+        "inference",
+        "train"
+      ],
+      "risk_level": "medium",
+      "security_notes": [
+        "checkpoint modules use torch.load",
+        "data processing with external inputs",
+        "distributed training with network communication"
+      ]
+    },
+    "mindspeed_llm/features_manager": {
+      "description": "Feature management for training",
+      "submodules": [
+        "arguments",
+        "dataset",
+        "finetune",
+        "transformer",
+        "moe",
+        "inference",
+        "evaluation"
+      ],
+      "risk_level": "medium",
+      "security_notes": [
+        "Argument parsing for various features",
+        "Dataset preprocessing with external data"
+      ]
+    }
+  },
+  "attack_surface": {
+    "data_ingestion": {
+      "description": "Data loading and preprocessing",
+      "components": [
+        "preprocess_data.py",
+        "mindspeed_llm/tasks/preprocess",
+        "mindspeed_llm/core/datasets",
+        "mindspeed_llm/fsdp2/data"
+      ],
+      "risk_factors": [
+        "External dataset loading",
+        "JSON/YAML parsing",
+        "nltk.load() uses pickle",
+        "HuggingFace datasets loading"
+      ]
+    },
+    "checkpoint_handling": {
+      "description": "Checkpoint loading and conversion",
+      "components": [
+        "convert_ckpt.py",
+        "convert_ckpt_v2.py",
+        "mindspeed_llm/tasks/checkpoint",
+        "mindspeed_llm/core/high_availability"
+      ],
+      "risk_factors": [
+        "torch.load with weights_only=False (pickle deserialization)",
+        "Arbitrary checkpoint file paths from arguments",
+        "Dynamic module loading for conversion plugins"
+      ]
+    },
+    "model_loading": {
+      "description": "Model loading and initialization",
+      "components": [
+        "inference.py",
+        "evaluation.py",
+        "mindspeed_llm/tasks/inference",
+        "mindspeed_llm/fsdp2/models"
+      ],
+      "risk_factors": [
+        "trust_remote_code=True in AutoTokenizer",
+        "Model loading from arbitrary paths",
+        "Dynamic spec loading via import_module"
+      ]
+    },
+    "code_execution": {
+      "description": "Dynamic code execution for evaluation",
+      "components": [
+        "mindspeed_llm/tasks/evaluation/eval_utils/human_utils.py",
+        "mindspeed_llm/tasks/evaluation/eval_impl/human_eval.py"
+      ],
+      "risk_factors": [
+        "exec() used for HumanEval code testing",
+        "reliability_guard provides limited protection (not a real sandbox)",
+        "Generated model code may be executed"
+      ]
+    },
+    "command_line_interface": {
+      "description": "CLI argument handling",
+      "components": [
+        "All entry point scripts",
+        "mindspeed_llm/training/arguments.py",
+        "mindspeed_llm/features_manager/arguments"
+      ],
+      "risk_factors": [
+        "68 files with argparse/sys.argv",
+        "Paths and configurations from user input",
+        "No input validation on file paths"
+      ]
+    },
+    "cpp_extension": {
+      "description": "C++ extension via pybind11",
+      "components": [
+        "mindspeed_llm/fsdp2/data/megatron_data/helpers.cpp"
+      ],
+      "risk_factors": [
+        "pybind11 numpy array handling",
+        "No explicit bounds checking on some array operations",
+        "Potential integer overflow in array indexing"
+      ]
+    }
+  },
+  "external_dependencies": {
+    "critical": [
+      {
+        "name": "torch",
+        "version": "unknown",
+        "risk": "torch.load uses pickle for deserialization"
+      },
+      {
+        "name": "transformers",
+        "version": "unknown",
+        "risk": "trust_remote_code allows arbitrary code execution"
+      },
+      {
+        "name": "ray",
+        "version": "unknown",
+        "risk": "Distributed computing framework with potential security issues"
+      },
+      {
+        "name": "hydra",
+        "version": "unknown",
+        "risk": "Configuration management"
+      },
+      {
+        "name": "nltk",
+        "version": "unknown",
+        "risk": "nltk.load() uses pickle deserialization"
+      },
+      {
+        "name": "megatron",
+        "version": "unknown",
+        "risk": "Core training framework with checkpoint handling"
+      }
+    ]
+  },
+  "security_patterns_detected": {
+    "unsafe_deserialization": {
+      "count": 21,
+      "files": [
+        "mindspeed_llm/tasks/checkpoint/convert_ckpt_mamba2.py",
+        "mindspeed_llm/tasks/checkpoint/convert_param.py",
+        "mindspeed_llm/tasks/checkpoint/convert_ckpt_longcat.py",
+        "mindspeed_llm/tasks/posttrain/ldt_sft/convert_ckpt_pp_vpp.py",
+        "mindspeed_llm/core/high_availability/tft_acp_compatibility.py",
+        "mindspeed_llm/core/high_availability/tft_optimizer_data_repair.py",
+        "examples/mindspore/deepseek3/convert_ckpt_deepseek3_mcore2hf.py",
+        "examples/mcore/deepseek3/convert_ckpt_deepseek3_mcore2hf.py",
+        "tests/test_tools/utils.py"
+      ],
+      "pattern": "torch.load(..., weights_only=False)"
+    },
+    "exec_usage": {
+      "count": 19,
+      "files": [
+        "mindspeed_llm/tasks/evaluation/eval_utils/human_utils.py",
+        "mindspeed_llm/tasks/evaluation/eval_impl/human_eval.py"
+      ],
+      "pattern": "exec() for code evaluation",
+      "context": "HumanEval benchmark requires executing generated code"
+    },
+    "dynamic_module_loading": {
+      "count": 4,
+      "files": [
+        "convert_ckpt.py",
+        "mindspeed_llm/core/datasets/helpers.py",
+        "mindspeed_llm/mindspore/convert_ckpt.py",
+        "mindspeed_llm/fsdp2/distributed/context_parallel/ulysses_cp_parallel.py"
+      ],
+      "pattern": "importlib.import_module"
+    },
+    "subprocess_calls": {
+      "count": 11,
+      "files": [
+        "ci/access_control_test.py",
+        "mindspeed_llm/tasks/inference/infer_base.py",
+        "mindspeed_llm/tasks/evaluation/eval_impl/human_eval.py",
+        "mindspeed_llm/tasks/evaluation/eval_utils/human_utils.py",
+        "mindspeed_llm/fsdp2/data/megatron_data/megatron_dataset_generate.py"
+      ],
+      "pattern": "subprocess module usage"
+    }
+  }
+}

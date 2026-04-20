@@ -1,0 +1,268 @@
+{
+  "functions": {
+    "main@mindspeed/run/run.py": {
+      "defined_at": 121,
+      "calls": ["parse_args@mindspeed/run/run.py", "patch_from_args@mindspeed/run/run.py"],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "CLI 主入口函数，处理命令行参数并执行 patch 操作"
+    },
+    "patch_from_args@mindspeed/run/run.py": {
+      "defined_at": 94,
+      "calls": ["find_all_patch@mindspeed/run/run.py", "subprocess.run"],
+      "called_by": ["main@mindspeed/run/run.py"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "根据参数执行 git apply 命令处理 patch 文件"
+    },
+    "_load_base_checkpoint@mindspeed/checkpointing.py": {
+      "defined_at": 204,
+      "calls": ["torch.load", "get_checkpoint_name", "read_metadata", "get_args", "dist_checkpointing.load"],
+      "called_by": ["load_checkpoint@mindspeed/checkpointing.py"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "从指定目录加载 checkpoint 文件，使用 torch.load 反序列化"
+    },
+    "generate_state_dict@mindspeed/checkpointing.py": {
+      "defined_at": 156,
+      "calls": ["model.state_dict_for_save_checkpoint", "optimizer.state_dict"],
+      "called_by": ["save_checkpoint@mindspeed/checkpointing.py"],
+      "receives_external_input": false,
+      "risk": "Low",
+      "description": "生成用于保存的 state_dict"
+    },
+    "save_checkpoint@mindspeed/checkpointing.py": {
+      "defined_at": 43,
+      "calls": ["generate_state_dict@mindspeed/checkpointing.py", "torch.save", "dist_checkpointing.save"],
+      "called_by": [],
+      "receives_external_input": false,
+      "risk": "Low",
+      "description": "保存模型 checkpoint"
+    },
+    "load_layerzero_checkpoint@mindspeed/core/distributed/layerzero/state/mga_checkpoint.py": {
+      "defined_at": 177,
+      "calls": ["torch.load", "models.load_state_dict", "optimizer.load_state_dict"],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "加载 layerzero checkpoint，使用 torch.load 反序列化"
+    },
+    "patch_features@mindspeed/megatron_adaptor.py": {
+      "defined_at": 23,
+      "calls": ["MindSpeedFeaturesManager.apply_features_pre_patches", "MindSpeedFeaturesManager.apply_features_patches", "delete_lock_file"],
+      "called_by": [],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "导入时自动执行的 patch 功能"
+    },
+    "_AutoTokenizer.__init__@mindspeed/tokenizer/tokenizer.py": {
+      "defined_at": 66,
+      "calls": ["AutoTokenizer.from_pretrained"],
+      "called_by": ["build_tokenizer_wrapper@mindspeed/tokenizer/tokenizer.py"],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "从路径加载 HuggingFace tokenizer"
+    },
+    "restricted_read@mindspeed/auto_settings/utils/file_utils.py": {
+      "defined_at": 28,
+      "calls": ["_RestrictedUnpickler.load", "check_file_size"],
+      "called_by": ["AutoSettings._init_hardware@mindspeed/auto_settings/auto_settings.py"],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "受限的 pickle 文件读取，仅允许 mindspeed.auto_settings 模块"
+    },
+    "MindSpeedRunner.run@mindspeed/auto_settings/mindspeed_adaptor/mindspeed_runner.py": {
+      "defined_at": 29,
+      "calls": ["subprocess.Popen"],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "执行 torchrun 命令启动分布式训练"
+    },
+    "AutoSettings.auto_setting_fun@mindspeed/auto_settings/auto_settings.py": {
+      "defined_at": 99,
+      "calls": ["AutoSettings.init", "AutoSettings.search", "AutoSettings.auto_tuning_disttrain"],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "自动配置搜索入口函数"
+    },
+    "process_args@mindspeed/arguments.py": {
+      "defined_at": 30,
+      "calls": ["_add_network_size_args", "_add_distributed_args", "_add_training_args", "_add_data_args", "_add_moe_args"],
+      "called_by": ["extra_args_provider_decorator@mindspeed/arguments.py"],
+      "receives_external_input": true,
+      "risk": "Low",
+      "description": "处理命令行参数，添加各种训练参数组"
+    },
+    "MindSpeedPatchesManager.apply_patches@mindspeed/patch_utils.py": {
+      "defined_at": 207,
+      "calls": ["Patch.apply_patch"],
+      "called_by": ["patch_features@mindspeed/megatron_adaptor.py"],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "应用所有注册的 patch"
+    },
+    "Patch.apply_patch@mindspeed/patch_utils.py": {
+      "defined_at": 110,
+      "calls": ["importlib.import_module", "setattr"],
+      "called_by": ["MindSpeedPatchesManager.apply_patches@mindspeed/patch_utils.py"],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "动态修改模块函数"
+    },
+    "Qos.__init__@mindspeed/core/qos/qos.py": {
+      "defined_at": 76,
+      "calls": ["os.environ.get", "get_args", "Qos.init_qos"],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "从环境变量读取 QoS 配置"
+    },
+    "npu_rotary_position_embedding_forward@mindspeed/ops/csrc/cann/npu_rotary_position_embedding.cpp": {
+      "defined_at": 89,
+      "calls": ["aclnn_ops", "TORCH_CHECK"],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Low",
+      "description": "C++ 自定义算子，处理 rotary embedding"
+    },
+    "NPUSwapManager@mindspeed/ops/csrc/pluggable_allocator/smart_swap/NPUSwapManager.cpp": {
+      "defined_at": 30,
+      "calls": ["c10_npu::NPUCachingAllocator", "NPUFunctions"],
+      "called_by": [],
+      "receives_external_input": false,
+      "risk": "Low",
+      "description": "C++ 内存交换管理器"
+    },
+    "build_dataset@tools/data_handler.py": {
+      "defined_at": 1,
+      "calls": ["load_dataset", "BaseDatasetHandler.get_tokenized_data", "indexed_dataset.make_dataset"],
+      "called_by": ["main@tools/preprocess_data.py"],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "构建数据集，加载外部数据"
+    },
+    "main@tools/preprocess_data.py": {
+      "defined_at": 1,
+      "calls": ["build_tokenizer", "build_splitter", "build_dataset"],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "数据预处理 CLI 入口"
+    },
+    "torch.load": {
+      "defined_at": 0,
+      "calls": [],
+      "called_by": ["_load_base_checkpoint@mindspeed/checkpointing.py", "load_layerzero_checkpoint@mindspeed/core/distributed/layerzero/state/mga_checkpoint.py", "layerzero_checkpointer@mindspeed/core/distributed/layerzero/state/scripts/layerzero_checkpointer.py"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "PyTorch 反序列化函数，加载 .pt 文件"
+    },
+    "subprocess.run": {
+      "defined_at": 0,
+      "calls": [],
+      "called_by": ["patch_from_args@mindspeed/run/run.py"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "Python 子进程执行函数"
+    },
+    "subprocess.Popen": {
+      "defined_at": 0,
+      "calls": [],
+      "called_by": ["MindSpeedRunner.run@mindspeed/auto_settings/mindspeed_adaptor/mindspeed_runner.py", "runner@mindspeed/auto_settings/profile/runner.py"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "Python 子进程执行函数"
+    },
+    "AutoTokenizer.from_pretrained": {
+      "defined_at": 0,
+      "calls": [],
+      "called_by": ["_AutoTokenizer.__init__@mindspeed/tokenizer/tokenizer.py"],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "HuggingFace tokenizer 加载函数"
+    },
+    "yaml.safe_load": {
+      "defined_at": 0,
+      "calls": [],
+      "called_by": ["parallel_state@mindspeed/core/parallel_state.py", "config@mindspeed/core/distributed/layerzero/config.py", "config@mindspeed/core/distributed/torch_fully_sharded_data_parallel/torch_fully_sharded_data_parallel_adaptor.py"],
+      "receives_external_input": true,
+      "risk": "Low",
+      "description": "YAML 配置文件加载（safe_load 相对安全）"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "argv@mindspeed/run/run.py:121",
+      "path": ["parse_args@mindspeed/run/run.py:89", "patch_from_args@mindspeed/run/run.py:94"],
+      "sink": "subprocess.run@mindspeed/run/run.py:109",
+      "sink_type": "command_execution",
+      "description": "命令行参数控制 git apply 命令执行"
+    },
+    {
+      "source": "load_dir@mindspeed/checkpointing.py:204",
+      "path": ["get_checkpoint_name@mindspeed/checkpointing.py", "_load_base_checkpoint@mindspeed/checkpointing.py:204"],
+      "sink": "torch.load@mindspeed/checkpointing.py:277",
+      "sink_type": "deserialization",
+      "description": "checkpoint 目录路径到 torch.load 反序列化"
+    },
+    {
+      "source": "ckpt_dir@mindspeed/core/distributed/layerzero/state/mga_checkpoint.py:177",
+      "path": ["load_layerzero_checkpoint@mindspeed/core/distributed/layerzero/state/mga_checkpoint.py:177"],
+      "sink": "torch.load@mindspeed/core/distributed/layerzero/state/mga_checkpoint.py:188",
+      "sink_type": "deserialization",
+      "description": "layerzero checkpoint 目录到 torch.load 反序列化"
+    },
+    {
+      "source": "tokenizer_name_or_path@mindspeed/tokenizer/tokenizer.py:66",
+      "path": ["_AutoTokenizer.__init__@mindspeed/tokenizer/tokenizer.py:66"],
+      "sink": "AutoTokenizer.from_pretrained@mindspeed/tokenizer/tokenizer.py:77",
+      "sink_type": "file_load",
+      "description": "tokenizer 路径到 HuggingFace tokenizer 加载"
+    },
+    {
+      "source": "args@mindspeed/auto_settings/mindspeed_adaptor/mindspeed_runner.py:13",
+      "path": ["MindSpeedRunner.run@mindspeed/auto_settings/mindspeed_adaptor/mindspeed_runner.py:29"],
+      "sink": "subprocess.Popen@mindspeed/auto_settings/mindspeed_adaptor/mindspeed_runner.py:44",
+      "sink_type": "command_execution",
+      "description": "配置参数到 torchrun 命令执行"
+    },
+    {
+      "source": "file_path@mindspeed/auto_settings/utils/file_utils.py:28",
+      "path": ["restricted_read@mindspeed/auto_settings/utils/file_utils.py:28", "check_file_size@mindspeed/auto_settings/utils/file_utils.py:23"],
+      "sink": "_RestrictedUnpickler.load@mindspeed/auto_settings/utils/file_utils.py:39",
+      "sink_type": "deserialization",
+      "description": "文件路径到受限 pickle 加载（有安全限制）"
+    },
+    {
+      "source": "env_vars@mindspeed/core/qos/qos.py:20",
+      "path": ["os.environ.get@mindspeed/core/qos/qos.py:20", "Qos.__init__@mindspeed/core/qos/qos.py:76"],
+      "sink": "Qos configuration@mindspeed/core/qos/qos.py",
+      "sink_type": "configuration",
+      "description": "环境变量到 QoS 配置"
+    },
+    {
+      "source": "argv@tools/preprocess_data.py",
+      "path": ["main@tools/preprocess_data.py", "build_dataset@tools/data_handler.py"],
+      "sink": "load_dataset@tools/data_handler.py",
+      "sink_type": "file_load",
+      "description": "命令行参数到数据集加载"
+    },
+    {
+      "source": "import mindspeed.megatron_adaptor",
+      "path": ["patch_features@mindspeed/megatron_adaptor.py:23"],
+      "sink": "MindSpeedFeaturesManager.apply_features_patches@mindspeed/megatron_adaptor.py:42",
+      "sink_type": "runtime_modification",
+      "description": "导入触发 runtime patch"
+    },
+    {
+      "source": "yaml_file@mindspeed/core/parallel_state.py:309",
+      "path": ["yaml.safe_load@mindspeed/core/parallel_state.py:309"],
+      "sink": "nccl_comm_cfgs@mindspeed/core/parallel_state.py",
+      "sink_type": "configuration",
+      "description": "YAML 配置文件加载（safe_load 相对安全）"
+    }
+  ]
+}

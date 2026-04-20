@@ -1,0 +1,136 @@
+{
+  "scan_id": "22693455-b1c8-43d6-b5c3-79dac2f0467a",
+  "start_time": "2026-04-20T08:03:19Z",
+  "end_time": "2026-04-20T10:28:14Z",
+  "duration_seconds": 8095,
+  "project_name": "MindSpeed",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/shenteng/MindSpeed/MindSpeed",
+  "status": "success",
+  "agents": [
+    {
+      "name": "architecture",
+      "start_time": "2026-04-20T08:03:19Z",
+      "end_time": "2026-04-20T08:10:21Z",
+      "status": "success",
+      "duration_seconds": 422,
+      "output_files": [
+        "scan-results/.context/project_model.json",
+        "scan-results/.context/call_graph.json",
+        "scan-results/threat_analysis_report.md"
+      ],
+      "summary": {
+        "modules_identified": 15,
+        "high_risk_files": 15,
+        "entry_points": 12,
+        "languages": ["python", "c_cpp"]
+      }
+    },
+    {
+      "name": "dataflow-scanner",
+      "start_time": "2026-04-20T08:10:22Z",
+      "end_time": "2026-04-20T08:28:57Z",
+      "status": "success",
+      "duration_seconds": 1115,
+      "output_files": [],
+      "summary": {
+        "modules_scanned": 15,
+        "candidates_found": 81,
+        "critical": 3,
+        "high": 24,
+        "medium": 32,
+        "low": 21
+      }
+    },
+    {
+      "name": "security-auditor",
+      "start_time": "2026-04-20T08:10:22Z",
+      "end_time": "2026-04-20T08:58:15Z",
+      "status": "success",
+      "duration_seconds": 2873,
+      "output_files": [],
+      "summary": {
+        "modules_audited": 12,
+        "candidates_found": 87,
+        "critical": 4,
+        "high": 21,
+        "medium": 23,
+        "low": 20
+      }
+    },
+    {
+      "name": "verification",
+      "start_time": "2026-04-20T09:02:18Z",
+      "end_time": "2026-04-20T09:21:39Z",
+      "status": "success",
+      "duration_seconds": 1141,
+      "output_files": [],
+      "summary": {
+        "total_verified": 82,
+        "confirmed": 11,
+        "likely": 12,
+        "possible": 12,
+        "false_positive": 47,
+        "critical_confirmed": 4,
+        "high_confirmed": 7
+      }
+    },
+    {
+      "name": "details-analyzer",
+      "start_time": "2026-04-20T09:21:40Z",
+      "end_time": "2026-04-20T10:24:15Z",
+      "status": "success",
+      "duration_seconds": 3755,
+      "output_files": [
+        "scan-results/details/VULN-DF-PY-CHKPT-001.md",
+        "scan-results/details/VULN-CROSS-TORCH-LOAD-001.md",
+        "scan-results/details/VULN-CROSS-CHKPT-001.md",
+        "scan-results/details/VULN-CROSS-TOOLS-DATA-LOAD-001.md",
+        "scan-results/details/layerzero-mga_checkpoint-torch_load-188.md",
+        "scan-results/details/VULN-SEC-LZ-002.md",
+        "scan-results/details/VULN-SEC-LZ-003.md",
+        "scan-results/details/VULN-tools-load_dataset-001.md",
+        "scan-results/details/VULN-tools-load_dataset-003.md",
+        "scan-results/details/core-qos-env-type-confusion-20.md",
+        "scan-results/details/ops-py-scan-info-001.md"
+      ],
+      "summary": {
+        "confirmed_analyzed": 11,
+        "reports_generated": 11,
+        "critical_analyzed": 4,
+        "high_analyzed": 6,
+        "medium_analyzed": 1,
+        "info_analyzed": 1
+      }
+    },
+    {
+      "name": "reporter",
+      "start_time": "2026-04-20T10:24:16Z",
+      "end_time": "2026-04-20T10:28:14Z",
+      "status": "success",
+      "duration_seconds": 238,
+      "output_files": [
+        "scan-results/report_confirmed.md",
+        "scan-results/report_unconfirmed.md"
+      ],
+      "summary": {
+        "confirmed_report_lines": 655,
+        "unconfirmed_report_lines": 885,
+        "executive_summary_added": true,
+        "top_5_deep_analysis_added": true,
+        "remediation_section_added": true
+      }
+    }
+  ],
+  "summary": {
+    "total_files": 960,
+    "total_modules": 15,
+    "c_cpp_files": 49,
+    "python_files": 911,
+    "total_candidates": 82,
+    "confirmed": 11,
+    "likely": 12,
+    "possible": 12,
+    "false_positive": 47,
+    "scan_duration_minutes": 135
+  }
+}

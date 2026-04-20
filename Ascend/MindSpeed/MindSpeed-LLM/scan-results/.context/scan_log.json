@@ -1,0 +1,126 @@
+{
+  "scan_id": "scan_20260420_mindspeed_llm",
+  "start_time": "2026-04-20T01:16:00Z",
+  "end_time": "2026-04-20T04:22:00Z",
+  "duration_seconds": 11760,
+  "status": "success",
+  "project_name": "MindSpeed-LLM",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/shenteng/MindSpeed/MindSpeed-LLM",
+  "language_detection": {
+    "python_files": 507,
+    "cpp_files": 1,
+    "c_files": 0,
+    "header_files": 0,
+    "project_type": "python_cpp_mixed"
+  },
+  "agents": [
+    {
+      "name": "architecture",
+      "status": "success",
+      "start_time": "2026-04-20T01:17:00Z",
+      "end_time": "2026-04-20T01:25:00Z",
+      "duration_seconds": 480,
+      "output_files": [
+        "scan-results/.context/project_model.json",
+        "scan-results/.context/call_graph.json",
+        "scan-results/threat_analysis_report.md"
+      ],
+      "summary": "识别4个主要攻击面: checkpoint处理、模型加载、代码执行、CLI接口"
+    },
+    {
+      "name": "dataflow-scanner",
+      "status": "success",
+      "start_time": "2026-04-20T01:26:00Z",
+      "end_time": "2026-04-20T02:01:00Z",
+      "duration_seconds": 2100,
+      "vulnerabilities_found": 26,
+      "summary": "发现26个数据流漏洞: CWE-502(pickle)、CWE-787/125(C++内存)、CWE-94(动态加载)"
+    },
+    {
+      "name": "security-auditor",
+      "status": "success",
+      "start_time": "2026-04-20T01:26:00Z",
+      "end_time": "2026-04-20T01:32:00Z",
+      "duration_seconds": 360,
+      "vulnerabilities_found": 22,
+      "summary": "发现22个安全漏洞: CWE-502、CWE-940(trust_remote_code)、CWE-94(exec)、CWE-78(subprocess)"
+    },
+    {
+      "name": "verification",
+      "status": "success",
+      "start_time": "2026-04-20T02:02:00Z",
+      "end_time": "2026-04-20T02:38:00Z",
+      "duration_seconds": 2160,
+      "input_count": 48,
+      "confirmed_count": 31,
+      "likely_count": 7,
+      "false_positive_count": 0,
+      "summary": "验证48个候选漏洞，确认31个CONFIRMED，7个LIKELY"
+    },
+    {
+      "name": "details-analyzer",
+      "status": "success",
+      "start_time": "2026-04-20T04:07:00Z",
+      "end_time": "2026-04-20T04:22:00Z",
+      "duration_seconds": 900,
+      "output_files": [
+        "scan-results/details/VULN-SEC-CKPT-001.md",
+        "scan-results/details/VULN-014.md",
+        "scan-results/details/VULN-SEC-DYN-001.md",
+        "scan-results/details/VULN-SEC-TRUST-001.md",
+        "scan-results/report_deep_analysis.md"
+      ],
+      "analyzed_vulnerabilities": 4,
+      "summary": "生成4个关键漏洞的深度利用分析报告 + 综合深度分析报告"
+    },
+    {
+      "name": "reporter",
+      "status": "success",
+      "start_time": "2026-04-20T02:37:00Z",
+      "end_time": "2026-04-20T02:38:00Z",
+      "duration_seconds": 60,
+      "output_files": [
+        "scan-results/report_confirmed.md",
+        "scan-results/report_unconfirmed.md"
+      ],
+      "summary": "生成漏洞扫描报告: 31个CONFIRMED漏洞(Critical:25, High:6)"
+    }
+  ],
+  "summary": {
+    "total_vulnerabilities": 38,
+    "confirmed": 31,
+    "likely": 7,
+    "critical": 25,
+    "high": 13,
+    "medium": 0,
+    "low": 0,
+    "cwe_distribution": {
+      "CWE-502": 27,
+      "CWE-94": 4,
+      "CWE-940": 2,
+      "CWE-787": 2,
+      "CWE-125": 3
+    },
+    "top_vulnerability_types": [
+      "不安全反序列化(torch.load weights_only=False)",
+      "动态模块加载(importlib.import_module)",
+      "trust_remote_code代码执行",
+      "C++数组边界检查缺失"
+    ],
+    "high_risk_modules": [
+      "mindspeed_llm/tasks/checkpoint",
+      "mindspeed_llm/core/high_availability",
+      "convert_ckpt.py",
+      "evaluation.py"
+    ],
+    "most_dangerous_vulnerability": {
+      "id": "VULN-014",
+      "type": "分布式训练横向移动",
+      "file": "tft_optimizer_data_repair.py:204",
+      "cvss": 9.3,
+      "reason": "单节点攻陷可导致整个GPU集群被控制"
+    }
+  },
+  "scan_mode": "autonomous_analysis",
+  "threat_md_exists": false
+}

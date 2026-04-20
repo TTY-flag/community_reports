@@ -1,0 +1,271 @@
+{
+  "project_name": "MindSpeed-Core-MS",
+  "scan_time": "2026-04-20T12:00:00Z",
+  "lsp_available": false,
+  "total_files": 47,
+  "total_lines": 13274,
+  "project_profile": {
+    "project_type": "library",
+    "deployment_model": "Python库/SDK，主要用于将PyTorch模型代码转换到MindSpore框架。典型部署场景是在开发环境中，通过CLI工具或Shell脚本进行代码转换操作，由开发者或运维人员手动执行。",
+    "trust_boundaries": [
+      {
+        "boundary": "CLI Interface",
+        "trusted_side": "Application logic (code conversion tools)",
+        "untrusted_side": "Command line arguments (file paths)",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "File System Interface",
+        "trusted_side": "Application logic",
+        "untrusted_side": "File contents from user-specified paths",
+        "risk": "High"
+      },
+      {
+        "boundary": "Pickle Deserialization",
+        "trusted_side": "Application logic",
+        "untrusted_side": "Serialized weight files (.pt files)",
+        "risk": "Critical"
+      },
+      {
+        "boundary": "Git Repository Clone",
+        "trusted_side": "Shell scripts (auto_convert.sh)",
+        "untrusted_side": "Remote Git repositories (hardcoded URLs)",
+        "risk": "Low"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "tools_convert",
+      "path": "tools/convert",
+      "language": "python",
+      "components": ["convert.py", "modules/api_transformer.py", "modules/string_transformer.py", "modules/utils.py"]
+    },
+    {
+      "name": "tools_patch_merge",
+      "path": "tools/convert/patch_merge/modules",
+      "language": "python",
+      "components": ["merge.py", "patch_replace.py", "patch_class_add_factory.py", "patch_func_router.py", "patch_wrapper_router.py", "cut_patch.py", "coverage.py", "patch_import_collector.py"]
+    },
+    {
+      "name": "tools_transfer",
+      "path": "tools",
+      "language": "python",
+      "components": ["transfer.py"]
+    },
+    {
+      "name": "tools_load_weights",
+      "path": "tools/load_ms_weights_to_pt",
+      "language": "python",
+      "components": ["transfer.py", "serialization.py", "checkpointing.py"]
+    },
+    {
+      "name": "tools_rules_rl",
+      "path": "tools/rules_rl",
+      "language": "python",
+      "components": ["line_rules.py", "line_rules_gongka.py"]
+    },
+    {
+      "name": "src_mindspeed",
+      "path": "src/mindspeed/mindspore",
+      "language": "python",
+      "components": ["mindspore_adaptor.py"]
+    },
+    {
+      "name": "src_mindspeed_mm",
+      "path": "src/mindspeed_mm/mindspore",
+      "language": "python",
+      "components": ["mindspore_adaptor.py", "models/common/communications.py", "models/vision/vision_encoders/glm4v_vl_vit_model.py", "utils/utils.py", "data/datasets/feature_dataset.py"]
+    },
+    {
+      "name": "tests",
+      "path": "tests",
+      "language": "python",
+      "components": ["st/ut/test_api_transformer.py", "st/ut/test_coverage.py", "st/ut/test_checkpointing.py", "st/ut/test_merge.py", "st/ut/test_serialization.py", "st/ut/test_transfer.py", "st/ut/test_tools_transfer.py"]
+    }
+  ],
+  "files": [
+    {
+      "path": "tools/load_ms_weights_to_pt/serialization.py",
+      "language": "python",
+      "risk": "Critical",
+      "module": "tools_load_weights",
+      "lines": 635,
+      "priority": 1,
+      "risk_reason": "pickle反序列化操作，可能存在任意代码执行风险"
+    },
+    {
+      "path": "tools/convert/patch_merge/modules/merge.py",
+      "language": "python",
+      "risk": "High",
+      "module": "tools_patch_merge",
+      "lines": 726,
+      "priority": 2,
+      "risk_reason": "AST操作和代码修改，涉及文件读写和代码注入"
+    },
+    {
+      "path": "src/mindspeed_mm/mindspore/data/datasets/feature_dataset.py",
+      "language": "python",
+      "risk": "High",
+      "module": "src_mindspeed_mm",
+      "lines": 35,
+      "priority": 3,
+      "risk_reason": "torch.load调用，加载外部权重文件"
+    },
+    {
+      "path": "tools/load_ms_weights_to_pt/transfer.py",
+      "language": "python",
+      "risk": "High",
+      "module": "tools_load_weights",
+      "lines": 58,
+      "priority": 4,
+      "risk_reason": "文件路径参数处理和文件写入操作"
+    },
+    {
+      "path": "tools/transfer.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "tools_transfer",
+      "lines": 204,
+      "priority": 5,
+      "risk_reason": "大量文件读写操作，路径参数来自命令行"
+    },
+    {
+      "path": "tools/convert/convert.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "tools_convert",
+      "lines": 39,
+      "priority": 6,
+      "risk_reason": "CLI入口点，处理用户指定的文件路径"
+    },
+    {
+      "path": "tools/convert/modules/api_transformer.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "tools_convert",
+      "lines": 142,
+      "priority": 7,
+      "risk_reason": "AST转换操作，读取JSON配置文件"
+    },
+    {
+      "path": "tools/convert/modules/utils.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "tools_convert",
+      "lines": 93,
+      "priority": 8,
+      "risk_reason": "文件转换工具，文件读写操作"
+    },
+    {
+      "path": "tools/load_ms_weights_to_pt/checkpointing.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "tools_load_weights",
+      "lines": 12,
+      "priority": 9,
+      "risk_reason": "包装torch.load函数，可能触发pickle反序列化"
+    },
+    {
+      "path": "src/mindspeed/mindspore/mindspore_adaptor.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "src_mindspeed",
+      "lines": 98,
+      "priority": 10,
+      "risk_reason": "库API适配器，注册patch函数"
+    },
+    {
+      "path": "src/mindspeed_mm/mindspore/mindspore_adaptor.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "src_mindspeed_mm",
+      "lines": 58,
+      "priority": 11,
+      "risk_reason": "库API适配器，注册patch函数"
+    },
+    {
+      "path": "setup.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "root",
+      "lines": 42,
+      "priority": 12,
+      "risk_reason": "安装脚本，读取README.md"
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "tools/convert/convert.py",
+      "line": 14,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "CLI工具入口，接收用户通过命令行传入的--path_to_change参数，该路径指向需要转换的代码目录或文件。本地用户可以控制此参数，可能传入恶意路径或包含恶意代码的文件。",
+      "description": "代码转换工具CLI入口，处理PyTorch到MSAdapter的API映射"
+    },
+    {
+      "file": "tools/transfer.py",
+      "line": 119,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "CLI工具入口，接收多个路径参数（megatron_path、mindspeed_path、mindspeed_llm_path等），这些路径由用户在命令行指定。本地用户可以控制这些参数，可能传入恶意路径。",
+      "description": "代码转换工具CLI入口，基于规则进行代码替换"
+    },
+    {
+      "file": "tools/load_ms_weights_to_pt/transfer.py",
+      "line": 51,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "CLI工具入口，接收mindspeed_llm_path参数，用于将权重转换工具复制到目标目录。本地用户可以控制此参数。",
+      "description": "权重加载工具CLI入口，复制checkpointing.py和serialization.py到目标目录"
+    },
+    {
+      "file": "tools/convert/patch_merge/modules/merge.py",
+      "line": 710,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "Patch合并工具CLI入口，接收root-dir和json-file参数。本地用户可以控制路径和JSON文件内容，可能触发不安全的代码操作。",
+      "description": "Patch合并工具CLI入口，将patch JSON合并到源代码"
+    },
+    {
+      "file": "tools/load_ms_weights_to_pt/serialization.py",
+      "line": 384,
+      "function": "load_ms_weights",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "权重加载函数，接收文件路径参数f，使用pickle进行反序列化。如果用户传入恶意构造的.pt文件，可能导致任意代码执行。",
+      "description": "权重加载函数，从.pt文件加载MindSpore权重"
+    },
+    {
+      "file": "src/mindspeed_mm/mindspore/data/datasets/feature_dataset.py",
+      "line": 21,
+      "function": "get_data_from_feature_data",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "特征数据加载函数，使用torch.load加载用户指定的.pt文件。torch.load内部使用pickle反序列化，存在任意代码执行风险。",
+      "description": "特征数据加载函数，从.pt文件加载特征数据"
+    },
+    {
+      "file": "tools/convert/modules/api_transformer.py",
+      "line": 9,
+      "function": "load_json_file",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "JSON配置文件加载函数，从api_mapping.json读取API映射配置。如果该文件被篡改，可能导致不安全的API映射。",
+      "description": "JSON配置文件加载函数，读取API映射配置"
+    }
+  ],
+  "attack_surfaces": [
+    "CLI Interface: tools/convert/convert.py --path_to_change参数",
+    "CLI Interface: tools/transfer.py 多个路径参数",
+    "CLI Interface: tools/load_ms_weights_to_pt/transfer.py --mindspeed_llm_path参数",
+    "CLI Interface: tools/convert/patch_merge/modules/merge.py --root-dir和--json-file参数",
+    "Pickle Deserialization: tools/load_ms_weights_to_pt/serialization.py load_ms_weights函数",
+    "Pickle Deserialization: src/mindspeed_mm/mindspore/data/datasets/feature_dataset.py torch.load调用",
+    "File Read: tools/convert/modules/api_transformer.py api_mapping.json配置文件"
+  ]
+}

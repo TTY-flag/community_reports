@@ -1,0 +1,481 @@
+{
+  "project_name": "MindSpeed-MM",
+  "scan_time": "2026-04-20T01:17:00Z",
+  "lsp_available": false,
+  "total_files": 691,
+  "total_lines": 178822,
+  "project_profile": {
+    "project_type": "library",
+    "deployment_model": "MindSpeed-MM 是华为昇腾平台的多模态大模型训练套件，作为 Python 库/SDK 在分布式训练集群上部署。主要使用场景包括：1) 在 Atlas NPU 服务器上进行模型预训练和微调；2) 通过命令行脚本启动训练任务；3) 加载外部模型权重、数据集和配置文件。",
+    "trust_boundaries": [
+      {
+        "boundary": "External Model Files",
+        "trusted_side": "Application logic",
+        "untrusted_side": "Model weights from HuggingFace/remote sources",
+        "risk": "High"
+      },
+      {
+        "boundary": "External Dataset Files",
+        "trusted_side": "Application logic",
+        "untrusted_side": "CSV/JSON/Parquet data files",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Configuration Files",
+        "trusted_side": "Application logic",
+        "untrusted_side": "YAML/JSON config files from user",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Command Line Arguments",
+        "trusted_side": "Application logic",
+        "untrusted_side": "User-provided CLI arguments and paths",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "trust_remote_code",
+        "trusted_side": "Application logic",
+        "untrusted_side": "Remote code from HuggingFace Hub",
+        "risk": "Critical"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "mindspeed_mm",
+      "path": "mindspeed_mm",
+      "language": "python",
+      "components": [
+        "arguments.py",
+        "training.py",
+        "config/",
+        "configs/",
+        "data/",
+        "models/",
+        "tasks/",
+        "tools/",
+        "utils/",
+        "patchs/",
+        "fsdp/",
+        "mindspore/"
+      ],
+      "risk": "High",
+      "description": "核心训练框架代码，包含模型定义、数据处理、训练流程"
+    },
+    {
+      "name": "examples",
+      "path": "examples",
+      "language": "python",
+      "components": [
+        "qwen2vl/",
+        "qwen2.5vl/",
+        "qwen3vl/",
+        "internvl2/",
+        "internvl3/",
+        "wan2.1/",
+        "wan2.2/",
+        "hunyuanvideo/",
+        "cogvideox/",
+        "diffusers/",
+        "diffsynth/",
+        "verl_examples/"
+      ],
+      "risk": "Medium",
+      "description": "预置模型示例和训练脚本"
+    },
+    {
+      "name": "bridge",
+      "path": "bridge",
+      "language": "python",
+      "components": [
+        "models/"
+      ],
+      "risk": "High",
+      "description": "模型权重转换工具，处理 from_pretrained 和 safetensors"
+    },
+    {
+      "name": "checkpoint",
+      "path": "checkpoint",
+      "language": "python",
+      "components": [
+        "convert_cli.py",
+        "vlm_model/",
+        "common/"
+      ],
+      "risk": "High",
+      "description": "离线权重转换工具"
+    },
+    {
+      "name": "verl_plugin",
+      "path": "verl_plugin",
+      "language": "python",
+      "components": [
+        "setup.py",
+        "verl_npu/"
+      ],
+      "risk": "Medium",
+      "description": "强化学习插件模块"
+    },
+    {
+      "name": "tests",
+      "path": "tests",
+      "language": "python",
+      "components": [
+        "ut/",
+        "st/"
+      ],
+      "risk": "Low",
+      "description": "单元测试和系统测试代码"
+    },
+    {
+      "name": "ci",
+      "path": "ci",
+      "language": "python",
+      "components": [
+        "access_control_test.py",
+        "generate_st_baseline.py"
+      ],
+      "risk": "Low",
+      "description": "CI/CD 测试脚本"
+    },
+    {
+      "name": "scripts",
+      "path": "scripts",
+      "language": "python",
+      "components": [
+        "install.sh",
+        "install_cann.sh"
+      ],
+      "risk": "Low",
+      "description": "安装脚本"
+    }
+  ],
+  "files": [
+    {
+      "path": "mindspeed_mm/training.py",
+      "language": "python",
+      "risk": "High",
+      "module": "mindspeed_mm",
+      "lines": 1145,
+      "priority": 1,
+      "description": "核心训练流程入口，处理模型初始化和训练循环"
+    },
+    {
+      "path": "mindspeed_mm/arguments.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "mindspeed_mm",
+      "lines": 343,
+      "priority": 2,
+      "description": "命令行参数解析，包含 trust-remote-code 参数"
+    },
+    {
+      "path": "mindspeed_mm/configs/config.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "mindspeed_mm",
+      "lines": 302,
+      "priority": 3,
+      "description": "配置文件加载，包含路径安全验证"
+    },
+    {
+      "path": "mindspeed_mm/configs/read_yaml_config.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "mindspeed_mm",
+      "lines": 79,
+      "priority": 4,
+      "description": "YAML 配置解析，使用 yaml.safe_load"
+    },
+    {
+      "path": "mindspeed_mm/models/vlm_model.py",
+      "language": "python",
+      "risk": "High",
+      "module": "mindspeed_mm",
+      "lines": 721,
+      "priority": 5,
+      "description": "视觉语言模型定义"
+    },
+    {
+      "path": "mindspeed_mm/models/qwen2vl_model.py",
+      "language": "python",
+      "risk": "High",
+      "module": "mindspeed_mm",
+      "lines": 515,
+      "priority": 6,
+      "description": "Qwen2-VL 模型实现"
+    },
+    {
+      "path": "mindspeed_mm/models/internvl_model.py",
+      "language": "python",
+      "risk": "High",
+      "module": "mindspeed_mm",
+      "lines": 640,
+      "priority": 7,
+      "description": "InternVL 模型实现"
+    },
+    {
+      "path": "mindspeed_mm/data/data_utils/utils.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "mindspeed_mm",
+      "lines": 956,
+      "priority": 8,
+      "description": "数据加载工具，处理 CSV/JSON/Parquet 文件"
+    },
+    {
+      "path": "mindspeed_mm/data/datasets/mm_base_dataset.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "mindspeed_mm",
+      "lines": 49,
+      "priority": 9,
+      "description": "基础数据集类"
+    },
+    {
+      "path": "mindspeed_mm/utils/security_utils/validate_path.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "mindspeed_mm",
+      "lines": 52,
+      "priority": 10,
+      "description": "路径安全验证工具"
+    },
+    {
+      "path": "mindspeed_mm/utils/security_utils/input_filter.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "mindspeed_mm",
+      "lines": 30,
+      "priority": 11,
+      "description": "DataFrame 输入过滤"
+    },
+    {
+      "path": "bridge/models/hf_pretrained/safe_config_loader.py",
+      "language": "python",
+      "risk": "High",
+      "module": "bridge",
+      "lines": 92,
+      "priority": 12,
+      "description": "安全配置加载器，调用 AutoConfig.from_pretrained"
+    },
+    {
+      "path": "bridge/models/hf_pretrained/causal_lm.py",
+      "language": "python",
+      "risk": "High",
+      "module": "bridge",
+      "lines": 170,
+      "priority": 13,
+      "description": "AutoModelForCausalLM.from_pretrained 调用"
+    },
+    {
+      "path": "bridge/models/conversion/auto_bridge.py",
+      "language": "python",
+      "risk": "High",
+      "module": "bridge",
+      "lines": 120,
+      "priority": 14,
+      "description": "自动模型桥接转换"
+    },
+    {
+      "path": "checkpoint/convert_cli.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "checkpoint",
+      "lines": 23,
+      "priority": 15,
+      "description": "权重转换命令行入口"
+    },
+    {
+      "path": "checkpoint/vlm_model/config.py",
+      "language": "python",
+      "risk": "High",
+      "module": "checkpoint",
+      "lines": 200,
+      "priority": 16,
+      "description": "检查点配置，加载 safetensors"
+    },
+    {
+      "path": "pretrain_vlm.py",
+      "language": "python",
+      "risk": "High",
+      "module": "root",
+      "lines": 269,
+      "priority": 17,
+      "description": "VLM 预训练入口脚本"
+    },
+    {
+      "path": "pretrain_qwen2vl.py",
+      "language": "python",
+      "risk": "High",
+      "module": "root",
+      "lines": 200,
+      "priority": 18,
+      "description": "Qwen2-VL 预训练入口脚本"
+    },
+    {
+      "path": "inference_sora.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "root",
+      "lines": 196,
+      "priority": 19,
+      "description": "Sora 推理脚本"
+    },
+    {
+      "path": "verl_plugin/setup.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "verl_plugin",
+      "lines": 399,
+      "priority": 20,
+      "description": "强化学习插件安装，包含代码注入逻辑"
+    },
+    {
+      "path": "examples/diffsynth/qwen_image_edit/qwen_image_edit_patch.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "examples",
+      "lines": 388,
+      "priority": 21,
+      "description": "Qwen Image Edit 补丁，导入 pickle"
+    },
+    {
+      "path": "ci/access_control_test.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "ci",
+      "lines": 220,
+      "priority": 22,
+      "description": "CI 测试脚本，使用 subprocess.Popen"
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "bridge/models/hf_pretrained/causal_lm.py",
+      "line": 95,
+      "function": "load_model",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "加载来自 HuggingFace 的模型权重，路径由用户通过配置文件或命令行指定，使用 safetensors 格式而非 pickle",
+      "description": "AutoModelForCausalLM.from_pretrained 调用"
+    },
+    {
+      "file": "bridge/models/hf_pretrained/safe_config_loader.py",
+      "line": 57,
+      "function": "safe_load_config_with_retry",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "加载模型配置文件，路径由用户指定，信任等级取决于 trust_remote_code 参数",
+      "description": "AutoConfig.from_pretrained 调用"
+    },
+    {
+      "file": "mindspeed_mm/configs/config.py",
+      "line": 86,
+      "function": "__init__",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "用户通过命令行指定配置文件路径，文件内容由用户控制",
+      "description": "MMConfig 配置文件加载入口"
+    },
+    {
+      "file": "mindspeed_mm/configs/read_yaml_config.py",
+      "line": 38,
+      "function": "get_sys_args_from_yaml",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "YAML 配置文件路径来自 sys.argv[1]，文件内容完全由用户控制，使用 yaml.safe_load 加载",
+      "description": "YAML 配置文件解析入口"
+    },
+    {
+      "file": "mindspeed_mm/data/data_utils/utils.py",
+      "line": 90,
+      "function": "get_datasamples",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "数据集文件路径来自用户配置，CSV/JSON/Parquet 文件内容由用户提供",
+      "description": "数据集文件加载入口"
+    },
+    {
+      "file": "mindspeed_mm/arguments.py",
+      "line": 177,
+      "function": "_add_security_args",
+      "type": "cmdline",
+      "trust_level": "semi_trusted",
+      "justification": "trust-remote-code 参数控制是否允许加载远程代码，默认为 False",
+      "description": "命令行参数定义 trust-remote-code"
+    },
+    {
+      "file": "mindspeed_mm/configs/config.py",
+      "line": 218,
+      "function": "file_legality_checker",
+      "type": "file",
+      "trust_level": "internal",
+      "justification": "内部安全检查函数，验证路径合法性",
+      "description": "文件路径安全验证"
+    },
+    {
+      "file": "pretrain_vlm.py",
+      "line": 256,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "semi_trusted",
+      "justification": "训练脚本入口，由有权限的开发者/研究人员执行，配置文件和数据路径通过命令行参数传入",
+      "description": "预训练脚本主入口"
+    },
+    {
+      "file": "checkpoint/convert_cli.py",
+      "line": 13,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "semi_trusted",
+      "justification": "权重转换工具入口，由用户执行转换本地模型权重",
+      "description": "权重转换命令行入口"
+    },
+    {
+      "file": "tests/ut/models/audio_encoder/test_audio_encoder_processor.py",
+      "line": 41,
+      "function": "test_audio_encoder",
+      "type": "file",
+      "trust_level": "internal",
+      "justification": "测试代码中使用 torch.load 加载预置的测试数据文件，非生产代码路径",
+      "description": "测试中使用 torch.load"
+    },
+    {
+      "file": "examples/diffsynth/qwen_image_edit/qwen_image_edit_patch.py",
+      "line": 4,
+      "function": "import",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "示例代码导入 pickle 模块，但未见直接 pickle.load 调用，属于潜在风险点",
+      "description": "pickle 模块导入（潜在风险）"
+    },
+    {
+      "file": "verl_plugin/setup.py",
+      "line": 82,
+      "function": "acquire_exitcode",
+      "type": "cmdline",
+      "trust_level": "trusted_admin",
+      "justification": "插件安装脚本中的 subprocess.Popen，仅用于安装阶段，非运行时入口",
+      "description": "安装脚本 subprocess 调用"
+    },
+    {
+      "file": "ci/access_control_test.py",
+      "line": 82,
+      "function": "acquire_exitcode",
+      "type": "cmdline",
+      "trust_level": "trusted_admin",
+      "justification": "CI 测试脚本，仅用于自动化测试，非生产运行时入口",
+      "description": "CI 测试 subprocess 调用"
+    }
+  ],
+  "attack_surfaces": [
+    "HuggingFace from_pretrained: 加载外部模型权重和配置",
+    "Safetensors 文件加载: 模型权重存储格式",
+    "YAML/JSON 配置文件解析: 用户训练配置",
+    "CSV/JSON/Parquet 数据集文件: 训练数据加载",
+    "trust_remote_code 参数: 控制远程代码加载",
+    "命令行参数: 训练脚本启动参数",
+    "torch.load: 测试代码中使用（非生产路径）"
+  ]
+}

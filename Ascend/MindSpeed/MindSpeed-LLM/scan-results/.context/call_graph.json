@@ -1,0 +1,308 @@
+{
+  "project_name": "MindSpeed-LLM",
+  "analysis_scope": "Security-critical function calls",
+  "nodes": [
+    {
+      "id": "entry_pretrain",
+      "name": "pretrain_gpt.main",
+      "type": "entry_point",
+      "file": "pretrain_gpt.py",
+      "calls": [
+        "megatron_adaptor",
+        "pretrain",
+        "model_provider",
+        "train_valid_test_datasets_provider"
+      ]
+    },
+    {
+      "id": "entry_eval",
+      "name": "evaluation.main",
+      "type": "entry_point",
+      "file": "evaluation.py",
+      "calls": [
+        "initialize_megatron",
+        "MegatronModuleForCausalLM.from_pretrained",
+        "AutoTokenizer.from_pretrained"
+      ],
+      "security_critical": true,
+      "security_notes": "AutoTokenizer.from_pretrained with trust_remote_code=True"
+    },
+    {
+      "id": "entry_inference",
+      "name": "inference.main",
+      "type": "entry_point",
+      "file": "inference.py",
+      "calls": [
+        "initialize_megatron",
+        "MegatronModuleForCausalLM.from_pretrained",
+        "task_factory"
+      ]
+    },
+    {
+      "id": "entry_preprocess",
+      "name": "preprocess_data.main",
+      "type": "entry_point",
+      "file": "preprocess_data.py",
+      "calls": [
+        "build_tokenizer",
+        "build_dataset",
+        "get_dataset_handler",
+        "build_splitter"
+      ],
+      "security_critical": true,
+      "security_notes": "nltk.load() uses pickle internally"
+    },
+    {
+      "id": "entry_convert_ckpt",
+      "name": "convert_ckpt.main",
+      "type": "entry_point",
+      "file": "convert_ckpt.py",
+      "calls": [
+        "load_plugin",
+        "loader.load_checkpoint",
+        "saver.save_model_checkpoint"
+      ],
+      "security_critical": true,
+      "security_notes": "Dynamic module loading and checkpoint handling"
+    },
+    {
+      "id": "load_plugin",
+      "name": "load_plugin",
+      "type": "function",
+      "file": "convert_ckpt.py",
+      "calls": [
+        "importlib.import_module"
+      ],
+      "security_critical": true,
+      "security_notes": "Dynamic module loading from string argument"
+    },
+    {
+      "id": "torch_load_unsafe",
+      "name": "torch.load (weights_only=False)",
+      "type": "unsafe_pattern",
+      "files": [
+        "mindspeed_llm/tasks/checkpoint/convert_ckpt_mamba2.py",
+        "mindspeed_llm/tasks/checkpoint/convert_param.py",
+        "mindspeed_llm/tasks/checkpoint/convert_ckpt_longcat.py",
+        "mindspeed_llm/core/high_availability/tft_acp_compatibility.py"
+      ],
+      "security_critical": true,
+      "cwe": "CWE-502: Deserialization of Untrusted Data",
+      "security_notes": "Pickle deserialization can lead to arbitrary code execution"
+    },
+    {
+      "id": "exec_humaneval",
+      "name": "check_correctness.unsafe_execute",
+      "type": "function",
+      "file": "mindspeed_llm/tasks/evaluation/eval_utils/human_utils.py",
+      "calls": [
+        "exec(check_program, exec_globals)",
+        "reliability_guard"
+      ],
+      "security_critical": true,
+      "cwe": "CWE-95: Improper Neutralization of Directives in Dynamically Evaluated Code",
+      "security_notes": "Executes dynamically generated code with limited sandboxing"
+    },
+    {
+      "id": "reliability_guard",
+      "name": "reliability_guard",
+      "type": "function",
+      "file": "mindspeed_llm/tasks/evaluation/eval_utils/human_utils.py",
+      "calls": [],
+      "security_critical": true,
+      "security_notes": "Limits dangerous operations but NOT a real security sandbox"
+    },
+    {
+      "id": "import_module_dynamic",
+      "name": "importlib.import_module",
+      "type": "unsafe_pattern",
+      "files": [
+        "convert_ckpt.py",
+        "mindspeed_llm/core/datasets/helpers.py",
+        "mindspeed_llm/mindspore/convert_ckpt.py"
+      ],
+      "security_critical": true,
+      "cwe": "CWE-94: Improper Control of Generation of Code",
+      "security_notes": "Dynamic module loading - if module name is attacker-controlled, can load malicious code"
+    },
+    {
+      "id": "AutoTokenizer_trust",
+      "name": "AutoTokenizer.from_pretrained (trust_remote_code=True)",
+      "type": "unsafe_pattern",
+      "file": "evaluation.py",
+      "security_critical": true,
+      "cwe": "CWE-940: Improper Verification of Source of Communication Channel",
+      "security_notes": "trust_remote_code allows arbitrary code execution from model repository"
+    },
+    {
+      "id": "nltk_load",
+      "name": "nltk.load",
+      "type": "unsafe_pattern",
+      "file": "preprocess_data.py",
+      "security_critical": true,
+      "cwe": "CWE-502: Deserialization of Untrusted Data",
+      "security_notes": "Warning in code: 'nltk.load() uses pickle. Ensure the source of the corpus is trusted'"
+    },
+    {
+      "id": "model_provider",
+      "name": "model_provider",
+      "type": "function",
+      "files": [
+        "pretrain_gpt.py",
+        "evaluation.py",
+        "inference.py"
+      ],
+      "calls": [
+        "core_transformer_config_from_args",
+        "core_transformer_config_from_yaml",
+        "import_module (if args.spec is set)",
+        "GPTModel",
+        "GPTModelInfer"
+      ],
+      "security_notes": "Uses import_module if spec argument is provided - potential code injection"
+    },
+    {
+      "id": "import_module_spec",
+      "name": "import_module (from spec_utils)",
+      "type": "function",
+      "called_by": [
+        "model_provider",
+        "gpt_model_provider"
+      ],
+      "security_critical": true,
+      "security_notes": "Imports module from args.spec - if spec path is attacker-controlled, security risk"
+    },
+    {
+      "id": "convert_param_load",
+      "name": "load_state_dict",
+      "type": "function",
+      "file": "mindspeed_llm/tasks/checkpoint/convert_param.py",
+      "calls": [
+        "torch.load(file_path, weights_only=False)"
+      ],
+      "security_critical": true
+    },
+    {
+      "id": "tft_acp_load",
+      "name": "tft_acp_compatibility checkpoint loading",
+      "type": "function",
+      "file": "mindspeed_llm/core/high_availability/tft_acp_compatibility.py",
+      "calls": [
+        "torch.load(filename)",
+        "torch.load(checkpoint_name, weights_only=False)"
+      ],
+      "security_critical": true
+    },
+    {
+      "id": "helpers_cpp",
+      "name": "helpers_cpp module",
+      "type": "cpp_extension",
+      "file": "mindspeed_llm/fsdp2/data/megatron_data/helpers.cpp",
+      "called_by": [
+        "mindspeed_llm/core/datasets/helpers.py",
+        "megatron.core.datasets"
+      ],
+      "security_notes": "pybind11 extension - receives numpy arrays without explicit validation"
+    },
+    {
+      "id": "build_mapping_impl",
+      "name": "build_mapping_impl",
+      "type": "cpp_function",
+      "file": "mindspeed_llm/fsdp2/data/megatron_data/helpers.cpp",
+      "security_notes": "Uses unchecked array access via .unchecked<1>() - potential issues with malformed arrays"
+    },
+    {
+      "id": "build_sample_idx",
+      "name": "build_sample_idx",
+      "type": "cpp_function",
+      "file": "mindspeed_llm/fsdp2/data/megatron_data/helpers.cpp",
+      "security_notes": "Dynamic memory allocation with new T[] - potential memory issues"
+    }
+  ],
+  "edges": [
+    {
+      "source": "entry_pretrain",
+      "target": "model_provider",
+      "type": "direct_call"
+    },
+    {
+      "source": "model_provider",
+      "target": "import_module_spec",
+      "type": "conditional_call",
+      "condition": "args.spec is not None"
+    },
+    {
+      "source": "entry_eval",
+      "target": "AutoTokenizer_trust",
+      "type": "direct_call"
+    },
+    {
+      "source": "entry_preprocess",
+      "target": "nltk_load",
+      "type": "conditional_call",
+      "condition": "args.split_sentences is True"
+    },
+    {
+      "source": "entry_convert_ckpt",
+      "target": "load_plugin",
+      "type": "direct_call"
+    },
+    {
+      "source": "load_plugin",
+      "target": "import_module_dynamic",
+      "type": "direct_call"
+    },
+    {
+      "source": "convert_param_load",
+      "target": "torch_load_unsafe",
+      "type": "direct_call"
+    },
+    {
+      "source": "tft_acp_load",
+      "target": "torch_load_unsafe",
+      "type": "direct_call"
+    },
+    {
+      "source": "exec_humaneval",
+      "target": "reliability_guard",
+      "type": "direct_call"
+    },
+    {
+      "source": "helpers_cpp",
+      "target": "build_mapping_impl",
+      "type": "pybind11_binding"
+    },
+    {
+      "source": "helpers_cpp",
+      "target": "build_sample_idx",
+      "type": "pybind11_binding"
+    }
+  ],
+  "security_critical_paths": [
+    {
+      "path": ["entry_convert_ckpt", "load_plugin", "import_module_dynamic"],
+      "description": "Checkpoint conversion with dynamic module loading - attacker can control module name",
+      "cwe": "CWE-94"
+    },
+    {
+      "path": ["convert_param_load", "torch_load_unsafe"],
+      "description": "Checkpoint loading with unsafe pickle deserialization",
+      "cwe": "CWE-502"
+    },
+    {
+      "path": ["entry_eval", "AutoTokenizer_trust"],
+      "description": "Tokenizer loading with trust_remote_code enabled",
+      "cwe": "CWE-940"
+    },
+    {
+      "path": ["exec_humaneval", "reliability_guard"],
+      "description": "Code execution for HumanEval - limited protection only",
+      "cwe": "CWE-95"
+    },
+    {
+      "path": ["model_provider", "import_module_spec"],
+      "description": "Dynamic spec module loading if args.spec provided",
+      "cwe": "CWE-94"
+    }
+  ]
+}

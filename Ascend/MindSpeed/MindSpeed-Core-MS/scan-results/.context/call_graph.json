@@ -1,0 +1,263 @@
+{
+  "functions": {
+    "main@tools/convert/convert.py": {
+      "defined_at": 14,
+      "calls": ["source_file_iterator@tools/convert/modules/utils.py:9", "FileConverter.convert@tools/convert/modules/utils.py:77"],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "CLI入口点，接收--path_to_change参数，处理文件转换"
+    },
+    "source_file_iterator@tools/convert/modules/utils.py": {
+      "defined_at": 9,
+      "calls": [],
+      "called_by": ["main@tools/convert/convert.py:14"],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "遍历指定路径获取Python文件列表"
+    },
+    "FileConverter.convert@tools/convert/modules/utils.py": {
+      "defined_at": 77,
+      "calls": ["cst.parse_module", "open"],
+      "called_by": ["main@tools/convert/convert.py:14"],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "读取文件内容并进行AST转换"
+    },
+    "APITransformer@tools/convert/modules/api_transformer.py": {
+      "defined_at": 14,
+      "calls": ["load_json_file@tools/convert/modules/api_transformer.py:9"],
+      "called_by": ["FileConverter@tools/convert/modules/utils.py:72"],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "AST转换器，将torch API映射到msadapter API"
+    },
+    "load_json_file@tools/convert/modules/api_transformer.py": {
+      "defined_at": 9,
+      "calls": ["open", "json.load"],
+      "called_by": ["APITransformer.__init__@tools/convert/modules/api_transformer.py:20"],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "加载JSON配置文件，读取API映射"
+    },
+    "main@tools/transfer.py": {
+      "defined_at": 119,
+      "calls": ["getfiles@tools/transfer.py:13", "convert_package@tools/transfer.py:110", "convert_general_rules@tools/transfer.py:23", "convert_special_rules@tools/transfer.py:47", "convert_special_rules_by_line@tools/transfer.py:72"],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "CLI入口点，接收多个路径参数进行代码转换"
+    },
+    "getfiles@tools/transfer.py": {
+      "defined_at": 13,
+      "calls": ["os.walk"],
+      "called_by": ["convert_general_rules@tools/transfer.py:23"],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "遍历文件夹获取所有文件路径"
+    },
+    "convert_general_rules@tools/transfer.py": {
+      "defined_at": 23,
+      "calls": ["open", "getfiles@tools/transfer.py:13"],
+      "called_by": ["convert_package@tools/transfer.py:110"],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "应用通用规则进行文件转换"
+    },
+    "convert_special_rules@tools/transfer.py": {
+      "defined_at": 47,
+      "calls": ["open", "re.sub"],
+      "called_by": ["convert_package@tools/transfer.py:110"],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "应用特殊规则进行文件转换"
+    },
+    "convert_special_rules_by_line@tools/transfer.py": {
+      "defined_at": 72,
+      "calls": ["open", "re.sub", "os.remove"],
+      "called_by": ["convert_package@tools/transfer.py:110"],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "按行应用特殊规则进行文件转换"
+    },
+    "main@tools/load_ms_weights_to_pt/transfer.py": {
+      "defined_at": 51,
+      "calls": ["transfer_load@tools/load_ms_weights_to_pt/transfer.py:11"],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "CLI入口点，接收mindspeed_llm_path参数"
+    },
+    "transfer_load@tools/load_ms_weights_to_pt/transfer.py": {
+      "defined_at": 11,
+      "calls": ["copy_weights_transfer_tool_file@tools/load_ms_weights_to_pt/transfer.py:16", "patch_torch_load@tools/load_ms_weights_to_pt/transfer.py:32"],
+      "called_by": ["main@tools/load_ms_weights_to_pt/transfer.py:51"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "复制权重转换工具并patch torch.load"
+    },
+    "copy_weights_transfer_tool_file@tools/load_ms_weights_to_pt/transfer.py": {
+      "defined_at": 16,
+      "calls": ["shutil.copy", "open"],
+      "called_by": ["transfer_load@tools/load_ms_weights_to_pt/transfer.py:11"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "复制checkpointing.py和serialization.py到目标目录"
+    },
+    "patch_torch_load@tools/load_ms_weights_to_pt/transfer.py": {
+      "defined_at": 32,
+      "calls": ["open", "re.sub"],
+      "called_by": ["transfer_load@tools/load_ms_weights_to_pt/transfer.py:11"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "修改megatron_adaptor.py，注入torch.load patch"
+    },
+    "load_ms_weights@tools/load_ms_weights_to_pt/serialization.py": {
+      "defined_at": 384,
+      "calls": ["_open_file_like@tools/load_ms_weights_to_pt/serialization.py:65", "_is_zipfile@tools/load_ms_weights_to_pt/serialization.py:76", "_load@tools/load_ms_weights_to_pt/serialization.py:428"],
+      "called_by": ["load_wrapper@tools/load_ms_weights_to_pt/checkpointing.py:3"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "使用pickle加载权重文件，存在反序列化风险"
+    },
+    "_load@tools/load_ms_weights_to_pt/serialization.py": {
+      "defined_at": 428,
+      "calls": ["UnpicklerWrapper.load@tools/load_ms_weights_to_pt/serialization.py:508", "zip_file.open_record", "zip_file.read_record"],
+      "called_by": ["load_ms_weights@tools/load_ms_weights_to_pt/serialization.py:384"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "从zip文件中使用pickle反序列化数据"
+    },
+    "UnpicklerWrapper@tools/load_ms_weights_to_pt/serialization.py": {
+      "defined_at": 508,
+      "calls": ["pickle_module.Unpickler.find_class", "get_func_by_name@tools/load_ms_weights_to_pt/serialization.py:421"],
+      "called_by": ["_load@tools/load_ms_weights_to_pt/serialization.py:428"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "pickle反序列化包装器，自定义find_class逻辑"
+    },
+    "load_wrapper@tools/load_ms_weights_to_pt/checkpointing.py": {
+      "defined_at": 3,
+      "calls": ["fn", "load_ms_weights@tools/load_ms_weights_to_pt/serialization.py:384"],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "torch.load的包装函数，失败时调用load_ms_weights"
+    },
+    "get_data_from_feature_data@src/mindspeed_mm/mindspore/data/datasets/feature_dataset.py": {
+      "defined_at": 10,
+      "calls": ["torch.load"],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "使用torch.load加载特征数据文件"
+    },
+    "mindspore_adaptation@src/mindspeed/mindspore/mindspore_adaptor.py": {
+      "defined_at": 10,
+      "calls": ["aspm.register_patch"],
+      "called_by": [],
+      "receives_external_input": false,
+      "risk": "Low",
+      "description": "MindSpore适配函数，注册patch"
+    },
+    "apply_mindspore_patch@src/mindspeed_mm/mindspore/mindspore_adaptor.py": {
+      "defined_at": 16,
+      "calls": ["aspm.register_patch", "aspm.apply_patches"],
+      "called_by": [],
+      "receives_external_input": false,
+      "risk": "Low",
+      "description": "多模态MindSpore适配函数，注册并应用patch"
+    },
+    "main@tools/convert/patch_merge/modules/merge.py": {
+      "defined_at": 710,
+      "calls": ["preprocess@tools/convert/patch_merge/modules/merge.py:660", "merge@tools/convert/patch_merge/modules/merge.py:609", "postprocess@tools/convert/patch_merge/modules/merge.py:699"],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "Patch合并工具CLI入口，处理JSON文件和源代码合并"
+    },
+    "merge@tools/convert/patch_merge/modules/merge.py": {
+      "defined_at": 609,
+      "calls": ["PatchMerger@tools/convert/patch_merge/modules/merge.py:75", "pm.parse_patch_infos", "pm.merge_replacement", "pm.merge_class_patch", "pm.merge_func_patch", "pm.merge_wrapper_patch", "pm.flush_cst_into_file"],
+      "called_by": ["main@tools/convert/patch_merge/modules/merge.py:710"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "Patch合并核心函数，修改源代码文件"
+    },
+    "PatchMerger@tools/convert/patch_merge/modules/merge.py": {
+      "defined_at": 75,
+      "calls": ["open", "json.load", "cst.parse_module", "PatchReplaceTransformer", "PatchClassFactoryTransformer", "PatchFuncRouterTransformer", "PatchWrapperRouterTransformer"],
+      "called_by": ["merge@tools/convert/patch_merge/modules/merge.py:609"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "Patch合并器，解析JSON并进行AST操作"
+    },
+    "preprocess@tools/convert/patch_merge/modules/merge.py": {
+      "defined_at": 660,
+      "calls": ["open", "MegatronAdaptation.register", "MegatronAdaptation.apply"],
+      "called_by": ["main@tools/convert/patch_merge/modules/merge.py:710"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "预处理函数，修改megatron_adaptor.py文件"
+    },
+    "postprocess@tools/convert/patch_merge/modules/merge.py": {
+      "defined_at": 699,
+      "calls": ["open"],
+      "called_by": ["main@tools/convert/patch_merge/modules/merge.py:710"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "后处理函数，恢复megatron_adaptor.py文件"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "args.path_to_change@tools/convert/convert.py:16",
+      "path": ["source_file_iterator@tools/convert/modules/utils.py:9", "FileConverter.convert@tools/convert/modules/utils.py:77", "cst.parse_module"],
+      "sink": "open(input_file, 'w')@tools/convert/modules/utils.py:89",
+      "sink_type": "file_write",
+      "description": "用户指定的路径 -> 文件遍历 -> AST解析 -> 文件写入修改后的代码"
+    },
+    {
+      "source": "args.megatron_path@tools/transfer.py:121",
+      "path": ["convert_package@tools/transfer.py:110", "convert_general_rules@tools/transfer.py:23", "getfiles@tools/transfer.py:13", "open(file_path, 'r')@tools/transfer.py:32"],
+      "sink": "open(convert_file_path, 'w')@tools/transfer.py:43",
+      "sink_type": "file_write",
+      "description": "用户指定的路径 -> 规则转换 -> 文件写入"
+    },
+    {
+      "source": "f@tools/load_ms_weights_to_pt/serialization.py:384",
+      "path": ["_open_file_like@tools/load_ms_weights_to_pt/serialization.py:65", "_is_zipfile@tools/load_ms_weights_to_pt/serialization.py:76", "_load@tools/load_ms_weights_to_pt/serialization.py:428", "UnpicklerWrapper.load@tools/load_ms_weights_to_pt/serialization.py:527"],
+      "sink": "unpickler.load()@tools/load_ms_weights_to_pt/serialization.py:527",
+      "sink_type": "pickle_deserialization",
+      "description": "用户指定的.pt文件路径 -> 文件打开 -> pickle反序列化（高风险）"
+    },
+    {
+      "source": "feature_path@src/mindspeed_mm/mindspore/data/datasets/feature_dataset.py:10",
+      "path": ["torch.load(feature_path)@src/mindspeed_mm/mindspore/data/datasets/feature_dataset.py:21"],
+      "sink": "torch.load@src/mindspeed_mm/mindspore/data/datasets/feature_dataset.py:21",
+      "sink_type": "pickle_deserialization",
+      "description": "用户指定的特征文件路径 -> torch.load（内部使用pickle，高风险）"
+    },
+    {
+      "source": "args.json_file@tools/convert/patch_merge/modules/merge.py:715",
+      "path": ["merge@tools/convert/patch_merge/modules/merge.py:609", "PatchMerger@tools/convert/patch_merge/modules/merge.py:75", "json.load(f)@tools/convert/patch_merge/modules/merge.py:617"],
+      "sink": "pm.flush_cst_into_file@tools/convert/patch_merge/modules/merge.py:143",
+      "sink_type": "file_write",
+      "description": "用户指定的JSON文件 -> Patch解析 -> AST修改 -> 源代码文件写入"
+    },
+    {
+      "source": "args.mindspeed_llm_path@tools/load_ms_weights_to_pt/transfer.py:53",
+      "path": ["transfer_load@tools/load_ms_weights_to_pt/transfer.py:11", "copy_weights_transfer_tool_file@tools/load_ms_weights_to_pt/transfer.py:16", "shutil.copy@tools/load_ms_weights_to_pt/transfer.py:28"],
+      "sink": "shutil.copy(checkpointing_file, target_directory)@tools/load_ms_weights_to_pt/transfer.py:28",
+      "sink_type": "file_copy",
+      "description": "用户指定的路径 -> 复制serialization.py和checkpointing.py到目标目录"
+    },
+    {
+      "source": "filepath@tools/convert/modules/api_transformer.py:9",
+      "path": ["load_json_file@tools/convert/modules/api_transformer.py:9", "json.load(file)@tools/convert/modules/api_transformer.py:11"],
+      "sink": "self.support_api@tools/convert/modules/api_transformer.py:26",
+      "sink_type": "config_load",
+      "description": "api_mapping.json配置文件 -> JSON加载 -> API映射字典"
+    }
+  ]
+}

@@ -1,0 +1,116 @@
+{
+  "scan_id": "60ae1a3e-f0e9-4af2-a705-6fe97d256df8",
+  "start_time": "2026-04-20T01:05:49-07:00",
+  "end_time": "2026-04-20T01:35:44-07:00",
+  "duration_seconds": 1795,
+  "project_name": "MindSpeed-Core-MS",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/shenteng/MindSpeed/MindSpeed-Core-MS",
+  "status": "success",
+  "summary": {
+    "total_candidates": 43,
+    "confirmed": 9,
+    "likely": 8,
+    "possible": 3,
+    "false_positive": 5
+  },
+  "agents": [
+    {
+      "name": "architecture",
+      "phase": 2,
+      "start_time": "2026-04-20T01:05:50-07:00",
+      "end_time": "2026-04-20T01:11:05-07:00",
+      "duration_seconds": 375,
+      "status": "success",
+      "output_files": [
+        "scan-results/.context/project_model.json",
+        "scan-results/.context/call_graph.json",
+        "scan-results/threat_analysis_report.md"
+      ],
+      "summary": {
+        "total_files": 47,
+        "total_modules": 8,
+        "entry_points": 7,
+        "high_risk_files": 6
+      }
+    },
+    {
+      "name": "dataflow-scanner",
+      "phase": 3,
+      "start_time": "2026-04-20T01:11:06-07:00",
+      "end_time": "2026-04-20T01:13:33-07:00",
+      "duration_seconds": 147,
+      "status": "success",
+      "modules_scanned": 8,
+      "summary": {
+        "candidates_found": 20,
+        "critical": 5,
+        "high": 7,
+        "medium": 3
+      }
+    },
+    {
+      "name": "security-auditor",
+      "phase": 3,
+      "start_time": "2026-04-20T01:11:06-07:00",
+      "end_time": "2026-04-20T01:16:49-07:00",
+      "duration_seconds": 343,
+      "status": "success",
+      "modules_scanned": 8,
+      "summary": {
+        "candidates_found": 8,
+        "critical": 2,
+        "high": 6,
+        "medium": 0
+      }
+    },
+    {
+      "name": "verification",
+      "phase": 4,
+      "start_time": "2026-04-20T01:17:00-07:00",
+      "end_time": "2026-04-20T01:20:18-07:00",
+      "duration_seconds": 198,
+      "status": "success",
+      "modules_verified": 6,
+      "summary": {
+        "verified": 20,
+        "confirmed": 9,
+        "likely": 8,
+        "false_positive": 5
+      }
+    },
+    {
+      "name": "details-analyzer",
+      "phase": 4.5,
+      "start_time": "2026-04-20T01:25:00-07:00",
+      "end_time": "2026-04-20T01:30:54-07:00",
+      "duration_seconds": 354,
+      "status": "success",
+      "output_files": [
+        "scan-results/details/tools_load_weights-CWE502-pickle-deser-001.md",
+        "scan-results/details/tools_load_weights-CWE502-indirect-pickle-001.md",
+        "scan-results/details/966c37c9-21bb-46fd-a062-1ca289fe4759.md",
+        "scan-results/details/VULN-src_mindspeed_mm-pickle_deserialization-001.md"
+      ],
+      "summary": {
+        "confirmed_analyzed": 4,
+        "reports_generated": 4
+      }
+    },
+    {
+      "name": "reporter",
+      "phase": 5,
+      "start_time": "2026-04-20T01:31:00-07:00",
+      "end_time": "2026-04-20T01:35:44-07:00",
+      "duration_seconds": 264,
+      "status": "success",
+      "output_files": [
+        "scan-results/report_confirmed.md",
+        "scan-results/report_unconfirmed.md"
+      ],
+      "summary": {
+        "confirmed_vulns": 9,
+        "unconfirmed_vulns": 11
+      }
+    }
+  ]
+}

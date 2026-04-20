@@ -1,0 +1,398 @@
+{
+  "project_name": "MindSpeed",
+  "scan_time": "2025-04-20T01:15:00Z",
+  "lsp_available": true,
+  "total_files": 960,
+  "total_lines": 156078,
+  "project_profile": {
+    "project_type": "library",
+    "deployment_model": "作为 Megatron-LM 的适配层，通过 pip install 安装后作为 Python 库使用。主要部署在昇腾 NPU 集群上进行大模型训练。典型使用场景为：导入 mindspeed.megatron_adaptor 后运行 Megatron-LM 训练脚本，或使用 mindspeed CLI 工具管理 patch 文件。",
+    "trust_boundaries": [
+      {
+        "boundary": "Checkpoint Files",
+        "trusted_side": "Application logic",
+        "untrusted_side": "External checkpoint/model files",
+        "risk": "High"
+      },
+      {
+        "boundary": "CLI Arguments",
+        "trusted_side": "Application logic",
+        "untrusted_side": "Local user input",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Environment Variables",
+        "trusted_side": "Application logic",
+        "untrusted_side": "Deployment environment",
+        "risk": "Low"
+      },
+      {
+        "boundary": "Patch Files",
+        "trusted_side": "Application logic",
+        "untrusted_side": "Local patch files",
+        "risk": "Medium"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "core",
+      "path": "mindspeed/core",
+      "language": "python",
+      "components": ["parallel_state.py", "training.py", "tensor_parallel", "pipeline_parallel", "memory", "distributed", "transformer", "optimizer", "datasets", "qos"]
+    },
+    {
+      "name": "ops",
+      "path": "mindspeed/ops",
+      "language": "mixed",
+      "components": ["csrc/cann", "csrc/atb", "csrc/pluggable_allocator", "csrc/algorithm", "csrc/qos", "csrc/flop_counter", "fusion_attention_v2.py", "gmm.py", "npu_rotary_position_embedding.py"]
+    },
+    {
+      "name": "features_manager",
+      "path": "mindspeed/features_manager",
+      "language": "python",
+      "components": ["features_manager.py", "__init__.py", "auto_settings", "moe", "tensor_parallel", "pipeline_parallel", "memory", "recompute", "distributed"]
+    },
+    {
+      "name": "auto_settings",
+      "path": "mindspeed/auto_settings",
+      "language": "python",
+      "components": ["auto_settings.py", "search_space.py", "config", "module", "profile", "utils", "mindspeed_adaptor"]
+    },
+    {
+      "name": "run",
+      "path": "mindspeed/run",
+      "language": "python",
+      "components": ["run.py", "helpers.patch", "gpt_dataset.patch", "initialize.patch"]
+    },
+    {
+      "name": "tokenizer",
+      "path": "mindspeed/tokenizer",
+      "language": "python",
+      "components": ["tokenizer.py", "build_tokenizer"]
+    },
+    {
+      "name": "checkpointing",
+      "path": "mindspeed",
+      "language": "python",
+      "components": ["checkpointing.py"]
+    },
+    {
+      "name": "fsdp",
+      "path": "mindspeed/fsdp",
+      "language": "python",
+      "components": ["distributed", "memory", "utils"]
+    },
+    {
+      "name": "te",
+      "path": "mindspeed/te",
+      "language": "python",
+      "components": ["pytorch/attention", "pytorch/fp8", "pytorch/module"]
+    },
+    {
+      "name": "moe",
+      "path": "mindspeed/moe",
+      "language": "python",
+      "components": ["moe.py", "config.py"]
+    },
+    {
+      "name": "multi_modal",
+      "path": "mindspeed/multi_modal",
+      "language": "python",
+      "components": ["dist_train"]
+    },
+    {
+      "name": "op_builder",
+      "path": "mindspeed/op_builder",
+      "language": "python",
+      "components": ["builder.py", "atb_builder.py"]
+    },
+    {
+      "name": "layerzero",
+      "path": "mindspeed/core/distributed/layerzero",
+      "language": "python",
+      "components": ["state/mga_checkpoint.py", "state/layerzero_checkpointer.py", "config.py", "zero3"]
+    },
+    {
+      "name": "pluggable_allocator",
+      "path": "mindspeed/ops/csrc/pluggable_allocator",
+      "language": "c_cpp",
+      "components": ["smart_swap/NPUSwapManager.cpp", "smart_swap/DeviceCachingAllocator.cpp", "adaptive_recomputing/NpuCachingCustomAllocator.cpp"]
+    },
+    {
+      "name": "cann_ops",
+      "path": "mindspeed/ops/csrc/cann",
+      "language": "c_cpp",
+      "components": ["npu_rotary_position_embedding.cpp", "fusion_attention_v2.cpp", "gmm.cpp", "npu_dropout_add_layer_norm.cpp", "rms_norm.cpp", "npu_mm_all_reduce_add_rms_norm.cpp"]
+    },
+    {
+      "name": "atb_ops",
+      "path": "mindspeed/ops/csrc/atb",
+      "language": "c_cpp",
+      "components": ["lcal_coc.cpp", "swiglu.cpp", "rms_norm.cpp", "matmul_add.cpp", "groupmatmul_add.cpp"]
+    },
+    {
+      "name": "tools",
+      "path": "tools",
+      "language": "python",
+      "components": ["preprocess_data.py", "data_handler.py"]
+    }
+  ],
+  "files": [
+    {
+      "path": "mindspeed/checkpointing.py",
+      "language": "python",
+      "risk": "Critical",
+      "module": "checkpointing",
+      "lines": 410,
+      "priority": 1,
+      "reason": "使用 torch.load 反序列化 checkpoint 文件，存在潜在的反序列化漏洞"
+    },
+    {
+      "path": "mindspeed/run/run.py",
+      "language": "python",
+      "risk": "High",
+      "module": "run",
+      "lines": 128,
+      "priority": 2,
+      "reason": "CLI 入口点，使用 subprocess.run 执行 git 命令处理 patch 文件"
+    },
+    {
+      "path": "mindspeed/core/distributed/layerzero/state/mga_checkpoint.py",
+      "language": "python",
+      "risk": "Critical",
+      "module": "layerzero",
+      "lines": 307,
+      "priority": 3,
+      "reason": "使用 torch.load 反序列化 checkpoint 文件，存在潜在的反序列化漏洞"
+    },
+    {
+      "path": "mindspeed/auto_settings/mindspeed_adaptor/mindspeed_runner.py",
+      "language": "python",
+      "risk": "High",
+      "module": "auto_settings",
+      "lines": 53,
+      "priority": 4,
+      "reason": "使用 subprocess.Popen 执行 torchrun 命令，参数来源于配置"
+    },
+    {
+      "path": "mindspeed/core/qos/qos.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "core",
+      "lines": 323,
+      "priority": 5,
+      "reason": "使用 subprocess 执行系统命令，涉及 QoS 配置"
+    },
+    {
+      "path": "mindspeed/auto_settings/utils/file_utils.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "auto_settings",
+      "lines": 52,
+      "priority": 6,
+      "reason": "使用 pickle.load 反序列化，但实现了受限的 Unpickler，仅允许 mindspeed.auto_settings 模块"
+    },
+    {
+      "path": "mindspeed/tokenizer/tokenizer.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "tokenizer",
+      "lines": 156,
+      "priority": 7,
+      "reason": "使用 HuggingFace AutoTokenizer.from_pretrained 加载外部 tokenizer"
+    },
+    {
+      "path": "mindspeed/megatron_adaptor.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "mindspeed",
+      "lines": 66,
+      "priority": 8,
+      "reason": "库的主入口点，导入时自动执行 patch_features()"
+    },
+    {
+      "path": "tools/preprocess_data.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "tools",
+      "lines": 188,
+      "priority": 9,
+      "reason": "数据预处理 CLI 工具，处理外部数据文件"
+    },
+    {
+      "path": "tools/data_handler.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "tools",
+      "lines": 554,
+      "priority": 10,
+      "reason": "数据处理器，使用 datasets.load_dataset 加载外部数据集"
+    },
+    {
+      "path": "mindspeed/ops/csrc/pluggable_allocator/smart_swap/NPUSwapManager.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "pluggable_allocator",
+      "lines": 1472,
+      "priority": 11,
+      "reason": "C++ 内存管理器，处理设备内存交换"
+    },
+    {
+      "path": "mindspeed/patch_utils.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "mindspeed",
+      "lines": 210,
+      "priority": 12,
+      "reason": "动态修改模块和函数的 patch 管理器，可能影响运行时行为"
+    },
+    {
+      "path": "mindspeed/arguments.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "mindspeed",
+      "lines": 1087,
+      "priority": 13,
+      "reason": "命令行参数解析，定义了各种训练参数"
+    },
+    {
+      "path": "mindspeed/core/parallel_state.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "core",
+      "lines": 52286,
+      "priority": 14,
+      "reason": "并行状态管理，使用 yaml.safe_load 加载配置"
+    },
+    {
+      "path": "mindspeed/core/distributed/layerzero/state/scripts/layerzero_checkpointer.py",
+      "language": "python",
+      "risk": "High",
+      "module": "layerzero",
+      "lines": 200,
+      "priority": 15,
+      "reason": "使用 torch.load 反序列化 checkpoint 文件"
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "mindspeed/run/run.py",
+      "line": 121,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "CLI 入口点，本地用户通过命令行参数控制 patch 文件路径，可指定 --patch 或 --reverse 选项",
+      "description": "处理 git patch 文件的主入口"
+    },
+    {
+      "file": "mindspeed/checkpointing.py",
+      "line": 277,
+      "function": "_load_base_checkpoint",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "从 load_dir 加载 checkpoint 文件，路径来源于命令行参数 args.load 或 args.save，checkpoint 文件可能来自外部下载",
+      "description": "加载模型 checkpoint 文件"
+    },
+    {
+      "file": "mindspeed/checkpointing.py",
+      "line": 284,
+      "function": "_load_base_checkpoint",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "加载 EMA checkpoint 文件，路径基于 checkpoint_name + '.ema'",
+      "description": "加载 EMA checkpoint 文件"
+    },
+    {
+      "file": "mindspeed/core/distributed/layerzero/state/mga_checkpoint.py",
+      "line": 188,
+      "function": "load_layerzero_checkpoint",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "从 ckpt_dir 加载 checkpoint 文件，路径来源于函数参数，可能来自外部",
+      "description": "加载 layerzero checkpoint 文件"
+    },
+    {
+      "file": "mindspeed/tokenizer/tokenizer.py",
+      "line": 77,
+      "function": "_AutoTokenizer.__init__",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "从 tokenizer_name_or_path 加载 HuggingFace tokenizer，路径来源于 args.tokenizer_name_or_path",
+      "description": "加载预训练 tokenizer"
+    },
+    {
+      "file": "mindspeed/auto_settings/utils/file_utils.py",
+      "line": 28,
+      "function": "restricted_read",
+      "type": "file",
+      "trust_level": "trusted_admin",
+      "justification": "读取 pickle 文件，但使用受限 Unpickler，仅允许 mindspeed.auto_settings 模块的类，降低了风险",
+      "description": "受限的 pickle 文件读取"
+    },
+    {
+      "file": "tools/preprocess_data.py",
+      "line": 1,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "数据预处理 CLI 工具，本地用户通过命令行参数指定输入文件路径",
+      "description": "数据预处理工具入口"
+    },
+    {
+      "file": "mindspeed/megatron_adaptor.py",
+      "line": 23,
+      "function": "patch_features",
+      "type": "decorator",
+      "trust_level": "trusted_admin",
+      "justification": "库入口点，导入时自动执行，修改 Megatron-LM 的行为。攻击者难以控制导入过程",
+      "description": "库的主入口点，导入时自动 patch"
+    },
+    {
+      "file": "mindspeed/run/run.py",
+      "line": 109,
+      "function": "patch_from_args",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "执行 git apply 命令处理 patch 文件，patch 文件路径来自扫描目录，命令行参数控制行为",
+      "description": "执行 git patch 命令"
+    },
+    {
+      "file": "mindspeed/auto_settings/mindspeed_adaptor/mindspeed_runner.py",
+      "line": 44,
+      "function": "MindSpeedRunner.run",
+      "type": "cmdline",
+      "trust_level": "semi_trusted",
+      "justification": "执行 torchrun 命令启动分布式训练，参数来源于配置 args，路径可能受外部配置影响",
+      "description": "执行分布式训练命令"
+    },
+    {
+      "file": "mindspeed/core/qos/qos.py",
+      "line": 1,
+      "function": "Qos.__init__",
+      "type": "env",
+      "trust_level": "trusted_admin",
+      "justification": "从环境变量读取 QOS 配置参数（QOS_SDMA_LOW, QOS_ROCE_LOW 等），环境变量由部署者控制",
+      "description": "读取环境变量配置 QoS"
+    },
+    {
+      "file": "mindspeed/arguments.py",
+      "line": 1,
+      "function": "process_args",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "解析命令行参数，定义训练参数，参数来自本地用户输入",
+      "description": "命令行参数解析"
+    }
+  ],
+  "attack_surfaces": [
+    "Checkpoint 文件加载：torch.load 用于加载 .pt checkpoint 文件",
+    "Tokenizer 加载：AutoTokenizer.from_pretrained 加载外部 tokenizer",
+    "Patch 文件处理：通过 git apply 命令处理 .patch 文件",
+    "数据集加载：datasets.load_dataset 加载外部数据集",
+    "命令行参数：CLI 工具接受本地用户输入",
+    "环境变量：从环境变量读取配置参数",
+    "YAML 配置文件：yaml.safe_load 加载配置文件",
+    "进程执行：subprocess.Popen 执行 torchrun 命令"
+  ]
+}

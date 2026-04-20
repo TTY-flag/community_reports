@@ -1,0 +1,424 @@
+{
+  "project_name": "MindSpeed-RL",
+  "language": ["python"],
+  "total_files": 142,
+  "modules": [
+    {
+      "name": "cli",
+      "path": "cli/",
+      "language": "python",
+      "files": [
+        "cli/train_ppo.py",
+        "cli/train_dapo.py",
+        "cli/train_grpo.py",
+        "cli/train_dpo.py",
+        "cli/preprocess_data.py",
+        "cli/eplb_generate_map_ds.py"
+      ],
+      "risk_level": "high",
+      "entry_points": [
+        "cli/train_ppo.py:main (Hydra)",
+        "cli/train_dapo.py:main (Hydra)",
+        "cli/train_grpo.py:main (Hydra)",
+        "cli/train_dpo.py:main (Hydra)",
+        "cli/preprocess_data.py:main (Hydra)"
+      ],
+      "external_dependencies": [
+        "hydra",
+        "omegaconf",
+        "yaml",
+        "ray",
+        "torch",
+        "megatron"
+      ],
+      "description": "CLI entry points for training and data preprocessing. Uses Hydra for configuration management, loads YAML configs, initializes Ray clusters, and orchestrates distributed training."
+    },
+    {
+      "name": "mindspeed_rl.tools",
+      "path": "mindspeed_rl/tools/",
+      "language": "python",
+      "files": [
+        "mindspeed_rl/tools/sandbox_fusion_tool.py",
+        "mindspeed_rl/tools/search_tool.py",
+        "mindspeed_rl/tools/base_tool.py",
+        "mindspeed_rl/tools/retool.py",
+        "mindspeed_rl/tools/utils/tool_utils.py",
+        "mindspeed_rl/tools/utils/tool_parser.py",
+        "mindspeed_rl/tools/utils/tool_registry.py",
+        "mindspeed_rl/tools/utils/execution_pool.py",
+        "mindspeed_rl/tools/utils/schemas.py"
+      ],
+      "risk_level": "high",
+      "entry_points": [
+        "mindspeed_rl/tools/sandbox_fusion_tool.py:SandboxFusionTool.execute",
+        "mindspeed_rl/tools/search_tool.py:SearchTool.execute"
+      ],
+      "external_dependencies": [
+        "requests",
+        "ray",
+        "threading"
+      ],
+      "description": "Tool execution framework including sandbox code execution via HTTP API and search retrieval services. Executes arbitrary code on remote sandbox servers."
+    },
+    {
+      "name": "mindspeed_rl.utils",
+      "path": "mindspeed_rl/utils/",
+      "language": "python",
+      "files": [
+        "mindspeed_rl/utils/utils.py",
+        "mindspeed_rl/utils/zmq_communication.py",
+        "mindspeed_rl/utils/tokenizer.py",
+        "mindspeed_rl/utils/loggers.py",
+        "mindspeed_rl/utils/compute.py",
+        "mindspeed_rl/utils/metrics.py",
+        "mindspeed_rl/utils/pad_process.py",
+        "mindspeed_rl/utils/seqlen_balancing.py",
+        "mindspeed_rl/utils/context_parallel.py",
+        "mindspeed_rl/utils/torch_functional.py",
+        "mindspeed_rl/utils/remove_padding.py",
+        "mindspeed_rl/utils/optimizer_module.py",
+        "mindspeed_rl/utils/transfer_queue/*.py",
+        "mindspeed_rl/utils/math_eval_toolkit/*.py"
+      ],
+      "risk_level": "medium",
+      "entry_points": [],
+      "external_dependencies": [
+        "zmq",
+        "subprocess",
+        "socket",
+        "torch",
+        "torch_npu",
+        "numpy",
+        "ray"
+      ],
+      "description": "Utility modules including ZMQ network communication, subprocess execution, MsProbe debugger integration, and various computation helpers."
+    },
+    {
+      "name": "mindspeed_rl.datasets",
+      "path": "mindspeed_rl/datasets/",
+      "language": "python",
+      "files": [
+        "mindspeed_rl/datasets/data_handler.py",
+        "mindspeed_rl/datasets/templates.py",
+        "mindspeed_rl/datasets/indexed_dataset.py",
+        "mindspeed_rl/datasets/preprocess_data.py",
+        "mindspeed_rl/datasets/prompt_dataset.py",
+        "mindspeed_rl/datasets/multimodal_dataset.py",
+        "mindspeed_rl/datasets/build_dataset.py",
+        "mindspeed_rl/datasets/formatter.py",
+        "mindspeed_rl/datasets/data_samplers.py",
+        "mindspeed_rl/datasets/dataloader.py",
+        "mindspeed_rl/datasets/handler_utils.py",
+        "mindspeed_rl/datasets/mm_utils.py",
+        "mindspeed_rl/datasets/utils.py",
+        "mindspeed_rl/datasets/base_dataset.py"
+      ],
+      "risk_level": "medium",
+      "entry_points": [],
+      "external_dependencies": [
+        "datasets (HuggingFace)",
+        "torch",
+        "numpy"
+      ],
+      "description": "Dataset handling modules that load external data from various formats (JSON, JSONL, Parquet, Arrow, CSV), process templates, and build training datasets. Uses HuggingFace datasets library."
+    },
+    {
+      "name": "mindspeed_rl.config_cls",
+      "path": "mindspeed_rl/config_cls/",
+      "language": "python",
+      "files": [
+        "mindspeed_rl/config_cls/rl_config.py",
+        "mindspeed_rl/config_cls/megatron_config.py",
+        "mindspeed_rl/config_cls/generate_config.py",
+        "mindspeed_rl/config_cls/mindstudio_config.py",
+        "mindspeed_rl/config_cls/data_handler_config.py",
+        "mindspeed_rl/config_cls/base_config.py",
+        "mindspeed_rl/config_cls/validate_config.py"
+      ],
+      "risk_level": "low",
+      "entry_points": [],
+      "external_dependencies": [
+        "omegaconf"
+      ],
+      "description": "Configuration classes for managing training parameters, model settings, and data handling configurations. Parses YAML configs into structured objects."
+    },
+    {
+      "name": "mindspeed_rl.models",
+      "path": "mindspeed_rl/models/",
+      "language": "python",
+      "files": [
+        "mindspeed_rl/models/actor.py",
+        "mindspeed_rl/models/reference.py",
+        "mindspeed_rl/models/critic.py",
+        "mindspeed_rl/models/reward.py",
+        "mindspeed_rl/models/actor_rollout_hybrid.py",
+        "mindspeed_rl/models/math_dapo.py",
+        "mindspeed_rl/models/math_verify.py",
+        "mindspeed_rl/models/rule_verifier.py",
+        "mindspeed_rl/models/orm/orm_model.py",
+        "mindspeed_rl/models/loss/*.py",
+        "mindspeed_rl/models/rollout/vllm_adapter/*.py",
+        "mindspeed_rl/models/base/*.py"
+      ],
+      "risk_level": "medium",
+      "entry_points": [],
+      "external_dependencies": [
+        "torch",
+        "megatron",
+        "vllm"
+      ],
+      "description": "Model definitions including Actor, Critic, Reward, Reference models, and ORM (Outcome Reward Model). Includes loss functions and vLLM adapters."
+    },
+    {
+      "name": "mindspeed_rl.workers",
+      "path": "mindspeed_rl/workers/",
+      "language": "python",
+      "files": [
+        "mindspeed_rl/workers/actor_hybrid_worker.py",
+        "mindspeed_rl/workers/reference_worker.py",
+        "mindspeed_rl/workers/critic_worker.py",
+        "mindspeed_rl/workers/reward_worker.py",
+        "mindspeed_rl/workers/integrated_worker.py",
+        "mindspeed_rl/workers/base_worker.py",
+        "mindspeed_rl/workers/vit_worker.py",
+        "mindspeed_rl/workers/rule_reward.py",
+        "mindspeed_rl/workers/dynamic_sampling.py",
+        "mindspeed_rl/workers/scheduler/*.py",
+        "mindspeed_rl/workers/resharding/*.py",
+        "mindspeed_rl/workers/eplb/*.py"
+      ],
+      "risk_level": "medium",
+      "entry_points": [],
+      "external_dependencies": [
+        "ray",
+        "torch",
+        "megatron",
+        "transformers"
+      ],
+      "description": "Ray-based distributed workers for actor, critic, reward, and reference models. Handles model loading, training, and inference coordination."
+    },
+    {
+      "name": "mindspeed_rl.trainer",
+      "path": "mindspeed_rl/trainer/",
+      "language": "python",
+      "files": [
+        "mindspeed_rl/trainer/ppo_trainer_hybrid.py",
+        "mindspeed_rl/trainer/dapo_trainer_hybrid.py",
+        "mindspeed_rl/trainer/grpo_trainer_hybrid.py",
+        "mindspeed_rl/trainer/base.py",
+        "mindspeed_rl/trainer/utils/*.py"
+      ],
+      "risk_level": "medium",
+      "entry_points": [],
+      "external_dependencies": [
+        "ray",
+        "torch",
+        "megatron"
+      ],
+      "description": "Training orchestrators for PPO, DAPO, and GRPO algorithms. Coordinates distributed training across workers."
+    },
+    {
+      "name": "configs",
+      "path": "configs/",
+      "language": "yaml",
+      "files": [
+        "configs/ppo_qwen25_32b_A3.yaml",
+        "configs/dapo_qwen25_32b_A3.yaml",
+        "configs/grpo_qwen25_7b_A3.yaml",
+        "configs/grpo_qwen25_32b_A2.yaml",
+        "configs/grpo_deepseek_r1_671b_A3.yaml",
+        "configs/dpo_qwen3_30b_a3b_A3.yaml",
+        "configs/envs/runtime_env.yaml",
+        "configs/datasets/*.yaml",
+        "configs/model/*.yaml",
+        "configs/checkpoint/*.yaml",
+        "configs/tools/*.yaml"
+      ],
+      "risk_level": "medium",
+      "entry_points": [
+        "configs/*.yaml (Hydra configuration)"
+      ],
+      "external_dependencies": [],
+      "description": "YAML configuration files for various training scenarios, model settings, and environment configurations."
+    },
+    {
+      "name": "tests",
+      "path": "tests/",
+      "language": "python",
+      "files": [
+        "tests/conftest.py",
+        "tests/__init__.py",
+        "tests/ut/**/*.py",
+        "tests/verl_examples/**/*.py",
+        "tests/test_tools/**/*.py"
+      ],
+      "risk_level": "low",
+      "entry_points": [],
+      "external_dependencies": [
+        "pytest"
+      ],
+      "description": "Unit tests and integration tests for the project."
+    },
+    {
+      "name": "verl_npu",
+      "path": "verl_npu/",
+      "language": "python",
+      "files": [
+        "verl_npu/verl_npu/**/*.py",
+        "verl_npu/verl_tests/**/*.py"
+      ],
+      "risk_level": "medium",
+      "entry_points": [],
+      "external_dependencies": [
+        "torch",
+        "torch_npu",
+        "ray"
+      ],
+      "description": "NPU-specific implementations and tests for vLLM integration on Ascend hardware."
+    }
+  ],
+  "entry_points": [
+    {
+      "type": "cli",
+      "location": "cli/train_ppo.py:main",
+      "description": "PPO training entry point using Hydra configuration"
+    },
+    {
+      "type": "cli",
+      "location": "cli/train_dapo.py:main",
+      "description": "DAPO training entry point using Hydra configuration"
+    },
+    {
+      "type": "cli",
+      "location": "cli/train_grpo.py:main",
+      "description": "GRPO training entry point using Hydra configuration"
+    },
+    {
+      "type": "cli",
+      "location": "cli/train_dpo.py:main",
+      "description": "DPO training entry point using Hydra configuration"
+    },
+    {
+      "type": "cli",
+      "location": "cli/preprocess_data.py:main",
+      "description": "Data preprocessing entry point for dataset preparation"
+    },
+    {
+      "type": "cli",
+      "location": "cli/eplb_generate_map_ds.py",
+      "description": "EPLB map generation for expert parallel load balancing"
+    },
+    {
+      "type": "config",
+      "location": "configs/*.yaml",
+      "description": "YAML configuration files loaded by Hydra for training parameters"
+    },
+    {
+      "type": "api",
+      "location": "mindspeed_rl/tools/sandbox_fusion_tool.py:SandboxFusionTool",
+      "description": "Remote sandbox API for code execution"
+    },
+    {
+      "type": "api",
+      "location": "mindspeed_rl/tools/search_tool.py:SearchTool",
+      "description": "Remote search/retrieval API for knowledge retrieval"
+    },
+    {
+      "type": "file",
+      "location": "mindspeed_rl/datasets/data_handler.py:build_dataset",
+      "description": "External dataset loading from local files or HuggingFace"
+    },
+    {
+      "type": "file",
+      "location": "cli/preprocess_data.py:resolve_relative_path",
+      "description": "Path resolution for input/output/tokenizer files"
+    },
+    {
+      "type": "file",
+      "location": "mindspeed_rl/datasets/templates.py:register_custom_template",
+      "description": "Custom template registration from JSON files"
+    },
+    {
+      "type": "network",
+      "location": "mindspeed_rl/utils/zmq_communication.py:ZmqServer/ZmqClient",
+      "description": "ZMQ-based distributed communication for training"
+    }
+  ],
+  "risk_assessment": {
+    "high_risk_modules": [
+      "mindspeed_rl.tools (sandbox_fusion_tool.py, tool_utils.py)",
+      "mindspeed_rl.utils (zmq_communication.py, utils.py)",
+      "cli (train_*.py, preprocess_data.py)"
+    ],
+    "medium_risk_modules": [
+      "mindspeed_rl.datasets (data_handler.py, templates.py)",
+      "mindspeed_rl.workers (rule_reward.py, scheduler/launcher.py)",
+      "mindspeed_rl.models (orm/orm_model.py)",
+      "configs (YAML configuration files)"
+    ],
+    "low_risk_modules": [
+      "mindspeed_rl.config_cls",
+      "mindspeed_rl.trainer/utils",
+      "mindspeed_rl.models/loss",
+      "tests"
+    ]
+  },
+  "attack_surface": {
+    "external_input_sources": [
+      {
+        "type": "yaml_config",
+        "location": "configs/*.yaml",
+        "description": "YAML configuration files loaded via Hydra/OmegaConf",
+        "risk": "Configuration injection, arbitrary code execution through spec import"
+      },
+      {
+        "type": "dataset_files",
+        "location": "mindspeed_rl/datasets/data_handler.py",
+        "description": "External dataset files (JSON, JSONL, Parquet, Arrow, CSV) loaded from local/remote sources",
+        "risk": "Data injection, malicious data in training samples"
+      },
+      {
+        "type": "model_checkpoint",
+        "location": "cli/train_*.py, mindspeed_rl/workers",
+        "description": "Model checkpoints loaded from external paths",
+        "risk": "Malicious checkpoint injection, model tampering"
+      },
+      {
+        "type": "tokenizer",
+        "location": "mindspeed_rl/utils/tokenizer.py",
+        "description": "HuggingFace tokenizer loaded from external path",
+        "risk": "trust_remote_code parameter allows arbitrary code execution"
+      },
+      {
+        "type": "template_json",
+        "location": "mindspeed_rl/datasets/templates.py",
+        "description": "Custom prompt templates loaded from JSON files",
+        "risk": "Template injection, has path validation mitigator"
+      },
+      {
+        "type": "sandbox_api",
+        "location": "mindspeed_rl/tools/utils/tool_utils.py:call_sandbox_api",
+        "description": "HTTP requests to remote sandbox for code execution",
+        "risk": "Arbitrary code execution, SSRF, API manipulation"
+      },
+      {
+        "type": "search_api",
+        "location": "mindspeed_rl/tools/utils/tool_utils.py:call_search_api",
+        "description": "HTTP requests to remote search/retrieval service",
+        "risk": "SSRF, data injection from external service"
+      },
+      {
+        "type": "zmq_network",
+        "location": "mindspeed_rl/utils/zmq_communication.py",
+        "description": "ZMQ-based distributed communication without authentication",
+        "risk": "Network injection, unauthorized access"
+      },
+      {
+        "type": "runtime_env",
+        "location": "configs/envs/runtime_env.yaml",
+        "description": "Runtime environment configuration loaded via YAML",
+        "risk": "Environment variable injection"
+      }
+    ]
+  }
+}
