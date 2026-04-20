@@ -1,0 +1,585 @@
+{
+  "project_name": "OmniStream",
+  "scan_time": "2026-04-19T21:52:00+08:00",
+  "lsp_available": true,
+  "total_files": 1716,
+  "total_lines": 74730,
+  "project_profile": {
+    "project_type": "network_service",
+    "deployment_model": "分布式流处理框架，部署在 Linux 服务器集群上，作为 Apache Flink 的 C++ 本地执行引擎。Java JobManager 通过 JNI 调用 C++ TaskManager 执行流处理任务，接收来自 Kafka 等外部数据源的数据流。",
+    "trust_boundaries": [
+      {
+        "boundary": "JNI Boundary",
+        "trusted_side": "Java Flink Runtime (JobManager)",
+        "untrusted_side": "C++ Native TaskManager",
+        "risk": "Critical"
+      },
+      {
+        "boundary": "Network Interface (Kafka)",
+        "trusted_side": "C++ TaskManager Internal Logic",
+        "untrusted_side": "External Kafka Brokers / Remote Data Producers",
+        "risk": "Critical"
+      },
+      {
+        "boundary": "Network Interface (Shuffle)",
+        "trusted_side": "C++ TaskManager Internal Logic",
+        "untrusted_side": "Remote TaskManagers (Data Exchange via Netty)",
+        "risk": "High"
+      },
+      {
+        "boundary": "State Storage",
+        "trusted_side": "C++ State Backend Logic",
+        "untrusted_side": "External Filesystem / RocksDB Storage",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Checkpoint Storage",
+        "trusted_side": "C++ Checkpoint Coordinator",
+        "untrusted_side": "External Distributed Storage (HDFS/S3)",
+        "risk": "Medium"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "jni",
+      "path": "cpp/jni",
+      "language": "c_cpp",
+      "components": [
+        "init.cpp",
+        "bridge/OmniTaskBridgeImpl2.cpp",
+        "bridge/TaskStateManagerBridgeImpl.cpp",
+        "bridge/RemoteDataFetcherBridgeImpl.cpp",
+        "tasks/jni_OmniStreamTask.cpp",
+        "tasks/jni_OmniSourceStreamTask.cpp",
+        "io/jni_OmniStreamTaskNetworkInput.cpp",
+        "io/jni_OmniLocalInputChannel.cpp"
+      ],
+      "description": "JNI 桥接层，Java ↔ C++ 数据传递边界，包含任务管理、状态管理、网络 I/O 等核心 JNI 入口点"
+    },
+    {
+      "name": "connector_kafka",
+      "path": "cpp/connector/kafka",
+      "language": "c_cpp",
+      "components": [
+        "source/KafkaSource.cpp",
+        "source/reader/RdKafkaConsumer.cpp",
+        "source/reader/KafkaSourceReader.cpp",
+        "source/reader/KafkaPartitionSplitReader.cpp",
+        "sink/KafkaSink.cpp",
+        "sink/KafkaWriter.cpp"
+      ],
+      "description": "Kafka 连接器，负责从 Kafka 读取外部数据并写入处理结果，涉及协议解析和反序列化"
+    },
+    {
+      "name": "runtime_io_network",
+      "path": "cpp/runtime/io/network",
+      "language": "c_cpp",
+      "components": [
+        "ConnectionManager.cpp",
+        "OmniShuffleEnvironment.cpp",
+        "api/serialization/SpillingAdaptiveSpanningRecordDeserializer.cpp",
+        "api/serialization/EventSerializer.cpp",
+        "api/writer/RecordWriter.cpp",
+        "netty/OmniCreditBasedSequenceNumberingViewReader.cpp"
+      ],
+      "description": "网络 I/O 模块，负责 TaskManager 间的数据交换（Shuffle）、反序列化网络数据"
+    },
+    {
+      "name": "runtime_buffer",
+      "path": "cpp/runtime/buffer",
+      "language": "c_cpp",
+      "components": [
+        "NetworkBuffer.cpp",
+        "LocalBufferPool.cpp",
+        "MemoryBufferBuilder.cpp",
+        "MemoryBufferConsumer.cpp",
+        "ObjectBufferPool.cpp",
+        "ObjectSegment.cpp"
+      ],
+      "description": "缓冲区管理模块，负责网络数据和内存数据的缓冲池管理"
+    },
+    {
+      "name": "runtime_state",
+      "path": "cpp/runtime/state",
+      "language": "c_cpp",
+      "components": [
+        "StateBackend.cpp",
+        "TaskStateManager.cpp",
+        "rocksdb/RocksDBStateUploader.cpp",
+        "rocksdb/RocksDBStateDownloader.cpp",
+        "filesystem/FsCheckpointStreamFactory.cpp",
+        "bridge/TaskStateManagerBridge.cpp",
+        "FullSnapshotAsyncWriter.cpp"
+      ],
+      "description": "状态管理模块，负责状态的存储、恢复和快照，涉及序列化/反序列化"
+    },
+    {
+      "name": "runtime_checkpoint",
+      "path": "cpp/runtime/checkpoint",
+      "language": "c_cpp",
+      "components": [
+        "SubtaskCheckpointCoordinatorImpl.cpp",
+        "channel/CheckpointBarrierTracker.cpp"
+      ],
+      "description": "Checkpoint 模块，负责流处理任务的快照和恢复"
+    },
+    {
+      "name": "core_memory",
+      "path": "cpp/core/memory",
+      "language": "c_cpp",
+      "components": [
+        "MemorySegment.cpp",
+        "MemorySegmentFactory.cpp"
+      ],
+      "description": "核心内存管理模块，负责堆外内存的分配和操作"
+    },
+    {
+      "name": "core_serialization",
+      "path": "cpp/core/api/common/serialization",
+      "language": "c_cpp",
+      "components": [
+        "JsonRowDataDeserializationSchema.cpp",
+        "JsonDeserializationSchema.cpp",
+        "SimpleStringSchema.cpp",
+        "DeserializationFactory.cpp"
+      ],
+      "description": "核心序列化模块，负责数据的反序列化处理"
+    },
+    {
+      "name": "streaming_runtime_tasks",
+      "path": "cpp/streaming/runtime/tasks",
+      "language": "c_cpp",
+      "components": [
+        "StreamTask.cpp",
+        "OperatorChain.cpp",
+        "SubtaskCheckpointCoordinatorImpl.cpp",
+        "AsyncCheckpointRunnable.cpp",
+        "omni/OmniOneInputStreamTask.cpp",
+        "omni/OmniSourceStreamTask.cpp"
+      ],
+      "description": "流处理任务运行时，负责执行算子链、处理输入输出流"
+    },
+    {
+      "name": "streaming_runtime_io",
+      "path": "cpp/streaming/runtime/io",
+      "language": "c_cpp",
+      "components": [
+        "StreamTaskNetworkInput.cpp",
+        "StreamTaskNetworkOutput.cpp",
+        "StreamOneInputProcessor.cpp",
+        "OmniStreamOneInputProcessor.cpp",
+        "checkpointing/BarrierAlignmentUtil.cpp"
+      ],
+      "description": "流处理 I/O 模块，负责网络数据的接收和处理"
+    },
+    {
+      "name": "runtime_scheduler",
+      "path": "cpp/runtime/scheduler",
+      "language": "c_cpp",
+      "components": [],
+      "description": "调度器模块，负责任务的调度和执行"
+    },
+    {
+      "name": "runtime_execution",
+      "path": "cpp/runtime/execution",
+      "language": "c_cpp",
+      "components": [],
+      "description": "执行模块，负责任务的执行管理"
+    },
+    {
+      "name": "table",
+      "path": "cpp/table",
+      "language": "c_cpp",
+      "components": [],
+      "description": "表处理模块，提供表 API 支持"
+    },
+    {
+      "name": "translate",
+      "path": "cpp/translate",
+      "language": "c_cpp",
+      "components": [],
+      "description": "类型转换模块，提供 Java 类型到 C++ 类型的映射"
+    },
+    {
+      "name": "datagen",
+      "path": "cpp/datagen",
+      "language": "c_cpp",
+      "components": [],
+      "description": "数据生成器模块，用于测试和基准测试"
+    },
+    {
+      "name": "zemo",
+      "path": "cpp/zemo",
+      "language": "c_cpp",
+      "components": [],
+      "description": "监控模块，提供性能监控功能"
+    }
+  ],
+  "files": [
+    {
+      "path": "cpp/jni/init.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "jni",
+      "lines": 55,
+      "priority": 1
+    },
+    {
+      "path": "cpp/jni/bridge/OmniTaskBridgeImpl2.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "jni",
+      "lines": 982,
+      "priority": 1
+    },
+    {
+      "path": "cpp/jni/tasks/jni_OmniStreamTask.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "jni",
+      "lines": 71,
+      "priority": 1
+    },
+    {
+      "path": "cpp/jni/bridge/TaskStateManagerBridgeImpl.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "jni",
+      "lines": 0,
+      "priority": 1
+    },
+    {
+      "path": "cpp/jni/io/jni_OmniStreamTaskNetworkInput.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "jni",
+      "lines": 0,
+      "priority": 2
+    },
+    {
+      "path": "cpp/jni/io/jni_OmniLocalInputChannel.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "jni",
+      "lines": 0,
+      "priority": 2
+    },
+    {
+      "path": "cpp/connector/kafka/source/KafkaSource.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "connector_kafka",
+      "lines": 56,
+      "priority": 1
+    },
+    {
+      "path": "cpp/connector/kafka/source/reader/RdKafkaConsumer.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "connector_kafka",
+      "lines": 170,
+      "priority": 1
+    },
+    {
+      "path": "cpp/connector/kafka/source/reader/KafkaSourceReader.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "connector_kafka",
+      "lines": 0,
+      "priority": 2
+    },
+    {
+      "path": "cpp/connector/kafka/sink/KafkaWriter.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "connector_kafka",
+      "lines": 0,
+      "priority": 2
+    },
+    {
+      "path": "cpp/runtime/io/network/api/serialization/SpillingAdaptiveSpanningRecordDeserializer.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "runtime_io_network",
+      "lines": 139,
+      "priority": 1
+    },
+    {
+      "path": "cpp/runtime/io/network/ConnectionManager.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "runtime_io_network",
+      "lines": 0,
+      "priority": 2
+    },
+    {
+      "path": "cpp/runtime/io/netty/OmniCreditBasedSequenceNumberingViewReader.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "runtime_io_network",
+      "lines": 0,
+      "priority": 2
+    },
+    {
+      "path": "cpp/runtime/buffer/NetworkBuffer.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "runtime_buffer",
+      "lines": 0,
+      "priority": 2
+    },
+    {
+      "path": "cpp/runtime/buffer/LocalBufferPool.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "runtime_buffer",
+      "lines": 0,
+      "priority": 2
+    },
+    {
+      "path": "cpp/runtime/buffer/MemoryBufferBuilder.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "runtime_buffer",
+      "lines": 0,
+      "priority": 2
+    },
+    {
+      "path": "cpp/runtime/state/StateBackend.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "runtime_state",
+      "lines": 0,
+      "priority": 2
+    },
+    {
+      "path": "cpp/runtime/state/rocksdb/RocksDBStateUploader.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "runtime_state",
+      "lines": 0,
+      "priority": 2
+    },
+    {
+      "path": "cpp/runtime/state/rocksdb/RocksDBStateDownloader.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "runtime_state",
+      "lines": 0,
+      "priority": 2
+    },
+    {
+      "path": "cpp/runtime/state/FullSnapshotAsyncWriter.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "runtime_state",
+      "lines": 0,
+      "priority": 2
+    },
+    {
+      "path": "cpp/core/memory/MemorySegment.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "core_memory",
+      "lines": 179,
+      "priority": 1
+    },
+    {
+      "path": "cpp/core/api/common/serialization/JsonRowDataDeserializationSchema.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "core_serialization",
+      "lines": 0,
+      "priority": 2
+    },
+    {
+      "path": "cpp/streaming/runtime/tasks/StreamTask.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "streaming_runtime_tasks",
+      "lines": 0,
+      "priority": 2
+    },
+    {
+      "path": "cpp/streaming/runtime/io/StreamTaskNetworkInput.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "streaming_runtime_io",
+      "lines": 0,
+      "priority": 2
+    },
+    {
+      "path": "cpp/streaming/runtime/io/StreamOneInputProcessor.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "streaming_runtime_io",
+      "lines": 0,
+      "priority": 2
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "cpp/jni/init.cpp",
+      "line": 37,
+      "function": "Java_com_huawei_omniruntime_flink_TNELLibrary_initialize",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "JNI 初始化入口，由 Java Flink Runtime 调用，初始化共享内存 Metric Manager",
+      "description": "JNI 初始化函数，设置共享内存监控"
+    },
+    {
+      "file": "cpp/jni/init.cpp",
+      "line": 50,
+      "function": "Java_org_apache_flink_runtime_taskexecutor_TaskManagerRunner_initTMConfiguration",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "JNI 配置入口，由 Java TaskManagerRunner 调用，接收 JSON 配置字符串",
+      "description": "初始化 TaskManager 配置，解析 JSON 配置字符串"
+    },
+    {
+      "file": "cpp/jni/tasks/jni_OmniStreamTask.cpp",
+      "line": 18,
+      "function": "Java_com_huawei_omniruntime_flink_runtime_tasks_OmniStreamTask_createNativeStreamTask",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "JNI 任务创建入口，由 Java 调用，接收 TDD JSON 字符串创建 C++ StreamTask",
+      "description": "创建原生 StreamTask 对象，解析任务部署描述符 JSON"
+    },
+    {
+      "file": "cpp/jni/tasks/jni_OmniStreamTask.cpp",
+      "line": 42,
+      "function": "Java_com_huawei_omniruntime_flink_runtime_tasks_OmniStreamTask_createNativeOmniInputProcessor",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "JNI 输入处理器创建入口，接收通道信息 JSON",
+      "description": "创建 OmniInputProcessor，处理输入通道配置"
+    },
+    {
+      "file": "cpp/jni/bridge/OmniTaskBridgeImpl2.cpp",
+      "line": 391,
+      "function": "OmniTaskBridgeImpl2::CallMaterializeMetaData",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "JNI 回调，将状态元数据序列化为 JSON 并上传到 Java 端",
+      "description": "序列化状态元数据并调用 Java 方法"
+    },
+    {
+      "file": "cpp/jni/bridge/OmniTaskBridgeImpl2.cpp",
+      "line": 568,
+      "function": "OmniTaskBridgeImpl2::readMetaData",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "JNI 回调，从 Java 端读取状态元数据并反序列化",
+      "description": "读取状态元数据 JSON 并解析"
+    },
+    {
+      "file": "cpp/jni/bridge/OmniTaskBridgeImpl2.cpp",
+      "line": 635,
+      "function": "OmniTaskBridgeImpl2::getKeyGroupEntries",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "JNI 回调，从 Java 端获取 KeyGroup 数据，处理字节数组数据",
+      "description": "从 Java 流中读取 KeyGroup 数据"
+    },
+    {
+      "file": "cpp/connector/kafka/source/KafkaSource.cpp",
+      "line": 36,
+      "function": "KafkaSource::createReader",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "Kafka 数据源入口，创建 KafkaSourceReader 从 Kafka Broker 读取数据",
+      "description": "创建 Kafka Source Reader，配置反序列化 Schema"
+    },
+    {
+      "file": "cpp/connector/kafka/source/reader/RdKafkaConsumer.cpp",
+      "line": 55,
+      "function": "RdKafkaConsumer::poll",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "Kafka 数据接收入口，从 Kafka Broker 消费消息数据",
+      "description": "从 Kafka 消费批量消息数据"
+    },
+    {
+      "file": "cpp/runtime/io/network/api/serialization/SpillingAdaptiveSpanningRecordDeserializer.cpp",
+      "line": 68,
+      "function": "SpillingAdaptiveSpanningRecordDeserializer::setNextBuffer",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "网络数据反序列化入口，接收来自远程 TaskManager 的网络缓冲区数据",
+      "description": "设置网络缓冲区并反序列化记录"
+    },
+    {
+      "file": "cpp/runtime/io/network/api/serialization/SpillingAdaptiveSpanningRecordDeserializer.cpp",
+      "line": 108,
+      "function": "SpillingAdaptiveSpanningRecordDeserializer::SetNextBuffer",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "网络数据反序列化入口（V2），接收 ReadOnlySlicedNetworkBuffer",
+      "description": "设置网络缓冲区并反序列化记录（V2 版本）"
+    },
+    {
+      "file": "cpp/streaming/runtime/io/StreamTaskNetworkInput.cpp",
+      "line": 1,
+      "function": "StreamTaskNetworkInput::processInput",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "流处理网络输入入口，处理来自远程 TaskManager 的数据",
+      "description": "处理网络输入数据"
+    },
+    {
+      "file": "cpp/core/api/common/serialization/JsonRowDataDeserializationSchema.cpp",
+      "line": 1,
+      "function": "JsonRowDataDeserializationSchema::deserialize",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "JSON 反序列化入口，解析来自 Kafka 或网络的数据",
+      "description": "反序列化 JSON 数据为 RowData"
+    },
+    {
+      "file": "cpp/core/memory/MemorySegment.cpp",
+      "line": 73,
+      "function": "MemorySegment::put",
+      "type": "internal",
+      "trust_level": "internal",
+      "justification": "内存写入操作，接收外部数据写入堆外内存",
+      "description": "向内存段写入数据"
+    },
+    {
+      "file": "cpp/core/memory/MemorySegment.cpp",
+      "line": 96,
+      "function": "MemorySegment::get",
+      "type": "internal",
+      "trust_level": "internal",
+      "justification": "内存读取操作，从堆外内存读取数据",
+      "description": "从内存段读取数据"
+    },
+    {
+      "file": "cpp/runtime/state/rocksdb/RocksDBStateDownloader.cpp",
+      "line": 1,
+      "function": "RocksDBStateDownloader::download",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "状态恢复入口，从外部存储下载 RocksDB 状态快照",
+      "description": "从外部存储下载状态数据"
+    },
+    {
+      "file": "cpp/runtime/state/rocksdb/RocksDBStateUploader.cpp",
+      "line": 1,
+      "function": "RocksDBStateUploader::upload",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "状态快照入口，将 RocksDB 状态上传到外部存储",
+      "description": "上传状态数据到外部存储"
+    }
+  ],
+  "attack_surfaces": [
+    "JNI Interface: Java Flink Runtime ↔ C++ TaskManager 数据传递边界",
+    "Kafka Consumer: 从 Kafka Broker 接收消息数据",
+    "Netty Shuffle Network: TaskManager 间数据交换（远程网络连接）",
+    "State Snapshot Storage: 从/向外部分布式存储读写状态快照",
+    "Checkpoint Storage: 从/向外部存储读写 Checkpoint 数据",
+    "JSON Deserialization: 解析来自网络/Kafka 的 JSON 数据",
+    "Memory Segment Operations: 堆外内存读写操作"
+  ]
+}

@@ -1,0 +1,355 @@
+{
+  "project_info": {
+    "name": "OmniStateStore",
+    "description": "High-performance state storage engine for Apache Flink, implementing LSM-tree architecture with multi-tier memory management",
+    "language": "C++14",
+    "version": "1.0.0",
+    "code_stats": {
+      "total_lines": 57209,
+      "source_files": 380,
+      "header_files": 200,
+      "java_files": 100
+    },
+    "build_system": "CMake 3.14.1",
+    "security_flags": [
+      "-fstack-protector-all",
+      "-fstack-protector-strong",
+      "-Wl,-z,relro",
+      "-Wl,-z,now",
+      "-Wl,-z,noexecstack",
+      "-D_FORTIFY_SOURCE=2",
+      "-fPIC"
+    ]
+  },
+  "modules": [
+    {
+      "name": "jni",
+      "path": "src/core/jni",
+      "description": "Java Native Interface layer providing bridge between Java Flink plugin and native C++ engine",
+      "risk_level": "critical",
+      "entry_points": [
+        {
+          "file": "com_huawei_ock_bss_common_BoostStateDB.cpp",
+          "function": "Java_com_huawei_ock_bss_common_BoostStateDB_open",
+          "signature": "JNIEXPORT jlong JNICALL Java_com_huawei_ock_bss_common_BoostStateDB_open(JNIEnv*, jclass, jobject)",
+          "description": "Opens BoostStateDB instance with configuration from Java",
+          "data_flow": "Java BoostConfig -> ConfigRef -> BoostStateDB"
+        },
+        {
+          "file": "com_huawei_ock_bss_common_BoostStateDB.cpp",
+          "function": "Java_com_huawei_ock_bss_common_BoostStateDB_restore",
+          "signature": "JNIEXPORT jboolean JNICALL Java_com_huawei_ock_bss_common_BoostStateDB_restore(JNIEnv*, jobject, jlong, jobject, jobject, jobject, jboolean, jboolean)",
+          "description": "Restores state from checkpoint with path mapping",
+          "data_flow": "Java List<String> paths -> std::vector<std::string> -> RestoreOperator",
+          "security_concerns": ["path_traversal", "external_file_paths"]
+        },
+        {
+          "file": "com_huawei_ock_bss_table_KVTableImpl.cpp",
+          "function": "JNI table operations",
+          "description": "KVTable put/get/delete operations through JNI",
+          "data_flow": "Java BinaryData -> native ByteBuffer"
+        },
+        {
+          "file": "com_huawei_ock_bss_table_iterator_*.cpp",
+          "function": "JNI iterator operations",
+          "description": "Iterator creation and traversal for state access",
+          "data_flow": "native iterator -> Java BinaryKeyValueItem"
+        },
+        {
+          "file": "com_huawei_ock_bss_common_memory_DirectBuffer.cpp",
+          "function": "Direct buffer operations",
+          "description": "Direct memory buffer access for efficient data transfer",
+          "security_concerns": ["unsafe_memory_access", "bounds_checking"]
+        }
+      ],
+      "dependencies": ["db", "kv_table", "snapshot", "common", "slice_table"]
+    },
+    {
+      "name": "fresh_table",
+      "path": "src/core/fresh_table",
+      "description": "In-memory write buffer using BoostHashMap and SkipList for active state storage",
+      "risk_level": "medium",
+      "classes": [
+        {"name": "FreshTable", "file": "fresh_table.h", "role": "Active memory table manager"},
+        {"name": "BoostHashMap", "file": "boost/boost_hash_map.h", "role": "Custom hash map for KV storage"},
+        {"name": "SkipList", "file": "memory/skiplist.h", "role": "Ordered in-memory structure"},
+        {"name": "MemorySegment", "file": "memory/memory_segment.h", "role": "Linear memory buffer"}
+      ],
+      "dependencies": ["memory", "executor", "slice_table"]
+    },
+    {
+      "name": "slice_table",
+      "path": "src/core/slice_table",
+      "description": "Intermediate memory layer managing slice chains with eviction to LSM store",
+      "risk_level": "medium",
+      "classes": [
+        {"name": "SliceTable", "file": "slice_table.h", "role": "Slice table manager"},
+        {"name": "Slice", "file": "slice/slice.h", "role": "Immutable in-memory data unit"},
+        {"name": "LogicalSliceChain", "file": "slice/logical_slice_chain.h", "role": "Chain of slices per bucket"},
+        {"name": "BucketGroup", "file": "bucket_group.h", "role": "Group of bucket ranges"},
+        {"name": "SliceCompactor", "file": "compaction/slice_compactor.h", "role": "In-memory compaction"}
+      ],
+      "dependencies": ["lsm_store", "memory", "compress"]
+    },
+    {
+      "name": "lsm_store",
+      "path": "src/core/lsm_store",
+      "description": "LSM-tree file storage engine handling SST files, versioning, and compaction",
+      "risk_level": "high",
+      "submodules": ["file", "version", "block", "compaction", "key", "lazy"],
+      "classes": [
+        {"name": "LsmStore", "file": "file/file_store_impl.h", "role": "LSM file storage"},
+        {"name": "Version", "file": "version/version.h", "role": "Immutable file layout snapshot"},
+        {"name": "VersionSet", "file": "version/version_set.h", "role": "Version history management"},
+        {"name": "FileManager", "file": "file/file_manager.h", "role": "File lifecycle management"},
+        {"name": "FileReader", "file": "file/file_reader.h", "role": "SST file reading"},
+        {"name": "FileWriter", "file": "file/file_writer.h", "role": "SST file writing"},
+        {"name": "DataBlock", "file": "block/data_block.h", "role": "Data block handling"},
+        {"name": "Compaction", "file": "compaction/compaction.h", "role": "LSM compaction logic"}
+      ],
+      "dependencies": ["compress", "memory", "common"]
+    },
+    {
+      "name": "snapshot",
+      "path": "src/core/snapshot",
+      "description": "Snapshot and restore operations for checkpoint persistence",
+      "risk_level": "critical",
+      "classes": [
+        {"name": "SnapshotManager", "file": "snapshot_manager.h", "role": "Snapshot lifecycle management"},
+        {"name": "RestoreOperator", "file": "restore_operator.h", "role": "9-phase restore process"},
+        {"name": "SnapshotOperatorCoordinator", "file": "snapshot_operator_coordinator.h", "role": "Orchestrates snapshot operators"},
+        {"name": "SliceTableSnapshotOperator", "file": "slice_table_snapshot_operator.h", "role": "Slice table snapshot"},
+        {"name": "FileStoreSnapshotOperator", "file": "file_store_snapshot_operator.h", "role": "LSM file snapshot"},
+        {"name": "SnapshotRestoreUtils", "file": "snapshot_restore_utils.h", "role": "Serialization utilities"}
+      ],
+      "security_concerns": [
+        "external_checkpoint_paths",
+        "snapshot_version_validation",
+        "file_name_from_metadata",
+        "hard_link_creation"
+      ],
+      "dependencies": ["lsm_store", "slice_table", "blob_store", "fresh_table"]
+    },
+    {
+      "name": "kv_table",
+      "path": "src/core/kv_table",
+      "description": "KV table and priority queue table for state access",
+      "risk_level": "medium",
+      "classes": [
+        {"name": "PQTable", "file": "pq_table.h", "role": "Priority queue table"},
+        {"name": "StateIdProvider", "file": "stateId_provider.h", "role": "State ID management"},
+        {"name": "SerializedData", "file": "serialized_data.h", "role": "Serialization wrapper"}
+      ],
+      "dependencies": ["lsm_store", "memory"]
+    },
+    {
+      "name": "memory",
+      "path": "src/core/memory",
+      "description": "Central memory management with allocation, tracking, and eviction",
+      "risk_level": "medium",
+      "classes": [
+        {"name": "MemManager", "file": "mem_manager.h", "role": "Central memory allocator"},
+        {"name": "DirectAllocator", "file": "allocator.h", "role": "Direct memory allocation"},
+        {"name": "MultiAllocator", "file": "allocator.h", "role": "Block-based allocation"},
+        {"name": "EvictManager", "file": "evict_manager.h", "role": "Eviction coordination"}
+      ],
+      "dependencies": ["common"]
+    },
+    {
+      "name": "blob_store",
+      "path": "src/core/blob_store",
+      "description": "Blob store for large value separation (KV separation feature)",
+      "risk_level": "medium",
+      "classes": [
+        {"name": "BlobStore", "file": "blob_store.h", "role": "Blob value storage"},
+        {"name": "BlobFileManager", "file": "blob_file_manager.h", "role": "Blob file management"}
+      ],
+      "dependencies": ["lsm_store", "memory"]
+    },
+    {
+      "name": "compress",
+      "path": "src/core/compress",
+      "description": "Compression module using LZ4 for SST file compression",
+      "risk_level": "low",
+      "classes": [
+        {"name": "Compressor", "file": "compressor.h", "role": "Compression interface"},
+        {"name": "Lz4Interface", "file": "lz4_interface.h", "role": "LZ4 implementation"}
+      ],
+      "external_dependencies": ["lz4"]
+    },
+    {
+      "name": "common",
+      "path": "src/core/common",
+      "description": "Common utilities including file system, logging, and serialization",
+      "risk_level": "high",
+      "submodules": ["fs", "io", "util", "transform"],
+      "classes": [
+        {"name": "FileSystem", "file": "fs/file_system.h", "role": "Abstract file operations"},
+        {"name": "LocalFileSystem", "file": "fs/local/local_file_system.h", "role": "Local disk operations"},
+        {"name": "HadoopFileSystem", "file": "fs/hdfs/hadoop_file_system.h", "role": "HDFS operations"},
+        {"name": "FileInputView", "file": "io/file_input_view.h", "role": "File reading with serialization"},
+        {"name": "FileOutputView", "file": "io/file_output_view.h", "role": "File writing with serialization"},
+        {"name": "ByteBuffer", "file": "slice_table/binary/byte_buffer.h", "role": "Binary data handling"},
+        {"name": "VarEncodingUtil", "file": "util/var_encoding_util.h", "role": "Variable-length encoding"}
+      ],
+      "security_concerns": [
+        "file_path_validation",
+        "serialization_bounds",
+        "integer_overflow_checks"
+      ]
+    },
+    {
+      "name": "db",
+      "path": "src/core/db",
+      "description": "Top-level database implementation coordinating all modules",
+      "risk_level": "high",
+      "classes": [
+        {"name": "BoostStateDBImpl", "file": "boost_state_db_impl.h", "role": "Main database implementation"},
+        {"name": "BoostStateDBGroupImpl", "file": "boost_state_dbgroup_impl.h", "role": "Database group for parallelism"}
+      ],
+      "dependencies": ["fresh_table", "slice_table", "lsm_store", "snapshot", "kv_table", "memory"]
+    },
+    {
+      "name": "plugin_java",
+      "path": "src/plugin/state_store_plugin",
+      "description": "Java plugin for Apache Flink state backend integration",
+      "risk_level": "critical",
+      "flink_versions": ["1.16.3", "1.17.1", "1.20.0"],
+      "classes": [
+        {"name": "EmbeddedOckStateBackend", "file": "EmbeddedOckStateBackend.java", "role": "Flink state backend"},
+        {"name": "OckDBKeyedStateBackend", "file": "OckDBKeyedStateBackend.java", "role": "Keyed state backend"},
+        {"name": "BoostIncrementalSnapshotStrategy", "file": "snapshot/BoostIncrementalSnapshotStrategy.java", "role": "Incremental snapshot"},
+        {"name": "BoostIncrementalRestoreOperation", "file": "restore/BoostIncrementalRestoreOperation.java", "role": "Incremental restore"},
+        {"name": "DirectDataInputDeserializer", "file": "common/memory/DirectDataInputDeserializer.java", "role": "Unsafe memory access"}
+      ],
+      "security_concerns": [
+        "path_normalization",
+        "symlink_prevention",
+        "unsafe_memory_operations"
+      ]
+    }
+  ],
+  "attack_surface": {
+    "external_inputs": [
+      {
+        "type": "jni_call",
+        "description": "Java Native Interface calls from Flink application",
+        "entry_point": "BoostStateDB::open, BoostStateDB::restore, Table operations",
+        "data_source": "Flink application configuration and checkpoint paths",
+        "risk": "Path traversal, configuration injection, memory corruption"
+      },
+      {
+        "type": "checkpoint_file",
+        "description": "External checkpoint files for state restoration",
+        "entry_point": "RestoreOperator::Restore, SnapshotRestoreUtils",
+        "data_source": "HDFS or local filesystem checkpoint directory",
+        "risk": "Malicious checkpoint data, path traversal, version mismatch"
+      },
+      {
+        "type": "file_paths",
+        "description": "File paths from configuration and checkpoint metadata",
+        "entry_point": "CreateConfig, CheckPathValid, restore paths",
+        "data_source": "Java BoostConfig, checkpoint metadata files",
+        "risk": "Path traversal, symlink attacks"
+      },
+      {
+        "type": "serialized_data",
+        "description": "Serialized binary data from files and JNI buffers",
+        "entry_point": "FileInputView::Read*, ByteBuffer operations, BinaryReader",
+        "data_source": "SST files, slice files, checkpoint metadata",
+        "risk": "Buffer overflow, integer overflow, malformed data"
+      }
+    ],
+    "high_risk_operations": [
+      {
+        "operation": "restore",
+        "location": "jni/com_huawei_ock_bss_common_BoostStateDB.cpp::restore",
+        "description": "Restores state from external checkpoint paths",
+        "concerns": ["External file paths", "Path validation gap", "Hard link creation"]
+      },
+      {
+        "operation": "ReadUTF",
+        "location": "common/io/file_input_view.h::ReadUTF",
+        "description": "Reads UTF string from file with length-controlled allocation",
+        "concerns": ["Memory exhaustion (128KB limit)", "Allocation based on file data"]
+      },
+      {
+        "operation": "ReadPrimary/ReadSecondaryKey",
+        "location": "lsm_store/key/full_key_util.cpp",
+        "description": "Reads key with length from file controlling allocation",
+        "concerns": ["No upper limit on keyLen", "Memory exhaustion"]
+      },
+      {
+        "operation": "SliceKey::Unpack",
+        "location": "binary/slice_binary.h::Unpack",
+        "description": "Unpacks slice key from buffer using reinterpret_cast",
+        "concerns": ["No explicit bounds check before cast", "Read beyond buffer"]
+      },
+      {
+        "operation": "CreateHardLinkForRestoredLocalFile",
+        "location": "snapshot/restore_operator.cpp",
+        "description": "Creates hard link using file name from checkpoint metadata",
+        "concerns": ["File name from external source", "Path construction"]
+      },
+      {
+        "operation": "unsafe_copyMemory",
+        "location": "plugin_java/DirectDataInputDeserializer.java",
+        "description": "Unsafe memory copy without bounds validation",
+        "concerns": ["Direct memory access", "No bounds check"]
+      }
+    ],
+    "security_controls": {
+      "path_validation": [
+        "CheckPathValid() in kv_helper.h - uses realpath, access, lstat",
+        "validateFilePath() in EmbeddedOckStateBackend.java - symlink check",
+        "Path.normalize() in BoostStateDownloader.java"
+      ],
+      "memory_limits": [
+        "UTF length limit 128KB in ReadUTF",
+        "Integer wraparound checks in Grow()",
+        "UINT32_MAX overflow checks in ByteBuffer"
+      ],
+      "version_validation": [
+        "Snapshot version check (must be <= 5)",
+        "Primary file status version check",
+        "Java metadata version check (must be <= 3)",
+        "Magic number validation (-42)"
+      ],
+      "secure_functions": [
+        "memcpy_s usage throughout codebase",
+        "libboundscheck library integration"
+      ]
+    }
+  },
+  "data_flow": {
+    "write_path": [
+      {"step": 1, "component": "JNI", "description": "Java put() call"},
+      {"step": 2, "component": "FreshTable", "description": "Active memory storage"},
+      {"step": 3, "component": "FreshTransformer", "description": "Async flush trigger"},
+      {"step": 4, "component": "SliceTable", "description": "Intermediate memory"},
+      {"step": 5, "component": "LsmStore", "description": "SST file write"}
+    ],
+    "read_path": [
+      {"step": 1, "component": "JNI", "description": "Java get() call"},
+      {"step": 2, "component": "FreshTable", "description": "Check active memory"},
+      {"step": 3, "component": "SliceTable", "description": "Check slice memory"},
+      {"step": 4, "component": "LsmStore", "description": "Check SST files"},
+      {"step": 5, "component": "BlockCache", "description": "Disk read if not cached"}
+    ],
+    "snapshot_path": [
+      {"step": 1, "component": "SnapshotCoordinator", "description": "Orchestrate 4-phase snapshot"},
+      {"step": 2, "component": "FreshTableSnapshot", "description": "Memory snapshot"},
+      {"step": 3, "component": "SliceTableSnapshot", "description": "Slice chain data write"},
+      {"step": 4, "component": "BlobStoreSnapshot", "description": "Blob metadata"},
+      {"step": 5, "component": "FileStoreSnapshot", "description": "File metadata serialization"}
+    ],
+    "restore_path": [
+      {"step": 1, "component": "JNI restore", "description": "Parse restore paths"},
+      {"step": 2, "component": "RestoreOperator", "description": "9-phase restore"},
+      {"step": 3, "component": "SnapshotRestoreUtils", "description": "Metadata deserialization"},
+      {"step": 4, "component": "FileManager", "description": "Hard link creation"},
+      {"step": 5, "component": "SliceTableRestore", "description": "Slice chain restoration"},
+      {"step": 6, "component": "FreshTable", "description": "In-memory state restore"}
+    ]
+  }
+}

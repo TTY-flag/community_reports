@@ -1,0 +1,262 @@
+{
+  "functions": {
+    "Java_nova_hetu_omniruntime_operator_OmniOperator_addInputNative@jni_operator.cpp": {
+      "defined_at": 159,
+      "calls": ["Operator::AddInput@operator.h", "Operator::SetInputVecBatch@operator.h", "RecordInputVectorsStack@jni_operator.cpp"],
+      "called_by": ["Java_adapter@Spark/Hive"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "Java_nova_hetu_omniruntime_operator_OmniOperator_getOutputNative@jni_operator.cpp": {
+      "defined_at": 178,
+      "calls": ["Operator::GetOutput@operator.h", "Transform@jni_operator.cpp", "LoadVecBatchAndOmniResults@jni_operator.cpp"],
+      "called_by": ["Java_adapter@Spark/Hive"],
+      "receives_external_input": false,
+      "risk": "Critical"
+    },
+    "Transform@jni_operator.cpp": {
+      "defined_at": 91,
+      "calls": ["VectorBatch::GetVectorCount@vector_batch.cpp", "BaseVector::GetTypeId@vector.h", "VectorHelper::UnsafeGetValues@vector_helper.h", "UnsafeBaseVector::GetNulls@unsafe_vector.h"],
+      "called_by": ["Java_nova_hetu_omniruntime_operator_OmniOperator_getOutputNative@jni_operator.cpp"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "Java_nova_hetu_omniruntime_operator_OmniOperatorFactory_createOperatorNative@jni_operator_factory.cpp": {
+      "defined_at": 156,
+      "calls": ["OperatorFactory::CreateOperator@operator_factory.h"],
+      "called_by": ["Java_adapter@Spark/Hive"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "Java_nova_hetu_omniruntime_operator_filter_OmniFilterAndProjectOperatorFactory_createFilterAndProjectOperatorFactory@jni_operator_factory.cpp": {
+      "defined_at": 458,
+      "calls": ["Deserialize@data_type_serializer.cpp", "nlohmann::json::parse@json_parser", "JSONParser::ParseJSON@jsonparser.h", "ExpressionEvaluator::ExpressionEvaluator@expression_codegen.cpp", "FilterAndProjectOperatorFactory@filter_and_project.cpp"],
+      "called_by": ["Java_adapter@Spark/Hive"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "GetExprsFromJson@jni_operator_factory.cpp": {
+      "defined_at": 67,
+      "calls": ["nlohmann::json::parse@json_parser", "JSONParser::ParseJSON@jsonparser.h"],
+      "called_by": ["Java_nova_hetu_omniruntime_operator_sort_OmniSortWithExprOperatorFactory_createSortWithExprOperatorFactory@jni_operator_factory.cpp"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "JSONParser::ParseJSON@jsonparser.h": {
+      "defined_at": 21,
+      "calls": ["ParseJSONFieldRef@jsonparser.cpp", "ParseJSONLiteral@jsonparser.cpp", "ParseJSONBinary@jsonparser.cpp", "ParseJSONFunc@jsonparser.cpp"],
+      "called_by": ["GetExprsFromJson@jni_operator_factory.cpp", "Java_nova_hetu_omniruntime_operator_filter_OmniFilterAndProjectOperatorFactory_createFilterAndProjectOperatorFactory@jni_operator_factory.cpp"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "Deserialize@data_type_serializer.cpp": {
+      "defined_at": 23,
+      "calls": ["nlohmann::json::parse@json_parser", "DataTypeJsonParser@data_type_serializer.cpp"],
+      "called_by": ["Java_nova_hetu_omniruntime_operator_sort_OmniSortOperatorFactory_createSortOperatorFactory@jni_operator_factory.cpp", "Java_nova_hetu_omniruntime_operator_aggregator_OmniHashAggregationOperatorFactory_createHashAggregationOperatorFactory@jni_operator_factory.cpp"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "DataTypeJsonParser@data_type_serializer.cpp": {
+      "defined_at": 39,
+      "calls": ["IntType@data_type.h", "LongType@data_type.h", "Decimal64Type@data_type.h", "Decimal128Type@data_type.h", "VarcharType@data_type.h"],
+      "called_by": ["Deserialize@data_type_serializer.cpp"],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "ExecuteHiveUdfSingle@java_udf_functions.cpp": {
+      "defined_at": 42,
+      "calls": ["JniUtil::GetJNIEnv@jni_util.cpp", "JNIEnv::NewStringUTF@jni.h", "JNIEnv::CallStaticVoidMethod@jni.h", "SetError@context_helper.cpp"],
+      "called_by": ["ExpressionEvaluator@expression_codegen.cpp"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "ExecuteHiveUdfBatch@java_udf_functions.cpp": {
+      "defined_at": 166,
+      "calls": ["JniUtil::GetJNIEnv@jni_util.cpp", "ExecHiveUdfOutputString@java_udf_functions.cpp", "ExecHiveUdfOutputNonString@java_udf_functions.cpp", "ArenaAllocatorMalloc@context_helper.cpp"],
+      "called_by": ["ExpressionEvaluator@expression_codegen.cpp"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "JniUtil::GetJNIEnv@jni_util.cpp": {
+      "defined_at": 181,
+      "calls": ["GetNewJNIEnv@jni_util.cpp", "javaVm->GetEnv@jni.h", "javaVm->AttachCurrentThread@jni.h"],
+      "called_by": ["ExecuteHiveUdfSingle@java_udf_functions.cpp", "ExecuteHiveUdfBatch@java_udf_functions.cpp"],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "CreateJavaVM@jni_util.cpp": {
+      "defined_at": 133,
+      "calls": ["getenv@stdlib", "JNI_GetCreatedJavaVMs@jni.h", "JNI_CreateJavaVM@jni.h"],
+      "called_by": ["JniUtil::GetNewJNIEnv@jni_util.cpp"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "LLVMEngine::LLVMEngine@llvm_engine.cpp": {
+      "defined_at": 26,
+      "calls": ["InitializeCodegenTargets@llvm_engine.cpp", "LLJITBuilder::create@llvm", "RegisterFunctions@llvm_engine.cpp", "FunctionRegistry::GetBatchFunctions@func_registry.cpp"],
+      "called_by": ["ExpressionEvaluator@expression_codegen.cpp"],
+      "receives_external_input": false,
+      "risk": "High"
+    },
+    "LLVMEngine::Compile@llvm_engine.cpp": {
+      "defined_at": 71,
+      "calls": ["jit::lookup@llvm", "jit::addIRModule@llvm"],
+      "called_by": ["ExpressionEvaluator@expression_codegen.cpp"],
+      "receives_external_input": false,
+      "risk": "High"
+    },
+    "ArenaAllocatorMalloc@context_helper.cpp": {
+      "defined_at": 19,
+      "calls": ["ExecutionContext::Allocate@execution_context.h"],
+      "called_by": ["GetJsonObject@json_functions.cpp", "ExecuteHiveUdfBatch@java_udf_functions.cpp", "stringfunctions.cpp"],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "GetJsonObject@json_functions.cpp": {
+      "defined_at": 9,
+      "calls": ["JsonPathTokenizer::reset@json_functions.h", "traverse_and_extract@json_functions.cpp", "ArenaAllocatorMalloc@context_helper.cpp", "memcpy_s@securec.h"],
+      "called_by": ["ExpressionEvaluator@expression_codegen.cpp"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "SpillWriter::WriteVecBatch@spiller.cpp": {
+      "defined_at": 173,
+      "calls": ["snprintf_s@securec.h", "memcpy_s@securec.h", "fopen@stdio", "fwrite@stdio"],
+      "called_by": ["Spiller::Spill@spiller.cpp"],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "Spiller::Spill@spiller.cpp": {
+      "defined_at": 24,
+      "calls": ["SpillWriter::WriteVecBatch@spiller.cpp", "VectorBatch::Resize@vector_batch.cpp", "VectorHelper::AppendVectors@vector_helper.h"],
+      "called_by": ["HashAggregation@aggregation.cpp", "Sort@sort.cpp"],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "ConfigUtil::CreateProperties@config_util.cpp": {
+      "defined_at": 81,
+      "calls": ["LoadConf@config_util.cpp", "SetProperties@config_util.cpp", "GetOmniHome@config_util.cpp", "GetConfigFilePath@config_util.cpp"],
+      "called_by": ["OperatorFactory::Init@operator_factory.cpp"],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "LoadConf@config_util.cpp": {
+      "defined_at": 43,
+      "calls": ["getenv@stdlib", "realpath@unistd", "std::ifstream::open@fstream", "std::getline@fstream"],
+      "called_by": ["ConfigUtil::CreateProperties@config_util.cpp"],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "Vector::SetValues@vector.h": {
+      "defined_at": 273,
+      "calls": ["memcpy_s@securec.h"],
+      "called_by": ["VectorBatch::Append@vector_batch.cpp", "Operator::AddInput@operator.cpp"],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "Vector::Expand@vector.h": {
+      "defined_at": 387,
+      "calls": ["AlignedBuffer::GetBuffer@aligned_buffer.h", "memcpy_s@securec.h", "NullsBuffer::SetNulls@nulls_buffer.h"],
+      "called_by": ["Operator::AddInput@operator.cpp"],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "LargeStringContainer::SetValue@large_string_container.cpp": {
+      "defined_at": 36,
+      "calls": ["memcpy_s@securec.h"],
+      "called_by": ["Vector::SetValue@vector.h", "ExpressionEvaluator@expression_codegen.cpp"],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "HashAggregation::AddInput@aggregation.cpp": {
+      "defined_at": 50,
+      "calls": ["Aggregator::Aggregate@aggregator.cpp", "HashMap::Insert@hashmap.cpp", "Spiller::Spill@spiller.cpp"],
+      "called_by": ["Java_nova_hetu_omniruntime_operator_OmniOperator_addInputNative@jni_operator.cpp"],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "Sort::AddInput@sort.cpp": {
+      "defined_at": 30,
+      "calls": ["PagesIndex::AddRow@pages_index.cpp", "Spiller::Spill@spiller.cpp"],
+      "called_by": ["Java_nova_hetu_omniruntime_operator_OmniOperator_addInputNative@jni_operator.cpp"],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "LookupJoin::AddInput@lookup_join.cpp": {
+      "defined_at": 40,
+      "calls": ["JoinHashTable::Probe@join_hash_table.cpp", "RowRef::GetRow@row_ref.h"],
+      "called_by": ["Java_nova_hetu_omniruntime_operator_OmniOperator_addInputNative@jni_operator.cpp"],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "ExpressionEvaluator::Evaluate@expression_codegen.cpp": {
+      "defined_at": 50,
+      "calls": ["LLVMEngine::Compile@llvm_engine.cpp", "LLVMEngine::GetIRBuilder@llvm_engine.cpp", "ExecuteHiveUdfSingle@java_udf_functions.cpp", "ExecuteHiveUdfBatch@java_udf_functions.cpp"],
+      "called_by": ["FilterAndProjectOperator@filter_and_project.cpp", "ProjectOperator@projection.cpp"],
+      "receives_external_input": true,
+      "risk": "High"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "Java_adapter:VectorBatch@jni_operator.cpp:159",
+      "path": ["Java_nova_hetu_omniruntime_operator_OmniOperator_addInputNative@jni_operator.cpp:159", "Operator::AddInput@operator.cpp", "Vector::SetValues@vector.h:273"],
+      "sink": "memcpy_s@vector.h:282",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "Java_adapter:JSON_expression@jni_operator_factory.cpp:458",
+      "path": ["Java_nova_hetu_omniruntime_operator_filter_OmniFilterAndProjectOperatorFactory_createFilterAndProjectOperatorFactory@jni_operator_factory.cpp:458", "nlohmann::json::parse@data_type_serializer.cpp:25", "JSONParser::ParseJSON@jsonparser.h:21"],
+      "sink": "Expr::CreateExpr@expressions.cpp",
+      "sink_type": "expression_parsing"
+    },
+    {
+      "source": "Java_adapter:DataType_JSON@jni_operator_factory.cpp:292",
+      "path": ["Deserialize@data_type_serializer.cpp:23", "nlohmann::json::parse@data_type_serializer.cpp:25", "DataTypeJsonParser@data_type_serializer.cpp:39"],
+      "sink": "DataType::Create@data_type.h",
+      "sink_type": "type_parsing"
+    },
+    {
+      "source": "UDF_ClassName@java_udf_functions.cpp:42",
+      "path": ["ExecuteHiveUdfSingle@java_udf_functions.cpp:42", "JNIEnv::NewStringUTF@jni_util.cpp:55", "JNIEnv::CallStaticVoidMethod@jni_util.cpp:66"],
+      "sink": "Java_UDF_execution@JVM",
+      "sink_type": "jni_call"
+    },
+    {
+      "source": "JSON_string_input@json_functions.cpp:9",
+      "path": ["GetJsonObject@json_functions.cpp:9", "JsonPathTokenizer::reset@json_functions.cpp:20", "traverse_and_extract@json_functions.cpp:26"],
+      "sink": "memcpy_s@json_functions.cpp:43",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "Spill_data@spiller.cpp:173",
+      "path": ["SpillWriter::WriteVecBatch@spiller.cpp:173", "memcpy_s@spiller.cpp:304", "fwrite@spiller.cpp"],
+      "sink": "File_write@spill_file",
+      "sink_type": "file_operation"
+    },
+    {
+      "source": "Environment_variable@config_util.cpp:21",
+      "path": ["getenv@config_util.cpp:21", "GetOmniHome@config_util.cpp:19", "LoadConf@config_util.cpp:43"],
+      "sink": "ConfigMap_insert@config_util.cpp:74",
+      "sink_type": "configuration"
+    },
+    {
+      "source": "Java_adapter:Row_bytes@jni_operator.cpp:348",
+      "path": ["Java_nova_hetu_omniruntime_vector_serialize_OmniRowDeserializer_parseOneRow@jni_operator.cpp:348", "env->GetByteArrayElements@jni_operator.cpp:352", "RowParser::ParseOnRow@row_parser.cpp"],
+      "sink": "Vector::SetValue@vector.h",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "Expression_string@expression_codegen.cpp",
+      "path": ["ExpressionEvaluator::Evaluate@expression_codegen.cpp:50", "LLVMEngine::Compile@llvm_engine.cpp:71", "jit::lookup@llvm_engine.cpp:78"],
+      "sink": "JIT_function_call@llvm",
+      "sink_type": "code_execution"
+    },
+    {
+      "source": "String_input@stringfunctions.cpp",
+      "path": ["Substring@stringfunctions.cpp:162", "memcpy_s@stringfunctions.cpp:162", "ArenaAllocatorMalloc@context_helper.cpp:19"],
+      "sink": "Return_string@context",
+      "sink_type": "memory_operation"
+    }
+  ]
+}

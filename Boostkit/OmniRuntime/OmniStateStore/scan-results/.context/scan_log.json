@@ -1,0 +1,92 @@
+{
+  "scan_id": "scan_20260419_234500",
+  "start_time": "2026-04-19T23:45:00Z",
+  "end_time": "2026-04-20T00:35:00Z",
+  "duration_seconds": 3000,
+  "project_name": "OmniStateStore",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/kunpeng/OmniStateStore",
+  "status": "success",
+  "agents": [
+    {
+      "name": "architecture",
+      "start_time": "2026-04-19T23:45:05Z",
+      "end_time": "2026-04-20T00:13:30Z",
+      "duration_seconds": 1705,
+      "status": "success",
+      "output_files": [
+        "project_model.json",
+        "call_graph.json",
+        "threat_analysis_report.md"
+      ]
+    },
+    {
+      "name": "dataflow-scanner",
+      "start_time": "2026-04-20T00:14:00Z",
+      "end_time": "2026-04-20T00:22:37Z",
+      "duration_seconds": 517,
+      "status": "success",
+      "item_count": 26
+    },
+    {
+      "name": "security-auditor",
+      "start_time": "2026-04-20T00:14:00Z",
+      "end_time": "2026-04-20T00:18:16Z",
+      "duration_seconds": 256,
+      "status": "success",
+      "item_count": 10
+    },
+    {
+      "name": "verification",
+      "start_time": "2026-04-20T00:23:00Z",
+      "end_time": "2026-04-20T00:28:58Z",
+      "duration_seconds": 358,
+      "status": "success",
+      "item_count": 36
+    },
+    {
+      "name": "details-analyzer",
+      "status": "skipped",
+      "reason": "无 CONFIRMED 漏洞"
+    },
+    {
+      "name": "reporter",
+      "start_time": "2026-04-20T00:29:00Z",
+      "end_time": "2026-04-20T00:34:43Z",
+      "duration_seconds": 343,
+      "status": "success",
+      "output_files": [
+        "report_confirmed.md",
+        "report_unconfirmed.md"
+      ]
+    }
+  ],
+  "summary": {
+    "total_files": 380,
+    "total_lines": 57209,
+    "languages": ["C/C++"],
+    "mode": "autonomous",
+    "candidates": {
+      "total": 36,
+      "critical": 5,
+      "high": 16,
+      "medium": 13,
+      "low": 2
+    },
+    "verified": {
+      "total": 36,
+      "confirmed": 0,
+      "likely": 14,
+      "possible": 15,
+      "false_positive": 7
+    },
+    "output_files": [
+      "scan-results/.context/scan.db",
+      "scan-results/.context/project_model.json",
+      "scan-results/.context/call_graph.json",
+      "scan-results/.context/scan_log.json",
+      "scan-results/threat_analysis_report.md",
+      "scan-results/report_confirmed.md",
+      "scan-results/report_unconfirmed.md"
+    ]
+  }
+}

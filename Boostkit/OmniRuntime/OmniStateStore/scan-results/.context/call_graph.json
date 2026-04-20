@@ -1,0 +1,286 @@
+{
+  "call_graph": {
+    "description": "Function call graph for OmniStateStore focusing on security-relevant paths",
+    "entry_points": [
+      {
+        "function": "JNI_OnLoad",
+        "file": "jni/jni_common.cpp",
+        "calls": ["SubTableEntryInit", "KListTableImplInit"]
+      },
+      {
+        "function": "Java_com_huawei_ock_bss_common_BoostStateDB_open",
+        "file": "jni/com_huawei_ock_bss_common_BoostStateDB.cpp",
+        "calls": ["BoostStateDBFactory::Create", "CreateConfig", "BoostStateDB::Open", "JVMInstance::Init"],
+        "data_flow": {
+          "input": ["jBoostConfig (Java object)"],
+          "output": ["jlong (native pointer)"],
+          "sensitive_data": ["configuration paths", "memory limits"]
+        }
+      },
+      {
+        "function": "Java_com_huawei_ock_bss_common_BoostStateDB_restore",
+        "file": "jni/com_huawei_ock_bss_common_BoostStateDB.cpp",
+        "calls": ["ConstructPath", "CheckPathValid", "BoostStateDB::Restore"],
+        "data_flow": {
+          "input": ["jRestorePaths (List<String>)", "jRemotePaths", "jLocalPaths"],
+          "output": ["jboolean"],
+          "sensitive_data": ["checkpoint paths", "file mappings"],
+          "security_check": "CheckPathValid() validates paths using realpath/access/lstat"
+        }
+      },
+      {
+        "function": "CreateConfig",
+        "file": "jni/kv_helper.h",
+        "calls": ["GetMaxParallelism", "GetKeyGroupRange", "GetStringFromJava", "CheckPathValid", "GetDBSize", "GetBorrowHeapSize", "Config::Init", "Config::Set*"],
+        "data_flow": {
+          "input": ["jBoostConfig"],
+          "output": ["ConfigRef"],
+          "validation": ["maxParallelism bounds check", "keyGroupRange validation", "path validation", "dbSize minimum check"]
+        }
+      }
+    ],
+    "critical_paths": [
+      {
+        "name": "restore_path",
+        "description": "State restoration from external checkpoint",
+        "chain": [
+          {"step": 1, "function": "Java_com_huawei_ock_bss_common_BoostStateDB_restore", "file": "jni/BoostStateDB.cpp"},
+          {"step": 2, "function": "CheckPathValid", "file": "jni/kv_helper.h", "validation": "realpath, access, lstat"},
+          {"step": 3, "function": "BoostStateDB::Restore", "file": "db/boost_state_db_impl.cpp"},
+          {"step": 4, "function": "RestoreOperator::Restore", "file": "snapshot/restore_operator.cpp"},
+          {"step": 5, "function": "RestoreOperator::ParseRestoredDb", "file": "snapshot/restore_operator.cpp"},
+          {"step": 6, "function": "SnapshotRestoreUtils::ReadSnapshotMetaTail", "file": "snapshot/snapshot_restore_utils.cpp"},
+          {"step": 7, "function": "SnapshotRestoreUtils::ReadFileMapping", "file": "snapshot/snapshot_restore_utils.cpp"},
+          {"step": 8, "function": "RestoreOperator::CreateHardLinkForRestoredLocalFile", "file": "snapshot/restore_operator.cpp", "risk": "uses fileName from metadata"},
+          {"step": 9, "function": "SliceTableRestoreOperation::Restore", "file": "snapshot/slice_table_restore_operation.cpp"},
+          {"step": 10, "function": "SliceTable::Restore", "file": "slice_table/slice_table.cpp"}
+        ],
+        "security_concerns": [
+          "External checkpoint paths passed from Java",
+          "File names from checkpoint metadata used in hard link creation",
+          "No explicit '..' validation in fileName extraction"
+        ]
+      },
+      {
+        "name": "snapshot_write_path",
+        "description": "Snapshot creation and file serialization",
+        "chain": [
+          {"step": 1, "function": "Java_com_huawei_ock_bss_common_Checkpoint_newCheckpoint", "file": "jni/Checkpoint.cpp"},
+          {"step": 2, "function": "BoostStateDB::CreateSyncCheckpoint", "file": "db/boost_state_db_impl.cpp"},
+          {"step": 3, "function": "PendingSnapshotOperatorCoordinator::Start", "file": "snapshot/pending_snapshot_operator_coordinator.cpp"},
+          {"step": 4, "function": "FreshTableSnapshotOperator::PreSnapshot", "file": "snapshot/fresh_table_snapshot_operator.cpp"},
+          {"step": 5, "function": "SliceTableSnapshotOperator::PreSnapshot", "file": "snapshot/slice_table_snapshot_operator.cpp"},
+          {"step": 6, "function": "SliceTableSnapshotOperator::AsyncSnapshot", "file": "snapshot/slice_table_snapshot_operator.cpp"},
+          {"step": 7, "function": "SnapshotRestoreUtils::WriteDbMeta", "file": "snapshot/snapshot_restore_utils.cpp"},
+          {"step": 8, "function": "FileOutputView::WriteUTF", "file": "common/io/file_output_view.cpp"}
+        ]
+      },
+      {
+        "name": "deserialization_path",
+        "description": "Data deserialization from file to native structures",
+        "chain": [
+          {"step": 1, "function": "FileInputView::ReadUTF", "file": "common/io/file_input_view.h", "risk": "allocates based on file-controlled length (128KB limit)"},
+          {"step": 2, "function": "FullKeyUtil::ReadPrimary", "file": "lsm_store/key/full_key_util.cpp", "risk": "no upper limit on keyLen"},
+          {"step": 3, "function": "FileMemAllocator::Alloc", "file": "lsm_store/file/file_mem_allocator.cpp"},
+          {"step": 4, "function": "SliceKey::Unpack", "file": "binary/slice_binary.h", "risk": "reinterpret_cast without bounds check"},
+          {"step": 5, "function": "LsmPriKeyNode::Unpack", "file": "binary/lsm_binary.h"}
+        ],
+        "security_concerns": [
+          "Length values from file control memory allocation",
+          "No maximum size limits on key lengths",
+          "reinterpret_cast without explicit bounds validation"
+        ]
+      },
+      {
+        "name": "jni_direct_buffer",
+        "description": "Direct memory buffer operations across JNI boundary",
+        "chain": [
+          {"step": 1, "function": "Java_com_huawei_ock_bss_common_memory_DirectBuffer_nativeAllocDirectBuffer", "file": "jni/DirectBuffer.cpp"},
+          {"step": 2, "function": "env->NewDirectByteBuffer", "risk": "exposes raw memory to Java"},
+          {"step": 3, "function": "Java_com_huawei_ock_bss_common_memory_DirectBuffer_nativeFreeDirectBuffer", "file": "jni/DirectBuffer.cpp", "risk": "potential use-after-free"},
+          {"step": 4, "function": "free(addr)", "risk": "no ownership validation"}
+        ],
+        "security_concerns": [
+          "Raw memory addresses exposed to Java",
+          "Use-after-free if Java continues using buffer after free",
+          "No bounds validation on buffer operations"
+        ]
+      },
+      {
+        "name": "table_put_path",
+        "description": "KV put operation through JNI to storage",
+        "chain": [
+          {"step": 1, "function": "Java_com_huawei_ock_bss_table_KVTableImpl_put", "file": "jni/KVTableImpl.cpp"},
+          {"step": 2, "function": "reinterpret_cast<Table*>(jTableHandle)", "risk": "no handle validation"},
+          {"step": 3, "function": "Table::Put", "file": "kv_table/boost_state_table.cpp"},
+          {"step": 4, "function": "FreshTable::Put", "file": "fresh_table/fresh_table.cpp"},
+          {"step": 5, "function": "BoostHashMap::Insert", "file": "fresh_table/boost/boost_hash_map.cpp"},
+          {"step": 6, "function": "MemorySegment::Put", "file": "fresh_table/memory/memory_segment.cpp"}
+        ],
+        "security_concerns": [
+          "Raw jlong handle cast without validation",
+          "Native memory addresses passed directly from Java (key, value pointers)"
+        ]
+      },
+      {
+        "name": "file_io_path",
+        "description": "File I/O operations",
+        "chain": [
+          {"step": 1, "function": "LocalFileSystem::Open", "file": "common/fs/local/local_file_system.cpp", "validation": "permission 0640"},
+          {"step": 2, "function": "open(path.c_str(), flags, 0640)", "risk": "path validation done at caller level"},
+          {"step": 3, "function": "LocalFileSystem::Read/Write", "file": "common/fs/local/local_file_system.cpp"},
+          {"step": 4, "function": "pread/pwrite", "validation": "offset/count bounds checked"},
+          {"step": 5, "function": "FileManager::AllocateFile", "file": "lsm_store/file/file_manager.cpp"},
+          {"step": 6, "function": "FileWriter::Write", "file": "lsm_store/file/file_writer.cpp"},
+          {"step": 7, "function": "FileManager::DeleteFile", "file": "lsm_store/file/file_manager.cpp"},
+          {"step": 8, "function": "unlink(path.c_str())"}
+        ],
+        "security_concerns": [
+          "Path validation done at caller level (JNI layer)",
+          "Hard link creation using file names from checkpoint metadata"
+        ]
+      }
+    ],
+    "high_risk_functions": [
+      {
+        "function": "CheckPathValid",
+        "file": "jni/kv_helper.h",
+        "line_range": "327-381",
+        "risk": "medium",
+        "description": "Path validation using realpath/access/lstat",
+        "vulnerabilities": [
+          "realpath requires path to exist for full validation",
+          "allowPathNotExist flag can bypass existence check",
+          "No explicit '..' sequence check"
+        ],
+        "calls": ["realpath", "access", "lstat", "S_ISDIR"]
+      },
+      {
+        "function": "FileInputView::ReadUTF",
+        "file": "common/io/file_input_view.h",
+        "line_range": "64-88",
+        "risk": "medium",
+        "description": "Read UTF string from file with length-controlled allocation",
+        "vulnerabilities": [
+          "Allocates memory based on file-controlled value",
+          "128KB limit prevents extreme memory exhaustion",
+          "Still allows attacker-controlled allocation up to 128KB"
+        ]
+      },
+      {
+        "function": "FullKeyUtil::ReadPrimary",
+        "file": "lsm_store/key/full_key_util.cpp",
+        "line_range": "184-213",
+        "risk": "high",
+        "description": "Read primary key with length from file",
+        "vulnerabilities": [
+          "No upper limit check on keyLen before allocation",
+          "Potential memory exhaustion from large keyLen values"
+        ]
+      },
+      {
+        "function": "SliceKey::Unpack",
+        "file": "binary/slice_binary.h",
+        "line_range": "46-67",
+        "risk": "medium",
+        "description": "Unpack slice key using reinterpret_cast",
+        "vulnerabilities": [
+          "No explicit bounds check before cast",
+          "Read beyond buffer possible if bufferOffset is invalid"
+        ]
+      },
+      {
+        "function": "RestoreOperator::CreateHardLinkForRestoredLocalFile",
+        "file": "snapshot/restore_operator.cpp",
+        "line_range": "152-165",
+        "risk": "high",
+        "description": "Create hard link using file name from checkpoint metadata",
+        "vulnerabilities": [
+          "fileName from restoredFileInfo->GetFileName() from checkpoint",
+          "No explicit '..' validation in fileName",
+          "link() uses externally-derived path components"
+        ],
+        "calls": ["Path::GetPath", "link"]
+      },
+      {
+        "function": "DirectBuffer::nativeFreeDirectBuffer",
+        "file": "jni/com_huawei_ock_bss_common_memory_DirectBuffer.cpp",
+        "line_range": "89-90",
+        "risk": "critical",
+        "description": "Free direct buffer memory",
+        "vulnerabilities": [
+          "No ownership tracking",
+          "Potential use-after-free if Java continues using buffer",
+          "No validation that buffer is actually owned"
+        ]
+      },
+      {
+        "function": "ByteBuffer::CheckParam",
+        "file": "slice_table/binary/byte_buffer.h",
+        "line_range": "409-415",
+        "risk": "low",
+        "description": "Bounds checking for ByteBuffer operations",
+        "security_positive": "Has overflow check before addition"
+      },
+      {
+        "function": "OutputView::Grow",
+        "file": "common/io/output_view.h",
+        "line_range": "206-217",
+        "risk": "low",
+        "description": "Buffer growth with overflow detection",
+        "security_positive": "Integer wraparound detection"
+      }
+    ],
+    "module_dependencies": {
+      "jni": ["db", "kv_table", "snapshot", "common", "slice_table"],
+      "db": ["fresh_table", "slice_table", "lsm_store", "snapshot", "kv_table", "memory"],
+      "snapshot": ["lsm_store", "slice_table", "blob_store", "fresh_table", "common"],
+      "slice_table": ["lsm_store", "memory", "compress", "common"],
+      "lsm_store": ["compress", "memory", "common", "executor"],
+      "fresh_table": ["memory", "executor", "slice_table", "common"],
+      "kv_table": ["lsm_store", "memory", "executor"],
+      "memory": ["common"],
+      "compress": [],
+      "common": [],
+      "blob_store": ["lsm_store", "memory"]
+    },
+    "security_validation_functions": [
+      {
+        "function": "CheckPathValid",
+        "file": "jni/kv_helper.h",
+        "purpose": "path traversal prevention",
+        "implementation": ["realpath() for canonical path", "access(R_OK)", "lstat() for file type", "PATH_MAX length check"]
+      },
+      {
+        "function": "validateFilePath",
+        "file": "plugin_java/EmbeddedOckStateBackend.java",
+        "purpose": "symlink attack prevention",
+        "implementation": ["Files.isSymbolicLink() check", "LINUX_PATH_MAX check", "Files.isReadable/isWritable"]
+      },
+      {
+        "function": "SnapshotRestoreUtils::ReadSnapshotMetaTail",
+        "file": "snapshot/snapshot_restore_utils.cpp",
+        "purpose": "version compatibility",
+        "implementation": ["snapshotVersion <= 5 check", "magic number validation"]
+      },
+      {
+        "function": "VersionMetaSerializer::Deserialize",
+        "file": "lsm_store/version/version_meta_serializer.h",
+        "purpose": "version validation",
+        "implementation": ["restoreVersion <= PRIMARY_FILE_STATUS_VERSION", "MAGIC_NUMBER = -42"]
+      },
+      {
+        "function": "ByteBuffer::CheckParam",
+        "file": "slice_table/binary/byte_buffer.h",
+        "purpose": "buffer bounds checking",
+        "implementation": ["UINT32_MAX overflow check", "pos + len <= mCapacity"]
+      },
+      {
+        "function": "OutputView::Grow",
+        "file": "common/io/output_view.h",
+        "purpose": "integer overflow prevention",
+        "implementation": ["wraparound detection in capacity doubling"]
+      }
+    ]
+  }
+}
