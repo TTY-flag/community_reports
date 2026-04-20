@@ -1,0 +1,291 @@
+{
+  "project_name": "MindInferenceService",
+  "scan_time": "2026-04-20T00:00:00Z",
+  "lsp_available": true,
+  "total_files": 23,
+  "total_lines": 3534,
+  "project_profile": {
+    "project_type": "web_application",
+    "deployment_model": "Linux 服务器上的 LLM 推理服务，通过 HTTP API 提供 OpenAI 兼容的聊天补全接口。默认监听 127.0.0.1:8000，可配置绑定地址。服务使用 vLLM 作为推理引擎后端，支持 YAML 配置文件进行性能调优。",
+    "trust_boundaries": [
+      {
+        "boundary": "HTTP API Interface",
+        "trusted_side": "MIS Application Logic",
+        "untrusted_side": "Remote HTTP Clients",
+        "risk": "Critical"
+      },
+      {
+        "boundary": "Configuration Files",
+        "trusted_side": "MIS Configuration Parser",
+        "untrusted_side": "Administrator-provided YAML configs",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Environment Variables",
+        "trusted_side": "MIS Environment Handler",
+        "untrusted_side": "System/Deployment Environment",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Model Files",
+        "trusted_side": "vLLM Engine",
+        "untrusted_side": "Pre-loaded model weights",
+        "risk": "Low"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "entrypoints",
+      "path": "mis/llm/entrypoints",
+      "language": "python",
+      "components": [
+        "launcher.py",
+        "middleware.py",
+        "__init__.py",
+        "openai/api_server.py",
+        "openai/api_extensions.py",
+        "openai/__init__.py"
+      ]
+    },
+    {
+      "name": "engines",
+      "path": "mis/llm/engines",
+      "language": "python",
+      "components": [
+        "config_parser.py",
+        "config_validator.py",
+        "__init__.py"
+      ]
+    },
+    {
+      "name": "hub",
+      "path": "mis/hub",
+      "language": "python",
+      "components": [
+        "envpreparation.py",
+        "__init__.py"
+      ]
+    },
+    {
+      "name": "utils",
+      "path": "mis/utils",
+      "language": "python",
+      "components": [
+        "utils.py",
+        "general_checker.py",
+        "logger_utils.py",
+        "__init__.py"
+      ]
+    },
+    {
+      "name": "core",
+      "path": "mis",
+      "language": "python",
+      "components": [
+        "run.py",
+        "args.py",
+        "envs.py",
+        "constants.py",
+        "logger.py",
+        "__init__.py"
+      ]
+    },
+    {
+      "name": "llm",
+      "path": "mis/llm",
+      "language": "python",
+      "components": [
+        "engine_factory.py",
+        "__init__.py"
+      ]
+    }
+  ],
+  "files": [
+    {
+      "path": "mis/llm/entrypoints/openai/api_server.py",
+      "language": "python",
+      "risk": "Critical",
+      "module": "entrypoints",
+      "lines": 270,
+      "priority": 1
+    },
+    {
+      "path": "mis/llm/entrypoints/middleware.py",
+      "language": "python",
+      "risk": "High",
+      "module": "entrypoints",
+      "lines": 594,
+      "priority": 2
+    },
+    {
+      "path": "mis/llm/entrypoints/openai/api_extensions.py",
+      "language": "python",
+      "risk": "High",
+      "module": "entrypoints",
+      "lines": 285,
+      "priority": 3
+    },
+    {
+      "path": "mis/llm/entrypoints/launcher.py",
+      "language": "python",
+      "risk": "High",
+      "module": "entrypoints",
+      "lines": 350,
+      "priority": 4
+    },
+    {
+      "path": "mis/llm/engines/config_parser.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "engines",
+      "lines": 271,
+      "priority": 5
+    },
+    {
+      "path": "mis/llm/engines/config_validator.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "engines",
+      "lines": 227,
+      "priority": 6
+    },
+    {
+      "path": "mis/utils/general_checker.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "utils",
+      "lines": 161,
+      "priority": 7
+    },
+    {
+      "path": "mis/envs.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "core",
+      "lines": 146,
+      "priority": 8
+    },
+    {
+      "path": "mis/utils/utils.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "utils",
+      "lines": 189,
+      "priority": 9
+    },
+    {
+      "path": "mis/hub/envpreparation.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "hub",
+      "lines": 68,
+      "priority": 10
+    },
+    {
+      "path": "mis/llm/engine_factory.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "llm",
+      "lines": 110,
+      "priority": 11
+    },
+    {
+      "path": "mis/logger.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "core",
+      "lines": 520,
+      "priority": 12
+    },
+    {
+      "path": "mis/args.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "core",
+      "lines": 51,
+      "priority": 13
+    },
+    {
+      "path": "mis/constants.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "core",
+      "lines": 57,
+      "priority": 14
+    },
+    {
+      "path": "mis/run.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "core",
+      "lines": 68,
+      "priority": 15
+    },
+    {
+      "path": "mis/utils/logger_utils.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "utils",
+      "lines": 36,
+      "priority": 16
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "mis/llm/entrypoints/openai/api_server.py",
+      "line": 143,
+      "function": "create_chat_completions",
+      "type": "web_route",
+      "trust_level": "untrusted_network",
+      "justification": "POST /openai/v1/chat/completions 是公开的 HTTP API 入口，接收外部客户端的聊天请求，请求体包含用户可控的 messages、model、temperature 等参数。",
+      "description": "OpenAI 兼容的聊天补全 API 入口"
+    },
+    {
+      "file": "mis/llm/entrypoints/openai/api_server.py",
+      "line": 63,
+      "function": "show_available_models",
+      "type": "web_route",
+      "trust_level": "untrusted_network",
+      "justification": "GET /openai/v1/models 是公开的 HTTP API 入口，允许外部客户端查询可用模型列表，无需认证即可访问。",
+      "description": "模型列表查询 API 入口"
+    },
+    {
+      "file": "mis/llm/engines/config_parser.py",
+      "line": 141,
+      "function": "_config_yaml_file_loading",
+      "type": "file",
+      "trust_level": "trusted_admin",
+      "justification": "YAML 配置文件由管理员通过 MIS_CONFIG 环境变量指定，配置路径和内容受管理员控制，需确保路径权限验证（已实现 640 权限检查）。",
+      "description": "引擎配置 YAML 文件加载入口"
+    },
+    {
+      "file": "mis/envs.py",
+      "line": 43,
+      "function": "environment_variables",
+      "type": "env",
+      "trust_level": "trusted_admin",
+      "justification": "环境变量由部署脚本或 systemd 注入，包括 MIS_MODEL、MIS_CONFIG、MIS_PORT 等关键配置，管理员负责设置正确值。",
+      "description": "环境变量配置入口"
+    },
+    {
+      "file": "mis/llm/entrypoints/launcher.py",
+      "line": 159,
+      "function": "restrict_host_middleware",
+      "type": "web_route",
+      "trust_level": "semi_trusted",
+      "justification": "Host 头验证中间件，限制请求只能来自 MIS_HOST 配置的主机，默认 127.0.0.1，可被管理员配置为其他地址。",
+      "description": "Host 头验证中间件"
+    }
+  ],
+  "attack_surfaces": [
+    "HTTP API: POST /openai/v1/chat/completions - 接收聊天请求，messages 字段完全可控",
+    "HTTP API: GET /openai/v1/models - 模型列表查询",
+    "YAML Configuration Loading: configs/llm/*.yaml - 配置文件解析",
+    "Environment Variables: MIS_* 系列环境变量",
+    "Request Body Size: max 50MB 限制",
+    "Request Headers: max 8KB 限制",
+    "Rate Limiting: 60 requests/minute 默认限制",
+    "Concurrent Requests: max 512 并发限制"
+  ]
+}

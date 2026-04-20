@@ -1,0 +1,436 @@
+{
+  "project_name": "RAGSDK",
+  "scan_time": "2026-04-20T12:00:00Z",
+  "lsp_available": false,
+  "total_files": 232,
+  "total_lines": 25000,
+  "project_profile": {
+    "project_type": "library",
+    "deployment_model": "Python 库/SDK，用户通过 Python API 调用各模块功能。支持在容器内部署或在物理机内部署两种安装方式。核心模块 mx_rag 为 Python RAG 功能，ops 为 C/C++ NPU 加速算子。",
+    "trust_boundaries": [
+      {
+        "boundary": "API Interface",
+        "trusted_side": "SDK 内部代码",
+        "untrusted_side": "调用方应用代码",
+        "risk": "High"
+      },
+      {
+        "boundary": "File Input",
+        "trusted_side": "SDK 文件处理模块",
+        "untrusted_side": "用户提供的文件路径和内容",
+        "risk": "High"
+      },
+      {
+        "boundary": "LLM Service",
+        "trusted_side": "SDK HTTP 客户端",
+        "untrusted_side": "远程 LLM 服务响应",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Database Storage",
+        "trusted_side": "SDK 存储模块",
+        "untrusted_side": "数据库数据",
+        "risk": "Medium"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "mx_rag",
+      "path": "mx_rag",
+      "language": "python",
+      "components": [
+        "__init__.py",
+        "cache",
+        "chain",
+        "compress",
+        "corag",
+        "document",
+        "embedding",
+        "evaluate",
+        "graphrag",
+        "knowledge",
+        "llm",
+        "reranker",
+        "retrievers",
+        "storage",
+        "summary",
+        "tools",
+        "utils",
+        "version.py"
+      ]
+    },
+    {
+      "name": "document_loader",
+      "path": "mx_rag/document/loader",
+      "language": "python",
+      "components": [
+        "base_loader.py",
+        "docx_loader.py",
+        "excel_loader.py",
+        "image_loader.py",
+        "md_loader.py",
+        "pdf_loader.py",
+        "ppt_loader.py"
+      ]
+    },
+    {
+      "name": "storage_vectorstore",
+      "path": "mx_rag/storage/vectorstore",
+      "language": "python",
+      "components": [
+        "vectorstore.py",
+        "faiss_npu.py",
+        "milvus.py",
+        "opengauss.py",
+        "vector_storage_factory.py"
+      ]
+    },
+    {
+      "name": "storage_docstore",
+      "path": "mx_rag/storage/document_store",
+      "language": "python",
+      "components": [
+        "base_storage.py",
+        "helper_storage.py",
+        "milvus_storage.py",
+        "opengauss_storage.py",
+        "sqlite_storage.py"
+      ]
+    },
+    {
+      "name": "llm_client",
+      "path": "mx_rag/llm",
+      "language": "python",
+      "components": [
+        "text2text.py",
+        "text2img.py",
+        "img2text.py",
+        "img2img.py",
+        "llm_parameter.py"
+      ]
+    },
+    {
+      "name": "utils",
+      "path": "mx_rag/utils",
+      "language": "python",
+      "components": [
+        "file_check.py",
+        "url.py",
+        "common.py",
+        "file_operate.py",
+        "cert_check.py",
+        "crl_checker.py",
+        "tlsconfing.py",
+        "url_checker.py",
+        "client_param.py"
+      ]
+    },
+    {
+      "name": "knowledge",
+      "path": "mx_rag/knowledge",
+      "language": "python",
+      "components": [
+        "knowledge.py",
+        "base_knowledge.py",
+        "handler.py"
+      ]
+    },
+    {
+      "name": "graphrag",
+      "path": "mx_rag/graphrag",
+      "language": "python",
+      "components": [
+        "graphrag_pipeline.py",
+        "graph_rag_model.py",
+        "relation_extraction.py",
+        "graph_merger.py",
+        "graphs"
+      ]
+    },
+    {
+      "name": "ops_models",
+      "path": "ops/models",
+      "language": "c_cpp",
+      "components": [
+        "src/log",
+        "src/base",
+        "src/utils",
+        "include/atb_speed",
+        "bge-large-zh-v1.5"
+      ]
+    },
+    {
+      "name": "ops_operations",
+      "path": "ops/operations",
+      "language": "c_cpp",
+      "components": [
+        "plugin_op"
+      ]
+    },
+    {
+      "name": "ops_adapter",
+      "path": "ops/adapter",
+      "language": "c_cpp",
+      "components": [
+        "model",
+        "operation",
+        "utils",
+        "workspace"
+      ]
+    },
+    {
+      "name": "embedding",
+      "path": "mx_rag/embedding",
+      "language": "python",
+      "components": [
+        "embedding_factory.py",
+        "local/text_embedding.py",
+        "local/img_embedding.py",
+        "local/sparse_embedding.py",
+        "service/tei_embedding.py"
+      ]
+    },
+    {
+      "name": "retrievers",
+      "path": "mx_rag/retrievers",
+      "language": "python",
+      "components": [
+        "retriever.py",
+        "bm_retriever.py",
+        "full_text_retriever.py",
+        "multi_query_retriever.py"
+      ]
+    }
+  ],
+  "files": [
+    {
+      "path": "mx_rag/document/loader/pdf_loader.py",
+      "language": "python",
+      "risk": "High",
+      "module": "document_loader",
+      "lines": 209,
+      "priority": 1
+    },
+    {
+      "path": "mx_rag/document/loader/excel_loader.py",
+      "language": "python",
+      "risk": "High",
+      "module": "document_loader",
+      "lines": 362,
+      "priority": 2
+    },
+    {
+      "path": "mx_rag/document/loader/base_loader.py",
+      "language": "python",
+      "risk": "High",
+      "module": "document_loader",
+      "lines": 150,
+      "priority": 3
+    },
+    {
+      "path": "mx_rag/storage/document_store/opengauss_storage.py",
+      "language": "python",
+      "risk": "High",
+      "module": "storage_docstore",
+      "lines": 178,
+      "priority": 4
+    },
+    {
+      "path": "mx_rag/knowledge/knowledge.py",
+      "language": "python",
+      "risk": "High",
+      "module": "knowledge",
+      "lines": 509,
+      "priority": 5
+    },
+    {
+      "path": "mx_rag/utils/url.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "utils",
+      "lines": 259,
+      "priority": 6
+    },
+    {
+      "path": "mx_rag/utils/file_check.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "utils",
+      "lines": 251,
+      "priority": 7
+    },
+    {
+      "path": "mx_rag/utils/common.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "utils",
+      "lines": 605,
+      "priority": 8
+    },
+    {
+      "path": "mx_rag/graphrag/graphrag_pipeline.py",
+      "language": "python",
+      "risk": "High",
+      "module": "graphrag",
+      "lines": 318,
+      "priority": 9
+    },
+    {
+      "path": "mx_rag/graphrag/graphs/opengauss_graph.py",
+      "language": "python",
+      "risk": "High",
+      "module": "graphrag",
+      "lines": 350,
+      "priority": 10
+    },
+    {
+      "path": "mx_rag/llm/text2text.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "llm_client",
+      "lines": 193,
+      "priority": 11
+    },
+    {
+      "path": "mx_rag/storage/vectorstore/vectorstore.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "storage_vectorstore",
+      "lines": 155,
+      "priority": 12
+    },
+    {
+      "path": "mx_rag/retrievers/retriever.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "retrievers",
+      "lines": 94,
+      "priority": 13
+    },
+    {
+      "path": "mx_rag/embedding/local/text_embedding.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "embedding",
+      "lines": 147,
+      "priority": 14
+    },
+    {
+      "path": "ops/models/src/utils/filesystem.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "ops_models",
+      "lines": 256,
+      "priority": 15
+    },
+    {
+      "path": "ops/models/src/utils/config.cpp",
+      "language": "c_cpp",
+      "risk": "Low",
+      "module": "ops_models",
+      "lines": 91,
+      "priority": 16
+    },
+    {
+      "path": "ops/adapter/workspace/workspace.cpp",
+      "language": "c_cpp",
+      "risk": "Low",
+      "module": "ops_adapter",
+      "lines": 150,
+      "priority": 17
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "mx_rag/document/loader/pdf_loader.py",
+      "line": 53,
+      "function": "PdfLoader.__init__",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "用户通过 API 调用传入 file_path 参数，该路径指向用户可控制的文件。SDK 作为库被调用方应用使用，调用方应用的用户可能是本地非特权用户。",
+      "description": "PDF 文件加载入口，接收用户提供的文件路径"
+    },
+    {
+      "file": "mx_rag/document/loader/excel_loader.py",
+      "line": 43,
+      "function": "ExcelLoader.__init__",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "用户通过 API 调用传入 file_path 参数，该路径指向用户可控制的文件。Excel 文件包含复杂的解析逻辑，可能存在解析漏洞风险。",
+      "description": "Excel 文件加载入口，接收用户提供的文件路径"
+    },
+    {
+      "file": "mx_rag/document/loader/base_loader.py",
+      "line": 47,
+      "function": "BaseLoader.__init__",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "基类构造函数接收 file_path 参数，所有文档加载器继承此类。文件路径由调用方应用传入，可能来自用户输入。",
+      "description": "文档加载器基类入口"
+    },
+    {
+      "file": "mx_rag/utils/url.py",
+      "line": 110,
+      "function": "RequestUtils.post",
+      "type": "network",
+      "trust_level": "semi_trusted",
+      "justification": "HTTP POST 请求发送到外部 LLM 服务，URL 由调用方应用配置传入。响应数据来自远程服务，但调用方应用通常控制服务端。",
+      "description": "HTTP 请求入口，用于调用外部 LLM 服务"
+    },
+    {
+      "file": "mx_rag/storage/document_store/opengauss_storage.py",
+      "line": 116,
+      "function": "OpenGaussDocstore.full_text_search",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "BM25 全文搜索接收用户提供的 query 参数，该参数用于构建 SQL 查询。虽然使用 SQLAlchemy ORM，但 query 参数直接传入 text() 函数。",
+      "description": "全文搜索入口，接收用户查询字符串"
+    },
+    {
+      "file": "mx_rag/knowledge/knowledge.py",
+      "line": 81,
+      "function": "KnowledgeStore.__init__",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "知识库存储初始化接收 db_path 参数，由调用方应用传入。SQLite 数据库路径可能来自用户配置。",
+      "description": "知识库存储入口"
+    },
+    {
+      "file": "mx_rag/graphrag/graphrag_pipeline.py",
+      "line": 98,
+      "function": "GraphRAGPipeline.__init__",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "GraphRAG 流程初始化接收 work_dir 参数，用于存储图数据和向量索引。工作目录路径由调用方应用传入。",
+      "description": "GraphRAG 流程入口"
+    },
+    {
+      "file": "mx_rag/retrievers/retriever.py",
+      "line": 49,
+      "function": "Retriever._get_relevant_documents",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "检索器接收用户查询字符串 query 参数，用于向量搜索和文档检索。查询内容可能包含恶意构造。",
+      "description": "文档检索入口"
+    },
+    {
+      "file": "mx_rag/embedding/embedding_factory.py",
+      "line": 48,
+      "function": "EmbeddingFactory.create_embedding",
+      "type": "decorator",
+      "trust_level": "semi_trusted",
+      "justification": "工厂方法根据 embedding_type 参数创建 embedding 实例，参数由调用方应用传入。embedding_type 控制实例化哪个类。",
+      "description": "Embedding 工厂入口"
+    }
+  ],
+  "attack_surfaces": [
+    "API 文件路径输入: mx_rag/document/loader/*.py - 用户可传入任意文件路径",
+    "HTTP 客户端响应: mx_rag/utils/url.py - 外部 LLM 服务响应数据",
+    "SQL 查询构造: mx_rag/storage/document_store/opengauss_storage.py - BM25 搜索 query 参数",
+    "模型加载路径: mx_rag/embedding/local/*.py - model_path 参数传入 transformers",
+    "工作目录路径: mx_rag/graphrag/graphrag_pipeline.py - work_dir 参数",
+    "知识库数据库路径: mx_rag/knowledge/knowledge.py - db_path 参数",
+    "Cypher 查询构造: mx_rag/graphrag/graphs/opengauss_graph.py - 图数据库查询"
+  ]
+}

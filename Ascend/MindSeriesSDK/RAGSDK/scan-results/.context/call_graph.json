@@ -1,0 +1,313 @@
+{
+  "functions": {
+    "PdfLoader.__init__@mx_rag/document/loader/pdf_loader.py": {
+      "defined_at": 53,
+      "calls": [
+        "BaseLoader.__init__@mx_rag/document/loader/base_loader.py",
+        "SecFileCheck.check@mx_rag/utils/file_check.py",
+        "fitz.open@pdf_loader.py"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "PdfLoader.lazy_load@mx_rag/document/loader/pdf_loader.py": {
+      "defined_at": 69,
+      "calls": [
+        "_check@pdf_loader.py",
+        "_parser@pdf_loader.py",
+        "_plain_parser@pdf_loader.py"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "ExcelLoader.__init__@mx_rag/document/loader/excel_loader.py": {
+      "defined_at": 43,
+      "calls": [
+        "BaseLoader.__init__@mx_rag/document/loader/base_loader.py",
+        "SecFileCheck.check@mx_rag/utils/file_check.py",
+        "xlrd.inspect_format@excel_loader.py"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "ExcelLoader.lazy_load@mx_rag/document/loader/excel_loader.py": {
+      "defined_at": 171,
+      "calls": [
+        "_load_xls@excel_loader.py",
+        "_load_xlsx@excel_loader.py",
+        "_is_zip_bomb@excel_loader.py"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "SecFileCheck.check@mx_rag/utils/file_check.py": {
+      "defined_at": 49,
+      "calls": [
+        "FileCheck.check_path_is_exist_and_valid@file_check.py",
+        "FileCheck.check_file_size@file_check.py",
+        "FileCheck.check_file_owner@file_check.py",
+        "FileCheck.check_mode@file_check.py"
+      ],
+      "called_by": [
+        "PdfLoader.__init__@pdf_loader.py",
+        "ExcelLoader.__init__@excel_loader.py",
+        "BaseLoader.__init__@base_loader.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "RequestUtils.post@mx_rag/utils/url.py": {
+      "defined_at": 110,
+      "calls": [
+        "is_url_valid@url.py",
+        "urllib3.PoolManager.request@url.py",
+        "response.read@url.py"
+      ],
+      "called_by": [
+        "Text2TextLLM.chat@text2text.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "Text2TextLLM.chat@mx_rag/llm/text2text.py": {
+      "defined_at": 74,
+      "calls": [
+        "_get_request_body@text2text.py",
+        "_client.post@url.py",
+        "json.loads@text2text.py"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "OpenGaussDocstore.full_text_search@mx_rag/storage/document_store/opengauss_storage.py": {
+      "defined_at": 116,
+      "calls": [
+        "_validate_filter_dict@opengauss_storage.py",
+        "_do_bm25_search@opengauss_storage.py",
+        "session.execute@opengauss_storage.py"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "Retriever._get_relevant_documents@mx_rag/retrievers/retriever.py": {
+      "defined_at": 49,
+      "calls": [
+        "_safe_embed_func@retriever.py",
+        "VectorStore.search@vectorstore.py",
+        "Docstore.search@base_storage.py"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "VectorStore.search@mx_rag/storage/vectorstore/vectorstore.py": {
+      "defined_at": 49,
+      "calls": [],
+      "called_by": [
+        "Retriever._get_relevant_documents@retriever.py",
+        "GraphRAGModel.retrieve@graph_rag_model.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "KnowledgeDB.add_file@mx_rag/knowledge/knowledge.py": {
+      "defined_at": 436,
+      "calls": [
+        "_storage_and_vector_add@knowledge.py",
+        "embed_func[texts]@knowledge.py",
+        "Docstore.add@base_storage.py"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "GraphRAGPipeline.upload_files@mx_rag/graphrag/graphrag_pipeline.py": {
+      "defined_at": 133,
+      "calls": [
+        "SecFileCheck.check@file_check.py",
+        "LoaderMng.get_loader@doc_loader_mng.py",
+        "loader.load_and_split@graphrag_pipeline.py"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "GraphRAGPipeline.build_graph@mx_rag/graphrag/graphrag_pipeline.py": {
+      "defined_at": 164,
+      "calls": [
+        "LLMRelationExtractor.query@relation_extraction.py",
+        "GraphMerger.merge@graph_merger.py",
+        "write_to_json@common.py"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "OpenGaussGraph.execute_cypher_query@mx_rag/graphrag/graphs/opengauss_graph.py": {
+      "defined_at": 149,
+      "calls": [
+        "age_graph.query@opengauss_graph.py"
+      ],
+      "called_by": [
+        "GraphMerger.merge@graph_merger.py",
+        "OpenGaussGraph.add_node@opengauss_graph.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "TextEmbedding.__init__@mx_rag/embedding/local/text_embedding.py": {
+      "defined_at": 57,
+      "calls": [
+        "SecDirCheck.check@file_check.py",
+        "AutoTokenizer.from_pretrained@text_embedding.py",
+        "AutoModel.from_pretrained@text_embedding.py"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "FileSystem.ReadFile@ops/models/src/utils/filesystem.cpp": {
+      "defined_at": 182,
+      "calls": [
+        "IsPathValid@filesystem.cpp",
+        "ifstream.open@filesystem.cpp"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "FileSystem.IsPathValid@ops/models/src/utils/filesystem.cpp": {
+      "defined_at": 136,
+      "calls": [
+        "IsOwnerSame@filesystem.cpp",
+        "lstat@filesystem.cpp",
+        "S_ISLNK@filesystem.cpp"
+      ],
+      "called_by": [
+        "FileSystem.ReadFile@filesystem.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "write_to_json@mx_rag/utils/common.py": {
+      "defined_at": 567,
+      "calls": [
+        "FileCheck.check_input_path_valid@file_check.py",
+        "os.fdopen@common.py",
+        "json.dump@common.py"
+      ],
+      "called_by": [
+        "GraphRAGPipeline.build_graph@graphrag_pipeline.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "PdfLoader.__init__(file_path)@mx_rag/document/loader/pdf_loader.py:53",
+      "path": [
+        "BaseLoader.__init__(file_path)@mx_rag/document/loader/base_loader.py:47",
+        "SecFileCheck.check(file_path)@mx_rag/utils/file_check.py:49",
+        "fitz.open(file_path)@mx_rag/document/loader/pdf_loader.py:112"
+      ],
+      "sink": "fitz.open(file_path)@mx_rag/document/loader/pdf_loader.py:112",
+      "sink_type": "file_operation"
+    },
+    {
+      "source": "ExcelLoader.__init__(file_path)@mx_rag/document/loader/excel_loader.py:43",
+      "path": [
+        "xlrd.open_workbook(file_path)@mx_rag/document/loader/excel_loader.py:310",
+        "load_workbook(file_path)@mx_rag/document/loader/excel_loader.py:341"
+      ],
+      "sink": "xlrd.open_workbook(file_path)@mx_rag/document/loader/excel_loader.py:310",
+      "sink_type": "file_operation"
+    },
+    {
+      "source": "Text2TextLLM.chat(query)@mx_rag/llm/text2text.py:74",
+      "path": [
+        "_get_request_body(query)@mx_rag/llm/text2text.py:158",
+        "_client.post(url, body)@mx_rag/utils/url.py:116",
+        "response.read()@mx_rag/utils/url.py:146"
+      ],
+      "sink": "json.loads(response_data)@mx_rag/llm/text2text.py:90",
+      "sink_type": "json_parse"
+    },
+    {
+      "source": "OpenGaussDocstore.full_text_search(query)@mx_rag/storage/document_store/opengauss_storage.py:116",
+      "path": [
+        "_do_bm25_search()@mx_rag/storage/document_store/opengauss_storage.py:154",
+        "text(':question_query')@mx_rag/storage/document_store/opengauss_storage.py:159",
+        "session.execute(data, params)@mx_rag/storage/document_store/opengauss_storage.py:134"
+      ],
+      "sink": "session.execute(text(...))@mx_rag/storage/document_store/opengauss_storage.py:134",
+      "sink_type": "sql_execution"
+    },
+    {
+      "source": "Retriever._get_relevant_documents(query)@mx_rag/retrievers/retriever.py:49",
+      "path": [
+        "_safe_embed_func([query])@mx_rag/retrievers/retriever.py:51",
+        "VectorStore.search(embeddings, k)@mx_rag/storage/vectorstore/vectorstore.py:49",
+        "Docstore.search(idx)@mx_rag/storage/document_store/base_storage.py"
+      ],
+      "sink": "Docstore.search(idx)@mx_rag/storage/document_store/base_storage.py",
+      "sink_type": "data_access"
+    },
+    {
+      "source": "KnowledgeDB.add_file(file, texts)@mx_rag/knowledge/knowledge.py:436",
+      "path": [
+        "embed_func['dense'](texts)@mx_rag/knowledge/knowledge.py:441",
+        "VectorStore.add(ids, embeddings)@mx_rag/storage/vectorstore/vectorstore.py:53",
+        "Docstore.add(documents, document_id)@mx_rag/storage/document_store/base_storage.py"
+      ],
+      "sink": "Docstore.add(documents)@mx_rag/storage/document_store/base_storage.py",
+      "sink_type": "data_storage"
+    },
+    {
+      "source": "GraphRAGPipeline.upload_files(file_list)@mx_rag/graphrag/graphrag_pipeline.py:133",
+      "path": [
+        "SecFileCheck(file, limit).check()@mx_rag/graphrag/graphrag_pipeline.py:137",
+        "loader.load_and_split(splitter)@mx_rag/graphrag/graphrag_pipeline.py:149",
+        "self.docs.extend(docs)@mx_rag/graphrag/graphrag_pipeline.py:150"
+      ],
+      "sink": "self.docs.extend(docs)@mx_rag/graphrag/graphrag_pipeline.py:150",
+      "sink_type": "memory_storage"
+    },
+    {
+      "source": "GraphRAGPipeline.build_graph(lang)@mx_rag/graphrag/graphrag_pipeline.py:164",
+      "path": [
+        "LLMRelationExtractor.query(self.docs)@mx_rag/graphrag/relation_extraction.py:207",
+        "GraphMerger.merge(relations)@mx_rag/graphrag/graph_merger.py",
+        "OpenGaussGraph.execute_cypher_query(query)@mx_rag/graphrag/graphs/opengauss_graph.py:159"
+      ],
+      "sink": "execute_cypher_query(query)@mx_rag/graphrag/graphs/opengauss_graph.py:159",
+      "sink_type": "cypher_execution"
+    },
+    {
+      "source": "FileSystem.ReadFile(filePath, buffer)@ops/models/src/utils/filesystem.cpp:182",
+      "path": [
+        "IsPathValid(filePath)@ops/models/src/utils/filesystem.cpp:136",
+        "ifstream.open(filePath)@ops/models/src/utils/filesystem.cpp:189",
+        "fd.read(buffer, bufferSize)@ops/models/src/utils/filesystem.cpp:193"
+      ],
+      "sink": "ifstream.read(buffer)@ops/models/src/utils/filesystem.cpp:193",
+      "sink_type": "file_operation"
+    },
+    {
+      "source": "TextEmbedding.__init__(model_path)@mx_rag/embedding/local/text_embedding.py:57",
+      "path": [
+        "SecDirCheck(model_path, limit).check()@mx_rag/embedding/local/text_embedding.py:64",
+        "AutoTokenizer.from_pretrained(model_path)@mx_rag/embedding/local/text_embedding.py:67",
+        "AutoModel.from_pretrained(model_path)@mx_rag/embedding/local/text_embedding.py:68"
+      ],
+      "sink": "AutoModel.from_pretrained(model_path)@mx_rag/embedding/local/text_embedding.py:68",
+      "sink_type": "model_load"
+    }
+  ]
+}

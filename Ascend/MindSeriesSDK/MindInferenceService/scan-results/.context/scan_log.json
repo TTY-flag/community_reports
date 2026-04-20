@@ -1,0 +1,107 @@
+{
+  "scan_id": "scan_20260420_001",
+  "start_time": "2026-04-20T00:00:00Z",
+  "end_time": "2026-04-20T01:00:00Z",
+  "duration_seconds": 3600,
+  "project_name": "MindInferenceService",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/shenteng/MindSeriesSDK/MindInferenceService",
+  "status": "success",
+  "agents": [
+    {
+      "name": "architecture",
+      "start_time": "2026-04-20T00:05:00Z",
+      "end_time": "2026-04-20T00:10:53Z",
+      "status": "success",
+      "output_files": [
+        "scan-results/.context/project_model.json",
+        "scan-results/.context/call_graph.json",
+        "scan-results/threat_analysis_report.md"
+      ],
+      "summary": {
+        "language": "Python",
+        "file_count": 23,
+        "module_count": 6,
+        "entry_point_count": 5,
+        "high_risk_files": 4
+      }
+    },
+    {
+      "name": "dataflow-scanner",
+      "start_time": "2026-04-20T00:12:00Z",
+      "end_time": "2026-04-20T00:20:00Z",
+      "status": "success",
+      "summary": {
+        "modules_scanned": 6,
+        "candidates_found": 26,
+        "modules": {
+          "entrypoints": 7,
+          "utils": 6,
+          "llm": 4,
+          "engines": 4,
+          "core": 3,
+          "hub": 2
+        }
+      }
+    },
+    {
+      "name": "security-auditor",
+      "start_time": "2026-04-20T00:21:00Z",
+      "end_time": "2026-04-20T00:25:00Z",
+      "status": "success",
+      "summary": {
+        "modules_scanned": 6,
+        "candidates_found": 0,
+        "note": "与 dataflow-scanner 共享数据库，候选漏洞已合并"
+      }
+    },
+    {
+      "name": "verification",
+      "start_time": "2026-04-20T00:30:00Z",
+      "end_time": "2026-04-20T00:45:00Z",
+      "status": "success",
+      "summary": {
+        "total_verified": 26,
+        "status_distribution": {
+          "FALSE_POSITIVE": 12,
+          "POSSIBLE": 10,
+          "LIKELY": 4,
+          "CONFIRMED": 0
+        },
+        "note": "无CONFIRMED漏洞，跳过深度利用分析阶段"
+      }
+    },
+    {
+      "name": "reporter",
+      "start_time": "2026-04-20T00:50:00Z",
+      "end_time": "2026-04-20T00:55:00Z",
+      "status": "success",
+      "output_files": [
+        "scan-results/report_confirmed.md",
+        "scan-results/report_unconfirmed.md"
+      ],
+      "summary": {
+        "total_vulnerabilities": 14,
+        "confirmed_count": 0,
+        "likely_count": 4,
+        "possible_count": 10,
+        "report_lines": 778
+      }
+    }
+  ],
+  "summary": {
+    "total_candidates": 26,
+    "total_verified": 26,
+    "false_positive_count": 12,
+    "likely_count": 4,
+    "possible_count": 10,
+    "confirmed_count": 0,
+    "severity_distribution": {
+      "Medium": 9,
+      "Low": 12,
+      "Informational": 5
+    },
+    "modules_scanned": 6,
+    "files_scanned": 24,
+    "scan_mode": "自主分析模式"
+  }
+}

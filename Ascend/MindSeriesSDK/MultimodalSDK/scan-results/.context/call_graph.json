@@ -1,0 +1,199 @@
+{
+  "functions": {
+    "ReadJpegData@AccSDK/source/utils/ImageUtils.cpp": {
+      "defined_at": 61,
+      "calls": ["IsFileValid@AccSDK/source/utils/FileUtils.cpp", "CheckFileExtension@AccSDK/source/utils/FileUtils.cpp", "ReadFile@AccSDK/source/utils/FileUtils.cpp", "tjInitDecompress@libjpeg-turbo", "tjDecompressHeader2@libjpeg-turbo", "CheckImSize@AccSDK/source/utils/ImageUtils.cpp", "tjDecompress2@libjpeg-turbo"],
+      "called_by": ["Image::Image@AccSDK/source/image/Image.cpp"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "Image::Image@AccSDK/source/image/Image.cpp": {
+      "defined_at": 180,
+      "calls": ["CheckDeviceFromConstructor@AccSDK/source/image/Image.cpp", "ReadJpegData@AccSDK/source/utils/ImageUtils.cpp"],
+      "called_by": ["PyAcc::Image::Image@AccSDK/source/py/module/PyImage.cpp"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "PyAcc::Image::Image@AccSDK/source/py/module/PyImage.cpp": {
+      "defined_at": 54,
+      "calls": ["Acc::Image::Image@AccSDK/source/image/Image.cpp"],
+      "called_by": ["Image.open@MultimodalSDK/source/mm/acc/wrapper/image_wrapper.py"],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "InitVideoInfo@AccSDK/source/video/Video.cpp": {
+      "defined_at": 130,
+      "calls": ["avformat_open_input@FFmpeg", "avformat_find_stream_info@FFmpeg", "FindVideoStream@AccSDK/source/utils/VideoUtils.cpp", "CheckVideoResolution@AccSDK/source/video/Video.cpp", "GetFramesAndFPS@AccSDK/source/utils/VideoUtils.cpp", "CheckTargetFrameIndices@AccSDK/source/video/Video.cpp", "ConstructVideoAuxInfo@AccSDK/source/utils/VideoUtils.cpp", "avformat_close_input@FFmpeg"],
+      "called_by": ["VideoDecodeCpu@AccSDK/source/video/Video.cpp"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "VideoDecodeCpu@AccSDK/source/video/Video.cpp": {
+      "defined_at": 283,
+      "calls": ["InitVideoInfo@AccSDK/source/video/Video.cpp", "DecodeKeyframesParallel@AccSDK/source/video/Video.cpp", "ConvertFramesToImage@AccSDK/source/video/Video.cpp"],
+      "called_by": ["VideoDecode@AccSDK/source/video/Video.cpp"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "VideoDecode@AccSDK/source/video/Video.cpp": {
+      "defined_at": 305,
+      "calls": ["IsFileValid@AccSDK/source/utils/FileUtils.cpp", "CheckFileExtension@AccSDK/source/utils/FileUtils.cpp", "VideoDecodeCpu@AccSDK/source/video/Video.cpp"],
+      "called_by": ["PyAcc::video_decode@AccSDK/source/py/module/PyVideo.cpp"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "PyAcc::video_decode@AccSDK/source/py/module/PyVideo.cpp": {
+      "defined_at": 30,
+      "calls": ["Acc::VideoDecode@AccSDK/source/video/Video.cpp"],
+      "called_by": ["video_decode@MultimodalSDK/source/mm/acc/wrapper/video_wrapper.py"],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "DecodeKeyframesParallel@AccSDK/source/video/Video.cpp": {
+      "defined_at": 190,
+      "calls": ["ThreadPool::Submit@AccSDK/source/utils/ThreadPool.cpp", "VideoDecodeSeek@AccSDK/source/utils/VideoUtils.cpp"],
+      "called_by": ["VideoDecodeCpu@AccSDK/source/video/Video.cpp"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "VideoDecodeSeek@AccSDK/source/utils/VideoUtils.cpp": {
+      "defined_at": 150,
+      "calls": ["avformat_open_input@FFmpeg", "avcodec_open2@FFmpeg", "av_read_frame@FFmpeg", "avcodec_send_packet@FFmpeg", "avcodec_receive_frame@FFmpeg", "sws_getContext@FFmpeg", "sws_scale@FFmpeg"],
+      "called_by": ["DecodeKeyframesParallel@AccSDK/source/video/Video.cpp"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "AudioDecode@AccSDK/source/utils/AudioUtils.cpp": {
+      "defined_at": 465,
+      "calls": ["ReadFile@AccSDK/source/utils/FileUtils.cpp", "ReadAndCheckRiffHeader@AccSDK/source/utils/AudioUtils.cpp", "FindAndReadFmtChunk@AccSDK/source/utils/AudioUtils.cpp", "CheckAudioFormat@AccSDK/source/utils/AudioUtils.cpp", "FindDataChunk@AccSDK/source/utils/AudioUtils.cpp", "ConvertAudioDataToFloat@AccSDK/source/utils/AudioUtils.cpp"],
+      "called_by": ["LoadAudioData@AccSDK/source/audio/Audio.cpp"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "LoadAudioData@AccSDK/source/audio/Audio.cpp": {
+      "defined_at": 44,
+      "calls": ["AudioDecode@AccSDK/source/utils/AudioUtils.cpp"],
+      "called_by": ["LoadAudio@AccSDK/source/audio/Audio.cpp"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "LoadAudio@AccSDK/source/audio/Audio.cpp": {
+      "defined_at": 177,
+      "calls": ["LoadAudioData@AccSDK/source/audio/Audio.cpp", "ProcessAudioChannels@AccSDK/source/audio/Audio.cpp", "ResampleAudio@AccSDK/source/audio/Audio.cpp", "FillRemainingBuffer@AccSDK/source/audio/Audio.cpp"],
+      "called_by": ["LoadAudioSingle@AccSDK/source/audio/Audio.cpp", "LoadAudioBatch@AccSDK/source/audio/Audio.cpp"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "LoadAudioSingle@AccSDK/source/audio/Audio.cpp": {
+      "defined_at": 218,
+      "calls": ["CheckSingleAudioInputs@AccSDK/source/utils/AudioUtils.cpp", "LoadAudio@AccSDK/source/audio/Audio.cpp"],
+      "called_by": ["PyAcc::LoadAudio@AccSDK/source/py/module/PyAudio.cpp"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "ReadFile@AccSDK/source/utils/FileUtils.cpp": {
+      "defined_at": 105,
+      "calls": ["CheckFileOpen@AccSDK/source/utils/FileUtils.cpp", "CheckAndGetFileSize@AccSDK/source/utils/FileUtils.cpp"],
+      "called_by": ["ReadJpegData@AccSDK/source/utils/ImageUtils.cpp", "AudioDecode@AccSDK/source/utils/AudioUtils.cpp"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "IsFileValid@AccSDK/source/utils/FileUtils.cpp": {
+      "defined_at": 203,
+      "calls": ["CheckFilePath@AccSDK/source/utils/FileUtils.cpp", "CheckFileOwner@AccSDK/source/utils/FileUtils.cpp", "CheckFilePermission@AccSDK/source/utils/FileUtils.cpp"],
+      "called_by": ["ReadJpegData@AccSDK/source/utils/ImageUtils.cpp", "VideoDecode@AccSDK/source/video/Video.cpp", "CheckSingleAudioInputs@AccSDK/source/utils/AudioUtils.cpp"],
+      "receives_external_input": false,
+      "risk": "Low"
+    },
+    "CheckImSize@AccSDK/source/utils/ImageUtils.cpp": {
+      "defined_at": 42,
+      "calls": [],
+      "called_by": ["ReadJpegData@AccSDK/source/utils/ImageUtils.cpp", "InitFromRawData@AccSDK/source/image/Image.cpp"],
+      "receives_external_input": false,
+      "risk": "Low"
+    },
+    "ConvertAudioDataToFloat@AccSDK/source/utils/AudioUtils.cpp": {
+      "defined_at": 352,
+      "calls": ["ConvertFloat32@AccSDK/source/utils/AudioUtils.cpp", "ConvertPcm16@AccSDK/source/utils/AudioUtils.cpp", "ConvertPcm24@AccSDK/source/utils/AudioUtils.cpp", "ConvertPcm32@AccSDK/source/utils/AudioUtils.cpp"],
+      "called_by": ["AudioDecode@AccSDK/source/utils/AudioUtils.cpp"],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "FindAndReadFmtChunk@AccSDK/source/utils/AudioUtils.cpp": {
+      "defined_at": 248,
+      "calls": ["memcpy_s@securec"],
+      "called_by": ["AudioDecode@AccSDK/source/utils/AudioUtils.cpp"],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "FindDataChunk@AccSDK/source/utils/AudioUtils.cpp": {
+      "defined_at": 295,
+      "calls": ["memcpy_s@securec"],
+      "called_by": ["AudioDecode@AccSDK/source/utils/AudioUtils.cpp"],
+      "receives_external_input": true,
+      "risk": "Medium"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "Image.open@MultimodalSDK/source/mm/acc/wrapper/image_wrapper.py:35",
+      "path": ["PyAcc::Image::Image@AccSDK/source/py/module/PyImage.cpp:54", "Acc::Image::Image@AccSDK/source/image/Image.cpp:180", "ReadJpegData@AccSDK/source/utils/ImageUtils.cpp:61", "ReadFile@AccSDK/source/utils/FileUtils.cpp:105", "ifstream::read@stdlib"],
+      "sink": "tjDecompress2@AccSDK/source/utils/ImageUtils.cpp:108",
+      "sink_type": "external_library"
+    },
+    {
+      "source": "Image.open@MultimodalSDK/source/mm/acc/wrapper/image_wrapper.py:35",
+      "path": ["PyAcc::Image::Image@AccSDK/source/py/module/PyImage.cpp:54", "Acc::Image::Image@AccSDK/source/image/Image.cpp:180", "ReadJpegData@AccSDK/source/utils/ImageUtils.cpp:61", "ReadFile@AccSDK/source/utils/FileUtils.cpp:105", "ifstream::read@stdlib"],
+      "sink": "tjDecompressHeader2@AccSDK/source/utils/ImageUtils.cpp:90",
+      "sink_type": "external_library"
+    },
+    {
+      "source": "video_decode@MultimodalSDK/source/mm/acc/wrapper/video_wrapper.py:27",
+      "path": ["PyAcc::video_decode@AccSDK/source/py/module/PyVideo.cpp:30", "VideoDecode@AccSDK/source/video/Video.cpp:305", "VideoDecodeCpu@AccSDK/source/video/Video.cpp:283", "InitVideoInfo@AccSDK/source/video/Video.cpp:130"],
+      "sink": "avformat_open_input@AccSDK/source/video/Video.cpp:136",
+      "sink_type": "external_library"
+    },
+    {
+      "source": "video_decode@MultimodalSDK/source/mm/acc/wrapper/video_wrapper.py:27",
+      "path": ["PyAcc::video_decode@AccSDK/source/py/module/PyVideo.cpp:30", "VideoDecode@AccSDK/source/video/Video.cpp:305", "VideoDecodeCpu@AccSDK/source/video/Video.cpp:283", "DecodeKeyframesParallel@AccSDK/source/video/Video.cpp:190", "VideoDecodeSeek@AccSDK/source/utils/VideoUtils.cpp:150"],
+      "sink": "av_read_frame@AccSDK/source/utils/VideoUtils.cpp:93",
+      "sink_type": "external_library"
+    },
+    {
+      "source": "video_decode@MultimodalSDK/source/mm/acc/wrapper/video_wrapper.py:27",
+      "path": ["PyAcc::video_decode@AccSDK/source/py/module/PyVideo.cpp:30", "VideoDecode@AccSDK/source/video/Video.cpp:305", "VideoDecodeCpu@AccSDK/source/video/Video.cpp:283", "DecodeKeyframesParallel@AccSDK/source/video/Video.cpp:190", "VideoDecodeSeek@AccSDK/source/utils/VideoUtils.cpp:150"],
+      "sink": "avcodec_send_packet@AccSDK/source/utils/VideoUtils.cpp:95",
+      "sink_type": "external_library"
+    },
+    {
+      "source": "load_audio@MultimodalSDK/source/mm/acc/__init__.py",
+      "path": ["LoadAudioSingle@AccSDK/source/audio/Audio.cpp:218", "LoadAudio@AccSDK/source/audio/Audio.cpp:177", "LoadAudioData@AccSDK/source/audio/Audio.cpp:44", "AudioDecode@AccSDK/source/utils/AudioUtils.cpp:465", "ReadFile@AccSDK/source/utils/FileUtils.cpp:105"],
+      "sink": "ifstream::read@AccSDK/source/utils/FileUtils.cpp:121",
+      "sink_type": "file_operation"
+    },
+    {
+      "source": "load_audio@MultimodalSDK/source/mm/acc/__init__.py",
+      "path": ["LoadAudioSingle@AccSDK/source/audio/Audio.cpp:218", "LoadAudio@AccSDK/source/audio/Audio.cpp:177", "LoadAudioData@AccSDK/source/audio/Audio.cpp:44", "AudioDecode@AccSDK/source/utils/AudioUtils.cpp:465", "FindAndReadFmtChunk@AccSDK/source/utils/AudioUtils.cpp:248"],
+      "sink": "memcpy_s@AccSDK/source/utils/AudioUtils.cpp:261",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "load_audio@MultimodalSDK/source/mm/acc/__init__.py",
+      "path": ["LoadAudioSingle@AccSDK/source/audio/Audio.cpp:218", "LoadAudio@AccSDK/source/audio/Audio.cpp:177", "LoadAudioData@AccSDK/source/audio/Audio.cpp:44", "AudioDecode@AccSDK/source/utils/AudioUtils.cpp:465", "FindDataChunk@AccSDK/source/utils/AudioUtils.cpp:295"],
+      "sink": "memcpy_s@AccSDK/source/utils/AudioUtils.cpp:307",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "ReadJpegData@AccSDK/source/utils/ImageUtils.cpp:61",
+      "path": ["CheckImSize@AccSDK/source/utils/ImageUtils.cpp:42"],
+      "sink": "std::make_unique<unsigned char[]>@AccSDK/source/utils/ImageUtils.cpp:107",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "AudioDecode@AccSDK/source/utils/AudioUtils.cpp:465",
+      "path": ["ConvertAudioDataToFloat@AccSDK/source/utils/AudioUtils.cpp:352", "ConvertPcm16@AccSDK/source/utils/AudioUtils.cpp:193"],
+      "sink": "memcpy_s@AccSDK/source/utils/AudioUtils.cpp:185",
+      "sink_type": "memory_operation"
+    }
+  ]
+}

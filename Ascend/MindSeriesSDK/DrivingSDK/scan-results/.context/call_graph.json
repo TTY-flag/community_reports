@@ -1,0 +1,225 @@
+{
+  "functions": {
+    "_set_env@mx_driving/__init__.py:149": {
+      "defined_at": 149,
+      "calls": [
+        "Dsmi_dc_Func.__init__@mx_driving/get_chip_info.py:18",
+        "os.path.join",
+        "os.environ.get",
+        "mx_driving._C._init_op_api_so_path"
+      ],
+      "called_by": ["<module>@mx_driving/__init__.py:179"],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "Dsmi_dc_Func.__init__@mx_driving/get_chip_info.py:18": {
+      "defined_at": 18,
+      "calls": [
+        "find_library_in_ld_path@mx_driving/get_chip_info.py:8",
+        "cdll.LoadLibrary"
+      ],
+      "called_by": ["_set_env@mx_driving/__init__.py:149"],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "find_library_in_ld_path@mx_driving/get_chip_info.py:8": {
+      "defined_at": 8,
+      "calls": ["os.environ.get", "os.path.join", "os.path.isfile"],
+      "called_by": ["Dsmi_dc_Func.__init__@mx_driving/get_chip_info.py:18"],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "with_imports@mx_driving/patcher/patch.py:720": {
+      "defined_at": 720,
+      "calls": [
+        "importlib.import_module@mx_driving/patcher/patch.py:758",
+        "eval@mx_driving/patcher/patch.py:790"
+      ],
+      "called_by": ["AtomicPatch.apply@mx_driving/patcher/patch.py"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "load_data@tests/torch/data_cache.py:88": {
+      "defined_at": 88,
+      "calls": [
+        "os.path.join",
+        "os.path.exists",
+        "np.load",
+        "torch.load@tests/torch/data_cache.py:98",
+        "json.load"
+      ],
+      "called_by": ["golden_data_cache wrapper@tests/torch/data_cache.py:158"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "golden_data_cache@tests/torch/data_cache.py:108": {
+      "defined_at": 108,
+      "calls": [
+        "serialize_param@tests/torch/data_cache.py:13",
+        "save_data@tests/torch/data_cache.py:38",
+        "load_data@tests/torch/data_cache.py:88"
+      ],
+      "called_by": ["<test functions>"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "__init__@model_examples/DriverAgent/data.py": {
+      "defined_at": 1,
+      "calls": [
+        "torch.load@model_examples/DriverAgent/data.py:65"
+      ],
+      "called_by": ["<training scripts>"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "voxelization@mx_driving/ops/voxelization.py": {
+      "defined_at": 54,
+      "calls": [
+        "mx_driving._C.hard_voxelize",
+        "mx_driving._C.dynamic_voxelization"
+      ],
+      "called_by": ["Voxelization.forward@mx_driving/modules/voxelization.py"],
+      "receives_external_input": true,
+      "risk": "Low"
+    },
+    "SparseConvFunction.forward@mx_driving/ops/sparse_functional.py:28": {
+      "defined_at": 28,
+      "calls": [
+        "mx_driving._C.npu_sparse_conv3d",
+        "mx_driving._C.unique_voxel",
+        "mx_driving._C.npu_sparse_matmul"
+      ],
+      "called_by": ["SparseConv3d.forward@mx_driving/modules/sparse_conv.py"],
+      "receives_external_input": true,
+      "risk": "Low"
+    },
+    "Patcher.apply@mx_driving/patcher/patcher.py:400": {
+      "defined_at": 400,
+      "calls": [
+        "importlib.import_module@mx_driving/patcher/patcher.py:501",
+        "AtomicPatch.apply"
+      ],
+      "called_by": ["default_patcher.apply@mx_driving/patcher/__init__.py"],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "replace_with@mx_driving/patcher/patcher.py:450": {
+      "defined_at": 450,
+      "calls": [
+        "importlib.import_module@mx_driving/patcher/patcher.py:501",
+        "setattr"
+      ],
+      "called_by": ["AtomicPatch.apply"],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "pybind_init@mx_driving/csrc/pybind.cpp": {
+      "defined_at": 1,
+      "calls": ["mx_driving._C bindings"],
+      "called_by": ["Python import mx_driving._C"],
+      "receives_external_input": false,
+      "risk": "Low"
+    },
+    "npu_sparse_conv3d@kernels/sparse_conv3d": {
+      "defined_at": 1,
+      "calls": ["ACL_OP_API calls"],
+      "called_by": ["SparseConvFunction.forward@mx_driving/ops/sparse_functional.py"],
+      "receives_external_input": true,
+      "risk": "Low"
+    },
+    "hard_voxelize@kernels/hard_voxelize": {
+      "defined_at": 1,
+      "calls": ["ACL_OP_API calls"],
+      "called_by": ["voxelization@mx_driving/ops/voxelization.py"],
+      "receives_external_input": true,
+      "risk": "Low"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "LD_LIBRARY_PATH@os.environ",
+      "path": [
+        "find_library_in_ld_path@mx_driving/get_chip_info.py:8",
+        "Dsmi_dc_Func.__init__@mx_driving/get_chip_info.py:18",
+        "cdll.LoadLibrary@mx_driving/get_chip_info.py:28"
+      ],
+      "sink": "Shared library execution@libdrvdsmi_host.so",
+      "sink_type": "library_loading"
+    },
+    {
+      "source": "decorator_exprs@AtomicPatch.with_imports",
+      "path": [
+        "with_imports@mx_driving/patcher/patch.py:720",
+        "eval@mx_driving/patcher/patch.py:790"
+      ],
+      "sink": "Code execution@eval()",
+      "sink_type": "code_execution"
+    },
+    {
+      "source": "file_path@load_data",
+      "path": [
+        "load_data@tests/torch/data_cache.py:88",
+        "torch.load@tests/torch/data_cache.py:98"
+      ],
+      "sink": "Pickle deserialization@torch.load()",
+      "sink_type": "deserialization"
+    },
+    {
+      "source": "path@DriverAgent/data.py",
+      "path": [
+        "__init__@model_examples/DriverAgent/data.py",
+        "torch.load@model_examples/DriverAgent/data.py:65"
+      ],
+      "sink": "Pickle deserialization@torch.load()",
+      "sink_type": "deserialization"
+    },
+    {
+      "source": "args.continue_path@train.py",
+      "path": [
+        "main@model_examples/DriverAgent/train.py",
+        "torch.load@model_examples/DriverAgent/train.py:112"
+      ],
+      "sink": "Pickle deserialization@torch.load()",
+      "sink_type": "deserialization"
+    },
+    {
+      "source": "points tensor@voxelization",
+      "path": [
+        "voxelization@mx_driving/ops/voxelization.py",
+        "mx_driving._C.hard_voxelize",
+        "ACL_OP_API@kernels/hard_voxelize"
+      ],
+      "sink": "NPU kernel execution",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "ASCEND_CUSTOM_OPP_PATH@os.environ",
+      "path": [
+        "_set_env@mx_driving/__init__.py:149",
+        "os.environ.get@mx_driving/__init__.py:169",
+        "os.environ[ASCEND_CUSTOM_OPP_PATH]@mx_driving/__init__.py:174"
+      ],
+      "sink": "Environment variable modification",
+      "sink_type": "env_modification"
+    },
+    {
+      "source": "features tensor@SparseConvFunction",
+      "path": [
+        "SparseConvFunction.forward@mx_driving/ops/sparse_functional.py:28",
+        "mx_driving._C.npu_sparse_conv3d",
+        "ACL_OP_API@kernels/sparse_conv3d"
+      ],
+      "sink": "NPU kernel execution",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "module_name@importlib.import_module",
+      "path": [
+        "Patcher.apply@mx_driving/patcher/patcher.py:400",
+        "importlib.import_module@mx_driving/patcher/patcher.py:501"
+      ],
+      "sink": "Dynamic module import",
+      "sink_type": "module_import"
+    }
+  ]
+}

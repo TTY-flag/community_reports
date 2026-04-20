@@ -1,0 +1,424 @@
+{
+  "functions": {
+    "create_chat_completions@mis/llm/entrypoints/openai/api_server.py": {
+      "defined_at": 143,
+      "calls": [
+        "get_client_ip@mis/utils/utils.py",
+        "chat@vllm/entrypoints/openai/api_server.py",
+        "_align_non_streaming_response@mis/llm/entrypoints/openai/api_server.py",
+        "_align_streaming_response@mis/llm/entrypoints/openai/api_server.py"
+      ],
+      "called_by": [
+        "FastAPI Router@mis/llm/entrypoints/openai/api_server.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "show_available_models@mis/llm/entrypoints/openai/api_server.py": {
+      "defined_at": 63,
+      "calls": [
+        "get_client_ip@mis/utils/utils.py",
+        "models@vllm/entrypoints/openai/api_server.py"
+      ],
+      "called_by": [
+        "FastAPI Router@mis/llm/entrypoints/openai/api_server.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "MISChatCompletionRequest.__init__@mis/llm/entrypoints/openai/api_extensions.py": {
+      "defined_at": 106,
+      "calls": [
+        "_remove_invalid_messages@mis/llm/entrypoints/openai/api_extensions.py",
+        "_validate_parameters@mis/llm/entrypoints/openai/api_extensions.py"
+      ],
+      "called_by": [
+        "create_chat_completions@mis/llm/entrypoints/openai/api_server.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "_remove_invalid_messages@mis/llm/entrypoints/openai/api_extensions.py": {
+      "defined_at": 120,
+      "calls": [],
+      "called_by": [
+        "MISChatCompletionRequest.__init__@mis/llm/entrypoints/openai/api_extensions.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "_validate_parameters@mis/llm/entrypoints/openai/api_extensions.py": {
+      "defined_at": 249,
+      "calls": [
+        "_validate_single_parameter@mis/llm/entrypoints/openai/api_extensions.py",
+        "_validate_range@mis/llm/entrypoints/openai/api_extensions.py",
+        "_validate_bool@mis/llm/entrypoints/openai/api_extensions.py",
+        "_validate_enum@mis/llm/entrypoints/openai/api_extensions.py",
+        "ConfigChecker.is_value_in_range@mis/utils/utils.py",
+        "ConfigChecker.is_value_in_enum@mis/utils/utils.py"
+      ],
+      "called_by": [
+        "MISChatCompletionRequest.__init__@mis/llm/entrypoints/openai/api_extensions.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "RequestHeaderSizeLimitMiddleware.dispatch@mis/llm/entrypoints/middleware.py": {
+      "defined_at": 70,
+      "calls": [
+        "get_client_ip@mis/utils/utils.py"
+      ],
+      "called_by": [
+        "FastAPI Middleware Chain@mis/llm/entrypoints/launcher.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "RequestSizeLimitMiddleware.dispatch@mis/llm/entrypoints/middleware.py": {
+      "defined_at": 137,
+      "calls": [
+        "get_client_ip@mis/utils/utils.py",
+        "_check_content_length@mis/llm/entrypoints/middleware.py",
+        "_handle_chunked_transfer@mis/llm/entrypoints/middleware.py"
+      ],
+      "called_by": [
+        "FastAPI Middleware Chain@mis/llm/entrypoints/launcher.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "ConcurrencyLimitMiddleware.dispatch@mis/llm/entrypoints/middleware.py": {
+      "defined_at": 259,
+      "calls": [
+        "get_client_ip@mis/utils/utils.py"
+      ],
+      "called_by": [
+        "FastAPI Middleware Chain@mis/llm/entrypoints/launcher.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "RateLimitMiddleware.dispatch@mis/llm/entrypoints/middleware.py": {
+      "defined_at": 347,
+      "calls": [
+        "get_client_ip@mis/utils/utils.py",
+        "_check_rate_limit@mis/llm/entrypoints/middleware.py",
+        "_update_rate_limit@mis/llm/entrypoints/middleware.py"
+      ],
+      "called_by": [
+        "FastAPI Middleware Chain@mis/llm/entrypoints/launcher.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "RequestTimeoutMiddleware.dispatch@mis/llm/entrypoints/middleware.py": {
+      "defined_at": 506,
+      "calls": [
+        "get_client_ip@mis/utils/utils.py",
+        "_handle_timeout@mis/llm/entrypoints/middleware.py",
+        "_handle_exception@mis/llm/entrypoints/middleware.py"
+      ],
+      "called_by": [
+        "FastAPI Middleware Chain@mis/llm/entrypoints/launcher.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "restrict_host_middleware@mis/llm/entrypoints/launcher.py": {
+      "defined_at": 159,
+      "calls": [
+        "get_client_ip@mis/utils/utils.py"
+      ],
+      "called_by": [
+        "FastAPI Middleware Chain@mis/llm/entrypoints/launcher.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "_run_server@mis/llm/entrypoints/launcher.py": {
+      "defined_at": 261,
+      "calls": [
+        "_build_engine_client_from_args@mis/llm/entrypoints/launcher.py",
+        "_build_app@mis/llm/entrypoints/launcher.py",
+        "_init_app_state@mis/llm/entrypoints/launcher.py",
+        "serve_http@vllm/entrypoints/launcher.py"
+      ],
+      "called_by": [
+        "_run@mis/llm/entrypoints/launcher.py"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "_build_app@mis/llm/entrypoints/launcher.py": {
+      "defined_at": 207,
+      "calls": [
+        "_add_middlewares@mis/llm/entrypoints/launcher.py",
+        "_add_exception_handlers@mis/llm/entrypoints/launcher.py",
+        "_add_restrict_host_middleware@mis/llm/entrypoints/launcher.py"
+      ],
+      "called_by": [
+        "_run_server@mis/llm/entrypoints/launcher.py"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "ConfigParser._config_yaml_file_loading@mis/llm/engines/config_parser.py": {
+      "defined_at": 122,
+      "calls": [
+        "GeneralChecker.check_path_or_file@mis/utils/general_checker.py",
+        "yaml.safe_load@yaml"
+      ],
+      "called_by": [
+        "_load_config_from_file@mis/llm/engines/config_parser.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "engine_config_loading@mis/llm/engines/config_parser.py": {
+      "defined_at": 101,
+      "calls": [
+        "_load_config_from_file@mis/llm/engines/config_parser.py",
+        "_config_attr_update@mis/llm/engines/config_parser.py"
+      ],
+      "called_by": [
+        "environment_preparation@mis/hub/envpreparation.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "AbsEngineConfigValidator.filter_and_validate_config@mis/llm/engines/config_validator.py": {
+      "defined_at": 180,
+      "calls": [
+        "_check_type@mis/llm/engines/config_validator.py",
+        "ConfigChecker.is_value_in_enum@mis/utils/utils.py",
+        "ConfigChecker.is_value_in_range@mis/utils/utils.py"
+      ],
+      "called_by": [
+        "_config_attr_update@mis/llm/engines/config_parser.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "environment_preparation@mis/hub/envpreparation.py": {
+      "defined_at": 41,
+      "calls": [
+        "_source_components_envs@mis/hub/envpreparation.py",
+        "ConfigParser.engine_config_loading@mis/llm/engines/config_parser.py",
+        "get_model_path@mis/utils/utils.py"
+      ],
+      "called_by": [
+        "main@mis/llm/entrypoints/launcher.py",
+        "main@mis/run.py"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "GeneralChecker.check_path_or_file@mis/utils/general_checker.py": {
+      "defined_at": 30,
+      "calls": [
+        "_path_validate_input@mis/utils/general_checker.py",
+        "_check_path_validity@mis/utils/general_checker.py",
+        "_check_path_permissions@mis/utils/general_checker.py"
+      ],
+      "called_by": [
+        "_config_yaml_file_loading@mis/llm/engines/config_parser.py",
+        "get_model_path@mis/utils/utils.py",
+        "LogManager.setup_logger@mis/logger.py",
+        "_get_cache_path_from_env@mis/envs.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "_check_path_validity@mis/utils/general_checker.py": {
+      "defined_at": 116,
+      "calls": [],
+      "called_by": [
+        "GeneralChecker.check_path_or_file@mis/utils/general_checker.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "_check_path_permissions@mis/utils/general_checker.py": {
+      "defined_at": 133,
+      "calls": [],
+      "called_by": [
+        "GeneralChecker.check_path_or_file@mis/utils/general_checker.py"
+      ],
+      "receives_external_input": false,
+      "risk": "Low"
+    },
+    "get_client_ip@mis/utils/utils.py": {
+      "defined_at": 159,
+      "calls": [
+        "ipaddress.ip_address@ipaddress"
+      ],
+      "called_by": [
+        "create_chat_completions@mis/llm/entrypoints/openai/api_server.py",
+        "show_available_models@mis/llm/entrypoints/openai/api_server.py",
+        "RequestHeaderSizeLimitMiddleware.dispatch@mis/llm/entrypoints/middleware.py",
+        "RequestSizeLimitMiddleware.dispatch@mis/llm/entrypoints/middleware.py",
+        "ConcurrencyLimitMiddleware.dispatch@mis/llm/entrypoints/middleware.py",
+        "RateLimitMiddleware.dispatch@mis/llm/entrypoints/middleware.py",
+        "RequestTimeoutMiddleware.dispatch@mis/llm/entrypoints/middleware.py",
+        "restrict_host_middleware@mis/llm/entrypoints/launcher.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Low"
+    },
+    "get_model_path@mis/utils/utils.py": {
+      "defined_at": 131,
+      "calls": [
+        "GeneralChecker.check_path_or_file@mis/utils/general_checker.py"
+      ],
+      "called_by": [
+        "environment_preparation@mis/hub/envpreparation.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "AutoEngine.from_config@mis/llm/engine_factory.py": {
+      "defined_at": 39,
+      "calls": [
+        "VLLMEngine.from_args@mis/llm/engine_factory.py"
+      ],
+      "called_by": [
+        "_build_engine_client_from_args@mis/llm/entrypoints/launcher.py"
+      ],
+      "receives_external_input": false,
+      "risk": "Low"
+    },
+    "VLLMEngine.from_args@mis/llm/engine_factory.py": {
+      "defined_at": 68,
+      "calls": [
+        "AsyncLLMEngine.from_engine_args@vllm"
+      ],
+      "called_by": [
+        "AutoEngine.from_config@mis/llm/engine_factory.py"
+      ],
+      "receives_external_input": false,
+      "risk": "Low"
+    },
+    "init_openai_app_state@mis/llm/entrypoints/openai/api_server.py": {
+      "defined_at": 195,
+      "calls": [
+        "_register_openai_services@mis/llm/entrypoints/openai/api_server.py"
+      ],
+      "called_by": [
+        "_init_app_state@mis/llm/entrypoints/launcher.py"
+      ],
+      "receives_external_input": false,
+      "risk": "Low"
+    },
+    "_source_components_envs@mis/hub/envpreparation.py": {
+      "defined_at": 31,
+      "calls": [
+        "os.environ@os"
+      ],
+      "called_by": [
+        "environment_preparation@mis/hub/envpreparation.py"
+      ],
+      "receives_external_input": false,
+      "risk": "Low"
+    },
+    "__getattr__@mis/envs.py": {
+      "defined_at": 127,
+      "calls": [
+        "environment_variables@mis/envs.py",
+        "_get_bool_from_env@mis/envs.py",
+        "_get_int_from_env@mis/envs.py",
+        "_get_str_from_env@mis/envs.py",
+        "_get_cache_path_from_env@mis/envs.py"
+      ],
+      "called_by": [
+        "GlobalArgs.__init__@mis/args.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "_get_cache_path_from_env@mis/envs.py": {
+      "defined_at": 112,
+      "calls": [
+        "_get_str_from_env@mis/envs.py",
+        "GeneralChecker.check_path_or_file@mis/utils/general_checker.py"
+      ],
+      "called_by": [
+        "__getattr__@mis/envs.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "HTTP Request Body@mis/llm/entrypoints/openai/api_server.py:143",
+      "path": [
+        "create_chat_completions@mis/llm/entrypoints/openai/api_server.py:143",
+        "MISChatCompletionRequest.__init__@mis/llm/entrypoints/openai/api_extensions.py:106",
+        "_validate_parameters@mis/llm/entrypoints/openai/api_extensions.py:249",
+        "handler.create_chat_completion@vllm"
+      ],
+      "sink": "vLLM Engine Processing",
+      "sink_type": "llm_inference"
+    },
+    {
+      "source": "HTTP Request Headers@mis/llm/entrypoints/middleware.py:70",
+      "path": [
+        "RequestHeaderSizeLimitMiddleware.dispatch@mis/llm/entrypoints/middleware.py:70",
+        "get_client_ip@mis/utils/utils.py:159",
+        "logger@mis/logger.py"
+      ],
+      "sink": "Logging System",
+      "sink_type": "logging"
+    },
+    {
+      "source": "HTTP Request Body@mis/llm/entrypoints/middleware.py:137",
+      "path": [
+        "RequestSizeLimitMiddleware.dispatch@mis/llm/entrypoints/middleware.py:137",
+        "_check_content_length@mis/llm/entrypoints/middleware.py:165",
+        "_handle_chunked_transfer@mis/llm/entrypoints/middleware.py:193"
+      ],
+      "sink": "Request Processing",
+      "sink_type": "request_handling"
+    },
+    {
+      "source": "YAML Configuration File@mis/llm/engines/config_parser.py:141",
+      "path": [
+        "_config_yaml_file_loading@mis/llm/engines/config_parser.py:141",
+        "yaml.safe_load@yaml",
+        "engine_config_loading@mis/llm/engines/config_parser.py:101",
+        "AbsEngineConfigValidator.filter_and_validate_config@mis/llm/engines/config_validator.py:180"
+      ],
+      "sink": "GlobalArgs.engine_optimization_config@mis/args.py",
+      "sink_type": "configuration"
+    },
+    {
+      "source": "Environment Variable MIS_CACHE_PATH@mis/envs.py:112",
+      "path": [
+        "_get_cache_path_from_env@mis/envs.py:112",
+        "GeneralChecker.check_path_or_file@mis/utils/general_checker.py:30",
+        "_check_path_validity@mis/utils/general_checker.py:116"
+      ],
+      "sink": "Path Validation Check",
+      "sink_type": "validation"
+    },
+    {
+      "source": "HTTP Host Header@mis/llm/entrypoints/launcher.py:181",
+      "path": [
+        "restrict_host_middleware@mis/llm/entrypoints/launcher.py:159",
+        "request.headers.get@launcher.py:181"
+      ],
+      "sink": "Host Validation Check",
+      "sink_type": "validation"
+    },
+    {
+      "source": "Client IP Address@mis/utils/utils.py:169",
+      "path": [
+        "get_client_ip@mis/utils/utils.py:159",
+        "request.client.host@utils.py:169",
+        "ipaddress.ip_address@ipaddress"
+      ],
+      "sink": "Rate Limit Middleware@mis/llm/entrypoints/middleware.py:347",
+      "sink_type": "rate_limiting"
+    }
+  ]
+}

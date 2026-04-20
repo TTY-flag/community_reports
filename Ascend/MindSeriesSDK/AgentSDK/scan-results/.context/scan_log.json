@@ -1,0 +1,113 @@
+{
+  "scan_id": "dataflow-scan-2026-04-20",
+  "start_time": "2026-04-20T07:29:19Z",
+  "end_time": "2026-04-20T08:24:00Z",
+  "duration_seconds": 3301,
+  "project_name": "MindSeriesSDK-AgentSDK",
+  "status": "completed",
+  "agents": [
+    {
+      "name": "dataflow-scanner",
+      "start_time": "2026-04-20T07:29:19Z",
+      "end_time": "2026-04-20T08:24:00Z",
+      "duration_seconds": 3301,
+      "status": "completed",
+      "outputs": ["scan.db"],
+      "error": null
+    },
+    {
+      "name": "module-scanner-trainer",
+      "start_time": "2026-04-20T07:29:19Z",
+      "end_time": "2026-04-20T08:00:00Z",
+      "duration_seconds": 1841,
+      "status": "timeout",
+      "outputs": [],
+      "error": "Task timed out after 30 minutes - vulnerabilities inserted directly by coordinator"
+    },
+    {
+      "name": "module-scanner-base_utils",
+      "start_time": "2026-04-20T07:29:19Z",
+      "end_time": "2026-04-20T07:36:43Z",
+      "duration_seconds": 444,
+      "status": "success",
+      "outputs": [],
+      "error": null
+    },
+    {
+      "name": "module-scanner-data_manager",
+      "start_time": "2026-04-20T07:29:19Z",
+      "end_time": "2026-04-20T07:32:10Z",
+      "duration_seconds": 171,
+      "status": "success",
+      "outputs": [],
+      "error": null
+    },
+    {
+      "name": "module-scanner-runner",
+      "start_time": "2026-04-20T07:29:19Z",
+      "end_time": "2026-04-20T07:32:07Z",
+      "duration_seconds": 168,
+      "status": "success",
+      "outputs": [],
+      "error": null
+    },
+    {
+      "name": "module-scanner-memory",
+      "start_time": "2026-04-20T07:29:19Z",
+      "end_time": "2026-04-20T07:32:37Z",
+      "duration_seconds": 198,
+      "status": "success",
+      "outputs": [],
+      "error": null
+    },
+    {
+      "name": "module-scanner-configs",
+      "start_time": "2026-04-20T07:36:44Z",
+      "end_time": "2026-04-20T07:41:33Z",
+      "duration_seconds": 289,
+      "status": "success",
+      "outputs": [],
+      "error": null
+    }
+  ],
+  "summary": {
+    "project_type": "cli_tool_python",
+    "total_files_scanned": 91,
+    "total_lines": 50000,
+    "candidates_found": 32,
+    "high_severity": 8,
+    "medium_severity": 16,
+    "low_severity": 8,
+    "confirmed_vulnerabilities": 1,
+    "likely_vulnerabilities": 4,
+    "possible_vulnerabilities": 17,
+    "false_positives": 3,
+    "lsp_available": false
+  },
+  "modules_scanned": {
+    "trainer": 6,
+    "configs": 6,
+    "base_utils": 6,
+    "runner": 5,
+    "data_manager": 4,
+    "memory": 3,
+    "cross_module": 2
+  },
+  "critical_paths_analyzed": [
+    {
+      "path_id": "CP-001",
+      "description": "Config injection to remote execution",
+      "vulnerabilities": ["VULN-DF-TRAINER-001", "VULN-DF-CROSS-001"]
+    },
+    {
+      "path_id": "CP-002",
+      "description": "Dynamic module loading path",
+      "vulnerabilities": ["VULN-DF-BASEUTILS-001", "VULN-DF-RUNNER-001", "VULN-DF-CROSS-001"]
+    },
+    {
+      "path_id": "CP-003",
+      "description": "Dataset loading path",
+      "vulnerabilities": ["VULN-DF-DATAMAN-002", "VULN-DF-TRAINER-004"]
+    }
+  ]
+}

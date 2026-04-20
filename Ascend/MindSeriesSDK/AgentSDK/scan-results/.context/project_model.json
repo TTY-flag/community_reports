@@ -1,0 +1,345 @@
+{
+  "project_name": "MindSeriesSDK-AgentSDK",
+  "language": "Python",
+  "version": "1.0.0",
+  "scan_timestamp": "2026-04-20T00:00:00Z",
+  "lsp_available": false,
+  "lsp_reason": "pyright-langserver failed to start - ENOEXEC error",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/shenteng/MindSeriesSDK/AgentSDK",
+  "scan_output_dir": "/home/pwn20tty/Desktop/opencode_project/shenteng/MindSeriesSDK/AgentSDK/scan-results",
+  "context_dir": "/home/pwn20tty/Desktop/opencode_project/shenteng/MindSeriesSDK/AgentSDK/scan-results/.context",
+  
+  "modules": [
+    {
+      "name": "trainer",
+      "path": "agentic_rl/trainer",
+      "description": "训练器模块 - 负责强化学习训练流程",
+      "risk_level": "HIGH",
+      "entry_points": [
+        {
+          "file": "agentic_rl/trainer/main.py",
+          "function": "main",
+          "line": 120,
+          "type": "cli_entry",
+          "source_type": "sys.argv",
+          "description": "命令行入口，接受 --config-path 参数加载 YAML 配置文件"
+        }
+      ],
+      "taint_sources": [
+        {
+          "file": "agentic_rl/trainer/main.py",
+          "function": "_load_config",
+          "line": 88,
+          "type": "file_input",
+          "source": "yaml.safe_load(config_path)",
+          "description": "从配置文件加载 YAML 数据，路径通过命令行参数传入"
+        }
+      ],
+      "taint_sinks": [
+        {
+          "file": "agentic_rl/trainer/main.py",
+          "function": "main",
+          "line": 171,
+          "type": "remote_execution",
+          "sink": "ray.get(train_fn.remote(cfg))",
+          "description": "将配置数据传递给远程 Ray actor 执行训练"
+        }
+      ],
+      "dependencies": ["base", "configs", "runner", "data_manager"]
+    },
+    {
+      "name": "base_utils",
+      "path": "agentic_rl/base/utils",
+      "description": "基础工具模块 - 提供文件检查、类加载、数据加载等功能",
+      "risk_level": "HIGH",
+      "entry_points": [],
+      "taint_sources": [],
+      "taint_sinks": [
+        {
+          "file": "agentic_rl/base/utils/class_loader.py",
+          "function": "load_subclasses_from_file",
+          "line": 35,
+          "type": "code_execution",
+          "sink": "importlib.util.spec_from_file_location",
+          "cwe": "CWE-94",
+          "description": "动态加载 Python 模块，存在代码注入风险"
+        }
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "data_manager",
+      "path": "agentic_rl/data_manager",
+      "description": "数据管理模块 - 管理训练数据流",
+      "risk_level": "MEDIUM",
+      "entry_points": [],
+      "taint_sources": [
+        {
+          "file": "agentic_rl/trainer/train_adapter/mindspeed_rl/train_agent_grpo.py",
+          "function": "_process_dataset",
+          "line": 114,
+          "type": "file_input",
+          "source": "load_dataset('json', data_files=actor_config.data_path)",
+          "description": "从外部 JSON 文件加载训练数据集"
+        }
+      ],
+      "taint_sinks": [],
+      "dependencies": ["base"]
+    },
+    {
+      "name": "memory",
+      "path": "agentic_rl/memory",
+      "description": "内存管理模块 - 管理 Agent 会话记忆和摘要",
+      "risk_level": "MEDIUM",
+      "entry_points": [],
+      "taint_sources": [
+        {
+          "file": "agentic_rl/memory/summary_client.py",
+          "function": "generate_chat_completion",
+          "line": 65,
+          "type": "api_response",
+          "source": "self.client.chat.completions.create(messages=messages, model=self.model_name)",
+          "description": "调用 OpenAI API 获取摘要响应"
+        }
+      ],
+      "taint_sinks": [],
+      "dependencies": ["base"]
+    },
+    {
+      "name": "runner",
+      "path": "agentic_rl/runner",
+      "description": "运行器模块 - 管理 Agent 推理引擎",
+      "risk_level": "HIGH",
+      "entry_points": [],
+      "taint_sources": [
+        {
+          "file": "agentic_rl/runner/infer_adapter/async_server.py",
+          "function": "__init__",
+          "line": 63,
+          "type": "env_var",
+          "source": "os.getenv('VLLM_DP_SIZE', '1')",
+          "description": "从环境变量读取分布式推理配置"
+        }
+      ],
+      "taint_sinks": [
+        {
+          "file": "agentic_rl/runner/agent_engine_wrapper/base_engine_wrapper.py",
+          "function": "generate_agent_trajectories_async",
+          "line": 105,
+          "type": "remote_execution",
+          "sink": "tasks parameter passed to agent engine",
+          "description": "将任务数据传递给 Agent 执行引擎"
+        }
+      ],
+      "dependencies": ["base", "configs", "trainer"]
+    },
+    {
+      "name": "configs",
+      "path": "agentic_rl/configs",
+      "description": "配置模块 - 管理全局配置",
+      "risk_level": "MEDIUM",
+      "entry_points": [],
+      "taint_sources": [],
+      "taint_sinks": [],
+      "dependencies": []
+    }
+  ],
+  
+  "entry_points": [
+    {
+      "id": "EP-001",
+      "type": "cli_entry",
+      "file": "agentic_rl/trainer/main.py",
+      "function": "main",
+      "line": 120,
+      "description": "命令行入口点，通过 argparse 解析 --config-path 参数",
+      "input_type": "sys.argv",
+      "controllability": "HIGH",
+      "attack_surface": "Configuration file path from user input"
+    },
+    {
+      "id": "EP-002",
+      "type": "file_input",
+      "file": "agentic_rl/trainer/main.py",
+      "function": "_load_config",
+      "line": 88,
+      "description": "YAML 配置文件加载",
+      "input_type": "file_content",
+      "controllability": "HIGH",
+      "attack_surface": "YAML configuration content loaded from user-specified path"
+    },
+    {
+      "id": "EP-003",
+      "type": "dynamic_load",
+      "file": "agentic_rl/base/utils/class_loader.py",
+      "function": "load_subclasses_from_file",
+      "line": 35,
+      "description": "动态加载 Python 模块",
+      "input_type": "file_path",
+      "controllability": "MEDIUM",
+      "attack_surface": "Python file loaded dynamically based on user-provided path"
+    },
+    {
+      "id": "EP-004",
+      "type": "env_var",
+      "file": "agentic_rl/runner/infer_adapter/async_server.py",
+      "function": "__init__",
+      "line": 63,
+      "description": "环境变量读取 VLLM_DP_SIZE",
+      "input_type": "environment_variable",
+      "controllability": "LOW",
+      "attack_surface": "Environment variable VLLM_DP_SIZE read and used for distributed inference configuration"
+    },
+    {
+      "id": "EP-005",
+      "type": "file_input",
+      "file": "agentic_rl/trainer/train_adapter/mindspeed_rl/train_agent_grpo.py",
+      "function": "_process_dataset",
+      "line": 114,
+      "description": "加载训练数据集",
+      "input_type": "json_file",
+      "controllability": "HIGH",
+      "attack_surface": "Training dataset loaded from JSON file specified in configuration"
+    },
+    {
+      "id": "EP-006",
+      "type": "api_call",
+      "file": "agentic_rl/memory/summary_client.py",
+      "function": "generate_chat_completion",
+      "line": 65,
+      "description": "OpenAI API 调用",
+      "input_type": "api_response",
+      "controllability": "LOW",
+      "attack_surface": "Response from OpenAI API used for memory summarization"
+    }
+  ],
+  
+  "attack_surface_summary": {
+    "total_entry_points": 6,
+    "high_risk_entry_points": 4,
+    "critical_paths": [
+      {
+        "path": "CLI -> YAML Config -> Ray Remote Execution",
+        "description": "用户通过命令行指定配置文件路径，配置内容加载后传递给 Ray 远程执行",
+        "risk": "Configuration injection leading to arbitrary code execution through Ray"
+      },
+      {
+        "path": "Config -> Dynamic Module Loading",
+        "description": "配置文件中指定的路径被用于动态加载 Python 模块",
+        "risk": "Arbitrary Python code execution through malicious module loading"
+      },
+      {
+        "path": "Config -> Dataset Loading",
+        "description": "配置指定的数据集文件被加载到训练流程",
+        "risk": "Malicious training data injection affecting model behavior"
+      }
+    ],
+    "file_operations": [
+      {
+        "function": "yaml.safe_load",
+        "file": "agentic_rl/trainer/main.py",
+        "line": 104,
+        "description": "加载 YAML 配置文件",
+        "risk": "Configuration injection",
+        "mitigation": "Path validation via FileCheck.check_data_path_is_valid()"
+      },
+      {
+        "function": "load_dataset",
+        "file": "agentic_rl/trainer/train_adapter/mindspeed_rl/train_agent_grpo.py",
+        "line": 114,
+        "description": "加载 JSON 数据集",
+        "risk": "Data injection",
+        "mitigation": "None observed"
+      },
+      {
+        "function": "importlib.util.spec_from_file_location",
+        "file": "agentic_rl/base/utils/class_loader.py",
+        "line": 57,
+        "description": "动态加载 Python 模块",
+        "risk": "Code execution",
+        "mitigation": "Path validation via FileCheck.check_data_path_is_valid()"
+      }
+    ]
+  },
+  
+  "high_risk_functions": [
+    {
+      "file": "agentic_rl/base/utils/class_loader.py",
+      "function": "load_subclasses_from_file",
+      "line": 35,
+      "risk_type": "code_injection",
+      "cwe": "CWE-94",
+      "severity": "HIGH",
+      "description": "动态加载外部 Python 模块，如果路径验证被绕过可能导致任意代码执行"
+    },
+    {
+      "file": "agentic_rl/trainer/main.py",
+      "function": "main",
+      "line": 120,
+      "risk_type": "remote_execution",
+      "cwe": "CWE-95",
+      "severity": "HIGH",
+      "description": "将配置数据传递给 Ray 远程 actor，配置注入可能导致远程代码执行"
+    },
+    {
+      "file": "agentic_rl/base/utils/file_utils.py",
+      "function": "check_path_is_exist_and_valid",
+      "line": 30,
+      "risk_type": "path_validation_bypass",
+      "cwe": "CWE-22",
+      "severity": "MEDIUM",
+      "description": "路径验证逻辑存在缺陷，os.path.realpath != os.path.normpath 检查不能正确检测符号链接"
+    }
+  ],
+  
+  "security_controls": [
+    {
+      "type": "path_validation",
+      "file": "agentic_rl/base/utils/file_utils.py",
+      "function": "FileCheck.check_data_path_is_valid",
+      "line": 110,
+      "description": "文件路径验证，检查路径存在性、字符合法性、符号链接、权限",
+      "effectiveness": "PARTIAL",
+      "weaknesses": [
+        "os.path.realpath(path) != os.path.normpath(path) 检查逻辑有问题",
+        "normpath 不会将路径转换为真实路径，因此比较可能不准确",
+        "字符验证 pattern_name 不包含完整的安全字符集"
+      ]
+    },
+    {
+      "type": "safe_yaml",
+      "file": "agentic_rl/trainer/main.py",
+      "function": "_load_config",
+      "line": 104,
+      "description": "使用 yaml.safe_load() 而非 yaml.load()，防止 YAML 反序列化攻击",
+      "effectiveness": "HIGH",
+      "weaknesses": []
+    },
+    {
+      "type": "env_whitelist",
+      "file": "agentic_rl/trainer/main.py",
+      "function": "whitelist_environ",
+      "line": 39,
+      "description": "环境变量白名单过滤，只保留必要的 ASCEND 相关变量",
+      "effectiveness": "HIGH",
+      "weaknesses": []
+    },
+    {
+      "type": "size_limit",
+      "file": "agentic_rl/trainer/main.py",
+      "function": "_load_config",
+      "line": 91,
+      "description": "配置文件大小限制 (1MB)",
+      "effectiveness": "MEDIUM",
+      "weaknesses": [
+        "仅限制配置文件，不限制数据集文件大小"
+      ]
+    }
+  ],
+  
+  "file_count": {
+    "total_python_files": 91,
+    "source_files": 49,
+    "test_files": 42
+  }
+}

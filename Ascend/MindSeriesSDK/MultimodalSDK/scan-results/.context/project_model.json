@@ -1,0 +1,274 @@
+{
+  "project_name": "MultimodalSDK",
+  "scan_time": "2026-04-20T02:00:00Z",
+  "lsp_available": false,
+  "total_files": 175,
+  "total_lines": 10127,
+  "project_profile": {
+    "project_type": "library",
+    "deployment_model": "作为 Python SDK 库被集成到多模态大模型推理系统中，在服务器端运行。用户通过 Python API 加载图像/视频/音频文件，SDK 进行预处理后输出 Tensor 数据供推理引擎使用。",
+    "trust_boundaries": [
+      {
+        "boundary": "File System Interface",
+        "trusted_side": "SDK 内部处理逻辑",
+        "untrusted_side": "用户提供的图像/视频/音频文件",
+        "risk": "High"
+      },
+      {
+        "boundary": "Python API Interface",
+        "trusted_side": "SDK Python 绑定层",
+        "untrusted_side": "调用方 Python 代码（可能来自 Web 应用或其他服务）",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "External Library Interface",
+        "trusted_side": "SDK 封装层",
+        "untrusted_side": "FFmpeg、libjpeg-turbo、Soxr 等外部库",
+        "risk": "Critical"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "image",
+      "path": "AccSDK/source/image",
+      "language": "c_cpp",
+      "components": ["Image.cpp", "ImageOps.cpp"]
+    },
+    {
+      "name": "video",
+      "path": "AccSDK/source/video",
+      "language": "c_cpp",
+      "components": ["Video.cpp"]
+    },
+    {
+      "name": "audio",
+      "path": "AccSDK/source/audio",
+      "language": "c_cpp",
+      "components": ["Audio.cpp"]
+    },
+    {
+      "name": "tensor",
+      "path": "AccSDK/source/tensor",
+      "language": "c_cpp",
+      "components": ["Tensor.cpp", "TensorOps.cpp"]
+    },
+    {
+      "name": "py_bindings",
+      "path": "AccSDK/source/py/module",
+      "language": "c_cpp",
+      "components": ["PyImage.cpp", "PyVideo.cpp", "PyAudio.cpp", "PyTensor.cpp", "PyPreprocess.cpp", "PyUtil.cpp", "PyLog.cpp", "PyTensorOps.cpp"]
+    },
+    {
+      "name": "utils",
+      "path": "AccSDK/source/utils",
+      "language": "c_cpp",
+      "components": ["FileUtils.cpp", "ImageUtils.cpp", "VideoUtils.cpp", "AudioUtils.cpp", "Log.cpp", "ThreadPool.cpp", "ErrorCodeUtils.cpp", "TensorUtils.cpp"]
+    },
+    {
+      "name": "core_framework",
+      "path": "AccSDK/source/core/framework",
+      "language": "c_cpp",
+      "components": ["Pipeline.cpp", "CPUAccelerator.cpp", "XPUAccelerator.cpp"]
+    },
+    {
+      "name": "fusion_operators",
+      "path": "AccSDK/source/fusion_operators",
+      "language": "c_cpp",
+      "components": ["FusionOperators.cpp"]
+    },
+    {
+      "name": "mm_acc_wrapper",
+      "path": "MultimodalSDK/source/mm/acc/wrapper",
+      "language": "python",
+      "components": ["image_wrapper.py", "video_wrapper.py", "audio_wrapper.py", "tensor_wrapper.py", "util.py", "data_type.py"]
+    },
+    {
+      "name": "mm_adapter",
+      "path": "MultimodalSDK/source/mm/adapter",
+      "language": "python",
+      "components": ["internvl2_preprocessor.py", "qwen2_vl_preprocessor.py"]
+    },
+    {
+      "name": "mm_patcher",
+      "path": "MultimodalSDK/source/mm/patcher/vllm",
+      "language": "python",
+      "components": ["image_patcher.py", "video_patcher.py", "internvl2_image_processor_patcher.py", "qwen2_vl_image_processor_patcher.py"]
+    },
+    {
+      "name": "mm_comm",
+      "path": "MultimodalSDK/source/mm/comm",
+      "language": "python",
+      "components": ["log.py"]
+    }
+  ],
+  "files": [
+    {
+      "path": "AccSDK/source/utils/ImageUtils.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "utils",
+      "lines": 120,
+      "priority": 1
+    },
+    {
+      "path": "AccSDK/source/utils/VideoUtils.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "utils",
+      "lines": 350,
+      "priority": 2
+    },
+    {
+      "path": "AccSDK/source/utils/AudioUtils.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "utils",
+      "lines": 506,
+      "priority": 3
+    },
+    {
+      "path": "AccSDK/source/video/Video.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "video",
+      "lines": 331,
+      "priority": 4
+    },
+    {
+      "path": "AccSDK/source/image/Image.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "image",
+      "lines": 267,
+      "priority": 5
+    },
+    {
+      "path": "AccSDK/source/audio/Audio.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "audio",
+      "lines": 290,
+      "priority": 6
+    },
+    {
+      "path": "AccSDK/source/utils/FileUtils.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "utils",
+      "lines": 224,
+      "priority": 7
+    },
+    {
+      "path": "AccSDK/source/py/module/PyImage.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "py_bindings",
+      "lines": 242,
+      "priority": 8
+    },
+    {
+      "path": "AccSDK/source/py/module/PyVideo.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "py_bindings",
+      "lines": 49,
+      "priority": 9
+    },
+    {
+      "path": "AccSDK/source/py/module/PyAudio.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "py_bindings",
+      "lines": 100,
+      "priority": 10
+    },
+    {
+      "path": "MultimodalSDK/source/mm/adapter/qwen2_vl_preprocessor.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "mm_adapter",
+      "lines": 824,
+      "priority": 11
+    },
+    {
+      "path": "MultimodalSDK/source/mm/adapter/internvl2_preprocessor.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "mm_adapter",
+      "lines": 177,
+      "priority": 12
+    },
+    {
+      "path": "MultimodalSDK/source/mm/acc/wrapper/image_wrapper.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "mm_acc_wrapper",
+      "lines": 391,
+      "priority": 13
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "AccSDK/source/utils/ImageUtils.cpp",
+      "line": 61,
+      "function": "ReadJpegData",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "用户通过 Python API Image.open(path) 提供图像文件路径，SDK 从文件系统读取并解码 JPEG 数据。攻击者可通过提供恶意构造的 JPEG 文件触发漏洞。",
+      "description": "JPEG 图像文件解码入口"
+    },
+    {
+      "file": "AccSDK/source/video/Video.cpp",
+      "line": 136,
+      "function": "InitVideoInfo",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "用户通过 video_decode(path) 提供视频文件路径，SDK 使用 FFmpeg 打开并解码 MP4 文件。FFmpeg 解码器历史上有多个已知漏洞，恶意视频文件可触发解析漏洞。",
+      "description": "FFmpeg 视频文件解码入口"
+    },
+    {
+      "file": "AccSDK/source/utils/AudioUtils.cpp",
+      "line": 465,
+      "function": "AudioDecode",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "用户通过 load_audio(path) 提供音频文件路径，SDK 手动解析 WAV 文件格式。攻击者可构造畸形 WAV 文件触发解析逻辑漏洞。",
+      "description": "WAV 音频文件解析入口"
+    },
+    {
+      "file": "AccSDK/source/utils/FileUtils.cpp",
+      "line": 105,
+      "function": "ReadFile",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "通用文件读取函数，被图像/音频加载模块调用。虽然有文件权限检查，但仍处理用户提供的文件内容。",
+      "description": "通用文件读取入口"
+    },
+    {
+      "file": "MultimodalSDK/source/mm/acc/wrapper/image_wrapper.py",
+      "line": 35,
+      "function": "Image.open",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "Python 层图像加载 API，接收用户提供的文件路径参数，传递给 C++ 层进行解码。",
+      "description": "Python 图像加载入口"
+    },
+    {
+      "file": "MultimodalSDK/source/mm/acc/wrapper/video_wrapper.py",
+      "line": 27,
+      "function": "video_decode",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "Python 层视频解码 API，接收用户提供的视频文件路径参数，传递给 C++ 层使用 FFmpeg 解码。",
+      "description": "Python 视频解码入口"
+    }
+  ],
+  "attack_surfaces": [
+    "JPEG 解码器 (libjpeg-turbo): tjDecompressHeader2, tjDecompress2",
+    "视频解码器 (FFmpeg): avformat_open_input, avcodec_open2, av_read_frame",
+    "WAV 文件解析: 手动解析 RIFF/FMT/DATA chunk",
+    "Python 绑定层: pybind11 封装函数",
+    "外部库依赖: libjpeg-turbo, FFmpeg, Soxr, transformers"
+  ]
+}

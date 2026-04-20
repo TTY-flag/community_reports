@@ -1,0 +1,89 @@
+{
+  "scan_id": "rag-sdk-scan-001",
+  "start_time": "2026-04-20T02:00:00.000Z",
+  "end_time": "2026-04-20T03:44:00.000Z",
+  "duration_seconds": 6840,
+  "project_name": "RAGSDK",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/shenteng/MindSeriesSDK/RAGSDK",
+  "status": "completed",
+  "agents": [
+    {
+      "name": "architecture",
+      "start_time": "2026-04-20T02:00:05.000Z",
+      "end_time": "2026-04-20T02:06:32.000Z",
+      "duration_seconds": 387,
+      "status": "success",
+      "outputs": [
+        "project_model.json",
+        "call_graph.json",
+        "threat_analysis_report.md"
+      ],
+      "error": null
+    },
+    {
+      "name": "dataflow-scanner",
+      "start_time": "2026-04-20T02:06:35.000Z",
+      "end_time": "2026-04-20T03:23:34.000Z",
+      "duration_seconds": 4619,
+      "status": "success",
+      "outputs": [
+        "scan.db (57 vulnerabilities)"
+      ],
+      "error": null
+    },
+    {
+      "name": "security-auditor",
+      "start_time": "2026-04-20T02:06:35.000Z",
+      "end_time": "2026-04-20T02:11:28.000Z",
+      "duration_seconds": 293,
+      "status": "success",
+      "outputs": [
+        "scan.db (additional vulnerabilities)"
+      ],
+      "error": null
+    },
+    {
+      "name": "verification",
+      "start_time": "2026-04-20T03:23:40.000Z",
+      "end_time": "2026-04-20T03:28:22.000Z",
+      "duration_seconds": 282,
+      "status": "success",
+      "outputs": [
+        "scan.db (65 verified vulnerabilities)"
+      ],
+      "error": null
+    },
+    {
+      "name": "details-analyzer",
+      "start_time": "2026-04-20T03:28:30.000Z",
+      "end_time": "2026-04-20T03:37:00.000Z",
+      "duration_seconds": 510,
+      "status": "partial",
+      "outputs": [
+        "details/*.md (8/9 reports generated)"
+      ],
+      "error": "CROSS-MODULE-001 report missing (worker timeout)"
+    },
+    {
+      "name": "reporter",
+      "start_time": "2026-04-20T03:37:10.000Z",
+      "end_time": "2026-04-20T03:44:00.000Z",
+      "duration_seconds": 410,
+      "status": "success",
+      "outputs": [
+        "report_confirmed.md",
+        "report_unconfirmed.md"
+      ],
+      "error": null
+    }
+  ],
+  "summary": {
+    "project_type": "cli_tool_python",
+    "total_files_scanned": 232,
+    "total_lines": 22329,
+    "candidates_found": 66,
+    "confirmed_vulnerabilities": 9,
+    "false_positives": 22,
+    "lsp_available": false
+  }
+}

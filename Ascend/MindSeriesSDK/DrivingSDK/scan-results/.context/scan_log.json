@@ -1,0 +1,99 @@
+{
+  "scan_id": "scan_20260420_0018",
+  "start_time": "2026-04-20T00:18:00Z",
+  "end_time": "2026-04-20T01:10:35Z",
+  "duration_seconds": 3125,
+  "project_name": "DrivingSDK",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/shenteng/MindSeriesSDK/DrivingSDK",
+  "status": "success",
+  "agents": [
+    {
+      "name": "architecture",
+      "start_time": "2026-04-20T00:18:00Z",
+      "end_time": "2026-04-20T00:25:00Z",
+      "duration_seconds": 420,
+      "status": "success",
+      "outputs": [
+        "project_model.json",
+        "call_graph.json",
+        "threat_analysis_report.md"
+      ]
+    },
+    {
+      "name": "dataflow-scanner",
+      "start_time": "2026-04-20T00:26:00Z",
+      "end_time": "2026-04-20T00:31:16Z",
+      "duration_seconds": 316,
+      "status": "success",
+      "item_count": 22,
+      "outputs": []
+    },
+    {
+      "name": "security-auditor",
+      "start_time": "2026-04-20T00:26:00Z",
+      "end_time": "2026-04-20T00:32:47Z",
+      "duration_seconds": 407,
+      "status": "success",
+      "item_count": 8,
+      "outputs": []
+    },
+    {
+      "name": "verification",
+      "start_time": "2026-04-20T00:33:00Z",
+      "end_time": "2026-04-20T00:50:52Z",
+      "duration_seconds": 1072,
+      "status": "success",
+      "item_count": 82,
+      "outputs": [],
+      "summary": {
+        "CONFIRMED": 2,
+        "LIKELY": 4,
+        "POSSIBLE": 42,
+        "FALSE_POSITIVE": 34
+      }
+    },
+    {
+      "name": "details-analyzer",
+      "start_time": "2026-04-20T00:53:00Z",
+      "end_time": "2026-04-20T01:07:11Z",
+      "duration_seconds": 851,
+      "status": "success",
+      "item_count": 2,
+      "outputs": [
+        "details/VULN-SA-PY-001.md",
+        "details/VULN-SA-PY-002.md"
+      ]
+    },
+    {
+      "name": "reporter",
+      "start_time": "2026-04-20T01:08:00Z",
+      "end_time": "2026-04-20T01:10:35Z",
+      "duration_seconds": 155,
+      "status": "success",
+      "outputs": [
+        "report_confirmed.md",
+        "report_unconfirmed.md"
+      ]
+    }
+  ],
+  "summary": {
+    "total_files": 676,
+    "total_lines": 126032,
+    "languages": {
+      "c_cpp": 439,
+      "python": 237
+    },
+    "vulnerabilities": {
+      "confirmed": 2,
+      "likely": 4,
+      "possible": 42,
+      "false_positive": 34,
+      "total_candidates": 82
+    },
+    "high_risk_modules": [
+      "mx_driving_patcher",
+      "model_examples",
+      "mx_driving"
+    ]
+  }
+}

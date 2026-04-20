@@ -1,0 +1,337 @@
+{
+  "project_name": "DrivingSDK",
+  "scan_time": "2026-04-20T00:18:00Z",
+  "lsp_available": false,
+  "total_files": 676,
+  "total_lines": 126032,
+  "project_profile": {
+    "project_type": "library",
+    "deployment_model": "Python库，通过pip安装后作为PyTorch的扩展模块使用。典型部署场景为：开发者导入mx_driving模块，调用NPU加速算子进行自动驾驶模型训练或推理。库包含C/C++算子实现（通过CMake编译为.so）和Python API封装。",
+    "trust_boundaries": [
+      {
+        "boundary": "API Input",
+        "trusted_side": "Application code (developer-controlled)",
+        "untrusted_side": "External input data (model files, training data)",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "File System",
+        "trusted_side": "Library installation path",
+        "untrusted_side": "User-provided file paths (torch.load paths, data paths)",
+        "risk": "High"
+      },
+      {
+        "boundary": "Dynamic Library Loading",
+        "trusted_side": "System library path",
+        "untrusted_side": "LD_LIBRARY_PATH (can be manipulated)",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Monkey Patching",
+        "trusted_side": "Original implementations (mmcv, mmdet, torch)",
+        "untrusted_side": "Patcher replacement code",
+        "risk": "Low"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "kernels",
+      "path": "kernels",
+      "language": "c_cpp",
+      "components": ["bev_pool", "bev_pool_v2", "bev_pool_v3", "sparse_conv3d", "subm_sparse_conv3d", "deformable_conv2d", "multi_scale_deformable_attn", "nms3d", "voxelization", "scatter_add", "scatter_max", "scatter_mean", "roiaware_pool3d", "knn", "furthest_point_sampling", "grid_sampler2d_v2", "grid_sampler3d_v1", "border_align", "box_iou", "dynamic_scatter", "common"]
+    },
+    {
+      "name": "mx_driving_ops",
+      "path": "mx_driving/ops",
+      "language": "python",
+      "components": ["voxelization.py", "sparse_functional.py", "bev_pool.py", "bev_pool_v2.py", "bev_pool_v3.py", "deform_conv2d.py", "modulated_deform_conv2d.py", "multi_scale_deformable_attn.py", "nms3d.py", "scatter_add.py", "scatter_max.py", "scatter_mean.py", "roiaware_pool3d.py", "knn.py", "furthest_point_sampling.py", "grid_sampler2d_v2.py", "grid_sampler3d_v1.py", "border_align.py", "box_iou.py", "dynamic_scatter.py", "sigmoid_focal_loss.py", "diff_iou_rotated.py", "npu_deformable_aggregation.py"]
+    },
+    {
+      "name": "mx_driving_csrc",
+      "path": "mx_driving/csrc",
+      "language": "c_cpp",
+      "components": ["pybind.cpp", "OpApiCommon.cpp", "BEVPool.cpp", "BEVPoolV2.cpp", "BEVPoolV3.cpp", "SparseConv3d.cpp", "SubmSparseConv3d.cpp", "DeformableConv2d.cpp", "ModulatedDeformableConv2d.cpp", "MultiScaleDeformableAttn.cpp", "Nms3d.cpp", "HardVoxelize.cpp", "DynamicVoxelization.cpp", "scatterAdd.cpp", "ScatterMax.cpp", "scatterMean.cpp", "RoiawarePool3d.cpp", "Knn.cpp", "FurthestPointSampling.cpp", "GridSampler2dV2.cpp", "GridSampler3dGradV1.cpp", "BorderAlign.cpp", "BoxIou.cpp", "DynamicScatter.cpp", "SigmoidFocalLoss.cpp", "DiffIouRotatedSortVertices.cpp", "DeformableAggregation.cpp"]
+    },
+    {
+      "name": "mx_driving_patcher",
+      "path": "mx_driving/patcher",
+      "language": "python",
+      "components": ["patcher.py", "patch.py", "mmcv_patch.py", "mmengine_patch.py", "mmdet_patch.py", "mmdet3d_patch.py", "numpy_patch.py", "torch_patch.py", "torch_scatter_patch.py", "legacy.py", "patcher_logger.py", "version.py", "__init__.py"]
+    },
+    {
+      "name": "mx_driving_modules",
+      "path": "mx_driving/modules",
+      "language": "python",
+      "components": ["sparse_conv.py", "sparse_modules.py", "sparse_structure.py", "voxelization.py", "roi_point_pool_3d.py"]
+    },
+    {
+      "name": "mx_driving_dataset",
+      "path": "mx_driving/dataset",
+      "language": "python",
+      "components": ["agent_dataset.py", "point_dataset.py"]
+    },
+    {
+      "name": "include",
+      "path": "include",
+      "language": "c_cpp",
+      "components": ["csrc", "ge", "log", "onnx"]
+    },
+    {
+      "name": "model_examples",
+      "path": "model_examples",
+      "language": "mixed",
+      "components": ["BEVFormer", "BEVDepth", "BEVDet", "Sparse4D", "VAD", "DriverAgent", "DiffusionDrive", "PanoOcc", "MapTR", "CenterPoint", "DETR3D", "FlashOCC", "GameFormer", "Cosmos-Drive-Dreams", "Cosmos-Predict2", "GR00T-N1.5"]
+    },
+    {
+      "name": "tests",
+      "path": "tests",
+      "language": "mixed",
+      "components": ["torch", "onnx", "patcher"]
+    },
+    {
+      "name": "onnx_plugin",
+      "path": "onnx_plugin",
+      "language": "c_cpp",
+      "components": []
+    },
+    {
+      "name": "scripts",
+      "path": "scripts",
+      "language": "python",
+      "components": []
+    },
+    {
+      "name": "ci",
+      "path": "ci",
+      "language": "python",
+      "components": ["access_control_test.py"]
+    },
+    {
+      "name": "cmake",
+      "path": "cmake",
+      "language": "mixed",
+      "components": ["config.cmake", "func.cmake", "intf.cmake", "util"]
+    }
+  ],
+  "files": [
+    {
+      "path": "mx_driving/patcher/patch.py",
+      "language": "python",
+      "risk": "High",
+      "module": "mx_driving_patcher",
+      "lines": 916,
+      "priority": 1,
+      "reason": "Contains eval() expression evaluation for decorator application, potential code injection if decorator expressions are user-controlled"
+    },
+    {
+      "path": "mx_driving/patcher/patcher.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "mx_driving_patcher",
+      "lines": 1222,
+      "priority": 2,
+      "reason": "Monkey patching framework with dynamic module import, module names from patch definitions"
+    },
+    {
+      "path": "tests/torch/data_cache.py",
+      "language": "python",
+      "risk": "High",
+      "module": "tests",
+      "lines": 171,
+      "priority": 3,
+      "reason": "Uses torch.load() without weights_only=True for loading cached test data, pickle deserialization vulnerability"
+    },
+    {
+      "path": "mx_driving/get_chip_info.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "mx_driving",
+      "lines": 49,
+      "priority": 4,
+      "reason": "Loads shared library from LD_LIBRARY_PATH via ctypes, library path can be manipulated by environment variable"
+    },
+    {
+      "path": "model_examples/DriverAgent/data.py",
+      "language": "python",
+      "risk": "High",
+      "module": "model_examples",
+      "lines": 460,
+      "priority": 5,
+      "reason": "Uses torch.load() without weights_only=True for loading .pt files, pickle deserialization vulnerability"
+    },
+    {
+      "path": "model_examples/DriverAgent/train.py",
+      "language": "python",
+      "risk": "High",
+      "module": "model_examples",
+      "lines": 350,
+      "priority": 6,
+      "reason": "Uses torch.load() and torch.save() for model loading/saving, potential deserialization vulnerability"
+    },
+    {
+      "path": "setup.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "root",
+      "lines": 213,
+      "priority": 7,
+      "reason": "Uses subprocess.check_call() for cmake/git commands, commands are hardcoded but git rev-parse uses cwd parameter"
+    },
+    {
+      "path": "cmake/util/ascendc_impl_build.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "cmake",
+      "lines": 150,
+      "priority": 8,
+      "reason": "Uses ctypes.CDLL() to load shared library, path derived from build output"
+    },
+    {
+      "path": "ci/access_control_test.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "ci",
+      "lines": 250,
+      "priority": 9,
+      "reason": "Uses subprocess.Popen() and subprocess.getstatusoutput() for CI testing, commands may be configurable"
+    },
+    {
+      "path": "mx_driving/__init__.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "mx_driving",
+      "lines": 179,
+      "priority": 10,
+      "reason": "Package initialization, sets environment variable ASCEND_CUSTOM_OPP_PATH, loads shared library for chip detection"
+    },
+    {
+      "path": "mx_driving/patcher/__init__.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "mx_driving_patcher",
+      "lines": 273,
+      "priority": 11,
+      "reason": "Patcher module initialization, imports torch/torch_npu and creates default patcher"
+    },
+    {
+      "path": "mx_driving/dataset/agent_dataset.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "mx_driving_dataset",
+      "lines": 202,
+      "priority": 12,
+      "reason": "Dataset loading logic, uses json.load() for agents_num file, no pickle usage"
+    },
+    {
+      "path": "mx_driving/csrc/pybind.cpp",
+      "language": "c_cpp",
+      "risk": "Low",
+      "module": "mx_driving_csrc",
+      "lines": 150,
+      "priority": 13,
+      "reason": "Pybind11 bindings for C++ operators, exposes C++ functions to Python"
+    },
+    {
+      "path": "kernels/common/op_host/common_op_host.h",
+      "language": "c_cpp",
+      "risk": "Low",
+      "module": "kernels",
+      "lines": 100,
+      "priority": 14,
+      "reason": "Common kernel utilities header"
+    },
+    {
+      "path": "mx_driving/ops/sparse_functional.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "mx_driving_ops",
+      "lines": 228,
+      "priority": 15,
+      "reason": "Sparse convolution functional wrappers, calls C++ bindings via mx_driving._C"
+    },
+    {
+      "path": "mx_driving/ops/voxelization.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "mx_driving_ops",
+      "lines": 54,
+      "priority": 16,
+      "reason": "Voxelization operator wrapper, basic input validation for empty tensors"
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "mx_driving/patcher/patch.py",
+      "line": 790,
+      "function": "with_imports",
+      "type": "decorator",
+      "trust_level": "semi_trusted",
+      "justification": "eval() used for decorator expression resolution within patcher framework. Decorator expressions come from predefined patch definitions (developer-controlled), not user input. Risk is limited to developers creating custom patches with malicious decorator strings.",
+      "description": "Decorator expression evaluation in patcher framework"
+    },
+    {
+      "file": "tests/torch/data_cache.py",
+      "line": 98,
+      "function": "load_data",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "torch.load() used without weights_only=True to load cached test data from file paths. File paths come from test cache directory (developer-controlled environment) but could be manipulated if cache directory is writable by other users.",
+      "description": "Loading cached test data via torch.load()"
+    },
+    {
+      "file": "model_examples/DriverAgent/data.py",
+      "line": 65,
+      "function": "__init__",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "torch.load() used without weights_only=True to load .pt data files from user-provided path. Path is constructor argument, attacker can provide malicious .pt file if they control data source.",
+      "description": "Loading training data from .pt files via torch.load()"
+    },
+    {
+      "file": "model_examples/DriverAgent/train.py",
+      "line": 112,
+      "function": "main",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "torch.load() used without weights_only=True to load pretrained model weights from args.continue_path. Path is CLI argument, attacker controlling command line can provide malicious checkpoint.",
+      "description": "Loading model checkpoint via torch.load()"
+    },
+    {
+      "file": "mx_driving/get_chip_info.py",
+      "line": 28,
+      "function": "__init__",
+      "type": "env",
+      "trust_level": "semi_trusted",
+      "justification": "Loads libdrvdsmi_host.so from LD_LIBRARY_PATH. Library search path can be manipulated by local user via environment variable, but requires the attacker to place malicious library in accessible location.",
+      "description": "Loading system library from LD_LIBRARY_PATH"
+    },
+    {
+      "file": "mx_driving/__init__.py",
+      "line": 170,
+      "function": "_set_env",
+      "type": "env",
+      "trust_level": "semi_trusted",
+      "justification": "Modifies ASCEND_CUSTOM_OPP_PATH environment variable, combining with existing value. Existing env value can be set by local user before importing mx_driving.",
+      "description": "Modifying ASCEND_CUSTOM_OPP_PATH environment variable"
+    },
+    {
+      "file": "setup.py",
+      "line": 188,
+      "function": "get_sha",
+      "type": "env",
+      "trust_level": "trusted_admin",
+      "justification": "git rev-parse executed in project root directory during build. Command is hardcoded, cwd is BASE_DIR (project root). Only executed during pip install/build, attacker cannot trigger this at runtime.",
+      "description": "Git command execution during build"
+    }
+  ],
+  "attack_surfaces": [
+    "Python API Input Validation: Tensor shape/type validation in ops modules (sparse_functional.py, voxelization.py)",
+    "File Loading: torch.load() in model examples and test data cache (DriverAgent/data.py, data_cache.py)",
+    "Environment Variable: LD_LIBRARY_PATH for library loading (get_chip_info.py), ASCEND_CUSTOM_OPP_PATH (__init__.py)",
+    "Monkey Patching: Dynamic module replacement via patcher framework (patcher.py, patch.py)",
+    "Decorator Evaluation: eval() in patch.py for decorator expression resolution",
+    "C Extension Bindings: pybind.cpp exposes C++ operators to Python without validation",
+    "Model Checkpoint Loading: torch.load() in DriverAgent/train.py for pretrained weights"
+  ]
+}

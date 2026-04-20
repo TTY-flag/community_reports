@@ -1,0 +1,345 @@
+{
+  "generated_by": "architecture_agent",
+  "generation_method": "grep_fallback",
+  "lsp_available": false,
+  "timestamp": "2026-04-20T00:00:00Z",
+  
+  "call_edges": [
+    {
+      "id": "CE-001",
+      "source": {
+        "file": "agentic_rl/trainer/main.py",
+        "function": "main",
+        "line": 120
+      },
+      "target": {
+        "file": "agentic_rl/trainer/main.py",
+        "function": "_load_config",
+        "line": 88
+      },
+      "type": "direct_call",
+      "description": "主函数调用配置加载函数",
+      "data_flow": "args.config_path -> config_path -> cfg"
+    },
+    {
+      "id": "CE-002",
+      "source": {
+        "file": "agentic_rl/trainer/main.py",
+        "function": "_load_config",
+        "line": 88
+      },
+      "target": {
+        "file": "agentic_rl/base/utils/file_utils.py",
+        "function": "FileCheck.check_data_path_is_valid",
+        "line": 110
+      },
+      "type": "method_call",
+      "description": "验证配置文件路径",
+      "data_flow": "config_path -> path validation"
+    },
+    {
+      "id": "CE-003",
+      "source": {
+        "file": "agentic_rl/trainer/main.py",
+        "function": "_load_config",
+        "line": 88
+      },
+      "target": {
+        "file": "agentic_rl/base/utils/file_utils.py",
+        "function": "FileCheck.check_file_size",
+        "line": 144
+      },
+      "type": "method_call",
+      "description": "检查配置文件大小",
+      "data_flow": "config_path, _MAX_FILE_SIZE -> size check"
+    },
+    {
+      "id": "CE-004",
+      "source": {
+        "file": "agentic_rl/trainer/main.py",
+        "function": "main",
+        "line": 168
+      },
+      "target": {
+        "file": "agentic_rl/trainer/train_adapter/train_registry.py",
+        "function": "get_train_fn",
+        "line": 23
+      },
+      "type": "direct_call",
+      "description": "获取训练函数",
+      "data_flow": "train_backend -> train_fn"
+    },
+    {
+      "id": "CE-005",
+      "source": {
+        "file": "agentic_rl/trainer/main.py",
+        "function": "main",
+        "line": 171
+      },
+      "target": {
+        "file": "agentic_rl/trainer/train_adapter/mindspeed_rl/train_agent_grpo.py",
+        "function": "train",
+        "line": 164
+      },
+      "type": "remote_call",
+      "description": "通过 Ray 远程执行训练函数",
+      "data_flow": "cfg -> ray.get(train_fn.remote(cfg))",
+      "cross_module": true
+    },
+    {
+      "id": "CE-006",
+      "source": {
+        "file": "agentic_rl/trainer/train_adapter/mindspeed_rl/train_agent_grpo.py",
+        "function": "_create_worker",
+        "line": 46
+      },
+      "target": {
+        "file": "agentic_rl/trainer/train_adapter/mindspeed_rl/workers/integrated_worker.py",
+        "function": "IntegratedWorker",
+        "line": 1
+      },
+      "type": "class_instantiation",
+      "description": "创建集成 Worker",
+      "data_flow": "configs -> worker"
+    },
+    {
+      "id": "CE-007",
+      "source": {
+        "file": "agentic_rl/trainer/train_adapter/mindspeed_rl/train_agent_grpo.py",
+        "function": "_process_dataset",
+        "line": 111
+      },
+      "target": {
+        "file": "agentic_rl/base/utils/data_loader.py",
+        "function": "GRPODataLoader",
+        "line": 27
+      },
+      "type": "class_instantiation",
+      "description": "创建数据加载器",
+      "data_flow": "actor_config.data_path, dataset_additional_keys -> data_loader"
+    },
+    {
+      "id": "CE-008",
+      "source": {
+        "file": "agentic_rl/base/utils/class_loader.py",
+        "function": "load_subclasses_from_file",
+        "line": 35
+      },
+      "target": {
+        "file": "agentic_rl/base/utils/file_utils.py",
+        "function": "FileCheck.check_data_path_is_valid",
+        "line": 110
+      },
+      "type": "method_call",
+      "description": "验证动态加载的文件路径",
+      "data_flow": "file_path -> path validation"
+    },
+    {
+      "id": "CE-009",
+      "source": {
+        "file": "agentic_rl/base/utils/class_loader.py",
+        "function": "load_subclasses_from_file",
+        "line": 57
+      },
+      "target": {
+        "module": "importlib.util",
+        "function": "spec_from_file_location",
+        "line": null
+      },
+      "type": "stdlib_call",
+      "description": "动态加载 Python 模块",
+      "data_flow": "file_path -> module spec -> module execution",
+      "risk": "HIGH",
+      "cwe": "CWE-94"
+    },
+    {
+      "id": "CE-010",
+      "source": {
+        "file": "agentic_rl/runner/runner_worker.py",
+        "function": "__init__",
+        "line": 115
+      },
+      "target": {
+        "file": "agentic_rl/base/utils/class_loader.py",
+        "function": "load_subclasses_from_file",
+        "line": 35
+      },
+      "type": "direct_call",
+      "description": "动态加载 Agent 引擎包装器",
+      "data_flow": "agent_engine_wrapper_path -> loaded class",
+      "risk": "HIGH"
+    },
+    {
+      "id": "CE-011",
+      "source": {
+        "file": "agentic_rl/runner/infer_adapter/async_server.py",
+        "function": "__init__",
+        "line": 52
+      },
+      "target": {
+        "file": "agentic_rl/base/utils/file_utils.py",
+        "function": "FileCheck.check_data_path_is_valid",
+        "line": 110
+      },
+      "type": "method_call",
+      "description": "验证 tokenizer 路径",
+      "data_flow": "tokenizer_name_or_path -> path validation"
+    },
+    {
+      "id": "CE-012",
+      "source": {
+        "file": "agentic_rl/trainer/rollout/rollout_worker.py",
+        "function": "__init__",
+        "line": 75
+      },
+      "target": {
+        "module": "transformers",
+        "function": "AutoTokenizer.from_pretrained",
+        "line": null
+      },
+      "type": "external_call",
+      "description": "加载 tokenizer",
+      "data_flow": "tokenizer_name_or_path -> tokenizer"
+    },
+    {
+      "id": "CE-013",
+      "source": {
+        "file": "agentic_rl/memory/summary_client.py",
+        "function": "generate_chat_completion",
+        "line": 86
+      },
+      "target": {
+        "module": "openai",
+        "function": "chat.completions.create",
+        "line": null
+      },
+      "type": "api_call",
+      "description": "调用 OpenAI API",
+      "data_flow": "messages -> API request -> response"
+    },
+    {
+      "id": "CE-014",
+      "source": {
+        "file": "agentic_rl/trainer/train_adapter/mindspeed_rl/train_agent_grpo.py",
+        "function": "_process_dataset",
+        "line": 114
+      },
+      "target": {
+        "module": "datasets",
+        "function": "load_dataset",
+        "line": null
+      },
+      "type": "external_call",
+      "description": "加载训练数据集",
+      "data_flow": "actor_config.data_path -> dataset",
+      "risk": "MEDIUM"
+    },
+    {
+      "id": "CE-015",
+      "source": {
+        "file": "agentic_rl/trainer/train_adapter/parse_config.py",
+        "function": "_validate_config",
+        "line": 57
+      },
+      "target": {
+        "file": "agentic_rl/trainer/train_adapter/schema.py",
+        "function": "GlobalConfig",
+        "line": 1
+      },
+      "type": "class_instantiation",
+      "description": "使用 Pydantic 验证配置",
+      "data_flow": "raw_config -> GlobalConfig validation"
+    },
+    {
+      "id": "CE-016",
+      "source": {
+        "file": "agentic_rl/configs/agentic_rl_config.py",
+        "function": "GenConfig.__post_init__",
+        "line": 93
+      },
+      "target": {
+        "file": "agentic_rl/base/utils/file_utils.py",
+        "function": "FileCheck.check_data_path_is_valid",
+        "line": 110
+      },
+      "type": "method_call",
+      "description": "验证 tokenizer 路径",
+      "data_flow": "tokenizer_name_or_path -> path validation"
+    },
+    {
+      "id": "CE-017",
+      "source": {
+        "file": "agentic_rl/memory/token_counter.py",
+        "function": "_initialize_tokenizer",
+        "line": 1
+      },
+      "target": {
+        "module": "transformers",
+        "function": "AutoTokenizer.from_pretrained",
+        "line": null
+      },
+      "type": "external_call",
+      "description": "加载 tokenizer 用于 token 计数",
+      "data_flow": "train_model_tokenizer_path -> tokenizer"
+    }
+  ],
+  
+  "module_dependencies": {
+    "trainer": ["base", "configs", "runner", "data_manager", "memory"],
+    "runner": ["base", "configs", "trainer"],
+    "data_manager": ["base", "trainer"],
+    "memory": ["base"],
+    "configs": ["base"],
+    "base": []
+  },
+  
+  "critical_paths": [
+    {
+      "path_id": "CP-001",
+      "description": "配置注入到远程执行的完整路径",
+      "sequence": [
+        {"step": 1, "file": "agentic_rl/trainer/main.py", "function": "main", "line": 120, "action": "CLI arg parsing"},
+        {"step": 2, "file": "agentic_rl/trainer/main.py", "function": "_load_config", "line": 88, "action": "Load YAML config"},
+        {"step": 3, "file": "agentic_rl/base/utils/file_utils.py", "function": "check_data_path_is_valid", "line": 110, "action": "Path validation (partial)"},
+        {"step": 4, "file": "agentic_rl/trainer/main.py", "function": "yaml.safe_load", "line": 104, "action": "Parse YAML content"},
+        {"step": 5, "file": "agentic_rl/trainer/main.py", "function": "main", "line": 171, "action": "Pass cfg to Ray remote"}
+      ],
+      "risk": "HIGH",
+      "vulnerability_type": "Configuration Injection",
+      "cwe": "CWE-15"
+    },
+    {
+      "path_id": "CP-002",
+      "description": "动态模块加载路径",
+      "sequence": [
+        {"step": 1, "file": "agentic_rl/runner/runner_worker.py", "function": "__init__", "line": 109, "action": "Receive agent_engine_wrapper_path"},
+        {"step": 2, "file": "agentic_rl/runner/runner_worker.py", "function": "__init__", "line": 115, "action": "Call load_subclasses_from_file"},
+        {"step": 3, "file": "agentic_rl/base/utils/class_loader.py", "function": "load_subclasses_from_file", "line": 46, "action": "Path validation"},
+        {"step": 4, "file": "agentic_rl/base/utils/class_loader.py", "function": "load_subclasses_from_file", "line": 57, "action": "importlib.util.spec_from_file_location"},
+        {"step": 5, "file": "agentic_rl/base/utils/class_loader.py", "function": "load_subclasses_from_file", "line": 62, "action": "spec.loader.exec_module(module)"}
+      ],
+      "risk": "HIGH",
+      "vulnerability_type": "Code Injection",
+      "cwe": "CWE-94"
+    },
+    {
+      "path_id": "CP-003",
+      "description": "数据集加载路径",
+      "sequence": [
+        {"step": 1, "file": "agentic_rl/trainer/train_adapter/mindspeed_rl/train_agent_grpo.py", "function": "train", "line": 164, "action": "Receive config"},
+        {"step": 2, "file": "agentic_rl/trainer/train_adapter/mindspeed_rl/train_agent_grpo.py", "function": "_process_dataset", "line": 111, "action": "Process dataset config"},
+        {"step": 3, "file": "agentic_rl/trainer/train_adapter/mindspeed_rl/train_agent_grpo.py", "function": "load_dataset", "line": 114, "action": "Load JSON dataset"}
+      ],
+      "risk": "MEDIUM",
+      "vulnerability_type": "Data Injection",
+      "cwe": "CWE-89"
+    }
+  ],
+  
+  "statistics": {
+    "total_edges": 17,
+    "high_risk_edges": 3,
+    "cross_module_edges": 1,
+    "external_module_edges": 5
+  }
+}
