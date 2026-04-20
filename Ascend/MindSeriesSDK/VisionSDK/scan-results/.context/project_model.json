@@ -1,0 +1,297 @@
+{
+  "project_name": "VisionSDK",
+  "scan_time": "2026-04-20T10:00:00Z",
+  "lsp_available": false,
+  "total_files": 706,
+  "total_lines": 0,
+  "project_profile": {
+    "project_type": "library",
+    "deployment_model": "Vision SDK 作为库/SDK被集成到用户应用中，可通过API接口方式或流程编排方式调用。典型部署在华为昇腾芯片服务器上，用于视频图像智能分析。",
+    "trust_boundaries": [
+      {
+        "boundary": "RTSP Network Interface",
+        "trusted_side": "SDK Internal Processing",
+        "untrusted_side": "Remote RTSP Server",
+        "risk": "Critical"
+      },
+      {
+        "boundary": "HTTP API Interface (StreamServer)",
+        "trusted_side": "SDK Internal Processing",
+        "untrusted_side": "HTTP Client Requests",
+        "risk": "High"
+      },
+      {
+        "boundary": "Configuration File Interface",
+        "trusted_side": "SDK Internal Processing",
+        "untrusted_side": "User-provided Config Files",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Image/Video Input Interface",
+        "trusted_side": "SDK Internal Processing",
+        "untrusted_side": "User-provided Media Files",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Model File Interface",
+        "trusted_side": "SDK Internal Processing",
+        "untrusted_side": "User-provided Model Files",
+        "risk": "Medium"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "mxBase",
+      "path": "mxBase/src",
+      "language": "c_cpp",
+      "components": [
+        "mxbase/module",
+        "operators",
+        "postprocess",
+        "python"
+      ],
+      "description": "基础底座模块，包含图像处理、模型推理、资源管理、算法库等核心功能"
+    },
+    {
+      "name": "mxStream",
+      "path": "mxStream/src",
+      "language": "mixed",
+      "components": [
+        "module/StreamManager",
+        "module/Stream",
+        "module/Packet",
+        "python/module"
+      ],
+      "description": "流程编排管理模块，负责Stream构建、销毁、数据发送接收等"
+    },
+    {
+      "name": "mxPlugins",
+      "path": "mxPlugins/src/module",
+      "language": "c_cpp",
+      "components": [
+        "MxpiRtspSrc",
+        "MxpiVideoDecoder",
+        "MxpiImageDecoder",
+        "MxpiModelInfer",
+        "MxpiVideoEncoder",
+        "MxpiImageEncoder",
+        "MxpiLoadData",
+        "MxpiDataSerialize"
+      ],
+      "description": "功能插件模块，提供RTSP拉流、视频解码、图像解码、模型推理等插件"
+    },
+    {
+      "name": "mxTools",
+      "path": "mxTools/src/module",
+      "language": "c_cpp",
+      "components": [
+        "PluginToolkit",
+        "PluginInspector"
+      ],
+      "description": "工具模块，提供插件开发API、插件信息收集工具等"
+    },
+    {
+      "name": "StreamServer",
+      "path": "mxStream/samples/streamserver/streamserverSourceCode",
+      "language": "python",
+      "components": [
+        "create_app.py",
+        "stream_server.py",
+        "model_server.py",
+        "infer_request.py"
+      ],
+      "description": "推理服务器示例，基于Flask提供RESTful HTTP接口"
+    }
+  ],
+  "files": [
+    {
+      "path": "mxPlugins/src/module/MxpiRtspSrc/MxpiRtspSrc.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "mxPlugins",
+      "lines": 1247,
+      "priority": 1
+    },
+    {
+      "path": "mxPlugins/src/module/MxpiVideoDecoder/MxpiVideoDecoder.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "mxPlugins",
+      "lines": 421,
+      "priority": 2
+    },
+    {
+      "path": "mxStream/src/module/StreamManager/MxStreamManager.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "mxStream",
+      "lines": 1200,
+      "priority": 3
+    },
+    {
+      "path": "mxPlugins/src/module/MxpiImageDecoder/MxpiImageDecoder.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "mxPlugins",
+      "lines": 688,
+      "priority": 4
+    },
+    {
+      "path": "mxStream/samples/streamserver/streamserverSourceCode/create_app.py",
+      "language": "python",
+      "risk": "High",
+      "module": "StreamServer",
+      "lines": 300,
+      "priority": 5
+    },
+    {
+      "path": "mxStream/samples/streamserver/streamserverSourceCode/stream_server.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "StreamServer",
+      "lines": 122,
+      "priority": 6
+    },
+    {
+      "path": "mxBase/src/mxbase/module/Utils/ConfigUtil.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "mxBase",
+      "lines": 319,
+      "priority": 7
+    },
+    {
+      "path": "mxPlugins/src/module/MxpiModelInfer/MxpiModelInfer.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "mxPlugins",
+      "lines": 0,
+      "priority": 8
+    },
+    {
+      "path": "mxPlugins/src/module/MxpiRtspSrc/RtspClientTlsInteraction.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "mxPlugins",
+      "lines": 0,
+      "priority": 9
+    },
+    {
+      "path": "mxBase/src/mxbase/module/Infer/Model/ModelInfer/ModelInferenceProcessor.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "mxBase",
+      "lines": 0,
+      "priority": 10
+    },
+    {
+      "path": "mxStream/samples/streamserver/streamserverSourceCode/utils.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "StreamServer",
+      "lines": 99,
+      "priority": 11
+    },
+    {
+      "path": "mxStream/samples/streamserver/streamserverSourceCode/model_server.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "StreamServer",
+      "lines": 196,
+      "priority": 12
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "mxPlugins/src/module/MxpiRtspSrc/MxpiRtspSrc.cpp",
+      "line": 833,
+      "function": "SetUrlProp",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "RTSP URL从配置参数传入，连接远程RTSP服务器拉取视频流，远程服务器数据不可信",
+      "description": "设置RTSP URL并建立与远程RTSP服务器的连接"
+    },
+    {
+      "file": "mxPlugins/src/module/MxpiRtspSrc/MxpiRtspSrc.cpp",
+      "line": 442,
+      "function": "ReadFile",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "TLS证书文件读取，路径由配置传入，需要文件权限检查",
+      "description": "读取TLS证书/密钥文件"
+    },
+    {
+      "file": "mxStream/samples/streamserver/streamserverSourceCode/create_app.py",
+      "line": 175,
+      "function": "post_stream_infer",
+      "type": "web_route",
+      "trust_level": "untrusted_network",
+      "justification": "Flask HTTP POST接口，接收远程客户端的推理请求，数据完全由客户端控制",
+      "description": "HTTP POST推理接口，接收JSON格式的推理请求"
+    },
+    {
+      "file": "mxStream/src/module/StreamManager/MxStreamManager.cpp",
+      "line": 211,
+      "function": "CreateMultipleStreams",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "JSON pipeline配置从字符串或文件解析，配置文件由应用开发者提供",
+      "description": "从JSON配置创建多个Stream pipeline"
+    },
+    {
+      "file": "mxStream/src/module/StreamManager/MxStreamManager.cpp",
+      "line": 267,
+      "function": "CreateMultipleStreamsFromFile",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "从文件读取pipeline配置，文件路径由应用传入",
+      "description": "从文件创建Stream pipeline"
+    },
+    {
+      "file": "mxBase/src/mxbase/module/Utils/ConfigUtil.cpp",
+      "line": 274,
+      "function": "LoadConfiguration",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "加载配置文件或JSON内容，配置由应用开发者提供",
+      "description": "加载配置文件或JSON配置内容"
+    },
+    {
+      "file": "mxPlugins/src/module/MxpiVideoDecoder/MxpiVideoDecoder.cpp",
+      "line": 107,
+      "function": "Process",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "视频解码输入数据来自上游插件（如RTSP），数据流经SDK内部传递",
+      "description": "处理视频解码请求，输入来自RTSP或其他数据源插件"
+    },
+    {
+      "file": "mxPlugins/src/module/MxpiImageDecoder/MxpiImageDecoder.cpp",
+      "line": 225,
+      "function": "Process",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "图像解码输入数据来自上游插件或用户应用，数据流经SDK内部传递",
+      "description": "处理图像解码请求"
+    },
+    {
+      "file": "mxStream/samples/streamserver/streamserverSourceCode/utils.py",
+      "line": 76,
+      "function": "read_json_config",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "读取JSON配置文件，文件路径由应用传入",
+      "description": "读取并解析JSON配置文件"
+    }
+  ],
+  "attack_surfaces": [
+    "RTSP Network Stream: MxpiRtspSrc插件连接远程RTSP服务器，接收H264/H265视频流",
+    "HTTP RESTful API: StreamServer Flask应用提供/v2/*/infer POST接口",
+    "Pipeline Configuration: JSON格式的pipeline配置文件解析",
+    "TLS Certificate Files: TLS证书/密钥文件读取和解析",
+    "Video/Image Decode Input: 视频解码器和图像解码器处理外部输入数据",
+    "Model Loading: 模型文件加载和推理",
+    "Environment Variables: getenv()调用获取运行环境配置"
+  ]
+}

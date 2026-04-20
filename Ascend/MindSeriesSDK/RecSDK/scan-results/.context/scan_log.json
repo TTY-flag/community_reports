@@ -1,0 +1,77 @@
+{
+  "scan_id": "40c13cf5-a89c-48dd-b364-230872d6095d",
+  "start_time": "2026-04-20T03:56:00Z",
+  "end_time": "2026-04-20T04:35:00Z",
+  "duration_seconds": 2340,
+  "status": "success",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/shenteng/MindSeriesSDK/RecSDK",
+  "summary": {
+    "total_vulnerabilities": 28,
+    "confirmed": 0,
+    "likely": 6,
+    "possible": 16,
+    "false_positive": 6,
+    "modules_scanned": 11,
+    "files_scanned": 838
+  },
+  "agents": [
+    {
+      "name": "architecture",
+      "start_time": "2026-04-20T03:57:00Z",
+      "end_time": "2026-04-20T04:07:00Z",
+      "status": "success",
+      "output_files": [
+        "project_model.json",
+        "call_graph.json",
+        "threat_analysis_report.md"
+      ],
+      "summary": "分析了12个模块，识别14个高风险文件，12个入口点，8个攻击面"
+    },
+    {
+      "name": "dataflow-scanner",
+      "start_time": "2026-04-20T04:10:00Z",
+      "end_time": "2026-04-20T04:18:00Z",
+      "duration_seconds": 480,
+      "status": "success",
+      "item_count": 20,
+      "summary": "扫描了11个模块，发现20个数据流候选漏洞：整数溢出(4)、缓冲区溢出(5)、路径遍历(6)、不安全JSON(5)"
+    },
+    {
+      "name": "security-auditor",
+      "start_time": "2026-04-20T04:10:00Z",
+      "end_time": "2026-04-20T04:17:00Z",
+      "duration_seconds": 420,
+      "status": "success",
+      "item_count": 8,
+      "summary": "审计了11个模块，发现8个安全逻辑候选漏洞：认证绕过(1)、配置篡改(2)、路径遍历(2)、跨模块问题(3)"
+    },
+    {
+      "name": "verification",
+      "start_time": "2026-04-20T04:19:00Z",
+      "end_time": "2026-04-20T04:26:00Z",
+      "duration_seconds": 420,
+      "status": "success",
+      "item_count": 28,
+      "summary": "验证28个候选漏洞：LIKELY(6)、POSSIBLE(16)、FALSE_POSITIVE(6)、CONFIRMED(0)"
+    },
+    {
+      "name": "details-analyzer",
+      "start_time": null,
+      "end_time": null,
+      "status": "skipped",
+      "reason": "无 CONFIRMED 漏洞，跳过深度利用分析阶段"
+    },
+    {
+      "name": "reporter",
+      "start_time": "2026-04-20T04:32:00Z",
+      "end_time": "2026-04-20T04:35:00Z",
+      "duration_seconds": 180,
+      "status": "success",
+      "output_files": [
+        "report_confirmed.md",
+        "report_unconfirmed.md"
+      ],
+      "summary": "生成漏洞扫描报告：已确认(0个)、待确认(22个)"
+    }
+  ]
+}

@@ -1,0 +1,393 @@
+{
+  "project_name": "MindSeriesSDK RecSDK",
+  "scan_time": "2026-04-20T08:00:00Z",
+  "lsp_available": false,
+  "lsp_notes": "C/C++ LSP requires Ascend SDK headers (kernel_operator.h, tilingdata_base.h) which are not installed; Python LSP (pyright-langserver) not available",
+  "total_files": 1176,
+  "total_lines": 48660,
+  "project_profile": {
+    "project_type": "library",
+    "deployment_model": "Python library with C/C++ custom operators for Ascend NPU. Deployed as pip-installable packages in training environments. Users import modules and call APIs to train recommendation models.",
+    "trust_boundaries": [
+      {
+        "boundary": "API Interface",
+        "trusted_side": "SDK internal implementation",
+        "untrusted_side": "User-provided training data, model configurations, and API parameters",
+        "risk": "High"
+      },
+      {
+        "boundary": "Configuration Files",
+        "trusted_side": "SDK configuration parser",
+        "untrusted_side": "TOML config files, rank table JSON, model checkpoint files",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Custom Operator Interface",
+        "trusted_side": "Operator implementation",
+        "untrusted_side": "User-provided tensors and parameters passed to operators",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Distributed Training Network",
+        "trusted_side": "Training processes on same cluster",
+        "untrusted_side": "Inter-node communication via TCP sockets",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "File System",
+        "trusted_side": "SDK file operations",
+        "untrusted_side": "File paths provided by users or environment variables",
+        "risk": "Medium"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "cust_op_ascendc",
+      "path": "cust_op/ascendc_op",
+      "language": "c_cpp",
+      "components": ["ai_core_op/*"],
+      "description": "Ascend C operators compiled for AI Core execution on NPU",
+      "risk": "Medium",
+      "file_count": 45
+    },
+    {
+      "name": "cust_op_framework_torch",
+      "path": "cust_op/framework/torch_plugin",
+      "language": "c_cpp",
+      "components": ["torch_library/*"],
+      "description": "PyTorch operator adapters for custom NPU operators",
+      "risk": "Medium",
+      "file_count": 60
+    },
+    {
+      "name": "cust_op_framework_tf",
+      "path": "cust_op/framework/tf_plugin",
+      "language": "c_cpp",
+      "components": ["src/*", "include/*"],
+      "description": "TensorFlow operator plugins for custom NPU operators",
+      "risk": "Medium",
+      "file_count": 15
+    },
+    {
+      "name": "cust_op_tf_cpu",
+      "path": "cust_op/tf_cpu_op",
+      "language": "c_cpp",
+      "components": ["src/*"],
+      "description": "CPU operators for TensorFlow on Kunpeng processor",
+      "risk": "Low",
+      "file_count": 20
+    },
+    {
+      "name": "training_common",
+      "path": "training/common",
+      "language": "mixed",
+      "components": ["python/*", "src/core/*"],
+      "description": "Common utilities including HCCL communication, validators, logging",
+      "risk": "High",
+      "file_count": 50
+    },
+    {
+      "name": "tf_rec_v1",
+      "path": "training/tf_rec_v1",
+      "language": "mixed",
+      "components": ["python/*", "src/*"],
+      "description": "TensorFlow v1 recommendation training framework (non-full-sinking)",
+      "risk": "High",
+      "file_count": 80
+    },
+    {
+      "name": "tf_rec_v2",
+      "path": "training/tf_rec_v2",
+      "language": "python",
+      "components": ["mxrec/*"],
+      "description": "TensorFlow v2 recommendation training framework (full-sinking POC)",
+      "risk": "Medium",
+      "file_count": 60
+    },
+    {
+      "name": "torch_rec_v1",
+      "path": "training/torch_rec_v1",
+      "language": "python",
+      "components": ["torchrec_embcache/*", "hybrid_torchrec/*", "torchrec_npu/*"],
+      "description": "PyTorch v1 recommendation training framework with TorchRec",
+      "risk": "Medium",
+      "file_count": 120
+    },
+    {
+      "name": "torch_rec_v2",
+      "path": "training/torch_rec_v2",
+      "language": "mixed",
+      "components": ["dynamic_emb/*", "torchrec_npu/*"],
+      "description": "PyTorch v2 recommendation training framework with dynamic embedding",
+      "risk": "Medium",
+      "file_count": 80
+    },
+    {
+      "name": "lccl_socket_comm",
+      "path": "training/common/src/core/lccl",
+      "language": "c_cpp",
+      "components": ["src/tools/socket/*"],
+      "description": "LCCL distributed training communication via TCP sockets",
+      "risk": "High",
+      "file_count": 10
+    },
+    {
+      "name": "cust_op_hkv",
+      "path": "cust_op/hkv",
+      "language": "mixed",
+      "components": ["*"],
+      "description": "HierarchicalKV submodule for key-value storage",
+      "risk": "Medium",
+      "file_count": 40
+    }
+  ],
+  "files": [
+    {
+      "path": "training/common/src/core/lccl/src/tools/socket/lcal_sock_exchange.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "lccl_socket_comm",
+      "lines": 415,
+      "priority": 1,
+      "risk_reasons": ["TCP socket server (bind/listen/accept)", "recv/send data without validation", "network communication for distributed training"]
+    },
+    {
+      "path": "training/tf_rec_v1/python/saver/saver.py",
+      "language": "python",
+      "risk": "High",
+      "module": "tf_rec_v1",
+      "lines": 1394,
+      "priority": 2,
+      "risk_reasons": ["json.load() on model index files", "file operations on user-provided paths", "model checkpoint save/load"]
+    },
+    {
+      "path": "training/tf_rec_v2/mxrec/python/config/parser.py",
+      "language": "python",
+      "risk": "High",
+      "module": "tf_rec_v2",
+      "lines": 112,
+      "priority": 3,
+      "risk_reasons": ["toml.load() on config file", "file path from user", "configuration parsing"]
+    },
+    {
+      "path": "training/common/python/communication/hccl/hccl_mgmt.py",
+      "language": "python",
+      "risk": "High",
+      "module": "training_common",
+      "lines": 151,
+      "priority": 4,
+      "risk_reasons": ["json.load() on rank table file", "file path from environment variable", "distributed training setup"]
+    },
+    {
+      "path": "training/tf_rec_v1/src/core/l3_storage/cache_manager.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "tf_rec_v1",
+      "lines": 300,
+      "priority": 5,
+      "risk_reasons": ["memcpy_s operations on embedding data", "memory management for cache"]
+    },
+    {
+      "path": "training/tf_rec_v1/python/saver/sparse.py",
+      "language": "python",
+      "risk": "High",
+      "module": "tf_rec_v1",
+      "lines": 200,
+      "priority": 6,
+      "risk_reasons": ["json.load() on attributes file", "sparse model save/load"]
+    },
+    {
+      "path": "cust_op/framework/tf_plugin/src/cust_embedding_by_address.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "cust_op_framework_tf",
+      "lines": 54,
+      "priority": 7,
+      "risk_reasons": ["TensorFlow operator registration", "embedding lookup/update operations"]
+    },
+    {
+      "path": "cust_op/framework/torch_plugin/torch_library/hstu/hstu_common.h",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "cust_op_framework_torch",
+      "lines": 75,
+      "priority": 8,
+      "risk_reasons": ["Input validation for HSTU operators", "parameter bounds checking"]
+    },
+    {
+      "path": "training/torch_rec_v2/dynamic_emb/dynamic_emb/distributed/key_value_table.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "torch_rec_v2",
+      "lines": 500,
+      "priority": 9,
+      "risk_reasons": ["load/save functions for embedding tables", "JSON file operations"]
+    },
+    {
+      "path": "setup_common.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "root",
+      "lines": 130,
+      "priority": 10,
+      "risk_reasons": ["subprocess.run() calls for build scripts", "file operations for package build"]
+    },
+    {
+      "path": "setup.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "root",
+      "lines": 60,
+      "priority": 11,
+      "risk_reasons": ["subprocess.run() calls", "build script execution"]
+    },
+    {
+      "path": "training/common/src/core/pcie_through/rma_shm_svm.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "training_common",
+      "lines": 400,
+      "priority": 12,
+      "risk_reasons": ["memcpy_s operations", "shared memory communication"]
+    },
+    {
+      "path": "training/tf_rec_v1/src/AccCTR/src/embedding_cache/emb_local_table.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "tf_rec_v1",
+      "lines": 200,
+      "priority": 13,
+      "risk_reasons": ["memcpy_s for embedding gather/scatter"]
+    },
+    {
+      "path": "cust_op/test/hstu_dense/torch/test_hstu_jagged_forward.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "cust_op",
+      "lines": 300,
+      "priority": 14,
+      "risk_reasons": ["Test file with custom_op_exec and golden_op_exec functions"]
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "training/common/src/core/lccl/src/tools/socket/lcal_sock_exchange.cpp",
+      "line": 217,
+      "function": "LcalSockExchange::InitServer",
+      "type": "network",
+      "trust_level": "semi_trusted",
+      "justification": "TCP socket for distributed training within trusted cluster. Port from configuration, only accessible within training cluster network. Not exposed to public network.",
+      "description": "TCP socket server for inter-node communication in distributed training"
+    },
+    {
+      "file": "training/common/src/core/lccl/src/tools/socket/lcal_sock_exchange.cpp",
+      "line": 255,
+      "function": "LcalSockExchange::AcceptConnection",
+      "type": "network",
+      "trust_level": "semi_trusted",
+      "justification": "Accept connections from other training nodes in the same cluster. Connection from nodes specified in rank table configuration.",
+      "description": "Accept incoming connections from training nodes"
+    },
+    {
+      "file": "training/common/src/core/lccl/src/tools/socket/lcal_sock_exchange.cpp",
+      "line": 85,
+      "function": "LcalSockExchange::Recv",
+      "type": "network",
+      "trust_level": "semi_trusted",
+      "justification": "Receive data from other training nodes. Data comes from trusted training processes within same cluster.",
+      "description": "Receive training data from peer nodes"
+    },
+    {
+      "file": "training/tf_rec_v2/mxrec/python/config/parser.py",
+      "line": 90,
+      "function": "TomlParser._parse_config",
+      "type": "file",
+      "trust_level": "trusted_admin",
+      "justification": "TOML config file path provided by user/admin at initialization. File is typically controlled by deployment scripts or system administrator.",
+      "description": "Load and parse TOML configuration file for training parameters"
+    },
+    {
+      "file": "training/common/python/communication/hccl/hccl_mgmt.py",
+      "line": 98,
+      "function": "_get_rank_info_with_ranktable",
+      "type": "file",
+      "trust_level": "trusted_admin",
+      "justification": "Rank table file path from RANK_TABLE_FILE environment variable, controlled by cluster deployment system. File content validated with class_safe_check.",
+      "description": "Load rank table JSON for distributed training configuration"
+    },
+    {
+      "file": "training/tf_rec_v1/python/saver/saver.py",
+      "line": 935,
+      "function": "update_model_index",
+      "type": "file",
+      "trust_level": "trusted_admin",
+      "justification": "Model index file path from save_dir parameter provided by user training script. File operations use secure file flags (SAVE_FILE_FLAG).",
+      "description": "Load and update model index JSON file for checkpoint management"
+    },
+    {
+      "file": "training/tf_rec_v1/python/saver/saver.py",
+      "line": 859,
+      "function": "merge_slice_files",
+      "type": "file",
+      "trust_level": "trusted_admin",
+      "justification": "File path from upper_dir parameter, controlled by training process. Reads slice data files generated by same training job.",
+      "description": "Read and merge slice data files for model checkpoint"
+    },
+    {
+      "file": "training/tf_rec_v1/python/saver/sparse.py",
+      "line": 81,
+      "function": "load_sparse_attributes",
+      "type": "file",
+      "trust_level": "trusted_admin",
+      "justification": "Sparse attributes file path provided by user for model restoration. JSON.load on user-controlled checkpoint file.",
+      "description": "Load sparse model attributes from JSON file"
+    },
+    {
+      "file": "cust_op/framework/torch_plugin/torch_library/hstu/hstu_jagged.cpp",
+      "line": 1,
+      "function": "TORCH_LIBRARY_IMPL(mxrec, PrivateUse1, m)",
+      "type": "decorator",
+      "trust_level": "untrusted_local",
+      "justification": "PyTorch custom operator registered for NPU device. User can call operator via Python API with arbitrary tensors. Input validation in hstu_common.h checks bounds but tensor data is user-controlled.",
+      "description": "PyTorch custom operator for HSTU jagged tensor operations"
+    },
+    {
+      "file": "cust_op/framework/torch_plugin/torch_library/block_bucketize_sparse_features/block_bucketize_sparse_features.cpp",
+      "line": 248,
+      "function": "TORCH_LIBRARY_FRAGMENT(mxrec, m)",
+      "type": "decorator",
+      "trust_level": "untrusted_local",
+      "justification": "Custom operator callable via Python API. User provides bucketize parameters and sparse feature indices.",
+      "description": "PyTorch custom operator for block bucketize sparse features"
+    },
+    {
+      "file": "cust_op/framework/tf_plugin/src/cust_embedding_by_address.cpp",
+      "line": 20,
+      "function": "REGISTER_OP(EmbeddingLookupByAddress)",
+      "type": "decorator",
+      "trust_level": "untrusted_local",
+      "justification": "TensorFlow custom operator callable via TF API. User provides address and embedding parameters.",
+      "description": "TensorFlow custom operator for embedding lookup by address"
+    },
+    {
+      "file": "setup_common.py",
+      "line": 114,
+      "function": "run_build_scripts",
+      "type": "cmdline",
+      "trust_level": "trusted_admin",
+      "justification": "Build script execution during package installation. Only runs during pip install, not runtime.",
+      "description": "Execute build scripts during package installation"
+    }
+  ],
+  "attack_surfaces": [
+    "Distributed Training Network: TCP socket communication for LCCL collective operations (training/common/src/core/lccl)",
+    "Configuration File Input: TOML config files parsed by mxrec (training/tf_rec_v2/mxrec/python/config)",
+    "Rank Table JSON: HCCL rank table file for distributed training setup (training/common/python/communication/hccl)",
+    "Model Checkpoint Files: JSON model index and sparse attributes files (training/tf_rec_v1/python/saver)",
+    "Custom Operator API: PyTorch TORCH_LIBRARY and TensorFlow REGISTER_OP custom operators (cust_op/framework)",
+    "Dynamic Embedding Load/Save: JSON and binary files for embedding tables (training/torch_rec_v2/dynamic_emb)",
+    "Build Scripts: subprocess calls in setup.py/setup_common.py (during installation only)",
+    "Ascend C Operators: AI Core operators with tensor input from user (cust_op/ascendc_op)"
+  ]
+}

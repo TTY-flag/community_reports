@@ -1,0 +1,413 @@
+{
+  "functions": {
+    "LcalSockExchange::InitServer@training/common/src/core/lccl/src/tools/socket/lcal_sock_exchange.cpp": {
+      "defined_at": 217,
+      "calls": [
+        "socket@lcal_sock_exchange.cpp:217",
+        "bind@lcal_sock_exchange.cpp:230",
+        "listen@lcal_sock_exchange.cpp:239"
+      ],
+      "called_by": [
+        "LcalSockExchange::AllGather@lcal_sock_exchange.cpp:107"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "input_source": "TCP socket configuration from lcalCommId_",
+      "description": "Initialize TCP socket server for distributed training communication"
+    },
+    "LcalSockExchange::AcceptConnection@training/common/src/core/lccl/src/tools/socket/lcal_sock_exchange.cpp": {
+      "defined_at": 255,
+      "calls": [
+        "accept@lcal_sock_exchange.cpp:255"
+      ],
+      "called_by": [
+        "LcalSockExchange::ServerRecvSend@lcal_sock_exchange.cpp:130"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "input_source": "Network connection from training peer nodes",
+      "description": "Accept incoming TCP connections"
+    },
+    "LcalSockExchange::Recv@training/common/src/core/lccl/src/tools/socket/lcal_sock_exchange.cpp": {
+      "defined_at": 85,
+      "calls": [
+        "recv@lcal_sock_exchange.cpp:internal"
+      ],
+      "called_by": [
+        "LcalSockExchange::ServerRecvSend@lcal_sock_exchange.cpp:130",
+        "LcalSockExchange::ClientSendRecv@lcal_sock_exchange.cpp:160"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "input_source": "TCP socket data from peer training nodes",
+      "description": "Receive data from TCP socket"
+    },
+    "LcalSockExchange::Send@training/common/src/core/lccl/src/tools/socket/lcal_sock_exchange.cpp": {
+      "defined_at": 83,
+      "calls": [
+        "send@lcal_sock_exchange.cpp:internal"
+      ],
+      "called_by": [
+        "LcalSockExchange::ServerRecvSend@lcal_sock_exchange.cpp:130",
+        "LcalSockExchange::ClientSendRecv@lcal_sock_exchange.cpp:160"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "Send data via TCP socket"
+    },
+    "LcalSockExchange::AllGather@training/common/src/core/lccl/src/tools/socket/lcal_sock_exchange.cpp": {
+      "defined_at": 107,
+      "calls": [
+        "LcalSockExchange::ClientSendRecv@lcal_sock_exchange.cpp:118",
+        "LcalSockExchange::ServerRecvSend@lcal_sock_exchange.cpp:121"
+      ],
+      "called_by": [
+        "LCCL collective operations@external"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "input_source": "sendBuf from training process, recvBuf from peer nodes",
+      "description": "All-gather collective operation for distributed training"
+    },
+    "TomlParser::_parse_config@training/tf_rec_v2/mxrec/python/config/parser.py": {
+      "defined_at": 89,
+      "calls": [
+        "open@parser.py:90",
+        "file_safe_check@parser.py:91",
+        "toml.load@parser.py:92",
+        "parse_field@parser.py:93"
+      ],
+      "called_by": [
+        "TomlParser::__init__@parser.py:30"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "input_source": "TOML config file from user/admin",
+      "description": "Parse TOML configuration file"
+    },
+    "_get_rank_info_with_ranktable@training/common/python/communication/hccl/hccl_mgmt.py": {
+      "defined_at": 97,
+      "calls": [
+        "os.getenv@hccl_mgmt.py:98",
+        "open@hccl_mgmt.py:101",
+        "json.load@hccl_mgmt.py:102",
+        "_parse_new_ranktable_format@hccl_mgmt.py:112",
+        "_parse_ranktable_format@hccl_mgmt.py:114"
+      ],
+      "called_by": [
+        "HCCL initialization@external"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "input_source": "RANK_TABLE_FILE env var, rank table JSON content",
+      "description": "Load and parse rank table file for distributed training"
+    },
+    "update_model_index@training/tf_rec_v1/python/saver/saver.py": {
+      "defined_at": 930,
+      "calls": [
+        "os.path.join@saver.py:931",
+        "tf.io.gfile.exists@saver.py:932",
+        "tf.io.gfile.GFile@saver.py:935",
+        "json.load@saver.py:936",
+        "json.dump@saver.py:941"
+      ],
+      "called_by": [
+        "save@saver.py:157"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "input_source": "save_dir path from user, model_index.json content",
+      "description": "Update model index JSON file for checkpoint management"
+    },
+    "merge_slice_files@training/tf_rec_v1/python/saver/saver.py": {
+      "defined_at": 850,
+      "calls": [
+        "os.listdir@saver.py:850",
+        "os.fdopen@saver.py:853",
+        "open@saver.py:859",
+        "read@saver.py:861",
+        "write@saver.py:864"
+      ],
+      "called_by": [
+        "save@saver.py:157"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "input_source": "upper_dir path, slice data file content",
+      "description": "Merge slice data files into single checkpoint file"
+    },
+    "load_sparse_attributes@training/tf_rec_v1/python/saver/sparse.py": {
+      "defined_at": 81,
+      "calls": [
+        "open@sparse.py:81",
+        "json.load@sparse.py:81"
+      ],
+      "called_by": [
+        "sparse model load@external"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "input_source": "Sparse attributes JSON file path and content",
+      "description": "Load sparse model attributes from JSON"
+    },
+    "save@training/tf_rec_v1/python/saver/saver.py": {
+      "defined_at": 157,
+      "calls": [
+        "update_model_index@saver.py:930",
+        "merge_slice_files@saver.py:850",
+        "save_table_name_data@saver.py:274",
+        "save_embedding_data@saver.py:615"
+      ],
+      "called_by": [
+        "User training script@external"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "input_source": "sess, save_path, global_step from user",
+      "description": "Save model checkpoint to files"
+    },
+    "TORCH_LIBRARY_IMPL(mxrec, PrivateUse1, m)@cust_op/framework/torch_plugin/torch_library/hstu/hstu_jagged.cpp": {
+      "defined_at": 1,
+      "calls": [
+        "hstu_jagged_forward_npu@hstu_jagged.cpp",
+        "hstu_jagged_backward_npu@hstu_jagged.cpp"
+      ],
+      "called_by": [
+        "torch.ops.mxrec.hstu_jagged@Python API"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "input_source": "Tensor data and parameters from user Python code",
+      "description": "PyTorch custom operator registration for HSTU jagged operations"
+    },
+    "MaskCheck@cust_op/framework/torch_plugin/torch_library/hstu/hstu_common.h": {
+      "defined_at": 58,
+      "calls": [
+        "TORCH_CHECK@hstu_common.h:59"
+      ],
+      "called_by": [
+        "hstu operators@hstu_jagged.cpp, hstu_dense.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "Low",
+      "description": "Input validation for mask type parameter"
+    },
+    "MaxSeqLenCheck@cust_op/framework/torch_plugin/torch_library/hstu/hstu_common.h": {
+      "defined_at": 67,
+      "calls": [
+        "TORCH_CHECK@hstu_common.h:69"
+      ],
+      "called_by": [
+        "hstu operators@hstu_jagged.cpp, hstu_dense.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "Low",
+      "description": "Input validation for maxSeqLen parameter"
+    },
+    "EmbeddingLookupByAddress@cust_op/framework/tf_plugin/src/cust_embedding_by_address.cpp": {
+      "defined_at": 20,
+      "calls": [
+        "MxRecTfPlugin::CustOps@cust_embedding_by_address.cpp:35"
+      ],
+      "called_by": [
+        "TensorFlow graph execution@Python API"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "input_source": "address tensor and embedding_dim attr from user",
+      "description": "TensorFlow custom operator for embedding lookup"
+    },
+    "memcpy_s@training/tf_rec_v1/src/core/l3_storage/cache_manager.cpp": {
+      "defined_at": 303,
+      "calls": [],
+      "called_by": [
+        "cache_manager embedding operations@cache_manager.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "input_source": "Embedding data from cache or external storage",
+      "description": "Memory copy for embedding cache operations"
+    },
+    "memcpy_s@training/tf_rec_v1/src/AccCTR/src/embedding_cache/emb_local_table.cpp": {
+      "defined_at": 117,
+      "calls": [],
+      "called_by": [
+        "embedding gather/scatter@emb_local_table.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "input_source": "Embedding data from local table",
+      "description": "Memory copy for embedding gather/scatter operations"
+    },
+    "file_safe_check@training/common/python/validator/safe_checker.py": {
+      "defined_at": 0,
+      "calls": [],
+      "called_by": [
+        "TomlParser::_parse_config@parser.py:91"
+      ],
+      "receives_external_input": true,
+      "risk": "Low",
+      "input_source": "File path to validate",
+      "description": "Validate file path for safety"
+    },
+    "class_safe_check@training/common/python/validator/safe_checker.py": {
+      "defined_at": 0,
+      "calls": [],
+      "called_by": [
+        "_parse_new_ranktable_format@hccl_mgmt.py:48",
+        "_parse_config@parser.py:98"
+      ],
+      "receives_external_input": true,
+      "risk": "Low",
+      "input_source": "Object and expected type to validate",
+      "description": "Validate object type for safety"
+    },
+    "int_safe_check@training/common/python/validator/safe_checker.py": {
+      "defined_at": 0,
+      "calls": [],
+      "called_by": [
+        "_parse_new_ranktable_format@hccl_mgmt.py:58",
+        "_parse_new_ranktable_format@hccl_mgmt.py:63"
+      ],
+      "receives_external_input": true,
+      "risk": "Low",
+      "input_source": "Integer value and range to validate",
+      "description": "Validate integer value within range"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "socket@lcal_sock_exchange.cpp:217",
+      "path": [
+        "LcalSockExchange::InitServer@lcal_sock_exchange.cpp:217",
+        "LcalSockExchange::AcceptConnection@lcal_sock_exchange.cpp:255",
+        "LcalSockExchange::Recv@lcal_sock_exchange.cpp:85"
+      ],
+      "sink": "recvBuf@lcal_sock_exchange.cpp:85",
+      "sink_type": "memory_buffer",
+      "risk": "Critical",
+      "description": "Network data received via TCP socket flows into memory buffer for distributed training"
+    },
+    {
+      "source": "recvBuf@lcal_sock_exchange.cpp:85",
+      "path": [
+        "LcalSockExchange::AllGather@lcal_sock_exchange.cpp:107",
+        "memcpy_s@lcal_sock_exchange.cpp:415"
+      ],
+      "sink": "recvBuf output@lcal_sock_exchange.cpp:107",
+      "sink_type": "memory_operation",
+      "risk": "High",
+      "description": "Received network data copied via memcpy_s to output buffer"
+    },
+    {
+      "source": "toml.load@parser.py:92",
+      "path": [
+        "open@parser.py:90",
+        "toml.load@parser.py:92",
+        "parse_field@parser.py:93"
+      ],
+      "sink": "self._config@parser.py:94",
+      "sink_type": "configuration_object",
+      "risk": "High",
+      "description": "TOML config file content parsed into configuration object"
+    },
+    {
+      "source": "json.load@hccl_mgmt.py:102",
+      "path": [
+        "os.getenv@hccl_mgmt.py:98",
+        "open@hccl_mgmt.py:101",
+        "json.load@hccl_mgmt.py:102",
+        "_parse_new_ranktable_format@hccl_mgmt.py:112"
+      ],
+      "sink": "rank_to_device_dict@hccl_mgmt.py:65",
+      "sink_type": "dictionary",
+      "risk": "High",
+      "description": "Rank table JSON content parsed into rank-to-device mapping"
+    },
+    {
+      "source": "json.load@saver.py:936",
+      "path": [
+        "tf.io.gfile.GFile@saver.py:935",
+        "json.load@saver.py:936",
+        "model_index_list@saver.py:933"
+      ],
+      "sink": "json.dump@saver.py:941",
+      "sink_type": "file_write",
+      "risk": "High",
+      "description": "Model index JSON loaded and modified for checkpoint management"
+    },
+    {
+      "source": "torch.ops.mxrec.hstu_jagged@Python",
+      "path": [
+        "TORCH_LIBRARY_IMPL(mxrec)@hstu_jagged.cpp",
+        "hstu_jagged_forward_npu@hstu_jagged.cpp",
+        "aclrtMemcpy@NPU runtime"
+      ],
+      "sink": "output tensor@hstu_jagged.cpp",
+      "sink_type": "tensor_output",
+      "risk": "Medium",
+      "description": "User tensor data flows through custom operator to NPU for computation"
+    },
+    {
+      "source": "slice data files@saver.py:850",
+      "path": [
+        "os.listdir@saver.py:850",
+        "open@saver.py:859",
+        "read@saver.py:861",
+        "write@saver.py:864"
+      ],
+      "sink": "outfile@saver.py:853",
+      "sink_type": "file_write",
+      "risk": "Medium",
+      "description": "Slice data files merged into single checkpoint file"
+    },
+    {
+      "source": "embeddings@cache_manager.cpp:303",
+      "path": [
+        "memcpy_s@cache_manager.cpp:303",
+        "cache_addrs@cache_manager.cpp"
+      ],
+      "sink": "extEmbeddingSize@cache_manager.cpp:303",
+      "sink_type": "memory_operation",
+      "risk": "High",
+      "description": "Embedding data copied from cache to external addresses"
+    }
+  ],
+  "cross_module_calls": [
+    {
+      "caller_module": "tf_rec_v2",
+      "caller_function": "TomlParser::_parse_config@parser.py",
+      "callee_module": "training_common",
+      "callee_function": "file_safe_check@safe_checker.py",
+      "data_passed": "config file path"
+    },
+    {
+      "caller_module": "tf_rec_v1",
+      "caller_function": "save@saver.py",
+      "callee_module": "training_common",
+      "callee_function": "DirectoryValidator@validator.py",
+      "data_passed": "save_dir path"
+    },
+    {
+      "caller_module": "training_common",
+      "caller_function": "_get_rank_info_with_ranktable@hccl_mgmt.py",
+      "callee_module": "training_common",
+      "callee_function": "class_safe_check@safe_checker.py, int_safe_check@safe_checker.py",
+      "data_passed": "rank table JSON content, rank_id, device_id"
+    },
+    {
+      "caller_module": "cust_op_framework_torch",
+      "caller_function": "hstu operators@hstu_jagged.cpp",
+      "callee_module": "cust_op_framework_torch",
+      "callee_function": "MaskCheck@hstu_common.h, MaxSeqLenCheck@hstu_common.h",
+      "data_passed": "maskType, maxSeqLen parameters"
+    },
+    {
+      "caller_module": "lccl_socket_comm",
+      "caller_function": "LcalSockExchange::AllGather@lcal_sock_exchange.cpp",
+      "callee_module": "lccl_socket_comm",
+      "callee_function": "memcpy_s@lcal_sock_exchange.cpp:415",
+      "data_passed": "sendBuf, recvBuf"
+    }
+  ]
+}

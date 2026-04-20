@@ -1,0 +1,398 @@
+{
+  "functions": {
+    "SetUrlProp@mxPlugins/src/module/MxpiRtspSrc/MxpiRtspSrc.cpp": {
+      "defined_at": 833,
+      "calls": [
+        "g_object_set@MxpiRtspSrc.cpp:838"
+      ],
+      "called_by": [
+        "GstRtspSrcSetProperty@MxpiRtspSrc.cpp:848"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "设置RTSP URL，连接远程服务器拉取视频流"
+    },
+    "SetTlsRelatedProps@mxPlugins/src/module/MxpiRtspSrc/MxpiRtspSrc.cpp": {
+      "defined_at": 774,
+      "calls": [
+        "RegularTlsCertPath@MxpiRtspSrc.cpp:487",
+        "CheckPathAndPrivateKey@MxpiRtspSrc.cpp:605",
+        "ConcatCertAndKey@MxpiRtspSrc.cpp:681",
+        "SetObject@MxpiRtspSrc.cpp:726"
+      ],
+      "called_by": [
+        "GstRtspSrcSetProperty@MxpiRtspSrc.cpp:884"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "设置TLS证书相关属性，处理证书文件读取和验证"
+    },
+    "ReadFile@mxPlugins/src/module/MxpiRtspSrc/MxpiRtspSrc.cpp": {
+      "defined_at": 442,
+      "calls": [
+        "fopen@MxpiRtspSrc.cpp:444",
+        "fseek@MxpiRtspSrc.cpp:449",
+        "ftell@MxpiRtspSrc.cpp:450",
+        "fread@MxpiRtspSrc.cpp:477",
+        "fclose@MxpiRtspSrc.cpp:478"
+      ],
+      "called_by": [
+        "GetCert@MxpiRtspSrc.cpp:543",
+        "IsCrypticPrivateKey@MxpiRtspSrc.cpp:523"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "读取TLS证书/密钥文件内容"
+    },
+    "ConcatCertAndKey@mxPlugins/src/module/MxpiRtspSrc/MxpiRtspSrc.cpp": {
+      "defined_at": 681,
+      "calls": [
+        "GetCert@MxpiRtspSrc.cpp:686",
+        "GetDecryptedCertKey@MxpiRtspSrc.cpp:693",
+        "g_strconcat@MxpiRtspSrc.cpp:706"
+      ],
+      "called_by": [
+        "SetTlsRelatedProps@MxpiRtspSrc.cpp:819"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "合并证书和密钥内容"
+    },
+    "OnPadAdded@mxPlugins/src/module/MxpiRtspSrc/MxpiRtspSrc.cpp": {
+      "defined_at": 969,
+      "calls": [
+        "gst_element_link_pads@MxpiRtspSrc.cpp:974",
+        "gst_element_link_pads@MxpiRtspSrc.cpp:989"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "RTSP流连接建立时的回调函数，处理H264/H265流"
+    },
+    "Reconnect@mxPlugins/src/module/MxpiRtspSrc/MxpiRtspSrc.cpp": {
+      "defined_at": 1009,
+      "calls": [
+        "gst_element_set_state@MxpiRtspSrc.cpp:1013",
+        "gst_element_set_state@MxpiRtspSrc.cpp:1029"
+      ],
+      "called_by": [
+        "StreamGuarder@MxpiRtspSrc.cpp:1039"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "RTSP流断开时重连"
+    },
+    "Process@mxPlugins/src/module/MxpiVideoDecoder/MxpiVideoDecoder.cpp": {
+      "defined_at": 107,
+      "calls": [
+        "PrepareInputDataInfo@MxpiVideoDecoder.cpp:126",
+        "SetDvppVideoFormat@MxpiVideoDecoder.cpp:134",
+        "DvppVideoDecode@MxpiVideoDecoder.cpp:151"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "处理视频解码请求，输入来自RTSP或其他数据源"
+    },
+    "PrepareInputDataInfo@mxPlugins/src/module/MxpiVideoDecoder/MxpiVideoDecoder.cpp": {
+      "defined_at": 302,
+      "calls": [],
+      "called_by": [
+        "Process@MxpiVideoDecoder.cpp:126"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "准备视频解码输入数据信息"
+    },
+    "DvppVideoDecode@mxPlugins/src/module/MxpiVideoDecoder/MxpiVideoDecoder.cpp": {
+      "defined_at": 345,
+      "calls": [
+        "MemoryHelper::MxbsMallocAndCopy@MxpiVideoDecoder.cpp:352",
+        "dvppWrapper_->DvppVdec@MxpiVideoDecoder.cpp:367"
+      ],
+      "called_by": [
+        "Process@MxpiVideoDecoder.cpp:151"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "执行DVPP视频解码"
+    },
+    "CallBack@mxPlugins/src/module/MxpiVideoDecoder/MxpiVideoDecoder.cpp": {
+      "defined_at": 379,
+      "calls": [
+        "MxpiBufferManager::CreateDeviceBufferWithMemory@MxpiVideoDecoder.cpp:396",
+        "SendData@MxpiVideoDecoder.cpp:415"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "视频解码完成回调函数"
+    },
+    "Process@mxPlugins/src/module/MxpiImageDecoder/MxpiImageDecoder.cpp": {
+      "defined_at": 225,
+      "calls": [
+        "DecodeProcess@MxpiImageDecoder.cpp:246",
+        "GenerateBuffer@MxpiImageDecoder.cpp:255",
+        "GenerateOpencvBuffer@MxpiImageDecoder.cpp:262",
+        "SendData@MxpiImageDecoder.cpp:272"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "处理图像解码请求"
+    },
+    "DecodeProcess@mxPlugins/src/module/MxpiImageDecoder/MxpiImageDecoder.cpp": {
+      "defined_at": 181,
+      "calls": [
+        "PrepareInputDataInfo@MxpiImageDecoder.cpp:187",
+        "DvppImageDecode@MxpiImageDecoder.cpp:193",
+        "OpencvDecode@MxpiImageDecoder.cpp:199",
+        "CheckBmpFormat@MxpiImageDecoder.cpp:207"
+      ],
+      "called_by": [
+        "Process@MxpiImageDecoder.cpp:246"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "执行图像解码处理"
+    },
+    "DvppImageDecode@mxPlugins/src/module/MxpiImageDecoder/MxpiImageDecoder.cpp": {
+      "defined_at": 384,
+      "calls": [
+        "MemoryHelper::MxbsMallocAndCopy@MxpiImageDecoder.cpp:391",
+        "dvppWrapper_->DvppJpegPredictDecSize@MxpiImageDecoder.cpp:401",
+        "dvppWrapper_->DvppJpegDecode@MxpiImageDecoder.cpp:421"
+      ],
+      "called_by": [
+        "DecodeProcess@MxpiImageDecoder.cpp:193"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "DVPP JPEG图像解码"
+    },
+    "OpencvDecode@mxPlugins/src/module/MxpiImageDecoder/MxpiImageDecoder.cpp": {
+      "defined_at": 554,
+      "calls": [
+        "cv::imdecode@MxpiImageDecoder.cpp:564",
+        "ConstructOutput@MxpiImageDecoder.cpp:590"
+      ],
+      "called_by": [
+        "DecodeProcess@MxpiImageDecoder.cpp:199"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "OpenCV图像解码"
+    },
+    "CreateMultipleStreams@mxStream/src/module/StreamManager/MxStreamManager.cpp": {
+      "defined_at": 211,
+      "calls": [
+        "CheckStreamsConfig@MxStreamManager.cpp:213",
+        "InitManager@MxStreamManager.cpp:218",
+        "nlohmann::json::parse@MxStreamManager.cpp:227",
+        "dPtr_->CreateSingleStream@MxStreamManager.cpp:249"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "从JSON配置创建多个Stream pipeline"
+    },
+    "CreateMultipleStreamsFromFile@mxStream/src/module/StreamManager/MxStreamManager.cpp": {
+      "defined_at": 267,
+      "calls": [
+        "FileUtils::RegularFilePath@MxStreamManager.cpp:270",
+        "FileUtils::IsFileValid@MxStreamManager.cpp:274",
+        "std::ifstream@MxStreamManager.cpp:278",
+        "CreateMultipleStreams@MxStreamManager.cpp:300"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "从文件创建Stream pipeline"
+    },
+    "SendData@mxStream/src/module/StreamManager/MxStreamManager.cpp": {
+      "defined_at": 426,
+      "calls": [
+        "StringUtils::HasInvalidChar@MxStreamManager.cpp:430",
+        "dPtr_->IsStreamExist@MxStreamManager.cpp:442",
+        "streamInstance->SendData@MxStreamManager.cpp:448"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "向Stream发送数据"
+    },
+    "GetResult@mxStream/src/module/StreamManager/MxStreamManager.cpp": {
+      "defined_at": 515,
+      "calls": [
+        "StringUtils::HasInvalidChar@MxStreamManager.cpp:520",
+        "dPtr_->IsStreamExist@MxStreamManager.cpp:533",
+        "streamInstance->GetResult@MxStreamManager.cpp:544"
+      ],
+      "called_by": [],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "从Stream获取处理结果"
+    },
+    "LoadConfiguration@mxBase/src/mxbase/module/Utils/ConfigUtil.cpp": {
+      "defined_at": 274,
+      "calls": [
+        "FileUtils::RegularFilePath@ConfigUtil.cpp:285",
+        "FileUtils::IsFileValid@ConfigUtil.cpp:290",
+        "data.InitContent@ConfigUtil.cpp:278",
+        "data.InitJson@ConfigUtil.cpp:301",
+        "data.InitFile@ConfigUtil.cpp:304"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "加载配置文件或JSON配置内容"
+    },
+    "InitJson@mxBase/src/mxbase/module/Utils/ConfigUtil.cpp": {
+      "defined_at": 158,
+      "calls": [
+        "nlohmann::json::parse@ConfigUtil.cpp:161",
+        "StringUtils::HasInvalidChar@ConfigUtil.cpp:166"
+      ],
+      "called_by": [
+        "LoadConfiguration@ConfigUtil.cpp:301"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "解析JSON配置文件"
+    },
+    "post_stream_infer@mxStream/samples/streamserver/streamserverSourceCode/create_app.py": {
+      "defined_at": 175,
+      "calls": [
+        "_extract_input_json@create_app.py:192",
+        "request_queues[task_id].push@create_app.py:199"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "HTTP POST推理接口处理函数"
+    },
+    "_extract_input_json@mxStream/samples/streamserver/streamserverSourceCode/create_app.py": {
+      "defined_at": 212,
+      "calls": [
+        "base64.b64decode@create_app.py:246",
+        "Tensor.set_data@create_app.py:255"
+      ],
+      "called_by": [
+        "post_stream_infer@create_app.py:192"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "从HTTP请求JSON提取输入数据"
+    },
+    "read_json_config@mxStream/samples/streamserver/streamserverSourceCode/utils.py": {
+      "defined_at": 76,
+      "calls": [
+        "file_base_check@utils.py:77",
+        "json.load@utils.py:80"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "读取并解析JSON配置文件"
+    },
+    "file_base_check@mxStream/samples/streamserver/streamserverSourceCode/utils.py": {
+      "defined_at": 62,
+      "calls": [
+        "os.path.basename@utils.py:63",
+        "os.path.isfile@utils.py:64",
+        "valid_characters@utils.py:66",
+        "verify_file_size@utils.py:68",
+        "os.path.islink@utils.py:70",
+        "os.access@utils.py:72"
+      ],
+      "called_by": [
+        "read_json_config@utils.py:77"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "文件基本检查，验证路径和大小"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "SetUrlProp@mxPlugins/src/module/MxpiRtspSrc/MxpiRtspSrc.cpp:838",
+      "path": [
+        "g_object_set(bin->rtspsrc, location)",
+        "OnPadAdded@MxpiRtspSrc.cpp:969",
+        "gst_element_link_pads@MxpiRtspSrc.cpp:974"
+      ],
+      "sink": "RTSP Network Stream Input",
+      "sink_type": "network_input",
+      "description": "RTSP URL设置 -> 建立网络连接 -> 接收视频流数据"
+    },
+    {
+      "source": "RTSP Stream Data",
+      "path": [
+        "OnPadAdded@MxpiRtspSrc.cpp:969",
+        "rtph264depay/rtph265depay",
+        "MxpiVideoDecoder::Process@MxpiVideoDecoder.cpp:107",
+        "PrepareInputDataInfo@MxpiVideoDecoder.cpp:302"
+      ],
+      "sink": "DvppVideoDecode@MxpiVideoDecoder.cpp:367",
+      "sink_type": "media_decode",
+      "description": "RTSP流数据 -> 视频解码器 -> DVPP解码"
+    },
+    {
+      "source": "TLS Certificate File Path",
+      "path": [
+        "SetTlsRelatedProps@MxpiRtspSrc.cpp:774",
+        "ReadFile@MxpiRtspSrc.cpp:442",
+        "fopen@MxpiRtspSrc.cpp:444"
+      ],
+      "sink": "fread@MxpiRtspSrc.cpp:477",
+      "sink_type": "file_read",
+      "description": "TLS证书路径 -> 文件读取 -> 证书内容加载"
+    },
+    {
+      "source": "HTTP POST Request Body",
+      "path": [
+        "post_stream_infer@create_app.py:175",
+        "_extract_input_json@create_app.py:212",
+        "base64.b64decode@create_app.py:246"
+      ],
+      "sink": "Tensor.set_data@create_app.py:255",
+      "sink_type": "tensor_input",
+      "description": "HTTP请求JSON -> 输入提取 -> Base64解码 -> Tensor数据"
+    },
+    {
+      "source": "Pipeline Config JSON",
+      "path": [
+        "CreateMultipleStreams@MxStreamManager.cpp:211",
+        "nlohmann::json::parse@MxStreamManager.cpp:227",
+        "dPtr_->CreateSingleStream@MxStreamManager.cpp:249"
+      ],
+      "sink": "Stream Pipeline Creation",
+      "sink_type": "config_parse",
+      "description": "Pipeline JSON配置 -> 解析 -> 创建Stream"
+    },
+    {
+      "source": "Config File Path",
+      "path": [
+        "LoadConfiguration@ConfigUtil.cpp:274",
+        "FileUtils::RegularFilePath@ConfigUtil.cpp:285",
+        "InitJson@ConfigUtil.cpp:158",
+        "nlohmann::json::parse@ConfigUtil.cpp:161"
+      ],
+      "sink": "cfgJson_@ConfigUtil.cpp:59",
+      "sink_type": "config_parse",
+      "description": "配置文件路径 -> 路径规范化 -> JSON解析 -> 配置存储"
+    },
+    {
+      "source": "Image Data Input",
+      "path": [
+        "Process@MxpiImageDecoder.cpp:225",
+        "DecodeProcess@MxpiImageDecoder.cpp:181",
+        "DvppImageDecode@MxpiImageDecoder.cpp:384",
+        "MemoryHelper::MxbsMallocAndCopy@MxpiImageDecoder.cpp:391"
+      ],
+      "sink": "dvppWrapper_->DvppJpegDecode@MxpiImageDecoder.cpp:421",
+      "sink_type": "media_decode",
+      "description": "图像数据输入 -> 解码处理 -> 内存拷贝 -> DVPP解码"
+    }
+  ]
+}
