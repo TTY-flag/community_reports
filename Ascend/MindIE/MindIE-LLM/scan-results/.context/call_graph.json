@@ -1,0 +1,387 @@
+{
+  "functions": {
+    "HttpServerInit@src/server/endpoint/http_wrapper/http_server.cpp": {
+      "defined_at": 385,
+      "calls": [
+        "CheckIp@src/utils",
+        "IsPortUsed@src/server/endpoint/http_wrapper/http_server.cpp",
+        "CreateHttpServerPoint@src/server/endpoint/http_wrapper/http_server.cpp",
+        "HttpServerDeInit@src/server/endpoint/http_wrapper/http_server.cpp"
+      ],
+      "called_by": [
+        "main@src/server/daemon/llm_daemon.cpp",
+        "EndPoint::Start@src/server/endpoint/endpoint.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "high"
+    },
+    "CreateHttpServerPoint@src/server/endpoint/http_wrapper/http_server.cpp": {
+      "defined_at": 318,
+      "calls": [
+        "GetServerConfig@src/config_manager/config_manager_impl.cpp",
+        "HttpHandler::BusinessInitialize@src/server/endpoint/http_wrapper/http_handler.cpp",
+        "HttpHandler::ManagementInitialize@src/server/endpoint/http_wrapper/http_handler.cpp",
+        "HttpHandler::InitializeMetricsResource@src/server/endpoint/http_wrapper/http_handler.cpp",
+        "HttpServerInitHttpLibConfig@src/server/endpoint/http_wrapper/http_server.cpp",
+        "HttpServerInitCallback@src/server/endpoint/http_wrapper/http_server.cpp"
+      ],
+      "called_by": [
+        "HttpServerInit@src/server/endpoint/http_wrapper/http_server.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "high"
+    },
+    "HttpHandler::BusinessInitialize@src/server/endpoint/http_wrapper/http_handler.cpp": {
+      "defined_at": 521,
+      "calls": [
+        "InitializeManagerResource@src/server/endpoint/http_wrapper/http_handler.cpp",
+        "InitializeInferResource@src/server/endpoint/http_wrapper/http_handler.cpp"
+      ],
+      "called_by": [
+        "CreateHttpServerPoint@src/server/endpoint/http_wrapper/http_server.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "critical"
+    },
+    "HandlePostGenerate@src/server/endpoint/http_wrapper/http_handler.cpp": {
+      "defined_at": 455,
+      "calls": [
+        "JsonParse::GetInferTypeFromJsonStr@src/server/endpoint/single_req_infer_interface/parse_protocol.cpp",
+        "MakeHttpHeadersOpt@src/server/endpoint/http_wrapper/http_handler.cpp",
+        "DispatchInfer@src/server/endpoint/http_wrapper/http_handler.cpp"
+      ],
+      "called_by": [
+        "HTTP request handler (httplib callback)"
+      ],
+      "receives_external_input": true,
+      "risk": "critical"
+    },
+    "DispatchInfer@src/server/endpoint/http_wrapper/http_handler.cpp": {
+      "defined_at": 226,
+      "calls": [
+        "SingleReqInferInterfaceBase::Process@src/server/endpoint/single_req_infer_interface",
+        "SingleReqTgiTextInferInterface::constructor",
+        "SingleReqVllmInferInterface::constructor"
+      ],
+      "called_by": [
+        "HandlePostGenerate@src/server/endpoint/http_wrapper/http_handler.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "critical"
+    },
+    "JsonParse::GetInferTypeFromJsonStr@src/server/endpoint/single_req_infer_interface/parse_protocol.cpp": {
+      "defined_at": 216,
+      "calls": [
+        "OrderedJson::parse@nlohmann/json",
+        "GetInferTypeFromJson@src/server/endpoint/single_req_infer_interface/parse_protocol.cpp"
+      ],
+      "called_by": [
+        "HandlePostGenerate@src/server/endpoint/http_wrapper/http_handler.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "critical"
+    },
+    "GrpcHandler::InitGrpcService@src/server/endpoint/grpc_wrapper/grpc_handler.cpp": {
+      "defined_at": 175,
+      "calls": [
+        "GrpcCommunicationMng::GetInstance::Init@src/server/endpoint/grpc_wrapper/grpc_communication_mng.cpp"
+      ],
+      "called_by": [
+        "EndPoint::Start@src/server/endpoint/endpoint.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "high"
+    },
+    "HandleDecodeRequest@src/server/endpoint/grpc_wrapper/grpc_handler.cpp": {
+      "defined_at": 35,
+      "calls": [
+        "GetInferInstance@src/server/infer_instances/infer_instances.cpp",
+        "SingleReqInferInterfaceBase::DecodeProcess@src/server/endpoint/single_req_infer_interface"
+      ],
+      "called_by": [
+        "GrpcCommunicationMng (gRPC callback)"
+      ],
+      "receives_external_input": true,
+      "risk": "critical"
+    },
+    "GRPCCommunicator::InitMaster@src/executor/grpc_communicator.cpp": {
+      "defined_at": 158,
+      "calls": [
+        "ServerBuilder::AddListeningPort",
+        "ServerBuilder::RegisterService",
+        "ServerBuilder::BuildAndStart",
+        "LoadCertificates@src/executor/grpc_communicator.cpp"
+      ],
+      "called_by": [
+        "GRPCCommunicator::Init@src/executor/grpc_communicator.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "high"
+    },
+    "GRPCCommunicator::InitSlave@src/executor/grpc_communicator.cpp": {
+      "defined_at": 231,
+      "calls": [
+        "grpc::CreateCustomChannel",
+        "stub_->RegisterAndCommunicate",
+        "SendRegistration@src/executor/grpc_communicator.cpp",
+        "LoadCertificates@src/executor/grpc_communicator.cpp"
+      ],
+      "called_by": [
+        "GRPCCommunicator::Init@src/executor/grpc_communicator.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "high"
+    },
+    "LoadCertificates@src/executor/grpc_communicator.cpp": {
+      "defined_at": 682,
+      "calls": [
+        "GetHomePath",
+        "ReadFileToString@src/executor/grpc_communicator.cpp"
+      ],
+      "called_by": [
+        "GRPCCommunicator::InitMaster@src/executor/grpc_communicator.cpp",
+        "GRPCCommunicator::InitSlave@src/executor/grpc_communicator.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "high"
+    },
+    "ReadFileToString@src/executor/grpc_communicator.cpp": {
+      "defined_at": 33,
+      "calls": [
+        "CanonicalPath@src/utils",
+        "std::ifstream::open"
+      ],
+      "called_by": [
+        "LoadCertificates@src/executor/grpc_communicator.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "medium"
+    },
+    "IPCCommunicator::SetupChannel@src/executor/ipc_communicator.cpp": {
+      "defined_at": 152,
+      "calls": [
+        "CreateSharedMemory@src/executor/ipc_communicator.cpp",
+        "CreateSemaphores@src/executor/ipc_communicator.cpp",
+        "InitSemaphores@src/executor/ipc_communicator.cpp"
+      ],
+      "called_by": [
+        "Executor initialization"
+      ],
+      "receives_external_input": false,
+      "risk": "medium"
+    },
+    "IPCCommunicator::SendMessageViaSM@src/executor/ipc_communicator.cpp": {
+      "defined_at": 212,
+      "calls": [
+        "SerializeExecuteMessage@src/executor/ipc_communicator.cpp",
+        "WriteMessage@src/executor/ipc_communicator.cpp",
+        "WaitOnAllSemaphores@src/executor/ipc_communicator.cpp",
+        "SignalAllSemaphores@src/executor/ipc_communicator.cpp"
+      ],
+      "called_by": [
+        "Executor process"
+      ],
+      "receives_external_input": false,
+      "risk": "medium"
+    },
+    "IPCCommunicator::HandleRcvMsg@src/executor/ipc_communicator.cpp": {
+      "defined_at": 322,
+      "calls": [
+        "ReceiveResponse@src/executor/ipc_communicator.cpp",
+        "ParseResponse@src/executor/ipc_communicator.cpp",
+        "responseHandler_@callback"
+      ],
+      "called_by": [
+        "IPCCommunicator::StartHandleResponseThread@src/executor/ipc_communicator.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "medium"
+    },
+    "ConfigManager::CreateInstance@src/config_manager/config_manager_impl.cpp": {
+      "defined_at": 49,
+      "calls": [
+        "GetConfigPath",
+        "CanonicalPath@src/utils",
+        "ConfigManager::GetInstance@src/config_manager/config_manager_impl.cpp"
+      ],
+      "called_by": [
+        "EndPoint::Start@src/server/endpoint/endpoint.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "high"
+    },
+    "ConfigManager::Impl::Impl@src/config_manager/config_manager_impl.cpp": {
+      "defined_at": 125,
+      "calls": [
+        "BaseConfig::CheckSystemConfig",
+        "ServerConfigManager::InitFromJson@src/config_manager/server_config.cpp",
+        "ScheduleConfigManager::InitFromJson@src/config_manager/schedule_config.cpp",
+        "ModelDeployConfigManager::InitFromJson@src/config_manager/model_deploy_config.cpp",
+        "BackendConfigManager::InitFromJson@src/config_manager/backend_config.cpp",
+        "ExecuteConfigInteractions@src/config_manager/config_manager_impl.cpp"
+      ],
+      "called_by": [
+        "ConfigManager::GetInstance@src/config_manager/config_manager_impl.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "high"
+    },
+    "HandleLoadLoraAdapter@src/server/endpoint/http_wrapper/http_handler.cpp": {
+      "defined_at": 1069,
+      "calls": [
+        "JsonParse::GetContextJsonBody@src/server/endpoint/single_req_infer_interface/parse_protocol.cpp",
+        "GetHomePath",
+        "GetInferInstance@src/server/infer_instances/infer_instances.cpp",
+        "InferInstance::HandleLora@src/server/infer_instances/infer_instances.cpp"
+      ],
+      "called_by": [
+        "HTTP POST /v1/load_lora_adapter handler"
+      ],
+      "receives_external_input": true,
+      "risk": "critical"
+    },
+    "HandlePDRoleV1@src/server/endpoint/http_wrapper/http_handler.cpp": {
+      "defined_at": 1060,
+      "calls": [
+        "DmiRole::HandlePDRoleV1@src/server/endpoint/http_wrapper/dmi_role.cpp",
+        "HandlePDWiseUpdateNpuDeviceIds@src/server/endpoint/http_wrapper/http_handler.cpp"
+      ],
+      "called_by": [
+        "HTTP POST /v1/role/(prefill|decode|flex) handler"
+      ],
+      "receives_external_input": true,
+      "risk": "high"
+    },
+    "main@src/server/daemon/llm_daemon.cpp": {
+      "defined_at": 393,
+      "calls": [
+        "Py_Initialize",
+        "setpgrp",
+        "ParseCommandLineArgs@src/server/daemon/llm_daemon.cpp",
+        "RegisterSignal@src/server/daemon/llm_daemon.cpp",
+        "RunEP@src/server/daemon/llm_daemon.cpp"
+      ],
+      "called_by": [],
+      "receives_external_input": false,
+      "risk": "high"
+    },
+    "RunEP@src/server/daemon/llm_daemon.cpp": {
+      "defined_at": 319,
+      "calls": [
+        "EndPoint::Start@src/server/endpoint/endpoint.cpp",
+        "EndPoint::Stop@src/server/endpoint/endpoint.cpp",
+        "KillProcessGroup@src/server/daemon/llm_daemon.cpp"
+      ],
+      "called_by": [
+        "main@src/server/daemon/llm_daemon.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "high"
+    },
+    "RequestListener::start@mindie_llm/connector/request_listener/request_listener.py": {
+      "defined_at": 27,
+      "calls": [
+        "SharedMemCommunication::get_instance",
+        "SharedMemCommunication::start"
+      ],
+      "called_by": [
+        "Connector initialization"
+      ],
+      "receives_external_input": false,
+      "risk": "medium"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "HTTP request body@src/server/endpoint/http_wrapper/http_handler.cpp:455",
+      "path": [
+        "JsonParse::GetInferTypeFromJsonStr@src/server/endpoint/single_req_infer_interface/parse_protocol.cpp:216",
+        "OrderedJson::parse@nlohmann/json",
+        "GetInferTypeFromJson@src/server/endpoint/single_req_infer_interface/parse_protocol.cpp:162"
+      ],
+      "sink": "DispatchInfer@src/server/endpoint/http_wrapper/http_handler.cpp:226",
+      "sink_type": "request_dispatch",
+      "description": "HTTP request body parsed as JSON to determine inference type (TGI/vLLM) and dispatched to appropriate handler"
+    },
+    {
+      "source": "HTTP request body@src/server/endpoint/http_wrapper/http_handler.cpp:1069",
+      "path": [
+        "JsonParse::GetContextJsonBody@src/server/endpoint/single_req_infer_interface/parse_protocol.cpp:776",
+        "loraName/loraPath extraction",
+        "regex validation"
+      ],
+      "sink": "GetInferInstance()->HandleLora@src/server/infer_instances/infer_instances.cpp",
+      "sink_type": "file_operation",
+      "description": "LoRA adapter name and path extracted from HTTP request body, validated, and loaded via HandleLora"
+    },
+    {
+      "source": "gRPC DecodeParameters@src/server/endpoint/grpc_wrapper/grpc_handler.cpp:35",
+      "path": [
+        "HandleDecodeRequest@src/server/endpoint/grpc_wrapper/grpc_handler.cpp:35",
+        "KvCacheInfo parsing",
+        "SingleReqInferInterfaceBase::DecodeProcess"
+      ],
+      "sink": "InferInstance processing",
+      "sink_type": "request_processing",
+      "description": "gRPC decode request parameters parsed and dispatched to inference engine for decode phase"
+    },
+    {
+      "source": "config.json file@src/config_manager/config_manager_impl.cpp:125",
+      "path": [
+        "ConfigManager::Impl::Impl@src/config_manager/config_manager_impl.cpp:125",
+        "BaseConfig::CheckSystemConfig",
+        "ServerConfigManager::InitFromJson",
+        "ScheduleConfigManager::InitFromJson",
+        "ModelDeployConfigManager::InitFromJson"
+      ],
+      "sink": "ServerConfig/ScheduleConfig/ModelDeployConfig global state",
+      "sink_type": "config_state",
+      "description": "Configuration file parsed and validated, stored in global configuration objects"
+    },
+    {
+      "source": "TLS certificate files@src/executor/grpc_communicator.cpp:682",
+      "path": [
+        "LoadCertificates@src/executor/grpc_communicator.cpp:682",
+        "ReadFileToString@src/executor/grpc_communicator.cpp:33",
+        "CanonicalPath validation"
+      ],
+      "sink": "grpc::experimental::TlsServerCredentialsOptions",
+      "sink_type": "tls_configuration",
+      "description": "TLS CA/Cert/Key/CRL files loaded and configured for gRPC mutual authentication"
+    },
+    {
+      "source": "IPC shared memory@src/executor/ipc_communicator.cpp:322",
+      "path": [
+        "HandleRcvMsg@src/executor/ipc_communicator.cpp:322",
+        "ReceiveResponse@src/executor/ipc_communicator.cpp:309",
+        "ParseResponse@src/executor/ipc_communicator.cpp:247",
+        "ExecuteResponse::ParseFromArray"
+      ],
+      "sink": "responseHandler_ callback",
+      "sink_type": "ipc_message",
+      "description": "Protobuf message received from shared memory, parsed and dispatched to response handler"
+    },
+    {
+      "source": "ExecuteRequest protobuf@src/executor/ipc_communicator.cpp:212",
+      "path": [
+        "SendMessageViaSM@src/executor/ipc_communicator.cpp:212",
+        "SerializeExecuteMessage@src/executor/ipc_communicator.cpp:26",
+        "WriteMessage@src/executor/ipc_communicator.cpp:79"
+      ],
+      "sink": "IPC shared memory buffer",
+      "sink_type": "ipc_message",
+      "description": "ExecuteRequest protobuf serialized and written to shared memory for IPC communication"
+    },
+    {
+      "source": "HTTP request headers@src/server/endpoint/http_wrapper/http_handler.cpp:183",
+      "path": [
+        "MakeHttpHeadersOpt@src/server/endpoint/http_wrapper/http_handler.cpp:183",
+        "IsFlexLocalReq@src/server/endpoint/http_wrapper/http_handler.cpp:162",
+        "GetReqType@src/server/endpoint/http_wrapper/http_handler.cpp:153"
+      ],
+      "sink": "HttpReqHeadersOption struct",
+      "sink_type": "request_routing",
+      "description": "HTTP headers parsed to determine request type (prefill/decode) and routing"
+    }
+  ]
+}

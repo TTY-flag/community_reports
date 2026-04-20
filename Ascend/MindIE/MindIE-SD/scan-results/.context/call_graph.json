@@ -1,0 +1,624 @@
+{
+  "metadata": {
+    "project": "MindIE-SD",
+    "generated_at": "2026-04-17",
+    "analysis_type": "static_call_graph",
+    "cross_language": true
+  },
+  "call_edges": [
+    {
+      "id": "edge_001",
+      "source": {
+        "module": "examples/service/server.py",
+        "function": "generate_image",
+        "line": 52,
+        "language": "Python"
+      },
+      "target": {
+        "module": "examples/service/worker.py",
+        "function": "GeneratorWorker.generate",
+        "line": 121,
+        "language": "Python"
+      },
+      "call_type": "remote_rpc",
+      "framework": "ray",
+      "data_flow": "GeneratorRequest -> worker",
+      "security_boundary": true,
+      "notes": "Ray remote call - distributed execution, no authentication"
+    },
+    {
+      "id": "edge_002",
+      "source": {
+        "module": "examples/service/worker.py",
+        "function": "GeneratorWorker.generate",
+        "line": 161,
+        "language": "Python"
+      },
+      "target": {
+        "module": "wan (external)",
+        "function": "WanT2V.generate",
+        "language": "Python"
+      },
+      "call_type": "method_call",
+      "data_flow": "prompt, size, frame_num -> video tensor",
+      "security_boundary": false,
+      "notes": "External Wan model pipeline"
+    },
+    {
+      "id": "edge_003",
+      "source": {
+        "module": "examples/service/worker.py",
+        "function": "GeneratorWorker.generate",
+        "line": 195,
+        "language": "Python"
+      },
+      "target": {
+        "module": "wan.utils.utils",
+        "function": "save_video",
+        "language": "Python"
+      },
+      "call_type": "function_call",
+      "data_flow": "video tensor -> save_disk_path",
+      "security_boundary": true,
+      "notes": "File write to user-provided path - potential path traversal"
+    },
+    {
+      "id": "edge_004",
+      "source": {
+        "module": "examples/service/worker.py",
+        "function": "GeneratorWorker._init_common_pipeline",
+        "line": 258,
+        "language": "Python"
+      },
+      "target": {
+        "module": "mindiesd/cache_agent/cache_agent.py",
+        "function": "CacheAgent",
+        "line": 26,
+        "language": "Python"
+      },
+      "call_type": "constructor",
+      "data_flow": "CacheConfig -> CacheAgent instance",
+      "security_boundary": false
+    },
+    {
+      "id": "edge_005",
+      "source": {
+        "module": "mindiesd/__init__.py",
+        "function": "import",
+        "line": 31,
+        "language": "Python"
+      },
+      "target": {
+        "module": "mindiesd/env.py",
+        "function": "set_environment_variables",
+        "language": "Python"
+      },
+      "call_type": "function_call",
+      "security_boundary": false,
+      "notes": "Environment setup on package import"
+    },
+    {
+      "id": "edge_006",
+      "source": {
+        "module": "mindiesd/layers/_custom_ops.py",
+        "function": "laser_attention",
+        "line": 34,
+        "language": "Python"
+      },
+      "target": {
+        "module": "torch.ops.mindiesd",
+        "function": "la",
+        "language": "Python/C++ binding"
+      },
+      "call_type": "torch_op_call",
+      "binding_target": {
+        "module": "csrc/plugin/register_ops.cpp",
+        "function": "la_mindie_sd_impl_npu",
+        "line": 66,
+        "language": "C++"
+      },
+      "data_flow": "query, key, value tensors -> attention output",
+      "security_boundary": true,
+      "notes": "Python-to-C++ binding via torch.ops"
+    },
+    {
+      "id": "edge_007",
+      "source": {
+        "module": "mindiesd/layers/_custom_ops.py",
+        "function": "rain_fusion_attention",
+        "line": 143,
+        "language": "Python"
+      },
+      "target": {
+        "module": "torch.ops.mindiesd",
+        "function": "rainfusionattention",
+        "language": "Python/C++ binding"
+      },
+      "call_type": "torch_op_call",
+      "binding_target": {
+        "module": "csrc/plugin/rainfusionattention.cpp",
+        "function": "rainfusionattention_mindie_sd_impl_npu",
+        "language": "C++"
+      },
+      "data_flow": "query, key, value, select_idx -> sparse attention output",
+      "security_boundary": true,
+      "notes": "RainFusion sparse attention operator"
+    },
+    {
+      "id": "edge_008",
+      "source": {
+        "module": "mindiesd/layers/_custom_ops.py",
+        "function": "block_sparse_attention",
+        "line": 287,
+        "language": "Python"
+      },
+      "target": {
+        "module": "torch.ops.mindiesd",
+        "function": "block_sparse_attention",
+        "language": "Python/C++ binding"
+      },
+      "call_type": "torch_op_call",
+      "binding_target": {
+        "module": "csrc/plugin/block_sparse_attention.cpp",
+        "function": "block_sparse_attention_impl_npu",
+        "line": 25,
+        "language": "C++"
+      },
+      "data_flow": "query, key, value, sparse_mask -> attention output",
+      "security_boundary": true,
+      "notes": "Block sparse attention - potential bounds issues"
+    },
+    {
+      "id": "edge_009",
+      "source": {
+        "module": "mindiesd/layers/_custom_ops.py",
+        "function": "sparse_block_estimate",
+        "line": 209,
+        "language": "Python"
+      },
+      "target": {
+        "module": "torch.ops.mindiesd",
+        "function": "sparse_block_estimate",
+        "language": "Python/C++ binding"
+      },
+      "call_type": "torch_op_call",
+      "binding_target": {
+        "module": "csrc/plugin/sparse_block_estimate.cpp",
+        "function": "sparse_block_estimate_mindie_sd_impl_npu",
+        "language": "C++"
+      },
+      "data_flow": "query, key -> sparse_mask, sparse_count_table",
+      "security_boundary": true,
+      "notes": "Sparsity estimation for attention"
+    },
+    {
+      "id": "edge_010",
+      "source": {
+        "module": "mindiesd/layers/_custom_ops.py",
+        "function": "adaln",
+        "line": 338,
+        "language": "Python"
+      },
+      "target": {
+        "module": "torch.ops.mindiesd",
+        "function": "adaln",
+        "language": "Python/C++ binding"
+      },
+      "call_type": "torch_op_call",
+      "binding_target": {
+        "module": "csrc/plugin/adalayernorm.cpp",
+        "function": "adaln_mindie_sd_impl_npu",
+        "language": "C++"
+      },
+      "data_flow": "x, scale, shift tensors -> normalized tensor",
+      "security_boundary": true
+    },
+    {
+      "id": "edge_011",
+      "source": {
+        "module": "mindiesd/layers/_custom_ops.py",
+        "function": "layernorm",
+        "line": 368,
+        "language": "Python"
+      },
+      "target": {
+        "module": "torch.ops.mindiesd",
+        "function": "layernorm",
+        "language": "Python/C++ binding"
+      },
+      "call_type": "torch_op_call",
+      "binding_target": {
+        "module": "csrc/plugin/layernorm.cpp",
+        "function": "layernorm_mindie_sd_impl_npu",
+        "language": "C++"
+      },
+      "data_flow": "input tensor -> normalized tensor, mean, rstd",
+      "security_boundary": true
+    },
+    {
+      "id": "edge_012",
+      "source": {
+        "module": "csrc/plugin/block_sparse_attention.cpp",
+        "function": "block_sparse_attention_impl_npu",
+        "line": 47,
+        "language": "C++"
+      },
+      "target": {
+        "module": "csrc/plugin/pytorch_npu_helper.h",
+        "function": "EXEC_NPU_CMD",
+        "line": 612,
+        "language": "C++"
+      },
+      "call_type": "macro_call",
+      "data_flow": "tensors -> ACLNN kernel",
+      "security_boundary": true,
+      "notes": "ACLNN API call wrapper"
+    },
+    {
+      "id": "edge_013",
+      "source": {
+        "module": "csrc/plugin/pytorch_npu_helper.h",
+        "function": "EXEC_NPU_CMD",
+        "line": 616,
+        "language": "C++"
+      },
+      "target": {
+        "module": "csrc/plugin/pytorch_npu_helper.h",
+        "function": "GetOpApiFuncAddr",
+        "line": 197,
+        "language": "C++"
+      },
+      "call_type": "function_call",
+      "data_flow": "apiName -> function pointer",
+      "security_boundary": false,
+      "notes": "Dynamic library lookup via dlopen/dlsym"
+    },
+    {
+      "id": "edge_014",
+      "source": {
+        "module": "csrc/plugin/pytorch_npu_helper.h",
+        "function": "GetOpApiFuncAddr",
+        "line": 199,
+        "language": "C++"
+      },
+      "target": {
+        "module": "csrc/plugin/find_op_path.cpp",
+        "function": "FindFuncInCustomLibPath",
+        "language": "C++"
+      },
+      "call_type": "function_call",
+      "data_flow": "apiName, libPath -> dlsym result",
+      "security_boundary": true,
+      "notes": "Dynamic library loading - potential library injection"
+    },
+    {
+      "id": "edge_015",
+      "source": {
+        "module": "mindiesd/share_memory.py",
+        "function": "ShareMemoryManager.__init__",
+        "line": 28,
+        "language": "Python"
+      },
+      "target": {
+        "module": "zmq",
+        "function": "Context.socket",
+        "language": "Python (external)"
+      },
+      "call_type": "library_call",
+      "data_flow": "network config -> ZMQ socket",
+      "security_boundary": true,
+      "notes": "Network socket creation - configurable address"
+    },
+    {
+      "id": "edge_016",
+      "source": {
+        "module": "mindiesd/share_memory.py",
+        "function": "ShareMemoryManager.broadcast_handle",
+        "line": 78,
+        "language": "Python"
+      },
+      "target": {
+        "module": "zmq",
+        "function": "socket.send_pyobj",
+        "language": "Python (external)"
+      },
+      "call_type": "method_call",
+      "data_flow": "NPU handle -> network transmission",
+      "security_boundary": true,
+      "notes": "Sensitive data transmitted over network - no encryption"
+    },
+    {
+      "id": "edge_017",
+      "source": {
+        "module": "mindiesd/utils/file_utils.py",
+        "function": "safe_open",
+        "line": 39,
+        "language": "Python"
+      },
+      "target": {
+        "module": "mindiesd/utils/file_utils.py",
+        "function": "standardize_path",
+        "line": 71,
+        "language": "Python"
+      },
+      "call_type": "function_call",
+      "data_flow": "file_path -> validated path",
+      "security_boundary": false,
+      "notes": "Path validation - symlink check"
+    },
+    {
+      "id": "edge_018",
+      "source": {
+        "module": "mindiesd/utils/file_utils.py",
+        "function": "standardize_path",
+        "line": 85,
+        "language": "Python"
+      },
+      "target": {
+        "module": "os",
+        "function": "realpath",
+        "language": "Python (stdlib)"
+      },
+      "call_type": "stdlib_call",
+      "data_flow": "path -> resolved path",
+      "security_boundary": false,
+      "notes": "Path canonicalization"
+    },
+    {
+      "id": "edge_019",
+      "source": {
+        "module": "mindiesd/cache_agent/cache_agent.py",
+        "function": "CacheAgent.apply",
+        "line": 33,
+        "language": "Python"
+      },
+      "target": {
+        "module": "user-provided",
+        "function": "callable function",
+        "language": "Python (external)"
+      },
+      "call_type": "callback",
+      "data_flow": "args, kwargs -> function result",
+      "security_boundary": true,
+      "notes": "Execution of user-provided callable - needs validation"
+    },
+    {
+      "id": "edge_020",
+      "source": {
+        "module": "examples/service/request.py",
+        "function": "GeneratorRequest",
+        "line": 24,
+        "language": "Python"
+      },
+      "target": {
+        "module": "pydantic",
+        "function": "BaseModel",
+        "language": "Python (external)"
+      },
+      "call_type": "inheritance",
+      "data_flow": "JSON -> validated model",
+      "security_boundary": false,
+      "notes": "Request model - minimal validation"
+    },
+    {
+      "id": "edge_021",
+      "source": {
+        "module": "examples/service/worker.py",
+        "function": "GeneratorWorker.generate",
+        "line": 140,
+        "language": "Python"
+      },
+      "target": {
+        "module": "PIL.Image",
+        "function": "Image.open",
+        "language": "Python (external)"
+      },
+      "call_type": "library_call",
+      "data_flow": "image path -> PIL Image object",
+      "security_boundary": true,
+      "notes": "File opening from user-provided path"
+    },
+    {
+      "id": "edge_022",
+      "source": {
+        "module": "mindiesd/quantization/quantize.py",
+        "function": "quantize",
+        "language": "Python"
+      },
+      "target": {
+        "module": "torch",
+        "function": "quantization APIs",
+        "language": "Python (external)"
+      },
+      "call_type": "library_call",
+      "data_flow": "model -> quantized model",
+      "security_boundary": false
+    },
+    {
+      "id": "edge_023",
+      "source": {
+        "module": "mindiesd/offload.py",
+        "function": "enable_offload",
+        "line": 180,
+        "language": "Python"
+      },
+      "target": {
+        "module": "torch.nn.Module",
+        "function": "register_forward_pre_hook",
+        "language": "Python (external)"
+      },
+      "call_type": "method_call",
+      "data_flow": "hook function -> model",
+      "security_boundary": false,
+      "notes": "Hook registration on model blocks"
+    },
+    {
+      "id": "edge_024",
+      "source": {
+        "module": "mindiesd/layers/flash_attn/sparse_flash_attn.py",
+        "function": "sparse_attention",
+        "language": "Python"
+      },
+      "target": {
+        "module": "mindiesd/layers/_custom_ops.py",
+        "function": "block_sparse_attention",
+        "language": "Python"
+      },
+      "call_type": "function_call",
+      "data_flow": "tensors -> sparse attention",
+      "security_boundary": false
+    },
+    {
+      "id": "edge_025",
+      "source": {
+        "module": "mindiesd/layers/flash_attn/attention_forward.py",
+        "function": "attention_forward",
+        "language": "Python"
+      },
+      "target": {
+        "module": "mindiesd/layers/_custom_ops.py",
+        "function": "laser_attention",
+        "language": "Python"
+      },
+      "call_type": "function_call",
+      "data_flow": "tensors -> attention output",
+      "security_boundary": false
+    },
+    {
+      "id": "edge_026",
+      "source": {
+        "module": "build/build.sh",
+        "function": "build_ops.sh",
+        "line": 33,
+        "language": "Shell"
+      },
+      "target": {
+        "module": "csrc/ops",
+        "function": "CMake build",
+        "language": "CMake/C++"
+      },
+      "call_type": "build_script",
+      "security_boundary": false,
+      "notes": "Build system - compiles C++ operators"
+    },
+    {
+      "id": "edge_027",
+      "source": {
+        "module": "csrc/ops/ascendc/op_host/block_sparse_attention.cpp",
+        "function": "block_sparse_attention",
+        "language": "C++"
+      },
+      "target": {
+        "module": "csrc/ops/ascendc/op_host/block_sparse_attention_tiling.cpp",
+        "function": "tiling calculation",
+        "language": "C++"
+      },
+      "call_type": "function_call",
+      "data_flow": "tensor shapes -> tiling params",
+      "security_boundary": true,
+      "notes": "Large tiling calculation ~266KB - potential overflow"
+    }
+  ],
+  "cross_language_bindings": [
+    {
+      "python_module": "mindiesd/layers/_custom_ops.py",
+      "cpp_module": "csrc/plugin/register_ops.cpp",
+      "binding_mechanism": "torch.library",
+      "library_name": "mindiesd",
+      "operations": [
+        {"python": "laser_attention", "cpp": "la_mindie_sd_impl_npu"},
+        {"python": "rain_fusion_attention", "cpp": "rainfusionattention_mindie_sd_impl_npu"},
+        {"python": "block_sparse_attention", "cpp": "block_sparse_attention_impl_npu"},
+        {"python": "sparse_block_estimate", "cpp": "sparse_block_estimate_mindie_sd_impl_npu"},
+        {"python": "adaln", "cpp": "adaln_mindie_sd_impl_npu"},
+        {"python": "adaln_v2", "cpp": "adaln_v2_mindie_sd_impl_npu"},
+        {"python": "layernorm", "cpp": "layernorm_mindie_sd_impl_npu"},
+        {"python": "laser_attention_preprocess", "cpp": "la_preprocess_mindie_sd_impl_npu"}
+      ]
+    }
+  ],
+  "external_dependencies": {
+    "torch": {
+      "calls": ["torch.ops", "torch.Tensor", "torch.npu"],
+      "purpose": "Tensor operations and NPU integration"
+    },
+    "torch_npu": {
+      "calls": ["npu.set_compile_mode", "npu.Stream", "npu.Event"],
+      "purpose": "Ascend NPU integration"
+    },
+    "zmq": {
+      "calls": ["Context.socket", "socket.bind", "socket.connect", "send_pyobj", "recv_pyobj"],
+      "purpose": "Inter-process communication"
+    },
+    "ray": {
+      "calls": ["ray.init", "ray.remote", "ray.get"],
+      "purpose": "Distributed execution"
+    },
+    "fastapi": {
+      "calls": ["FastAPI", "app.post", "HTTPException"],
+      "purpose": "HTTP API framework"
+    },
+    "PIL": {
+      "calls": ["Image.open"],
+      "purpose": "Image file handling"
+    }
+  },
+  "security_boundaries": [
+    {
+      "boundary_id": "SB001",
+      "type": "network_input",
+      "location": "examples/service/server.py:52",
+      "description": "HTTP endpoint accepts untrusted input",
+      "crosses_to": ["worker.py", "request.py"],
+      "controls": "none",
+      "recommendation": "Add authentication, input validation, rate limiting"
+    },
+    {
+      "boundary_id": "SB002",
+      "type": "file_access",
+      "location": "examples/service/worker.py:195",
+      "description": "File write to user-provided path",
+      "crosses_to": ["save_video", "file system"],
+      "controls": "minimal",
+      "recommendation": "Use file_utils.safe_open, validate paths"
+    },
+    {
+      "boundary_id": "SB003",
+      "type": "ipc_network",
+      "location": "mindiesd/share_memory.py:44",
+      "description": "ZMQ network binding for handle broadcasting",
+      "crosses_to": ["remote processes"],
+      "controls": "none",
+      "recommendation": "Add authentication, encrypt handles"
+    },
+    {
+      "boundary_id": "SB004",
+      "type": "python_cpp",
+      "location": "mindiesd/layers/_custom_ops.py -> csrc/plugin",
+      "description": "Python-to-C++ binding via torch.ops",
+      "crosses_to": ["ACLNN kernels", "NPU hardware"],
+      "controls": "TORCH_CHECK assertions",
+      "recommendation": "Add comprehensive bounds checking"
+    },
+    {
+      "boundary_id": "SB005",
+      "type": "dynamic_library",
+      "location": "csrc/plugin/find_op_path.cpp",
+      "description": "dlopen-based library loading",
+      "crosses_to": ["external libraries"],
+      "controls": "path validation",
+      "recommendation": "Validate library paths, check signatures"
+    }
+  ],
+  "summary": {
+    "total_edges": 27,
+    "cross_language_edges": 8,
+    "security_boundaries_crossed": 5,
+    "high_risk_paths": [
+      "HTTP API -> Worker -> File Write",
+      "HTTP API -> Worker -> Model Inference",
+      "ZMQ -> Handle Broadcast -> NPU Memory",
+      "Python -> C++ -> ACLNN -> NPU"
+    ]
+  }
+}

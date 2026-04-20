@@ -1,0 +1,1181 @@
+{
+  "functions": {
+    "parse_custom_args@mindie_turbo/utils/cli.py:33": {
+      "defined_at": 33,
+      "calls": [
+        "_extract_and_validate_key@mindie_turbo/utils/cli.py:88",
+        "_convert_values_to_appropriate_type@mindie_turbo/utils/cli.py:99",
+        "_safe_set_attribute@mindie_turbo/utils/cli.py:127",
+        "warnings.warn@stdlib"
+      ],
+      "called_by": [
+        "BaseTurbo.args@mindie_turbo/adaptor/base_turbo.py:69"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "Parse unknown CLI arguments into namespace"
+    },
+    "_extract_and_validate_key@mindie_turbo/utils/cli.py:88": {
+      "defined_at": 88,
+      "calls": [
+        "warnings.warn@stdlib"
+      ],
+      "called_by": [
+        "parse_custom_args@mindie_turbo/utils/cli.py:33"
+      ],
+      "receives_external_input": false,
+      "risk": "Low"
+    },
+    "_convert_values_to_appropriate_type@mindie_turbo/utils/cli.py:99": {
+      "defined_at": 99,
+      "calls": [
+        "_convert_single_value@mindie_turbo/utils/cli.py:110",
+        "_convert_multiple_values@mindie_turbo/utils/cli.py:122"
+      ],
+      "called_by": [
+        "parse_custom_args@mindie_turbo/utils/cli.py:33"
+      ],
+      "receives_external_input": false,
+      "risk": "Low"
+    },
+    "_convert_single_value@mindie_turbo/utils/cli.py:110": {
+      "defined_at": 110,
+      "calls": [
+        "_is_float@mindie_turbo/utils/cli.py:135"
+      ],
+      "called_by": [
+        "_convert_values_to_appropriate_type@mindie_turbo/utils/cli.py:99",
+        "_convert_multiple_values@mindie_turbo/utils/cli.py:122"
+      ],
+      "receives_external_input": false,
+      "risk": "Low"
+    },
+    "_safe_set_attribute@mindie_turbo/utils/cli.py:127": {
+      "defined_at": 127,
+      "calls": [
+        "hasattr@stdlib",
+        "warnings.warn@stdlib",
+        "setattr@stdlib"
+      ],
+      "called_by": [
+        "parse_custom_args@mindie_turbo/utils/cli.py:33"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "Dynamic attribute setting via setattr()"
+    },
+    "Patch.__init__@mindie_turbo/utils/patcher.py:39": {
+      "defined_at": 39,
+      "calls": [
+        "_validate_target_format@mindie_turbo/utils/patcher.py:66",
+        "set_replacement@mindie_turbo/utils/patcher.py:87",
+        "add_decorator@mindie_turbo/utils/patcher.py:97",
+        "initialize_placeholder@mindie_turbo/utils/patcher.py:23"
+      ],
+      "called_by": [
+        "register_patch@mindie_turbo/utils/patcher.py:232"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "_validate_target_format@mindie_turbo/utils/patcher.py:66": {
+      "defined_at": 66,
+      "calls": [
+        "re.match@stdlib"
+      ],
+      "called_by": [
+        "Patch.__init__@mindie_turbo/utils/patcher.py:39"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "Validate target path format"
+    },
+    "apply_patch@mindie_turbo/utils/patcher.py:102": {
+      "defined_at": 102,
+      "calls": [
+        "parse_path@mindie_turbo/utils/patcher.py:127",
+        "setattr@stdlib"
+      ],
+      "called_by": [
+        "apply_patches@mindie_turbo/utils/patcher.py:269",
+        "activate_extra_patches@mindie_turbo/adaptor/vllm_turbo.py:58"
+      ],
+      "receives_external_input": false,
+      "risk": "Critical",
+      "description": "Apply patch to target function, modify sys.modules"
+    },
+    "parse_path@mindie_turbo/utils/patcher.py:127": {
+      "defined_at": 127,
+      "calls": [
+        "importlib.import_module@stdlib",
+        "create_dummy_module@mindie_turbo/utils/patcher.py:146",
+        "create_placeholder_function@mindie_turbo/utils/patcher.py:161",
+        "setattr@stdlib"
+      ],
+      "called_by": [
+        "apply_patch@mindie_turbo/utils/patcher.py:102"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "Parse module path, create dummy modules, inject into sys.modules"
+    },
+    "create_dummy_module@mindie_turbo/utils/patcher.py:146": {
+      "defined_at": 146,
+      "calls": [
+        "types.ModuleType@stdlib",
+        "sys.modules@stdlib",
+        "setattr@stdlib"
+      ],
+      "called_by": [
+        "parse_path@mindie_turbo/utils/patcher.py:127"
+      ],
+      "receives_external_input": false,
+      "risk": "Critical",
+      "description": "Create and register dummy module in sys.modules"
+    },
+    "register_patch@mindie_turbo/utils/patcher.py:232": {
+      "defined_at": 232,
+      "calls": [
+        "Patch.__init__@mindie_turbo/utils/patcher.py:39",
+        "set_replacement@mindie_turbo/utils/patcher.py:87",
+        "add_decorator@mindie_turbo/utils/patcher.py:97"
+      ],
+      "called_by": [
+        "register_patches@mindie_turbo/adaptor/base_turbo.py:84",
+        "register_env_patches@mindie_turbo/adaptor/base_turbo.py:93"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "Register patch with target path string"
+    },
+    "apply_patches@mindie_turbo/utils/patcher.py:269": {
+      "defined_at": 269,
+      "calls": [
+        "apply_patch@mindie_turbo/utils/patcher.py:102"
+      ],
+      "called_by": [
+        "activate@mindie_turbo/adaptor/base_turbo.py:98"
+      ],
+      "receives_external_input": false,
+      "risk": "Critical",
+      "description": "Apply all registered patches"
+    },
+    "safe_open@mindie_turbo/utils/file_utils.py:34": {
+      "defined_at": 34,
+      "calls": [
+        "standardize_path@mindie_turbo/utils/file_utils.py:77",
+        "check_file_safety@mindie_turbo/utils/file_utils.py:170",
+        "os.fdopen@stdlib",
+        "os.open@stdlib"
+      ],
+      "called_by": [
+        "read_readme@setup.py:73",
+        "get_requirements@setup.py:80",
+        "_read_version_from_ini@setup.py:132"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "Safe file open with path validation"
+    },
+    "check_file_path@mindie_turbo/utils/file_utils.py:67": {
+      "defined_at": 67,
+      "calls": [
+        "standardize_path@mindie_turbo/utils/file_utils.py:77",
+        "check_file_safety@mindie_turbo/utils/file_utils.py:170"
+      ],
+      "called_by": [
+        "validate_path@mindie_turbo/env.py:31",
+        "load_module_from_path@setup.py:42",
+        "get_version@setup.py:94",
+        "_validate_log_configuration@mindie_turbo/utils/logger.py:95",
+        "safe_chmod@mindie_turbo/utils/file_utils.py:197"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "standardize_path@mindie_turbo/utils/file_utils.py:77": {
+      "defined_at": 77,
+      "calls": [
+        "check_path_is_none@mindie_turbo/utils/file_utils.py:97",
+        "check_path_is_str@mindie_turbo/utils/file_utils.py:108",
+        "check_path_length_lt@mindie_turbo/utils/file_utils.py:120",
+        "check_path_is_link@mindie_turbo/utils/file_utils.py:102",
+        "os.realpath@stdlib",
+        "check_path_has_special_characters@mindie_turbo/utils/file_utils.py:113"
+      ],
+      "called_by": [
+        "safe_open@mindie_turbo/utils/file_utils.py:34",
+        "check_file_path@mindie_turbo/utils/file_utils.py:67",
+        "safe_chmod@mindie_turbo/utils/file_utils.py:197"
+      ],
+      "receives_external_input": false,
+      "risk": "High"
+    },
+    "check_path_has_special_characters@mindie_turbo/utils/file_utils.py:113": {
+      "defined_at": 113,
+      "calls": [
+        "re.compile@stdlib",
+        "re.findall@stdlib"
+      ],
+      "called_by": [
+        "standardize_path@mindie_turbo/utils/file_utils.py:77"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "Check for special characters in path"
+    },
+    "check_file_safety@mindie_turbo/utils/file_utils.py:170": {
+      "defined_at": 170,
+      "calls": [
+        "is_path_exists@mindie_turbo/utils/file_utils.py:93",
+        "check_file_size_lt@mindie_turbo/utils/file_utils.py:127",
+        "check_path_permission@mindie_turbo/utils/file_utils.py:165"
+      ],
+      "called_by": [
+        "safe_open@mindie_turbo/utils/file_utils.py:34",
+        "check_file_path@mindie_turbo/utils/file_utils.py:67"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "check_path_permission@mindie_turbo/utils/file_utils.py:165": {
+      "defined_at": 165,
+      "calls": [
+        "check_owner@mindie_turbo/utils/file_utils.py:134",
+        "check_other_write_permission@mindie_turbo/utils/file_utils.py:150"
+      ],
+      "called_by": [
+        "check_file_safety@mindie_turbo/utils/file_utils.py:170"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "safe_listdir@mindie_turbo/utils/file_utils.py:188": {
+      "defined_at": 188,
+      "calls": [
+        "os.listdir@stdlib"
+      ],
+      "called_by": [
+        "rename_wheel_file@setup.py:176",
+        "pack_wheel_file@setup.py:254"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "check_directory_path@mindie_turbo/utils/directory_utils.py:23": {
+      "defined_at": 23,
+      "calls": [
+        "standardize_directory_path@mindie_turbo/utils/directory_utils.py:39",
+        "check_directory_safety@mindie_turbo/utils/directory_utils.py:142"
+      ],
+      "called_by": [
+        "safe_listdir@mindie_turbo/utils/directory_utils.py:172",
+        "safe_walk@mindie_turbo/utils/directory_utils.py:189",
+        "safe_mkdir@mindie_turbo/utils/directory_utils.py:217",
+        "safe_rmdir@mindie_turbo/utils/directory_utils.py:233",
+        "_validate_directory@mindie_turbo/utils/logger.py:120",
+        "pack_wheel_file@setup.py:254"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "standardize_directory_path@mindie_turbo/utils/directory_utils.py:39": {
+      "defined_at": 39,
+      "calls": [
+        "check_path_is_none@mindie_turbo/utils/directory_utils.py:56",
+        "check_path_is_str@mindie_turbo/utils/directory_utils.py:61",
+        "check_path_length_lt@mindie_turbo/utils/directory_utils.py:85",
+        "check_path_is_link@mindie_turbo/utils/directory_utils.py:66",
+        "os.realpath@stdlib",
+        "check_directory_path_characters@mindie_turbo/utils/directory_utils.py:72"
+      ],
+      "called_by": [
+        "check_directory_path@mindie_turbo/utils/directory_utils.py:23"
+      ],
+      "receives_external_input": false,
+      "risk": "High"
+    },
+    "check_directory_safety@mindie_turbo/utils/directory_utils.py:142": {
+      "defined_at": 142,
+      "calls": [
+        "check_directory_permissions@mindie_turbo/utils/directory_utils.py:107",
+        "check_directory_owner@mindie_turbo/utils/directory_utils.py:92",
+        "check_directory_other_permissions@mindie_turbo/utils/directory_utils.py:129"
+      ],
+      "called_by": [
+        "check_directory_path@mindie_turbo/utils/directory_utils.py:23"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "safe_rmdir@mindie_turbo/utils/directory_utils.py:233": {
+      "defined_at": 233,
+      "calls": [
+        "check_directory_path@mindie_turbo/utils/directory_utils.py:23",
+        "shutil.rmtree@stdlib"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "Remove directory using shutil.rmtree"
+    },
+    "setup_logger@mindie_turbo/utils/logger.py:23": {
+      "defined_at": 23,
+      "calls": [
+        "_validate_log_configuration@mindie_turbo/utils/logger.py:95",
+        "logging.getLogger@stdlib",
+        "logging.StreamHandler@stdlib",
+        "logging.handlers.RotatingFileHandler@stdlib",
+        "logging.FileHandler@stdlib"
+      ],
+      "called_by": [
+        "module_init@mindie_turbo/utils/logger.py:161"
+      ],
+      "receives_external_input": false,
+      "risk": "Low"
+    },
+    "_validate_log_configuration@mindie_turbo/utils/logger.py:95": {
+      "defined_at": 95,
+      "calls": [
+        "_validate_directory@mindie_turbo/utils/logger.py:120",
+        "check_file_path@mindie_turbo/utils/file_utils.py:67",
+        "_check_disk_space@mindie_turbo/utils/logger.py:132"
+      ],
+      "called_by": [
+        "setup_logger@mindie_turbo/utils/logger.py:23"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "_validate_directory@mindie_turbo/utils/logger.py:120": {
+      "defined_at": 120,
+      "calls": [
+        "check_directory_path@mindie_turbo/utils/directory_utils.py:23"
+      ],
+      "called_by": [
+        "_validate_log_configuration@mindie_turbo/utils/logger.py:95"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "validate_path@mindie_turbo/env.py:31": {
+      "defined_at": 31,
+      "calls": [
+        "check_file_path@mindie_turbo/utils/file_utils.py:67"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "__getattr__@mindie_turbo/env.py:122": {
+      "defined_at": 122,
+      "calls": [
+        "env_variables@mindie_turbo/env.py:119"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "Dynamic attribute access for environment variables"
+    },
+    "validate_optimization_level@mindie_turbo/adaptor/base_turbo.py:21": {
+      "defined_at": 21,
+      "calls": [
+        "int@stdlib"
+      ],
+      "called_by": [
+        "activate@mindie_turbo/adaptor/base_turbo.py:98",
+        "get_validated_optimization_level@mindie_turbo/adaptor/vllm_turbo.py:73"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "activate@mindie_turbo/adaptor/base_turbo.py:98": {
+      "defined_at": 98,
+      "calls": [
+        "validate_optimization_level@mindie_turbo/adaptor/base_turbo.py:21",
+        "check_environment@mindie_turbo/adaptor/base_turbo.py:74",
+        "setup_environment@mindie_turbo/adaptor/base_turbo.py:79",
+        "register_patches@mindie_turbo/adaptor/base_turbo.py:84",
+        "register_env_patches@mindie_turbo/adaptor/base_turbo.py:93",
+        "apply_patches@mindie_turbo/utils/patcher.py:269"
+      ],
+      "called_by": [
+        "initialize_vllm_turbo@mindie_turbo/adaptor/vllm_turbo.py:90"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "Activate optimization and apply patches"
+    },
+    "TurboPatch.activate_extra_patches@mindie_turbo/adaptor/base_turbo.py:142": {
+      "defined_at": 142,
+      "calls": [
+        "activate_extra_patches@mindie_turbo/adaptor/vllm_turbo.py:58"
+      ],
+      "called_by": [],
+      "receives_external_input": false,
+      "risk": "High"
+    },
+    "get_validated_optimization_level@mindie_turbo/adaptor/vllm_turbo.py:73": {
+      "defined_at": 73,
+      "calls": [
+        "os.getenv@stdlib",
+        "validate_optimization_level@mindie_turbo/adaptor/base_turbo.py:21"
+      ],
+      "called_by": [
+        "initialize_vllm_turbo@mindie_turbo/adaptor/vllm_turbo.py:90"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "Read VLLM_OPTIMIZATION_LEVEL from environment"
+    },
+    "initialize_vllm_turbo@mindie_turbo/adaptor/vllm_turbo.py:90": {
+      "defined_at": 90,
+      "calls": [
+        "get_validated_optimization_level@mindie_turbo/adaptor/vllm_turbo.py:73",
+        "VLLMTurbo.__init__@mindie_turbo/adaptor/vllm_turbo.py:23",
+        "activate@mindie_turbo/adaptor/base_turbo.py:98",
+        "register_extra_patches@mindie_turbo/adaptor/vllm_turbo.py:51",
+        "logger.info@mindie_turbo/utils/logger.py:161",
+        "logger.error@mindie_turbo/utils/logger.py:161",
+        "logger.warning@mindie_turbo/utils/logger.py:161"
+      ],
+      "called_by": [
+        "module_init@mindie_turbo/adaptor/vllm_turbo.py:130"
+      ],
+      "receives_external_input": false,
+      "risk": "Critical",
+      "description": "Initialize and activate vLLM Turbo with patches"
+    },
+    "VLLMTurbo.activate_extra_patches@mindie_turbo/adaptor/vllm_turbo.py:58": {
+      "defined_at": 58,
+      "calls": [
+        "apply_patch@mindie_turbo/utils/patcher.py:102"
+      ],
+      "called_by": [
+        "TurboPatch.activate_extra_patches@mindie_turbo/adaptor/base_turbo.py:142"
+      ],
+      "receives_external_input": false,
+      "risk": "High"
+    },
+    "load_module_from_path@setup.py:42": {
+      "defined_at": 42,
+      "calls": [
+        "check_file_path@mindie_turbo/utils/file_utils.py:67",
+        "importlib.util.spec_from_file_location@stdlib",
+        "importlib.util.module_from_spec@stdlib",
+        "spec.loader.exec_module@stdlib"
+      ],
+      "called_by": [
+        "module_init@setup.py:65"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "Load module dynamically from file path"
+    },
+    "get_version@setup.py:94": {
+      "defined_at": 94,
+      "calls": [
+        "check_file_path@mindie_turbo/utils/file_utils.py:67",
+        "importlib.util.spec_from_file_location@stdlib",
+        "_read_version_from_ini@setup.py:132"
+      ],
+      "called_by": [
+        "setup@setup.py:319"
+      ],
+      "receives_external_input": false,
+      "risk": "Low"
+    },
+    "_read_version_from_ini@setup.py:132": {
+      "defined_at": 132,
+      "calls": [
+        "safe_open@mindie_turbo/utils/file_utils.py:34",
+        "re.match@stdlib"
+      ],
+      "called_by": [
+        "get_version@setup.py:94"
+      ],
+      "receives_external_input": false,
+      "risk": "Low"
+    },
+    "rename_wheel_file@setup.py:176": {
+      "defined_at": 176,
+      "calls": [
+        "safe_listdir@mindie_turbo/utils/file_utils.py:188",
+        "get_wheel_tag@setup.py:155",
+        "get_version@setup.py:94",
+        "os.rename@stdlib",
+        "shutil.copy2@stdlib",
+        "os.remove@stdlib"
+      ],
+      "called_by": [
+        "setup@setup.py:319"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "pack_wheel_file@setup.py:254": {
+      "defined_at": 254,
+      "calls": [
+        "check_directory_path@mindie_turbo/utils/directory_utils.py:23",
+        "safe_remove@setup.py:218",
+        "safe_listdir@mindie_turbo/utils/file_utils.py:188",
+        "check_file_path@mindie_turbo/utils/file_utils.py:67",
+        "shutil.copy@stdlib",
+        "shutil.make_archive@stdlib"
+      ],
+      "called_by": [
+        "setup@setup.py:319"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "parse_custom_args@mindie_turbo/utils/cli.py:33",
+      "path": [
+        "_safe_set_attribute@mindie_turbo/utils/cli.py:127"
+      ],
+      "sink": "setattr@stdlib",
+      "sink_type": "dynamic_attribute",
+      "description": "CLI args -> setattr() dynamic attribute setting"
+    },
+    {
+      "source": "register_patch@mindie_turbo/utils/patcher.py:232",
+      "path": [
+        "Patch.__init__@mindie_turbo/utils/patcher.py:39",
+        "apply_patch@mindie_turbo/utils/patcher.py:102",
+        "parse_path@mindie_turbo/utils/patcher.py:127"
+      ],
+      "sink": "setattr@stdlib",
+      "sink_type": "module_injection",
+      "description": "Target path string -> sys.modules injection via setattr()"
+    },
+    {
+      "source": "parse_path@mindie_turbo/utils/patcher.py:127",
+      "path": [
+        "create_dummy_module@mindie_turbo/utils/patcher.py:146"
+      ],
+      "sink": "sys.modules@stdlib",
+      "sink_type": "module_injection",
+      "description": "Module path -> sys.modules registration"
+    },
+    {
+      "source": "apply_patch@mindie_turbo/utils/patcher.py:102",
+      "path": [
+        "setattr@stdlib"
+      ],
+      "sink": "sys.modules@stdlib",
+      "sink_type": "function_replacement",
+      "description": "Patch application -> function replacement in sys.modules"
+    },
+    {
+      "source": "get_validated_optimization_level@mindie_turbo/adaptor/vllm_turbo.py:73",
+      "path": [
+        "validate_optimization_level@mindie_turbo/adaptor/base_turbo.py:21",
+        "activate@mindie_turbo/adaptor/base_turbo.py:98",
+        "apply_patches@mindie_turbo/utils/patcher.py:269"
+      ],
+      "sink": "apply_patch@mindie_turbo/utils/patcher.py:102",
+      "sink_type": "code_modification",
+      "description": "VLLM_OPTIMIZATION_LEVEL env var -> patch activation"
+    },
+    {
+      "source": "safe_open@mindie_turbo/utils/file_utils.py:34",
+      "path": [
+        "standardize_path@mindie_turbo/utils/file_utils.py:77"
+      ],
+      "sink": "os.open@stdlib",
+      "sink_type": "file_operation",
+      "description": "File path -> os.open() after validation"
+    },
+    {
+      "source": "check_file_path@mindie_turbo/utils/file_utils.py:67",
+      "path": [
+        "standardize_path@mindie_turbo/utils/file_utils.py:77",
+        "check_path_has_special_characters@mindie_turbo/utils/file_utils.py:113"
+      ],
+      "sink": "re.compile@stdlib",
+      "sink_type": "regex_validation",
+      "description": "File path -> regex validation for special characters"
+    },
+    {
+      "source": "safe_rmdir@mindie_turbo/utils/directory_utils.py:233",
+      "path": [
+        "check_directory_path@mindie_turbo/utils/directory_utils.py:23"
+      ],
+      "sink": "shutil.rmtree@stdlib",
+      "sink_type": "directory_deletion",
+      "description": "Directory path -> shutil.rmtree() deletion"
+    },
+    {
+      "source": "load_module_from_path@setup.py:42",
+      "path": [
+        "check_file_path@mindie_turbo/utils/file_utils.py:67"
+      ],
+      "sink": "importlib.util.spec_from_file_location@stdlib",
+      "sink_type": "module_loading",
+      "description": "Module path -> dynamic module loading"
+    },
+    {
+      "source": "__getattr__@mindie_turbo/env.py:122",
+      "path": [
+        "env_variables@mindie_turbo/env.py:119",
+        "validate_path@mindie_turbo/env.py:31"
+      ],
+      "sink": "check_file_path@mindie_turbo/utils/file_utils.py:67",
+      "sink_type": "path_validation",
+      "description": "Dynamic env var access -> path validation"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "parse_custom_args",
+      "file": "mindie_turbo/utils/cli.py",
+      "line": 33,
+      "type": "function",
+      "risk": "Medium"
+    },
+    {
+      "id": "_extract_and_validate_key",
+      "file": "mindie_turbo/utils/cli.py",
+      "line": 88,
+      "type": "function",
+      "risk": "Low"
+    },
+    {
+      "id": "_convert_values_to_appropriate_type",
+      "file": "mindie_turbo/utils/cli.py",
+      "line": 99,
+      "type": "function",
+      "risk": "Low"
+    },
+    {
+      "id": "_safe_set_attribute",
+      "file": "mindie_turbo/utils/cli.py",
+      "line": 127,
+      "type": "function",
+      "risk": "Medium"
+    },
+    {
+      "id": "Patch.__init__",
+      "file": "mindie_turbo/utils/patcher.py",
+      "line": 39,
+      "type": "method",
+      "risk": "Critical"
+    },
+    {
+      "id": "_validate_target_format",
+      "file": "mindie_turbo/utils/patcher.py",
+      "line": 66,
+      "type": "method",
+      "risk": "Medium"
+    },
+    {
+      "id": "apply_patch",
+      "file": "mindie_turbo/utils/patcher.py",
+      "line": 102,
+      "type": "method",
+      "risk": "Critical"
+    },
+    {
+      "id": "parse_path",
+      "file": "mindie_turbo/utils/patcher.py",
+      "line": 127,
+      "type": "staticmethod",
+      "risk": "Critical"
+    },
+    {
+      "id": "create_dummy_module",
+      "file": "mindie_turbo/utils/patcher.py",
+      "line": 146,
+      "type": "inner_function",
+      "risk": "Critical"
+    },
+    {
+      "id": "register_patch",
+      "file": "mindie_turbo/utils/patcher.py",
+      "line": 232,
+      "type": "staticmethod",
+      "risk": "Critical"
+    },
+    {
+      "id": "apply_patches",
+      "file": "mindie_turbo/utils/patcher.py",
+      "line": 269,
+      "type": "staticmethod",
+      "risk": "Critical"
+    },
+    {
+      "id": "safe_open",
+      "file": "mindie_turbo/utils/file_utils.py",
+      "line": 34,
+      "type": "function",
+      "risk": "High"
+    },
+    {
+      "id": "check_file_path",
+      "file": "mindie_turbo/utils/file_utils.py",
+      "line": 67,
+      "type": "function",
+      "risk": "High"
+    },
+    {
+      "id": "standardize_path",
+      "file": "mindie_turbo/utils/file_utils.py",
+      "line": 77,
+      "type": "function",
+      "risk": "High"
+    },
+    {
+      "id": "check_path_has_special_characters",
+      "file": "mindie_turbo/utils/file_utils.py",
+      "line": 113,
+      "type": "function",
+      "risk": "Medium"
+    },
+    {
+      "id": "check_file_safety",
+      "file": "mindie_turbo/utils/file_utils.py",
+      "line": 170,
+      "type": "function",
+      "risk": "Medium"
+    },
+    {
+      "id": "check_path_permission",
+      "file": "mindie_turbo/utils/file_utils.py",
+      "line": 165,
+      "type": "function",
+      "risk": "Medium"
+    },
+    {
+      "id": "safe_listdir",
+      "file": "mindie_turbo/utils/file_utils.py",
+      "line": 188,
+      "type": "function",
+      "risk": "Medium"
+    },
+    {
+      "id": "check_directory_path",
+      "file": "mindie_turbo/utils/directory_utils.py",
+      "line": 23,
+      "type": "function",
+      "risk": "High"
+    },
+    {
+      "id": "standardize_directory_path",
+      "file": "mindie_turbo/utils/directory_utils.py",
+      "line": 39,
+      "type": "function",
+      "risk": "High"
+    },
+    {
+      "id": "check_directory_safety",
+      "file": "mindie_turbo/utils/directory_utils.py",
+      "line": 142,
+      "type": "function",
+      "risk": "Medium"
+    },
+    {
+      "id": "safe_rmdir",
+      "file": "mindie_turbo/utils/directory_utils.py",
+      "line": 233,
+      "type": "function",
+      "risk": "High"
+    },
+    {
+      "id": "setup_logger",
+      "file": "mindie_turbo/utils/logger.py",
+      "line": 23,
+      "type": "function",
+      "risk": "Low"
+    },
+    {
+      "id": "_validate_log_configuration",
+      "file": "mindie_turbo/utils/logger.py",
+      "line": 95,
+      "type": "function",
+      "risk": "Medium"
+    },
+    {
+      "id": "_validate_directory",
+      "file": "mindie_turbo/utils/logger.py",
+      "line": 120,
+      "type": "function",
+      "risk": "Medium"
+    },
+    {
+      "id": "validate_path",
+      "file": "mindie_turbo/env.py",
+      "line": 31,
+      "type": "staticmethod",
+      "risk": "Medium"
+    },
+    {
+      "id": "__getattr__",
+      "file": "mindie_turbo/env.py",
+      "line": 122,
+      "type": "module_function",
+      "risk": "Medium"
+    },
+    {
+      "id": "validate_optimization_level",
+      "file": "mindie_turbo/adaptor/base_turbo.py",
+      "line": 21,
+      "type": "function",
+      "risk": "Medium"
+    },
+    {
+      "id": "activate",
+      "file": "mindie_turbo/adaptor/base_turbo.py",
+      "line": 98,
+      "type": "method",
+      "risk": "Critical"
+    },
+    {
+      "id": "TurboPatch.activate_extra_patches",
+      "file": "mindie_turbo/adaptor/base_turbo.py",
+      "line": 142,
+      "type": "classmethod",
+      "risk": "High"
+    },
+    {
+      "id": "get_validated_optimization_level",
+      "file": "mindie_turbo/adaptor/vllm_turbo.py",
+      "line": 73,
+      "type": "function",
+      "risk": "Medium"
+    },
+    {
+      "id": "initialize_vllm_turbo",
+      "file": "mindie_turbo/adaptor/vllm_turbo.py",
+      "line": 90,
+      "type": "function",
+      "risk": "Critical"
+    },
+    {
+      "id": "VLLMTurbo.activate_extra_patches",
+      "file": "mindie_turbo/adaptor/vllm_turbo.py",
+      "line": 58,
+      "type": "method",
+      "risk": "High"
+    },
+    {
+      "id": "load_module_from_path",
+      "file": "setup.py",
+      "line": 42,
+      "type": "function",
+      "risk": "High"
+    },
+    {
+      "id": "get_version",
+      "file": "setup.py",
+      "line": 94,
+      "type": "function",
+      "risk": "Low"
+    },
+    {
+      "id": "_read_version_from_ini",
+      "file": "setup.py",
+      "line": 132,
+      "type": "function",
+      "risk": "Low"
+    },
+    {
+      "id": "rename_wheel_file",
+      "file": "setup.py",
+      "line": 176,
+      "type": "function",
+      "risk": "Medium"
+    },
+    {
+      "id": "pack_wheel_file",
+      "file": "setup.py",
+      "line": 254,
+      "type": "function",
+      "risk": "Medium"
+    }
+  ],
+  "edges": [
+    {
+      "source": "parse_custom_args",
+      "target": "_extract_and_validate_key",
+      "type": "call"
+    },
+    {
+      "source": "parse_custom_args",
+      "target": "_convert_values_to_appropriate_type",
+      "type": "call"
+    },
+    {
+      "source": "parse_custom_args",
+      "target": "_safe_set_attribute",
+      "type": "call"
+    },
+    {
+      "source": "_convert_values_to_appropriate_type",
+      "target": "_convert_single_value",
+      "type": "call"
+    },
+    {
+      "source": "_convert_values_to_appropriate_type",
+      "target": "_convert_multiple_values",
+      "type": "call"
+    },
+    {
+      "source": "_safe_set_attribute",
+      "target": "setattr",
+      "type": "stdlib_call"
+    },
+    {
+      "source": "Patch.__init__",
+      "target": "_validate_target_format",
+      "type": "call"
+    },
+    {
+      "source": "Patch.__init__",
+      "target": "set_replacement",
+      "type": "call"
+    },
+    {
+      "source": "Patch.__init__",
+      "target": "add_decorator",
+      "type": "call"
+    },
+    {
+      "source": "apply_patch",
+      "target": "parse_path",
+      "type": "call"
+    },
+    {
+      "source": "apply_patch",
+      "target": "setattr",
+      "type": "stdlib_call"
+    },
+    {
+      "source": "parse_path",
+      "target": "create_dummy_module",
+      "type": "call"
+    },
+    {
+      "source": "parse_path",
+      "target": "importlib.import_module",
+      "type": "stdlib_call"
+    },
+    {
+      "source": "create_dummy_module",
+      "target": "sys.modules",
+      "type": "stdlib_access"
+    },
+    {
+      "source": "create_dummy_module",
+      "target": "setattr",
+      "type": "stdlib_call"
+    },
+    {
+      "source": "register_patch",
+      "target": "Patch.__init__",
+      "type": "call"
+    },
+    {
+      "source": "apply_patches",
+      "target": "apply_patch",
+      "type": "call"
+    },
+    {
+      "source": "safe_open",
+      "target": "standardize_path",
+      "type": "call"
+    },
+    {
+      "source": "safe_open",
+      "target": "check_file_safety",
+      "type": "call"
+    },
+    {
+      "source": "safe_open",
+      "target": "os.open",
+      "type": "stdlib_call"
+    },
+    {
+      "source": "check_file_path",
+      "target": "standardize_path",
+      "type": "call"
+    },
+    {
+      "source": "check_file_path",
+      "target": "check_file_safety",
+      "type": "call"
+    },
+    {
+      "source": "standardize_path",
+      "target": "check_path_is_link",
+      "type": "call"
+    },
+    {
+      "source": "standardize_path",
+      "target": "os.realpath",
+      "type": "stdlib_call"
+    },
+    {
+      "source": "standardize_path",
+      "target": "check_path_has_special_characters",
+      "type": "call"
+    },
+    {
+      "source": "check_file_safety",
+      "target": "check_path_permission",
+      "type": "call"
+    },
+    {
+      "source": "check_path_permission",
+      "target": "check_owner",
+      "type": "call"
+    },
+    {
+      "source": "check_path_permission",
+      "target": "check_other_write_permission",
+      "type": "call"
+    },
+    {
+      "source": "check_directory_path",
+      "target": "standardize_directory_path",
+      "type": "call"
+    },
+    {
+      "source": "check_directory_path",
+      "target": "check_directory_safety",
+      "type": "call"
+    },
+    {
+      "source": "check_directory_safety",
+      "target": "check_directory_permissions",
+      "type": "call"
+    },
+    {
+      "source": "check_directory_safety",
+      "target": "check_directory_owner",
+      "type": "call"
+    },
+    {
+      "source": "safe_rmdir",
+      "target": "check_directory_path",
+      "type": "call"
+    },
+    {
+      "source": "safe_rmdir",
+      "target": "shutil.rmtree",
+      "type": "stdlib_call"
+    },
+    {
+      "source": "_validate_log_configuration",
+      "target": "check_file_path",
+      "type": "call"
+    },
+    {
+      "source": "_validate_directory",
+      "target": "check_directory_path",
+      "type": "call"
+    },
+    {
+      "source": "validate_path",
+      "target": "check_file_path",
+      "type": "call"
+    },
+    {
+      "source": "__getattr__",
+      "target": "env_variables",
+      "type": "access"
+    },
+    {
+      "source": "validate_optimization_level",
+      "target": "int",
+      "type": "stdlib_call"
+    },
+    {
+      "source": "activate",
+      "target": "validate_optimization_level",
+      "type": "call"
+    },
+    {
+      "source": "activate",
+      "target": "register_patches",
+      "type": "call"
+    },
+    {
+      "source": "activate",
+      "target": "apply_patches",
+      "type": "call"
+    },
+    {
+      "source": "get_validated_optimization_level",
+      "target": "os.getenv",
+      "type": "stdlib_call"
+    },
+    {
+      "source": "get_validated_optimization_level",
+      "target": "validate_optimization_level",
+      "type": "call"
+    },
+    {
+      "source": "initialize_vllm_turbo",
+      "target": "get_validated_optimization_level",
+      "type": "call"
+    },
+    {
+      "source": "initialize_vllm_turbo",
+      "target": "activate",
+      "type": "call"
+    },
+    {
+      "source": "VLLMTurbo.activate_extra_patches",
+      "target": "apply_patch",
+      "type": "call"
+    },
+    {
+      "source": "TurboPatch.activate_extra_patches",
+      "target": "VLLMTurbo.activate_extra_patches",
+      "type": "call"
+    },
+    {
+      "source": "load_module_from_path",
+      "target": "check_file_path",
+      "type": "call"
+    },
+    {
+      "source": "load_module_from_path",
+      "target": "importlib.util.spec_from_file_location",
+      "type": "stdlib_call"
+    },
+    {
+      "source": "get_version",
+      "target": "check_file_path",
+      "type": "call"
+    },
+    {
+      "source": "_read_version_from_ini",
+      "target": "safe_open",
+      "type": "call"
+    },
+    {
+      "source": "rename_wheel_file",
+      "target": "safe_listdir",
+      "type": "call"
+    },
+    {
+      "source": "pack_wheel_file",
+      "target": "check_directory_path",
+      "type": "call"
+    },
+    {
+      "source": "pack_wheel_file",
+      "target": "safe_listdir",
+      "type": "call"
+    },
+    {
+      "source": "pack_wheel_file",
+      "target": "check_file_path",
+      "type": "call"
+    }
+  ]
+}

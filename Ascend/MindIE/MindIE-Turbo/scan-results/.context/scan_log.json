@@ -1,0 +1,116 @@
+{
+  "scan_id": "mindie-turbo-20250419-205500",
+  "start_time": "2025-04-19T20:55:00+08:00",
+  "end_time": "2025-04-19T21:32:00+08:00",
+  "duration_seconds": 2220,
+  "project_name": "MindIE-Turbo",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/shenteng/MindIE/MindIE-Turbo",
+  "status": "success",
+  "agents": [
+    {
+      "name": "architecture",
+      "start_time": "2025-04-19T20:56:00+08:00",
+      "end_time": "2025-04-19T21:04:01+08:00",
+      "duration_seconds": 481,
+      "status": "success",
+      "output_files": [
+        "scan-results/.context/project_model.json",
+        "scan-results/.context/call_graph.json",
+        "scan-results/threat_analysis_report.md"
+      ],
+      "summary": {
+        "modules_identified": 6,
+        "high_risk_files": 5,
+        "entry_points": 12,
+        "data_flow_paths": 5
+      }
+    },
+    {
+      "name": "dataflow-scanner",
+      "start_time": "2025-04-19T21:05:00+08:00",
+      "end_time": "2025-04-19T21:07:48+08:00",
+      "duration_seconds": 168,
+      "status": "success",
+      "modules_scanned": ["utils", "adaptor", "core", "setup"],
+      "summary": {
+        "candidates_found": 39,
+        "critical": 5,
+        "high": 8,
+        "medium": 17,
+        "low": 4
+      }
+    },
+    {
+      "name": "security-auditor",
+      "start_time": "2025-04-19T21:05:00+08:00",
+      "end_time": "2025-04-19T21:14:38+08:00",
+      "duration_seconds": 578,
+      "status": "success",
+      "modules_scanned": ["utils", "adaptor", "core", "setup", "cross-module"],
+      "summary": {
+        "candidates_found": 43,
+        "critical": 6,
+        "high": 9,
+        "medium": 19,
+        "low": 4,
+        "cross_module_vulns": 4
+      }
+    },
+    {
+      "name": "verification",
+      "start_time": "2025-04-19T21:15:00+08:00",
+      "end_time": "2025-04-19T21:22:16+08:00",
+      "duration_seconds": 436,
+      "status": "success",
+      "summary": {
+        "total_verified": 33,
+        "confirmed": 1,
+        "likely": 1,
+        "possible": 2,
+        "false_positive": 29,
+        "dedup_merged": 1
+      }
+    },
+    {
+      "name": "details-analyzer",
+      "start_time": "2025-04-19T21:25:00+08:00",
+      "end_time": "2025-04-19T21:28:02+08:00",
+      "duration_seconds": 182,
+      "status": "success",
+      "output_files": [
+        "scan-results/details/VULN-010.md"
+      ],
+      "summary": {
+        "confirmed_analyzed": 1,
+        "reports_generated": 1,
+        "vuln_type": "Security Hygiene Issue (Missing Audit Logging)"
+      }
+    },
+    {
+      "name": "reporter",
+      "start_time": "2025-04-19T21:28:00+08:00",
+      "end_time": "2025-04-19T21:30:14+08:00",
+      "duration_seconds": 134,
+      "status": "success",
+      "output_files": [
+        "scan-results/report_confirmed.md",
+        "scan-results/report_unconfirmed.md"
+      ],
+      "summary": {
+        "confirmed_report_enhanced": true,
+        "vulnerabilities_reported": 4
+      }
+    }
+  ],
+  "summary": {
+    "total_files_scanned": 14,
+    "total_lines_scanned": 1564,
+    "total_candidates": 33,
+    "confirmed_vulnerabilities": 1,
+    "likely_vulnerabilities": 1,
+    "possible_vulnerabilities": 2,
+    "false_positives": 29,
+    "security_hygiene_issues": 1,
+    "scan_mode": "autonomous_analysis"
+  }
+}

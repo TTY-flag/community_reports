@@ -1,0 +1,137 @@
+{
+  "scan_id": "scan_20260417_010500",
+  "start_time": "2026-04-17T01:05:00Z",
+  "end_time": "2026-04-17T03:02:30Z",
+  "duration_seconds": 7440,
+  "status": "success",
+  "project_name": "MindIE-LLM",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/shenteng/MindIE/MindIE-LLM",
+  "agents": [
+    {
+      "name": "architecture",
+      "start_time": "2026-04-17T01:05:30Z",
+      "end_time": "2026-04-17T01:13:35Z",
+      "duration_seconds": 485,
+      "status": "success",
+      "output_files": [
+        "scan-results/.context/project_model.json",
+        "scan-results/.context/call_graph.json",
+        "scan-results/threat_analysis_report.md"
+      ],
+      "summary": {
+        "modules_identified": 21,
+        "critical_modules": 5,
+        "high_risk_modules": 6,
+        "attack_surfaces": 7
+      }
+    },
+    {
+      "name": "dataflow-scanner",
+      "start_time": "2026-04-17T01:15:00Z",
+      "end_time": "2026-04-17T01:36:14Z",
+      "duration_seconds": 1274,
+      "status": "success",
+      "output_files": [],
+      "summary": {
+        "candidate_vulnerabilities": 89,
+        "modules_scanned": 14,
+        "high_severity": 24,
+        "medium_severity": 45,
+        "low_severity": 16
+      }
+    },
+    {
+      "name": "security-auditor",
+      "start_time": "2026-04-17T01:15:00Z",
+      "end_time": "2026-04-17T01:19:49Z",
+      "duration_seconds": 289,
+      "status": "success",
+      "output_files": [],
+      "summary": {
+        "candidate_vulnerabilities": 4,
+        "modules_scanned": 3,
+        "high_severity": 1,
+        "medium_severity": 1,
+        "low_severity": 2
+      }
+    },
+    {
+      "name": "verification",
+      "start_time": "2026-04-17T01:38:00Z",
+      "end_time": "2026-04-17T01:55:00Z",
+      "duration_seconds": 1020,
+      "status": "success",
+      "output_files": [],
+      "summary": {
+        "total_verified": 89,
+        "confirmed": 25,
+        "likely": 20,
+        "possible": 23,
+        "false_positive": 21
+      }
+    },
+    {
+      "name": "details-analyzer",
+      "start_time": "2026-04-17T02:42:00Z",
+      "end_time": "2026-04-17T03:02:30Z",
+      "duration_seconds": 1230,
+      "status": "success",
+      "output_files": [
+        "scan-results/details/CVE-MINDIE-001.md",
+        "scan-results/details/DAEMON-001.md",
+        "scan-results/details/DAEMON-002.md",
+        "scan-results/details/DAEMON-003.md",
+        "scan-results/details/DFLOW-001.md",
+        "scan-results/details/IPC-001.md",
+        "scan-results/details/SEC-INFER-001.md",
+        "scan-results/details/SEC-INFER-002.md",
+        "scan-results/details/SEC-INFER-003.md",
+        "scan-results/details/SEC-INFER-004.md",
+        "scan-results/details/VULN-GRPC-001.md",
+        "scan-results/details/VULN-INF-002.md",
+        "scan-results/details/VULN-LLMMGR-002.md",
+        "scan-results/details/VULN-LLMMGR-003.md",
+        "scan-results/details/VULN-RH-001.md",
+        "scan-results/details/VULN-RH-002.md",
+        "scan-results/details/VULN-RH-003.md",
+        "scan-results/details/VULN-RH-004.md",
+        "scan-results/details/VULN-RH-008.md"
+      ],
+      "summary": {
+        "reports_generated": 19,
+        "total_size_kb": 344,
+        "confirmed_analyzed": 19,
+        "remaining_confirmed": 6
+      }
+    },
+    {
+      "name": "reporter",
+      "start_time": "2026-04-17T01:55:00Z",
+      "end_time": "2026-04-17T02:01:13Z",
+      "duration_seconds": 373,
+      "status": "success",
+      "output_files": [
+        "scan-results/report_confirmed.md",
+        "scan-results/report_unconfirmed.md"
+      ],
+      "summary": {
+        "confirmed_report_lines": 1122,
+        "unconfirmed_report_lines": 1116
+      }
+    }
+  ],
+  "summary": {
+    "total_vulnerabilities": 89,
+    "confirmed": 25,
+    "likely": 20,
+    "possible": 23,
+    "false_positive": 21,
+    "high_severity": 14,
+    "medium_severity": 22,
+    "low_severity": 15,
+    "modules_scanned": 14,
+    "critical_modules": 5,
+    "top_cwes": ["CWE-479", "CWE-129", "CWE-190", "CWE-125", "CWE-22"],
+    "detail_reports_generated": 19
+  }
+}

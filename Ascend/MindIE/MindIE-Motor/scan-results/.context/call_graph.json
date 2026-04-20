@@ -1,0 +1,389 @@
+{
+  "functions": {
+    "HandleRequest@mindie_motor/src/common/http_server/HttpServer.cpp": {
+      "defined_at": 115,
+      "calls": [
+        "GetUrlHandler@mindie_motor/src/common/http_server/HttpServer.cpp:104",
+        "BadRequest@mindie_motor/src/common/http_server/HttpServer.cpp:42",
+        "ResourceNotFound@mindie_motor/src/common/http_server/HttpServer.cpp:27",
+        "ResponseOK@mindie_motor/src/common/http_server/HttpServer.cpp:58",
+        "ResponseError@mindie_motor/src/common/http_server/HttpServer.cpp:73",
+        "GenerateResponse@mindie_motor/src/common/http_server/HttpServer.cpp:88"
+      ],
+      "called_by": [
+        "OnRead@mindie_motor/src/common/http_server/HttpServer.cpp:187",
+        "OnRead@mindie_motor/src/common/http_server/HttpServer.cpp:307"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "OnAccept@mindie_motor/src/common/http_server/HttpServer.cpp": {
+      "defined_at": 434,
+      "calls": [
+        "Connection::Run@mindie_motor/src/common/http_server/HttpServer.cpp:153",
+        "ConnectionTls::Run@mindie_motor/src/common/http_server/HttpServer.cpp:260"
+      ],
+      "called_by": [
+        "Listener::Run@mindie_motor/src/common/http_server/HttpServer.cpp:383"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "Read@mindie_motor/src/common/ipc/shared_memory/SharedMemoryUtils.cpp": {
+      "defined_at": 43,
+      "calls": [],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "Write@mindie_motor/src/common/ipc/shared_memory/SharedMemoryUtils.cpp": {
+      "defined_at": 42,
+      "calls": [],
+      "called_by": [],
+      "receives_external_input": false,
+      "risk": "High"
+    },
+    "FileToJsonObj@mindie_motor/src/controller/json_file_loader/JsonFileLoader.cpp": {
+      "defined_at": 17,
+      "calls": [],
+      "called_by": [
+        "LoadProcessFile@mindie_motor/src/controller/process_manager/ProcessManager.cpp:60",
+        "GetStatusFromPath@mindie_motor/src/controller/process_manager/ProcessManager.cpp:67"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "SendRequest@mindie_motor/src/http_client_ctl/http_client/HttpClient.cpp": {
+      "defined_at": 45,
+      "calls": [
+        "SendRequestTls@mindie_motor/src/http_client_ctl/http_client/HttpClient.cpp:48",
+        "SendRequestNonTls@mindie_motor/src/http_client_ctl/http_client/HttpClient.cpp:51"
+      ],
+      "called_by": [],
+      "receives_external_input": false,
+      "risk": "High"
+    },
+    "CreateGrpcChannel@mindie_motor/src/common/cluster_grpc/GrpcClusterClient.cpp": {
+      "defined_at": 28,
+      "calls": [],
+      "called_by": [],
+      "receives_external_input": false,
+      "risk": "High"
+    },
+    "running_status@mindie_motor/python/mindie_motor/node_manager/routes/server_api.py": {
+      "defined_at": 31,
+      "calls": [
+        "Service.get_node_running_status@mindie_motor/python/mindie_motor/node_manager/core/service.py:27"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "fault_handling_command@mindie_motor/python/mindie_motor/node_manager/routes/server_api.py": {
+      "defined_at": 49,
+      "calls": [
+        "Service.parse_fault_cmd_info@mindie_motor/python/mindie_motor/node_manager/core/service.py:31",
+        "Service.fault_handle@mindie_motor/python/mindie_motor/node_manager/core/service.py:56",
+        "Service.stop_node_server@mindie_motor/python/mindie_motor/node_manager/core/service.py:60"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "hardware_fault_info@mindie_motor/python/mindie_motor/node_manager/routes/server_api.py": {
+      "defined_at": 76,
+      "calls": [
+        "Service.parse_hardware_fault_info@mindie_motor/python/mindie_motor/node_manager/core/service.py:36"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "start_daemon_process@mindie_motor/python/mindie_motor/node_manager/daemon_manager/base_daemon_manager.py": {
+      "defined_at": 144,
+      "calls": [
+        "build_daemon_command@mindie_motor/python/mindie_motor/node_manager/daemon_manager/llm_daemon_starter.py:38",
+        "is_valid_daemon_command@mindie_motor/python/mindie_motor/node_manager/daemon_manager/base_daemon_manager.py:130",
+        "subprocess.Popen"
+      ],
+      "called_by": [
+        "start_daemon_instances@mindie_motor/python/mindie_motor/node_manager/daemon_manager/llm_daemon_starter.py:99"
+      ],
+      "receives_external_input": false,
+      "risk": "High"
+    },
+    "_query_engine_server_status@mindie_motor/python/mindie_motor/node_manager/core/heartbeat_mng.py": {
+      "defined_at": 122,
+      "calls": [
+        "Client.get_ep_status"
+      ],
+      "called_by": [
+        "_monitor_engine_server_status@mindie_motor/python/mindie_motor/node_manager/core/heartbeat_mng.py:165"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "read_data@mindie_motor/python/mindie_motor/om_adapter/share_memory_utils/circular_memory.py": {
+      "defined_at": 17,
+      "calls": [],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "write_data@mindie_motor/python/mindie_motor/om_adapter/share_memory_utils/circular_memory.py": {
+      "defined_at": 29,
+      "calls": [],
+      "called_by": [],
+      "receives_external_input": false,
+      "risk": "High"
+    },
+    "send@mindie_motor/python/mindie_motor/om_adapter/monitors/kafka_client/kafka_produce.py": {
+      "defined_at": 52,
+      "calls": [
+        "Producer.produce",
+        "Producer.flush"
+      ],
+      "called_by": [],
+      "receives_external_input": false,
+      "risk": "High"
+    },
+    "_update_info@mindie_motor/python/mindie_motor/node_manager/core/config.py": {
+      "defined_at": 87,
+      "calls": [
+        "_load_config_path@mindie_motor/python/mindie_motor/node_manager/core/config.py:63",
+        "JsonUtil.read_json_file",
+        "_load_server_engine_ports@mindie_motor/python/mindie_motor/node_manager/core/config.py:97",
+        "_load_server_engine_ip@mindie_motor/python/mindie_motor/node_manager/core/config.py:53",
+        "_load_controller_port@mindie_motor/python/mindie_motor/node_manager/core/config.py:128",
+        "_load_heartbeat_interval@mindie_motor/python/mindie_motor/node_manager/core/config.py:137"
+      ],
+      "called_by": [
+        "__init__@mindie_motor/python/mindie_motor/node_manager/core/config.py:28"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "GetStartupHandler@mindie_motor/src/controller/probe_server/ProbeServer.cpp": {
+      "defined_at": 50,
+      "calls": [],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "GetHealthHandler@mindie_motor/src/controller/probe_server/ProbeServer.cpp": {
+      "defined_at": 55,
+      "calls": [],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "SendCoordinatorBackupRequest@mindie_motor/src/controller/request_handler/CoordinatorBackupHandler.cpp": {
+      "defined_at": 39,
+      "calls": [
+        "HttpClient::SendRequest@mindie_motor/src/http_client_ctl/http_client/HttpClient.cpp:45"
+      ],
+      "called_by": [],
+      "receives_external_input": false,
+      "risk": "High"
+    },
+    "SendRegister2UpdateStatus@mindie_motor/src/controller/request_handler/CCAERequestHandler.cpp": {
+      "defined_at": 50,
+      "calls": [
+        "HttpClient::SendRequest@mindie_motor/src/http_client_ctl/http_client/HttpClient.cpp:45"
+      ],
+      "called_by": [],
+      "receives_external_input": false,
+      "risk": "High"
+    },
+    "LoadProcessFile@mindie_motor/src/controller/process_manager/ProcessManager.cpp": {
+      "defined_at": 60,
+      "calls": [
+        "FileToJsonObj@mindie_motor/src/controller/json_file_loader/JsonFileLoader.cpp:17"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "_is_child_process_detected@mindie_motor/python/mindie_motor/node_manager/core/heartbeat_mng.py": {
+      "defined_at": 103,
+      "calls": [
+        "subprocess.run"
+      ],
+      "called_by": [
+        "_process_engine_server_error_info@mindie_motor/python/mindie_motor/node_manager/core/heartbeat_mng.py:224"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "is_child_process_detected@mindie_motor/python/mindie_motor/node_manager/daemon_manager/llm_daemon_starter.py": {
+      "defined_at": 108,
+      "calls": [
+        "subprocess.run"
+      ],
+      "called_by": [],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "get_device_type@mindie_motor/python/mindie_motor/node_manager/daemon_manager/llm_daemon_starter.py": {
+      "defined_at": 71,
+      "calls": [
+        "subprocess.run"
+      ],
+      "called_by": [
+        "get_cpu_binding@mindie_motor/python/mindie_motor/node_manager/daemon_manager/llm_daemon_starter.py:88"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "terminate_all_processes@mindie_motor/python/mindie_motor/node_manager/daemon_manager/base_daemon_manager.py": {
+      "defined_at": 186,
+      "calls": [
+        "kill_process_group@mindie_motor/python/mindie_motor/node_manager/daemon_manager/base_daemon_manager.py:117"
+      ],
+      "called_by": [
+        "signal_handler@mindie_motor/python/mindie_motor/node_manager/daemon_manager/base_daemon_manager.py:113",
+        "child_process_handler@mindie_motor/python/mindie_motor/node_manager/daemon_manager/base_daemon_manager.py:76"
+      ],
+      "receives_external_input": false,
+      "risk": "High"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "HTTP Request Body@mindie_motor/src/common/http_server/HttpServer.cpp:115",
+      "path": [
+        "HandleRequest@mindie_motor/src/common/http_server/HttpServer.cpp:115",
+        "UrlCallBack handler@mindie_motor/src/common/http_server/HttpServer.cpp:131"
+      ],
+      "sink": "JSON Parse@mindie_motor/src/common/http_server/HttpServer.cpp:93",
+      "sink_type": "json_parsing"
+    },
+    {
+      "source": "HTTP Request Target@mindie_motor/src/common/http_server/HttpServer.cpp:122",
+      "path": [
+        "HandleRequest@mindie_motor/src/common/http_server/HttpServer.cpp:115",
+        "GetUrlHandler@mindie_motor/src/common/http_server/HttpServer.cpp:104"
+      ],
+      "sink": "URL Handler Lookup@mindie_motor/src/common/http_server/HttpServer.cpp:127",
+      "sink_type": "control_flow"
+    },
+    {
+      "source": "Shared Memory Read@mindie_motor/src/common/ipc/shared_memory/SharedMemoryUtils.cpp:43",
+      "path": [
+        "Read@mindie_motor/src/common/ipc/shared_memory/SharedMemoryUtils.cpp:43"
+      ],
+      "sink": "Circular Buffer Data@mindie_motor/src/common/ipc/shared_memory/SharedMemoryUtils.cpp:49",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "JSON File@mindie_motor/src/controller/json_file_loader/JsonFileLoader.cpp:17",
+      "path": [
+        "FileToJsonObj@mindie_motor/src/controller/json_file_loader/JsonFileLoader.cpp:17"
+      ],
+      "sink": "nlohmann::json parse@mindie_motor/src/controller/json_file_loader/JsonFileLoader.cpp",
+      "sink_type": "json_parsing"
+    },
+    {
+      "source": "HTTP POST Body@mindie_motor/python/mindie_motor/node_manager/routes/server_api.py:49",
+      "path": [
+        "fault_handling_command@mindie_motor/python/mindie_motor/node_manager/routes/server_api.py:49",
+        "Service.parse_fault_cmd_info@mindie_motor/python/mindie_motor/node_manager/core/service.py:31",
+        "Service.fault_handle@mindie_motor/python/mindie_motor/node_manager/core/service.py:56"
+      ],
+      "sink": "FaultCmd model@mindie_motor/python/mindie_motor/node_manager/models/dataclass.py",
+      "sink_type": "model_parsing"
+    },
+    {
+      "source": "HTTP POST Body@mindie_motor/python/mindie_motor/node_manager/routes/server_api.py:76",
+      "path": [
+        "hardware_fault_info@mindie_motor/python/mindie_motor/node_manager/routes/server_api.py:76",
+        "Service.parse_hardware_fault_info@mindie_motor/python/mindie_motor/node_manager/core/service.py:36"
+      ],
+      "sink": "HardwareFaultInfo model@mindie_motor/python/mindie_motor/node_manager/models/dataclass.py",
+      "sink_type": "model_parsing"
+    },
+    {
+      "source": "Config File@mindie_motor/python/mindie_motor/node_manager/core/config.py:89",
+      "path": [
+        "_update_info@mindie_motor/python/mindie_motor/node_manager/core/config.py:87",
+        "JsonUtil.read_json_file@mindie_motor/python/mindie_motor/node_manager/framework/utils/json_util.py"
+      ],
+      "sink": "GeneralConfig instance@mindie_motor/python/mindie_motor/node_manager/core/config.py",
+      "sink_type": "configuration"
+    },
+    {
+      "source": "Environment Variable (POD_IP, MIES_INSTALL_PATH)@mindie_motor/python/mindie_motor/node_manager/core/config.py:54",
+      "path": [
+        "_load_server_engine_ip@mindie_motor/python/mindie_motor/node_manager/core/config.py:53",
+        "_load_config_path@mindie_motor/python/mindie_motor/node_manager/core/config.py:63"
+      ],
+      "sink": "GeneralConfig fields@mindie_motor/python/mindie_motor/node_manager/core/config.py",
+      "sink_type": "environment_variable"
+    },
+    {
+      "source": "Shared Memory Read@mindie_motor/python/mindie_motor/om_adapter/share_memory_utils/circular_memory.py:17",
+      "path": [
+        "read_data@mindie_motor/python/mindie_motor/om_adapter/share_memory_utils/circular_memory.py:17"
+      ],
+      "sink": "bytes(chunk).decode@mindie_motor/python/mindie_motor/om_adapter/share_memory_utils/circular_memory.py:27",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "HTTP Response Body@mindie_motor/python/mindie_motor/node_manager/core/heartbeat_mng.py:122",
+      "path": [
+        "_query_engine_server_status@mindie_motor/python/mindie_motor/node_manager/core/heartbeat_mng.py:122",
+        "_monitor_engine_server_status@mindie_motor/python/mindie_motor/node_manager/core/heartbeat_mng.py:165"
+      ],
+      "sink": "engine_server_status_queue@mindie_motor/python/mindie_motor/node_manager/core/heartbeat_mng.py:194",
+      "sink_type": "state_update"
+    },
+    {
+      "source": "Command Arguments@mindie_motor/python/mindie_motor/node_manager/daemon_manager/base_daemon_manager.py:144",
+      "path": [
+        "start_daemon_process@mindie_motor/python/mindie_motor/node_manager/daemon_manager/base_daemon_manager.py:144",
+        "subprocess.Popen@mindie_motor/python/mindie_motor/node_manager/daemon_manager/base_daemon_manager.py:152"
+      ],
+      "sink": "mindie_llm_server process@mindie_motor/python/mindie_motor/node_manager/daemon_manager/base_daemon_manager.py:152",
+      "sink_type": "process_execution"
+    }
+  ],
+  "high_risk_data_paths": [
+    {
+      "description": "HTTP Request to JSON Parse",
+      "entry_point": "HandleRequest@HttpServer.cpp:115",
+      "sink": "nlohmann::json::parse",
+      "cross_file": true,
+      "risk": "Critical"
+    },
+    {
+      "description": "HTTP POST to Fault Command Execution",
+      "entry_point": "fault_handling_command@server_api.py:49",
+      "sink": "Service.fault_handle",
+      "cross_file": false,
+      "risk": "Critical"
+    },
+    {
+      "description": "Shared Memory IPC Cross Language",
+      "entry_point": "SharedMemoryUtils::Read",
+      "sink": "CircularShareMemory::read_data",
+      "cross_file": true,
+      "cross_language": true,
+      "risk": "High"
+    },
+    {
+      "description": "JSON Config to Process Execution",
+      "entry_point": "FileToJsonObj",
+      "sink": "start_daemon_process",
+      "cross_file": true,
+      "cross_language": true,
+      "risk": "High"
+    },
+    {
+      "description": "HTTP Client Response Processing",
+      "entry_point": "HttpClient::SendRequest",
+      "sink": "responseBody processing",
+      "cross_file": false,
+      "risk": "High"
+    }
+  ]
+}

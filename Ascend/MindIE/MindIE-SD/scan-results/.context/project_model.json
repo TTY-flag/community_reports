@@ -1,0 +1,486 @@
+{
+  "project": {
+    "name": "MindIE-SD",
+    "description": "Mind Inference Engine for Stable Diffusion - optimized inference engine for SD models on Ascend hardware",
+    "version": "2.3.0",
+    "license": "Mulan PSL v2",
+    "repository": "https://gitcode.com/Ascend/MindIE-SD.git",
+    "vendor": "Huawei Technologies Co., Ltd."
+  },
+  "composition": {
+    "languages": {
+      "c_cpp": {
+        "file_count": 120,
+        "primary_extensions": [".cpp", ".c", ".h", ".hpp"],
+        "primary_dirs": ["csrc/ops", "csrc/plugin"]
+      },
+      "python": {
+        "file_count": 148,
+        "primary_extensions": [".py"],
+        "primary_dirs": ["mindiesd", "examples", "tests"]
+      }
+    },
+    "architecture_type": "hybrid_pybind",
+    "binding_mechanism": "torch_npu/pytorch_extension"
+  },
+  "modules": {
+    "csrc_plugin": {
+      "name": "C++ Plugin Layer",
+      "path": "csrc/plugin",
+      "language": "C++",
+      "purpose": "PyTorch NPU custom operators registration and implementation",
+      "key_files": [
+        "register_ops.cpp",
+        "pytorch_npu_helper.h",
+        "block_sparse_attention.cpp",
+        "rainfusionattention.cpp",
+        "adalayernorm.cpp",
+        "layernorm.cpp",
+        "la.cpp",
+        "la_preprocess.cpp",
+        "rope.cpp",
+        "sparse_block_estimate.cpp",
+        "find_op_path.cpp"
+      ],
+      "exports": {
+        "torch_library": "mindiesd",
+        "operations": [
+          "la",
+          "adaln",
+          "adaln_v2",
+          "la_preprocess",
+          "rainfusionattention",
+          "block_sparse_attention",
+          "sparse_block_estimate",
+          "layernorm"
+        ]
+      },
+      "risk_level": "high",
+      "risk_factors": [
+        "Direct tensor manipulation",
+        "Memory allocation without bounds checking",
+        "ACLNN API calls with unchecked parameters",
+        "Dynamic library loading via dlopen"
+      ]
+    },
+    "csrc_ops": {
+      "name": "C++ Ascend Operators",
+      "path": "csrc/ops",
+      "language": "C++",
+      "purpose": "AscendC/TIK kernel implementations for attention and sparse operations",
+      "key_submodules": [
+        "ascendc",
+        "block_sparse_attention",
+        "la_preprocess",
+        "laser_attention",
+        "sparse_block_estimate",
+        "tik",
+        "utils"
+      ],
+      "risk_level": "high",
+      "risk_factors": [
+        "Large tiling calculations (block_sparse_attention_tiling.cpp ~266KB)",
+        "Complex memory layouts",
+        "Hardware-specific optimizations",
+        "Tiling overflow potential"
+      ]
+    },
+    "mindiesd_layers": {
+      "name": "Python Layers",
+      "path": "mindiesd/layers",
+      "language": "Python",
+      "purpose": "High-level API wrapping C++ custom operators",
+      "key_files": [
+        "_custom_ops.py",
+        "flash_attn/attention_forward.py",
+        "flash_attn/sparse_flash_attn.py",
+        "adalayernorm.py",
+        "norm.py",
+        "rope.py",
+        "activation.py"
+      ],
+      "bindings": {
+        "mechanism": "torch.ops.mindiesd",
+        "calls": [
+          "laser_attention -> torch.ops.mindiesd.la",
+          "rain_fusion_attention -> torch.ops.mindiesd.rainfusionattention",
+          "block_sparse_attention -> torch.ops.mindiesd.block_sparse_attention",
+          "sparse_block_estimate -> torch.ops.mindiesd.sparse_block_estimate",
+          "adaln -> torch.ops.mindiesd.adaln",
+          "layernorm -> torch.ops.mindiesd.layernorm"
+        ]
+      },
+      "risk_level": "medium",
+      "risk_factors": [
+        "Tensor shape validation gaps",
+        "Optional parameter handling",
+        "No input sanitization on tensor data"
+      ]
+    },
+    "mindiesd_cache_agent": {
+      "name": "Cache Agent",
+      "path": "mindiesd/cache_agent",
+      "language": "Python",
+      "purpose": "Attention cache and DiT block cache for inference acceleration",
+      "key_files": [
+        "cache_agent.py",
+        "cache.py",
+        "attention_cache.py",
+        "dit_block_cache.py"
+      ],
+      "risk_level": "medium",
+      "risk_factors": [
+        "Config validation gaps",
+        "Callable function execution",
+        "Memory-intensive operations"
+      ]
+    },
+    "mindiesd_quantization": {
+      "name": "Quantization",
+      "path": "mindiesd/quantization",
+      "language": "Python",
+      "purpose": "Model quantization for memory optimization",
+      "key_files": [
+        "quantize.py",
+        "layer.py",
+        "config.py",
+        "mode.py",
+        "utils.py"
+      ],
+      "risk_level": "medium",
+      "risk_factors": [
+        "Model weight manipulation",
+        "FP16/BF16/INT8 conversions",
+        "Timestep-based policy decisions"
+      ]
+    },
+    "mindiesd_compilation": {
+      "name": "Compilation",
+      "path": "mindiesd/compilation",
+      "language": "Python",
+      "purpose": "FX graph-based model compilation and optimization",
+      "key_files": [
+        "mindie_sd_backend.py",
+        "_custom_decomposition.py",
+        "passes/pattern_match_pass.py",
+        "patterns/*.py"
+      ],
+      "risk_level": "low",
+      "risk_factors": [
+        "Graph transformation",
+        "Pattern matching"
+      ]
+    },
+    "mindiesd_utils": {
+      "name": "Utilities",
+      "path": "mindiesd/utils",
+      "language": "Python",
+      "purpose": "File handling, logging, environment configuration",
+      "key_files": [
+        "file_utils.py",
+        "env.py",
+        "exception.py",
+        "logs/logging.py",
+        "utils.py"
+      ],
+      "risk_level": "medium",
+      "risk_factors": [
+        "File path operations with symlink checks",
+        "File permission validation",
+        "Environment variable parsing",
+        "Log path injection potential"
+      ]
+    },
+    "mindiesd_offload": {
+      "name": "Memory Offload",
+      "path": "mindiesd/offload.py",
+      "language": "Python",
+      "purpose": "CPU/NPU memory swapping for large model inference",
+      "risk_level": "medium",
+      "risk_factors": [
+        "Storage resize operations",
+        "Memory pinning",
+        "Hook registration on model blocks"
+      ]
+    },
+    "mindiesd_share_memory": {
+      "name": "Shared Memory",
+      "path": "mindiesd/share_memory.py",
+      "language": "Python",
+      "purpose": "Inter-process NPU memory sharing via ZMQ",
+      "risk_level": "high",
+      "risk_factors": [
+        "ZMQ socket binding on configurable ports",
+        "Network communication (master_addr configurable)",
+        "Handle broadcasting over network",
+        "Potential for remote memory access"
+      ]
+    },
+    "mindiesd_eplb": {
+      "name": "Expert Parallel Load Balancing",
+      "path": "mindiesd/eplb",
+      "language": "Python",
+      "purpose": "Distributed task scheduling and load balancing",
+      "key_files": [
+        "eplb_scheduler.py",
+        "dispatcher.py",
+        "collector.py",
+        "task_manager.py",
+        "task_handler.py",
+        "task_transfer.py",
+        "greedy_algorithm.py"
+      ],
+      "risk_level": "medium",
+      "risk_factors": [
+        "Task dispatching logic",
+        "Greedy algorithm complexity"
+      ]
+    },
+    "examples_service": {
+      "name": "Service Example",
+      "path": "examples/service",
+      "language": "Python",
+      "purpose": "FastAPI-based inference service example",
+      "key_files": [
+        "server.py",
+        "worker.py",
+        "request.py"
+      ],
+      "risk_level": "critical",
+      "risk_factors": [
+        "HTTP endpoint on 0.0.0.0:6000",
+        "No authentication mechanism",
+        "User-provided file path (save_disk_path, image)",
+        "User-provided prompt (prompt injection potential)",
+        "Ray distributed execution",
+        "Pydantic model with minimal validation"
+      ]
+    },
+    "build": {
+      "name": "Build System",
+      "path": "build",
+      "language": "Shell/CMake",
+      "purpose": "Build scripts for C++ operators and plugins",
+      "key_files": [
+        "build.sh",
+        "build_ops.sh",
+        "build_plugin.sh"
+      ],
+      "risk_level": "low",
+      "risk_factors": [
+        "Build script execution",
+        "Directory cleanup operations"
+      ]
+    }
+  },
+  "entry_points": {
+    "python_package": {
+      "file": "mindiesd/__init__.py",
+      "exports": [
+        "CacheConfig",
+        "CacheAgent",
+        "layernorm_scale_shift",
+        "attention_forward",
+        "attention_forward_varlen",
+        "rotary_position_embedding",
+        "get_activation_layer",
+        "RMSNorm",
+        "quantize",
+        "TimestepManager",
+        "TimestepPolicyConfig",
+        "sparse_attention",
+        "fast_layernorm"
+      ]
+    },
+    "service_endpoint": {
+      "file": "examples/service/server.py",
+      "type": "HTTP API",
+      "port": 6000,
+      "endpoint": "/generate",
+      "method": "POST",
+      "request_model": "GeneratorRequest"
+    },
+    "cli_scripts": {
+      "file": "examples/wan/infer_t2v.sh",
+      "type": "Shell script",
+      "purpose": "Text-to-video inference command line"
+    }
+  },
+  "attack_surfaces": [
+    {
+      "type": "network_service",
+      "location": "examples/service/server.py",
+      "description": "FastAPI HTTP service with no authentication",
+      "severity": "critical",
+      "details": {
+        "binding": "0.0.0.0:6000",
+        "endpoint": "/generate POST",
+        "auth": "none",
+        "input_fields": ["prompt", "save_disk_path", "image", "ckpt_dir"]
+      }
+    },
+    {
+      "type": "ipc_network",
+      "location": "mindiesd/share_memory.py",
+      "description": "ZMQ-based inter-process communication with configurable network binding",
+      "severity": "high",
+      "details": {
+        "protocol": "ZMQ TCP",
+        "default_addr": "127.0.0.1",
+        "default_port": "5555+",
+        "exposure": "handle broadcasting"
+      }
+    },
+    {
+      "type": "file_operations",
+      "location": "examples/service/request.py, worker.py",
+      "description": "User-controlled file paths for output saving and image input",
+      "severity": "high",
+      "details": {
+        "fields": ["save_disk_path", "image", "ckpt_dir"],
+        "operations": ["Image.open", "save_video"],
+        "validation": "minimal"
+      }
+    },
+    {
+      "type": "tensor_manipulation",
+      "location": "mindiesd/layers/_custom_ops.py, csrc/plugin/*.cpp",
+      "description": "Tensor operations with potential shape/bounds issues",
+      "severity": "medium",
+      "details": {
+        "operators": ["block_sparse_attention", "rainfusionattention", "sparse_block_estimate"],
+        "risks": ["unchecked tensor sizes", "tiling overflow", "memory allocation"]
+      }
+    },
+    {
+      "type": "environment_variables",
+      "location": "mindiesd/utils/env.py",
+      "description": "Environment variable parsing with regex operations",
+      "severity": "low",
+      "details": {
+        "vars": ["MINDIE_LOG_LEVEL", "MINDIE_LOG_PATH", "MINDIE_LOG_ROTATE"],
+        "validation": "length checks, character validation"
+      }
+    },
+    {
+      "type": "dynamic_library_loading",
+      "location": "csrc/plugin/pytorch_npu_helper.h, find_op_path.cpp",
+      "description": "dlopen-based dynamic library loading for ACLNN APIs",
+      "severity": "medium",
+      "details": {
+        "function": "dlopen/dlsym",
+        "paths": "g_customLibPath, g_defaultCustomLibPath"
+      }
+    },
+    {
+      "type": "prompt_input",
+      "location": "examples/service/request.py, worker.py",
+      "description": "Text prompt processing for model inference",
+      "severity": "medium",
+      "details": {
+        "field": "prompt",
+        "processing": "T5 encoder, model inference",
+        "potential": "prompt injection"
+      }
+    }
+  ],
+  "high_risk_modules": [
+    {
+      "module": "examples/service",
+      "reason": "Unauthenticated HTTP API with file path control",
+      "vulnerabilities": ["CWE-306: Missing Authentication", "CWE-22: Path Traversal", "CWE-79: Input Validation"]
+    },
+    {
+      "module": "mindiesd/share_memory",
+      "reason": "Network-based IPC with handle broadcasting",
+      "vulnerabilities": ["CWE-287: Improper Authentication", "CWE-319: Cleartext Transmission"]
+    },
+    {
+      "module": "csrc/plugin",
+      "reason": "Custom operator implementations with tensor bounds issues",
+      "vulnerabilities": ["CWE-787: Out-of-bounds Write", "CWE-125: Out-of-bounds Read"]
+    },
+    {
+      "module": "csrc/ops/block_sparse_attention",
+      "reason": "Large tiling calculations with overflow potential",
+      "vulnerabilities": ["CWE-190: Integer Overflow", "CWE-131: Incorrect Calculation of Buffer Size"]
+    },
+    {
+      "module": "mindiesd/cache_agent",
+      "reason": "Config-based callable execution",
+      "vulnerabilities": ["CWE-20: Improper Input Validation"]
+    }
+  ],
+  "dependencies": {
+    "python": [
+      "torch==2.1.0",
+      "torch_npu",
+      "diffusers==0.29.0",
+      "transformers==4.44.2",
+      "open_clip_torch==2.20.0",
+      "av==12.0.0",
+      "ray",
+      "fastapi",
+      "uvicorn",
+      "pydantic",
+      "zmq",
+      "numpy==1.24.0",
+      "accelerate==0.26.1"
+    ],
+    "cpp": [
+      "ACL (Ascend Computing Language)",
+      "ACLNN",
+      "torch_npu",
+      "ATen"
+    ]
+  },
+  "data_flow": {
+    "external_input_to_model": {
+      "source": "HTTP API / CLI",
+      "path": ["request.py -> worker.py -> wan pipeline -> mindiesd layers -> csrc operators"],
+      "data_types": ["prompt (text)", "image (file)", "config (dict)"]
+    },
+    "tensor_propagation": {
+      "source": "Python tensor creation",
+      "path": ["torch.Tensor -> mindiesd layers -> torch.ops.mindiesd -> ACLNN -> NPU kernel"],
+      "data_types": ["FP16/BF16/FP32 tensors"]
+    },
+    "file_operations": {
+      "source": "User-provided paths",
+      "path": ["request.save_disk_path -> save_video -> PIL.Image -> file write"],
+      "data_types": ["MP4 video output", "JPEG/PNG image input"]
+    },
+    "ipc_communication": {
+      "source": "ShareMemoryManager",
+      "path": ["ZMQ socket -> broadcast_handle -> NPU storage sharing"],
+      "data_types": ["NPU memory handles", "control messages"]
+    }
+  },
+  "security_controls": {
+    "existing": [
+      {
+        "location": "mindiesd/utils/file_utils.py",
+        "type": "path_validation",
+        "description": "Symlink checks, path length limits, permission checks"
+      },
+      {
+        "location": "mindiesd/utils/env.py",
+        "type": "input_validation",
+        "description": "Environment variable length and character validation"
+      },
+      {
+        "location": "mindiesd/utils/exception.py",
+        "type": "error_handling",
+        "description": "Custom exception types for parameter validation"
+      }
+    ],
+    "missing": [
+      "Authentication mechanism for HTTP service",
+      "Input sanitization for file paths in service layer",
+      "Rate limiting for inference endpoints",
+      "Prompt content filtering",
+      "Network authentication for ZMQ IPC",
+      "Tensor bounds checking in C++ operators"
+    ]
+  }
+}

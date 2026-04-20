@@ -1,0 +1,99 @@
+{
+  "scan_id": "scan_mindie_sd_001",
+  "start_time": "2026-04-17T01:06:00Z",
+  "end_time": "2026-04-17T01:38:00Z",
+  "duration_seconds": 1920,
+  "status": "success",
+  "project_name": "MindIE-SD",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/shenteng/MindIE/MindIE-SD",
+  "scan_mode": "autonomous_analysis",
+  "project_type": "c_cpp_python_hybrid",
+  "language_stats": {
+    "c_cpp_files": 120,
+    "python_files": 148
+  },
+  "agents": [
+    {
+      "name": "architecture",
+      "status": "success",
+      "start_time": "2026-04-17T01:06:30Z",
+      "end_time": "2026-04-17T01:15:08Z",
+      "duration_seconds": 518,
+      "output_files": [
+        "scan-results/.context/project_model.json",
+        "scan-results/.context/call_graph.json",
+        "scan-results/threat_analysis_report.md"
+      ]
+    },
+    {
+      "name": "dataflow-scanner",
+      "status": "success",
+      "start_time": "2026-04-17T01:15:30Z",
+      "end_time": "2026-04-17T01:20:14Z",
+      "duration_seconds": 284,
+      "vulnerabilities_found": 7
+    },
+    {
+      "name": "security-auditor",
+      "status": "success",
+      "start_time": "2026-04-17T01:15:30Z",
+      "end_time": "2026-04-17T01:18:09Z",
+      "duration_seconds": 159,
+      "vulnerabilities_found": 4
+    },
+    {
+      "name": "verification",
+      "status": "success",
+      "start_time": "2026-04-17T01:21:00Z",
+      "end_time": "2026-04-17T01:25:24Z",
+      "duration_seconds": 264,
+      "confirmed": 2,
+      "likely": 5,
+      "possible": 2
+    },
+    {
+      "name": "details-analyzer",
+      "status": "success",
+      "start_time": "2026-04-17T01:26:00Z",
+      "end_time": "2026-04-17T01:30:56Z",
+      "duration_seconds": 296,
+      "output_files": [
+        "scan-results/details/VULN-DF-PY-001.md",
+        "scan-results/details/VULN-DF-PY-002.md"
+      ]
+    },
+    {
+      "name": "reporter",
+      "status": "success",
+      "start_time": "2026-04-17T01:31:00Z",
+      "end_time": "2026-04-17T01:38:18Z",
+      "duration_seconds": 438,
+      "output_files": [
+        "scan-results/report_confirmed.md",
+        "scan-results/report_unconfirmed.md"
+      ]
+    }
+  ],
+  "summary": {
+    "total_vulnerabilities": 9,
+    "confirmed": 2,
+    "likely": 5,
+    "possible": 2,
+    "by_severity": {
+      "high": 2,
+      "medium": 4,
+      "low": 3
+    },
+    "by_module": {
+      "examples/service": 4,
+      "csrc/plugin": 2,
+      "mindiesd/share_memory": 1,
+      "mindiesd/eplb": 1,
+      "csrc/ops/block_sparse_attention": 1
+    },
+    "critical_findings": [
+      "VULN-DF-PY-001: Path traversal in Image.open() - arbitrary file read",
+      "VULN-DF-PY-002: Path traversal in save_video() - arbitrary file write"
+    ]
+  }
+}

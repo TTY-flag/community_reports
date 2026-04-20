@@ -1,0 +1,83 @@
+{
+  "scan_id": "17d34ec0-cf6e-4868-888e-cdf0b7206764",
+  "start_time": "2026-04-17T00:00:00Z",
+  "end_time": "2026-04-17T00:30:41Z",
+  "duration_seconds": 1841,
+  "project_name": "MindIE-Motor",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/shenteng/MindIE/MindIE-Motor",
+  "status": "success",
+  "agents": [
+    {
+      "name": "architecture",
+      "start_time": "2026-04-17T00:00:00Z",
+      "end_time": "2026-04-17T00:08:20Z",
+      "duration_seconds": 500,
+      "status": "success",
+      "output_files": [
+        "project_model.json",
+        "call_graph.json",
+        "threat_analysis_report.md"
+      ]
+    },
+    {
+      "name": "dataflow-scanner",
+      "start_time": "2026-04-17T00:08:20Z",
+      "end_time": "2026-04-17T00:13:44Z",
+      "duration_seconds": 324,
+      "status": "success",
+      "item_count": 6
+    },
+    {
+      "name": "security-auditor",
+      "start_time": "2026-04-17T00:08:20Z",
+      "end_time": "2026-04-17T00:14:52Z",
+      "duration_seconds": 392,
+      "status": "success",
+      "item_count": 14
+    },
+    {
+      "name": "verification",
+      "start_time": "2026-04-17T00:14:52Z",
+      "end_time": "2026-04-17T00:20:47Z",
+      "duration_seconds": 355,
+      "status": "success",
+      "verified_count": {
+        "confirmed": 1,
+        "likely": 2,
+        "possible": 4,
+        "false_positive": 13
+      }
+    },
+    {
+      "name": "details-analyzer",
+      "start_time": "2026-04-17T00:20:47Z",
+      "end_time": "2026-04-17T00:23:23Z",
+      "duration_seconds": 156,
+      "status": "success",
+      "output_files": [
+        "details/VULN-DF-CPP-001.md"
+      ]
+    },
+    {
+      "name": "reporter",
+      "start_time": "2026-04-17T00:23:23Z",
+      "end_time": "2026-04-17T00:30:41Z",
+      "duration_seconds": 438,
+      "status": "success",
+      "output_files": [
+        "report_confirmed.md",
+        "report_unconfirmed.md"
+      ]
+    }
+  ],
+  "summary": {
+    "total_files_scanned": 334,
+    "total_lines_scanned": 56790,
+    "total_candidates": 20,
+    "confirmed": 1,
+    "likely": 2,
+    "possible": 4,
+    "false_positive": 13,
+    "modules_scanned": ["controller", "coordinator", "common", "http_client_ctl", "node_manager", "om_adapter", "python_controller", "python_coordinator"]
+  }
+}

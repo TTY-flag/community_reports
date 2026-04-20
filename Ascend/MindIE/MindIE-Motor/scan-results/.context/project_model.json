@@ -1,0 +1,547 @@
+{
+  "project_name": "MindIE-Motor",
+  "scan_time": "2026-04-17T00:30:00Z",
+  "lsp_available": true,
+  "total_files": 334,
+  "total_lines": 56790,
+  "project_profile": {
+    "project_type": "network_service",
+    "deployment_model": "分布式AI推理引擎管理系统，部署在Linux服务器集群上，包含Controller、Coordinator、Node Manager三个核心服务组件。通过HTTP/gRPC进行集群通信，通过共享内存进行本地IPC。",
+    "trust_boundaries": [
+      {
+        "boundary": "Network Interface (HTTP/gRPC)",
+        "trusted_side": "MindIE-Motor Services (Controller/Coordinator/NodeManager)",
+        "untrusted_side": "External Clients, CCAE System, Kafka Cluster",
+        "risk": "Critical"
+      },
+      {
+        "boundary": "Shared Memory IPC",
+        "trusted_side": "Local MindIE Processes",
+        "untrusted_side": "Potentially compromised local process",
+        "risk": "High"
+      },
+      {
+        "boundary": "Configuration Files",
+        "trusted_side": "MindIE-Motor Services",
+        "untrusted_side": "Administrator controlled files",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Environment Variables",
+        "trusted_side": "MindIE-Motor Services",
+        "untrusted_side": "Deployment environment",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Process Execution",
+        "trusted_side": "MindIE-Motor Daemon Manager",
+        "untrusted_side": "mindie_llm_server subprocess",
+        "risk": "High"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "controller",
+      "path": "mindie_motor/src/controller",
+      "language": "c_cpp",
+      "components": [
+        "probe_server/ProbeServer.cpp",
+        "request_handler/CCAERequestHandler.cpp",
+        "request_handler/CoordinatorBackupHandler.cpp",
+        "process_manager/ProcessManager.cpp",
+        "cluster_grpc/ClusterClient.cpp",
+        "json_file_loader/JsonFileLoader.cpp",
+        "node_scheduler/NodeScheduler.cpp",
+        "fault_manager/FaultManager.cpp",
+        "alarm_manager/AlarmManager.cpp",
+        "leader_judge/ControllerLeaderAgent.cpp",
+        "resource_manager/ResourceManager.cpp",
+        "status_updater/StatusUpdater.cpp"
+      ]
+    },
+    {
+      "name": "coordinator",
+      "path": "mindie_motor/src/coordinator",
+      "language": "c_cpp",
+      "components": [
+        "request/RequestManager.cpp",
+        "request_listener/RequestListener.cpp",
+        "controller_listener/ControllerListener.cpp",
+        "scheduler/Scheduler.cpp",
+        "digs_scheduler/DigsScheduler.cpp",
+        "cluster_monitor/ClusterMonitor.cpp",
+        "request_monitor/RequestMonitor.cpp",
+        "request_repeater/RequestRepeater.cpp",
+        "alarm/Alarm.cpp",
+        "metrics/Metrics.cpp",
+        "resource/Resource.cpp",
+        "leader_judge/LeaderJudge.cpp"
+      ]
+    },
+    {
+      "name": "common",
+      "path": "mindie_motor/src/common",
+      "language": "c_cpp",
+      "components": [
+        "http_server/HttpServer.cpp",
+        "ipc/shared_memory/SharedMemoryUtils.cpp",
+        "ipc/heartbeat/HeartbeatProducer.cpp",
+        "cluster_grpc/GrpcClusterClient.cpp",
+        "securityutils/SecurityUtils.cpp",
+        "utils/Util.cpp",
+        "digs/DigsCommon.cpp",
+        "alarm_config/AlarmConfig.cpp",
+        "leader_judge/LeaderJudgeBase.cpp"
+      ]
+    },
+    {
+      "name": "http_client_ctl",
+      "path": "mindie_motor/src/http_client_ctl",
+      "language": "c_cpp",
+      "components": [
+        "http_client/HttpClient.cpp",
+        "params/ConfigParams.cpp",
+        "common/DynamicConfigHandler.cpp",
+        "common/Util.cpp",
+        "log/Logger.cpp",
+        "log/LogLevelDynamicHandler.cpp"
+      ]
+    },
+    {
+      "name": "node_manager",
+      "path": "mindie_motor/python/mindie_motor/node_manager",
+      "language": "python",
+      "components": [
+        "routes/server_api.py",
+        "core/service.py",
+        "core/heartbeat_mng.py",
+        "core/config.py",
+        "core/fault_mng.py",
+        "daemon_manager/llm_daemon_starter.py",
+        "daemon_manager/base_daemon_manager.py",
+        "framework/server.py",
+        "framework/client.py",
+        "common/utils.py"
+      ]
+    },
+    {
+      "name": "om_adapter",
+      "path": "mindie_motor/python/mindie_motor/om_adapter",
+      "language": "python",
+      "components": [
+        "share_memory_utils/circular_memory.py",
+        "share_memory_utils/byte_memory.py",
+        "share_memory_utils/abstract_memory.py",
+        "monitors/kafka_client/kafka_produce.py",
+        "monitors/ccae_monitor.py",
+        "monitors/base_monitor.py",
+        "common/cert_util.py",
+        "common/util.py",
+        "backends/mindie_backend.py",
+        "backends/log_collect/log_collector.py",
+        "backends/log_collect/log_processor.py"
+      ]
+    },
+    {
+      "name": "python_controller",
+      "path": "mindie_motor/python/mindie_motor/controller",
+      "language": "python",
+      "components": [
+        "controller_run.py"
+      ]
+    },
+    {
+      "name": "python_coordinator",
+      "path": "mindie_motor/python/mindie_motor/coordinator",
+      "language": "python",
+      "components": [
+        "coordinator_run.py"
+      ]
+    }
+  ],
+  "files": [
+    {
+      "path": "mindie_motor/src/common/http_server/HttpServer.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "common",
+      "lines": 641,
+      "priority": 1
+    },
+    {
+      "path": "mindie_motor/src/common/ipc/shared_memory/SharedMemoryUtils.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "common",
+      "lines": 150,
+      "priority": 2
+    },
+    {
+      "path": "mindie_motor/src/common/ipc/heartbeat/HeartbeatProducer.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "common",
+      "lines": 80,
+      "priority": 3
+    },
+    {
+      "path": "mindie_motor/src/common/cluster_grpc/GrpcClusterClient.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "common",
+      "lines": 200,
+      "priority": 4
+    },
+    {
+      "path": "mindie_motor/src/controller/probe_server/ProbeServer.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "controller",
+      "lines": 120,
+      "priority": 5
+    },
+    {
+      "path": "mindie_motor/src/controller/request_handler/CCAERequestHandler.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "controller",
+      "lines": 300,
+      "priority": 6
+    },
+    {
+      "path": "mindie_motor/src/controller/request_handler/CoordinatorBackupHandler.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "controller",
+      "lines": 200,
+      "priority": 7
+    },
+    {
+      "path": "mindie_motor/src/controller/process_manager/ProcessManager.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "controller",
+      "lines": 250,
+      "priority": 8
+    },
+    {
+      "path": "mindie_motor/src/controller/json_file_loader/JsonFileLoader.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "controller",
+      "lines": 100,
+      "priority": 9
+    },
+    {
+      "path": "mindie_motor/src/http_client_ctl/http_client/HttpClient.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "http_client_ctl",
+      "lines": 300,
+      "priority": 10
+    },
+    {
+      "path": "mindie_motor/src/common/securityutils/SecurityUtils.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "common",
+      "lines": 200,
+      "priority": 11
+    },
+    {
+      "path": "mindie_motor/python/mindie_motor/node_manager/routes/server_api.py",
+      "language": "python",
+      "risk": "Critical",
+      "module": "node_manager",
+      "lines": 87,
+      "priority": 1
+    },
+    {
+      "path": "mindie_motor/python/mindie_motor/node_manager/core/heartbeat_mng.py",
+      "language": "python",
+      "risk": "High",
+      "module": "node_manager",
+      "lines": 392,
+      "priority": 2
+    },
+    {
+      "path": "mindie_motor/python/mindie_motor/node_manager/daemon_manager/base_daemon_manager.py",
+      "language": "python",
+      "risk": "High",
+      "module": "node_manager",
+      "lines": 228,
+      "priority": 3
+    },
+    {
+      "path": "mindie_motor/python/mindie_motor/node_manager/daemon_manager/llm_daemon_starter.py",
+      "language": "python",
+      "risk": "High",
+      "module": "node_manager",
+      "lines": 155,
+      "priority": 4
+    },
+    {
+      "path": "mindie_motor/python/mindie_motor/node_manager/core/service.py",
+      "language": "python",
+      "risk": "High",
+      "module": "node_manager",
+      "lines": 67,
+      "priority": 5
+    },
+    {
+      "path": "mindie_motor/python/mindie_motor/node_manager/core/config.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "node_manager",
+      "lines": 150,
+      "priority": 6
+    },
+    {
+      "path": "mindie_motor/python/mindie_motor/om_adapter/share_memory_utils/circular_memory.py",
+      "language": "python",
+      "risk": "High",
+      "module": "om_adapter",
+      "lines": 34,
+      "priority": 7
+    },
+    {
+      "path": "mindie_motor/python/mindie_motor/om_adapter/monitors/kafka_client/kafka_produce.py",
+      "language": "python",
+      "risk": "High",
+      "module": "om_adapter",
+      "lines": 65,
+      "priority": 8
+    },
+    {
+      "path": "mindie_motor/python/mindie_motor/om_adapter/common/cert_util.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "om_adapter",
+      "lines": 78,
+      "priority": 9
+    },
+    {
+      "path": "mindie_motor/python/mindie_motor/node_manager/common/utils.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "node_manager",
+      "lines": 157,
+      "priority": 10
+    },
+    {
+      "path": "mindie_motor/python/mindie_motor/om_adapter/common/util.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "om_adapter",
+      "lines": 155,
+      "priority": 11
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "mindie_motor/src/common/http_server/HttpServer.cpp",
+      "line": 115,
+      "function": "HandleRequest",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "HTTP请求处理函数，接收来自外部客户端的HTTP请求，包括body和header数据，可能来自不可信的网络来源",
+      "description": "处理HTTP GET/POST/DELETE请求，解析请求body和target路径"
+    },
+    {
+      "file": "mindie_motor/src/common/http_server/HttpServer.cpp",
+      "line": 383,
+      "function": "Listener::Run",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "HTTP服务器监听端口，接受外部网络连接",
+      "description": "在指定端口监听TCP连接，接受来自任何IP的HTTP请求"
+    },
+    {
+      "file": "mindie_motor/src/common/ipc/shared_memory/SharedMemoryUtils.cpp",
+      "line": 43,
+      "function": "Read",
+      "type": "ipc",
+      "trust_level": "semi_trusted",
+      "justification": "从共享内存读取数据，数据可能来自其他本地进程（包括可能被攻击者控制的进程）",
+      "description": "从共享内存环形缓冲区读取消息"
+    },
+    {
+      "file": "mindie_motor/src/common/ipc/heartbeat/HeartbeatProducer.cpp",
+      "line": 40,
+      "function": "CreateHeartbeatMessage",
+      "type": "ipc",
+      "trust_level": "semi_trusted",
+      "justification": "心跳消息写入共享内存，可能被其他进程读取",
+      "description": "创建并写入心跳消息到共享内存"
+    },
+    {
+      "file": "mindie_motor/src/controller/json_file_loader/JsonFileLoader.cpp",
+      "line": 17,
+      "function": "FileToJsonObj",
+      "type": "file",
+      "trust_level": "trusted_admin",
+      "justification": "从文件加载JSON配置，文件由管理员控制但需验证权限",
+      "description": "读取JSON配置文件并解析为JSON对象"
+    },
+    {
+      "file": "mindie_motor/python/mindie_motor/node_manager/routes/server_api.py",
+      "line": 31,
+      "function": "running_status",
+      "type": "web_route",
+      "trust_level": "untrusted_network",
+      "justification": "FastAPI HTTP GET路由，接收外部HTTP请求查询节点状态",
+      "description": "处理/v1/node-manager/running-status GET请求"
+    },
+    {
+      "file": "mindie_motor/python/mindie_motor/node_manager/routes/server_api.py",
+      "line": 49,
+      "function": "fault_handling_command",
+      "type": "web_route",
+      "trust_level": "semi_trusted",
+      "justification": "FastAPI HTTP POST路由，接收故障处理命令，可能影响进程执行",
+      "description": "处理/v1/node-manager/fault-handling-command POST请求，解析并执行命令"
+    },
+    {
+      "file": "mindie_motor/python/mindie_motor/node_manager/routes/server_api.py",
+      "line": 76,
+      "function": "hardware_fault_info",
+      "type": "web_route",
+      "trust_level": "semi_trusted",
+      "justification": "FastAPI HTTP POST路由，接收硬件故障信息",
+      "description": "处理/v1/node-manager/hardware-fault-info POST请求"
+    },
+    {
+      "file": "mindie_motor/python/mindie_motor/node_manager/daemon_manager/base_daemon_manager.py",
+      "line": 144,
+      "function": "start_daemon_process",
+      "type": "cmdline",
+      "trust_level": "trusted_admin",
+      "justification": "启动子进程执行mindie_llm_server，命令参数来自配置文件",
+      "description": "使用subprocess.Popen启动daemon进程，包含命令验证"
+    },
+    {
+      "file": "mindie_motor/python/mindie_motor/node_manager/daemon_manager/llm_daemon_starter.py",
+      "line": 38,
+      "function": "build_daemon_command",
+      "type": "cmdline",
+      "trust_level": "trusted_admin",
+      "justification": "构建daemon进程命令，包含taskset CPU绑定和配置文件路径",
+      "description": "构建mindie_llm_server启动命令，支持taskset和config-file参数"
+    },
+    {
+      "file": "mindie_motor/python/mindie_motor/node_manager/daemon_manager/llm_daemon_starter.py",
+      "line": 49,
+      "function": "parse_daemon_arguments",
+      "type": "cmdline",
+      "trust_level": "trusted_admin",
+      "justification": "解析命令行参数决定启动模式",
+      "description": "解析sys.argv参数，支持single和distributed模式"
+    },
+    {
+      "file": "mindie_motor/python/mindie_motor/node_manager/core/config.py",
+      "line": 87,
+      "function": "_update_info",
+      "type": "env",
+      "trust_level": "semi_trusted",
+      "justification": "从环境变量MIES_INSTALL_PATH和POD_IP读取配置路径和IP地址",
+      "description": "从环境变量和配置文件加载系统配置"
+    },
+    {
+      "file": "mindie_motor/python/mindie_motor/node_manager/core/heartbeat_mng.py",
+      "line": 122,
+      "function": "_query_engine_server_status",
+      "type": "network",
+      "trust_level": "semi_trusted",
+      "justification": "向engine server发送HTTP请求查询状态，接收响应数据",
+      "description": "使用Client发送HTTP请求查询engine server状态"
+    },
+    {
+      "file": "mindie_motor/python/mindie_motor/om_adapter/share_memory_utils/circular_memory.py",
+      "line": 17,
+      "function": "read_data",
+      "type": "ipc",
+      "trust_level": "semi_trusted",
+      "justification": "从共享内存环形缓冲区读取数据",
+      "description": "读取Python共享内存环形缓冲区数据"
+    },
+    {
+      "file": "mindie_motor/python/mindie_motor/om_adapter/share_memory_utils/circular_memory.py",
+      "line": 29,
+      "function": "write_data",
+      "type": "ipc",
+      "trust_level": "semi_trusted",
+      "justification": "写入数据到共享内存环形缓冲区",
+      "description": "写入数据到Python共享内存环形缓冲区"
+    },
+    {
+      "file": "mindie_motor/python/mindie_motor/om_adapter/monitors/kafka_client/kafka_produce.py",
+      "line": 52,
+      "function": "send",
+      "type": "network",
+      "trust_level": "semi_trusted",
+      "justification": "向Kafka集群发送消息，Kafka配置包含SSL认证",
+      "description": "使用confluent_kafka发送消息到Kafka主题"
+    },
+    {
+      "file": "mindie_motor/src/http_client_ctl/http_client/HttpClient.cpp",
+      "line": 45,
+      "function": "SendRequest",
+      "type": "network",
+      "trust_level": "semi_trusted",
+      "justification": "发送HTTP请求到外部服务，接收响应数据",
+      "description": "使用Boost.Beast发送HTTP请求，支持TLS和非TLS模式"
+    },
+    {
+      "file": "mindie_motor/src/common/cluster_grpc/GrpcClusterClient.cpp",
+      "line": 28,
+      "function": "CreateGrpcChannel",
+      "type": "network",
+      "trust_level": "semi_trusted",
+      "justification": "创建gRPC通道用于集群通信",
+      "description": "创建gRPC客户端通道，支持TLS认证"
+    }
+  ],
+  "attack_surfaces": [
+    "HTTP Server: 监听端口接受外部HTTP请求（mindie_motor/src/common/http_server/HttpServer.cpp）",
+    "FastAPI Routes: Python HTTP API endpoints（mindie_motor/python/mindie_motor/node_manager/routes/server_api.py）",
+    "Shared Memory IPC: C++和Python共享内存通信（mindie_motor/src/common/ipc/ 和 mindie_motor/python/mindie_motor/om_adapter/share_memory_utils/）",
+    "gRPC Cluster Communication: 集群节点间gRPC通信（mindie_motor/src/common/cluster_grpc/）",
+    "Kafka Client: 向Kafka集群发送消息（mindie_motor/python/mindie_motor/om_adapter/monitors/kafka_client/）",
+    "Process Execution: subprocess.Popen启动mindie_llm_server进程（mindie_motor/python/mindie_motor/node_manager/daemon_manager/）",
+    "JSON Configuration Parsing: 解析配置文件（mindie_motor/src/controller/json_file_loader/ 和 mindie_motor/python/mindie_motor/node_manager/core/config.py）",
+    "Environment Variables: 读取MIES_INSTALL_PATH、POD_IP、RANK_TABLE_FILE等环境变量",
+    "Heartbeat IPC: 本地进程心跳监控机制",
+    "HTTP Client: 向外部服务发送HTTP请求"
+  ],
+  "c_cpp_python_boundary": [
+    {
+      "boundary_type": "shared_memory",
+      "c_cpp_side": "mindie_motor/src/common/ipc/shared_memory/SharedMemoryUtils.cpp",
+      "python_side": "mindie_motor/python/mindie_motor/om_adapter/share_memory_utils/",
+      "risk": "High",
+      "description": "通过共享内存环形缓冲区进行C++和Python进程间数据传递"
+    },
+    {
+      "boundary_type": "configuration",
+      "c_cpp_side": "mindie_motor/src/controller/json_file_loader/JsonFileLoader.cpp",
+      "python_side": "mindie_motor/python/mindie_motor/node_manager/core/config.py",
+      "risk": "Medium",
+      "description": "C++和Python都从JSON配置文件读取配置信息"
+    },
+    {
+      "boundary_type": "environment",
+      "c_cpp_side": "mindie_motor/src/controller/constant/ControllerConfig.cpp",
+      "python_side": "mindie_motor/python/mindie_motor/node_manager/core/config.py",
+      "risk": "Medium",
+      "description": "C++和Python都从环境变量读取部署路径和配置"
+    },
+    {
+      "boundary_type": "daemon_process",
+      "c_cpp_side": "mindie_motor/src/controller/process_manager/ProcessManager.cpp",
+      "python_side": "mindie_motor/python/mindie_motor/node_manager/daemon_manager/llm_daemon_starter.py",
+      "risk": "High",
+      "description": "Python启动mindie_llm_server进程，C++管理进程状态信息"
+    }
+  ]
+}

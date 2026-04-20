@@ -1,0 +1,609 @@
+{
+  "project_name": "MindIE-LLM",
+  "scan_time": "2025-04-17T00:00:00Z",
+  "lsp_available": true,
+  "total_files": 1904,
+  "total_lines": 500000,
+  "project_profile": {
+    "project_type": "network_service",
+    "deployment_model": "Distributed LLM inference service running on NPU clusters, with HTTP/gRPC endpoints for client requests and inter-node communication via gRPC/IPC",
+    "trust_boundaries": [
+      {
+        "boundary": "Network Interface (HTTP/gRPC)",
+        "trusted_side": "MindIE Server",
+        "untrusted_side": "Remote clients (HTTP API users, gRPC clients)",
+        "risk": "Critical"
+      },
+      {
+        "boundary": "Inter-node Communication",
+        "trusted_side": "Master/Slave nodes within cluster",
+        "untrusted_side": "Network between nodes",
+        "risk": "High"
+      },
+      {
+        "boundary": "IPC Shared Memory",
+        "trusted_side": "Executor processes",
+        "untrusted_side": "Local IPC channels",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Configuration Files",
+        "trusted_side": "Service configuration",
+        "untrusted_side": "Filesystem (config.json, TLS certs)",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Model Loading",
+        "trusted_side": "Runtime engine",
+        "untrusted_side": "Model weights files, LoRA adapters",
+        "risk": "Medium"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "http_endpoint",
+      "path": "src/server/endpoint/http_wrapper",
+      "language": "c_cpp",
+      "risk": "critical",
+      "description": "HTTP server implementation handling REST API requests for inference. Exposes OpenAI, TGI, vLLM, Triton API endpoints to external clients.",
+      "files": [
+        "http_server.cpp",
+        "http_handler.cpp",
+        "http_wrapper.cpp",
+        "http_ssl.cpp",
+        "http_ssl_secret.cpp"
+      ],
+      "dependencies": [
+        "config_manager",
+        "infer_instances",
+        "single_req_infer_interface"
+      ],
+      "attack_surface": [
+        "network",
+        "http",
+        "ssl_tls"
+      ]
+    },
+    {
+      "name": "grpc_endpoint",
+      "path": "src/server/endpoint/grpc_wrapper",
+      "language": "c_cpp",
+      "risk": "critical",
+      "description": "gRPC endpoint for PD (Prefill-Decode) disaggregation mode. Handles decode requests and KV cache release from prefill nodes.",
+      "files": [
+        "grpc_handler.cpp",
+        "grpc_wrapper.cpp",
+        "grpc_communication_mng.cpp",
+        "dmi_msg_receiver.cpp",
+        "dmi_msg_sender.cpp"
+      ],
+      "dependencies": [
+        "config_manager",
+        "infer_instances",
+        "grpc_communicator"
+      ],
+      "attack_surface": [
+        "network",
+        "rpc",
+        "grpc"
+      ]
+    },
+    {
+      "name": "request_handler",
+      "path": "src/server/endpoint/single_llm_req_handler",
+      "language": "c_cpp",
+      "risk": "high",
+      "description": "Request handlers for single LLM inference. Processes prefill, decode, and PnD (Prefill-and-Decode) requests.",
+      "files": [
+        "single_llm_prefill_req_handler.cpp",
+        "single_llm_decode_req_handler.cpp",
+        "single_llm_pnd_req_handler.cpp",
+        "single_llm_req_handler_base.cpp"
+      ],
+      "dependencies": [
+        "infer_instances",
+        "single_req_infer_interface"
+      ],
+      "attack_surface": [
+        "protocol_parsing",
+        "request_processing"
+      ]
+    },
+    {
+      "name": "infer_interface",
+      "path": "src/server/endpoint/single_req_infer_interface",
+      "language": "c_cpp",
+      "risk": "critical",
+      "description": "Protocol parsing and inference interface implementations. Parses OpenAI, TGI, vLLM, Triton request formats and dispatches to inference engine.",
+      "files": [
+        "parse_protocol.cpp",
+        "single_req_openai_infer_interface.cpp",
+        "single_req_tgi_text_infer_interface.cpp",
+        "single_req_vllm_infer_interface.cpp",
+        "single_req_vllm_openai_infer_interface.cpp",
+        "single_req_triton_text_infer_interface.cpp",
+        "single_req_self_develop_infer_interface.cpp"
+      ],
+      "dependencies": [
+        "request_handler",
+        "infer_instances"
+      ],
+      "attack_surface": [
+        "protocol_parsing",
+        "json_parsing",
+        "request_validation"
+      ]
+    },
+    {
+      "name": "daemon",
+      "path": "src/server/daemon",
+      "language": "c_cpp",
+      "risk": "high",
+      "description": "Main daemon process managing service lifecycle. Handles signals, subprocess management, and graceful shutdown.",
+      "files": [
+        "llm_daemon.cpp"
+      ],
+      "dependencies": [
+        "config_manager",
+        "endpoint"
+      ],
+      "attack_surface": [
+        "process_control",
+        "signal_handling"
+      ]
+    },
+    {
+      "name": "infer_instances",
+      "path": "src/server/infer_instances",
+      "language": "c_cpp",
+      "risk": "medium",
+      "description": "Inference instance management. Coordinates batch scheduler, KV cache, and model execution.",
+      "files": [
+        "infer_instances.cpp"
+      ],
+      "dependencies": [
+        "llm_manager",
+        "scheduler"
+      ],
+      "attack_surface": [
+        "internal_api"
+      ]
+    },
+    {
+      "name": "grpc_communicator",
+      "path": "src/executor/grpc_communicator",
+      "language": "c_cpp",
+      "risk": "critical",
+      "description": "gRPC communication for multi-node inference. Handles master-slave coordination, request/response streaming, TLS certificate management.",
+      "files": [
+        "grpc_communicator.cpp",
+        "executor.cpp"
+      ],
+      "dependencies": [
+        "config_manager",
+        "communicator"
+      ],
+      "attack_surface": [
+        "network",
+        "grpc",
+        "tls",
+        "certificate_management"
+      ]
+    },
+    {
+      "name": "ipc_communicator",
+      "path": "src/executor/ipc_communicator",
+      "language": "c_cpp",
+      "risk": "high",
+      "description": "IPC communication via shared memory and semaphores. Handles request/response serialization between executor processes.",
+      "files": [
+        "ipc_communicator.cpp",
+        "communicator.cpp"
+      ],
+      "dependencies": [
+        "executor"
+      ],
+      "attack_surface": [
+        "ipc",
+        "shared_memory",
+        "semaphore",
+        "protobuf_serialization"
+      ]
+    },
+    {
+      "name": "config_manager",
+      "path": "src/config_manager",
+      "language": "c_cpp",
+      "risk": "high",
+      "description": "Configuration file parsing and management. Reads config.json, validates parameters, handles dynamic config updates.",
+      "files": [
+        "config_manager_impl.cpp",
+        "server_config.cpp",
+        "schedule_config.cpp",
+        "model_deploy_config.cpp",
+        "backend_config.cpp",
+        "ranktable_config.cpp",
+        "param_checker.cpp",
+        "config_interaction.cpp",
+        "config_dynamic_handler.cpp"
+      ],
+      "dependencies": [],
+      "attack_surface": [
+        "file_parsing",
+        "json_parsing",
+        "config_validation"
+      ]
+    },
+    {
+      "name": "scheduler",
+      "path": "src/scheduler",
+      "language": "c_cpp",
+      "risk": "medium",
+      "description": "Request scheduling and batch management. Implements prefill/decode policies, latency prediction.",
+      "files": [],
+      "dependencies": [
+        "infer_instances"
+      ],
+      "attack_surface": [
+        "internal_api"
+      ]
+    },
+    {
+      "name": "llm_manager",
+      "path": "src/llm_manager",
+      "language": "mixed",
+      "risk": "medium",
+      "description": "LLM manager with Python API bindings. Manages inference requests, responses, and tensor operations.",
+      "files": [
+        "llm_manager.cpp",
+        "llm_manager_adapter.cpp",
+        "llm_infer_request.cpp",
+        "llm_infer_response.cpp",
+        "infer_request_impl.cpp",
+        "infer_tensor.cpp",
+        "python_api/python_api_init.cpp"
+      ],
+      "dependencies": [
+        "infer_instances",
+        "config_manager"
+      ],
+      "attack_surface": [
+        "python_bindings",
+        "internal_api"
+      ]
+    },
+    {
+      "name": "endpoint_utils",
+      "path": "src/server/endpoint/utils",
+      "language": "c_cpp",
+      "risk": "medium",
+      "description": "Utility functions for endpoint: JSON parsing, parameter checking, base64 encoding, TLS helper, sensitive info management.",
+      "files": [
+        "json_util.cpp",
+        "infer_param.cpp",
+        "parameters_checker.cpp",
+        "base64_util.cpp",
+        "https_server_helper.cpp",
+        "grpc_tls_function_expansion.cpp",
+        "SensitiveInfoManager.cpp",
+        "random_generator.cpp",
+        "event_dispatcher.cpp"
+      ],
+      "dependencies": [],
+      "attack_surface": [
+        "json_parsing",
+        "input_validation",
+        "tls_helper"
+      ]
+    },
+    {
+      "name": "health_checker",
+      "path": "src/server/endpoint/health_checker",
+      "language": "c_cpp",
+      "risk": "low",
+      "description": "Health check and fault recovery. Implements simulated inference for health probing.",
+      "files": [
+        "health_checker.cpp",
+        "simulate_task_runner.cpp",
+        "simulate_request_executor.cpp"
+      ],
+      "dependencies": [
+        "infer_instances"
+      ],
+      "attack_surface": [
+        "health_api"
+      ]
+    },
+    {
+      "name": "tokenizer",
+      "path": "src/server/tokenizer",
+      "language": "c_cpp",
+      "risk": "low",
+      "description": "Tokenization handling for inference requests.",
+      "files": [
+        "infer_tokenizer.cpp"
+      ],
+      "dependencies": [],
+      "attack_surface": []
+    },
+    {
+      "name": "python_connector",
+      "path": "mindie_llm/connector",
+      "language": "python",
+      "risk": "high",
+      "description": "Python connector for request handling. Implements shared memory communication and request routing.",
+      "files": [
+        "request_listener/request_listener.py",
+        "request_listener/shared_mem_communication.py",
+        "request_router/request_router.py",
+        "request_router/router_impl.py",
+        "main.py"
+      ],
+      "dependencies": [
+        "runtime"
+      ],
+      "attack_surface": [
+        "ipc",
+        "shared_memory",
+        "request_routing"
+      ]
+    },
+    {
+      "name": "python_runtime",
+      "path": "mindie_llm/runtime",
+      "language": "python",
+      "risk": "medium",
+      "description": "Python runtime for model execution. Includes model implementations, attention layers, sampling, LoRA management.",
+      "files": [
+        "model_runner/model_runner.py",
+        "model_runner/input_buffer.py",
+        "tokenizer/tokenizer_wrapper.py",
+        "lora/lora_manager.py",
+        "lora/lora_layers.py",
+        "layers/attention/attention_layer.py",
+        "layers/sampling/sampler.py"
+      ],
+      "dependencies": [
+        "python_connector"
+      ],
+      "attack_surface": [
+        "model_loading",
+        "lora_adapter_loading"
+      ]
+    },
+    {
+      "name": "python_server",
+      "path": "mindie_llm/server",
+      "language": "python",
+      "risk": "medium",
+      "description": "Python server entry point. Launches C++ daemon process.",
+      "files": [
+        "main.py"
+      ],
+      "dependencies": [],
+      "attack_surface": [
+        "process_launch"
+      ]
+    },
+    {
+      "name": "python_text_generator",
+      "path": "mindie_llm/text_generator",
+      "language": "mixed",
+      "risk": "low",
+      "description": "Text generation utilities with C++ bindings.",
+      "files": [],
+      "dependencies": [
+        "python_runtime"
+      ],
+      "attack_surface": []
+    },
+    {
+      "name": "python_utils",
+      "path": "mindie_llm/utils",
+      "language": "python",
+      "risk": "low",
+      "description": "Python utility modules including logging.",
+      "files": [],
+      "dependencies": [],
+      "attack_surface": []
+    },
+    {
+      "name": "proto_definitions",
+      "path": "proto",
+      "language": "c_cpp",
+      "risk": "medium",
+      "description": "Protocol buffer definitions for inter-node and IPC communication.",
+      "files": [
+        "model_execute_data.proto"
+      ],
+      "dependencies": [],
+      "attack_surface": [
+        "protobuf_serialization"
+      ]
+    }
+  ],
+  "files": [
+    {
+      "path": "src/server/endpoint/http_wrapper/http_server.cpp",
+      "language": "c_cpp",
+      "risk": "critical",
+      "module": "http_endpoint",
+      "lines": 485,
+      "priority": 1
+    },
+    {
+      "path": "src/server/endpoint/http_wrapper/http_handler.cpp",
+      "language": "c_cpp",
+      "risk": "critical",
+      "module": "http_endpoint",
+      "lines": 1138,
+      "priority": 1
+    },
+    {
+      "path": "src/server/endpoint/grpc_wrapper/grpc_handler.cpp",
+      "language": "c_cpp",
+      "risk": "critical",
+      "module": "grpc_endpoint",
+      "lines": 211,
+      "priority": 1
+    },
+    {
+      "path": "src/executor/grpc_communicator.cpp",
+      "language": "c_cpp",
+      "risk": "critical",
+      "module": "grpc_communicator",
+      "lines": 711,
+      "priority": 1
+    },
+    {
+      "path": "src/executor/ipc_communicator.cpp",
+      "language": "c_cpp",
+      "risk": "high",
+      "module": "ipc_communicator",
+      "lines": 410,
+      "priority": 2
+    },
+    {
+      "path": "src/server/endpoint/single_req_infer_interface/parse_protocol.cpp",
+      "language": "c_cpp",
+      "risk": "critical",
+      "module": "infer_interface",
+      "lines": 946,
+      "priority": 1
+    },
+    {
+      "path": "src/server/daemon/llm_daemon.cpp",
+      "language": "c_cpp",
+      "risk": "high",
+      "module": "daemon",
+      "lines": 421,
+      "priority": 2
+    },
+    {
+      "path": "src/config_manager/config_manager_impl.cpp",
+      "language": "c_cpp",
+      "risk": "high",
+      "module": "config_manager",
+      "lines": 458,
+      "priority": 2
+    },
+    {
+      "path": "mindie_llm/connector/request_listener/request_listener.py",
+      "language": "python",
+      "risk": "high",
+      "module": "python_connector",
+      "lines": 37,
+      "priority": 2
+    },
+    {
+      "path": "mindie_llm/server/main.py",
+      "language": "python",
+      "risk": "medium",
+      "module": "python_server",
+      "lines": 95,
+      "priority": 3
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "src/server/endpoint/http_wrapper/http_server.cpp",
+      "line": 251,
+      "function": "HttpServer::HttpServerInit",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "HTTP server listens on configured IP/port, accepting requests from external clients via REST API endpoints",
+      "description": "Initializes HTTP server listening for external client requests"
+    },
+    {
+      "file": "src/server/endpoint/http_wrapper/http_handler.cpp",
+      "line": 541,
+      "function": "HttpHandler::InitializeServiceStatusResource",
+      "type": "http",
+      "trust_level": "untrusted_network",
+      "justification": "HTTP GET endpoints for health checks and service management accessible from external clients",
+      "description": "Registers HTTP GET handlers for health check and status endpoints"
+    },
+    {
+      "file": "src/server/endpoint/http_wrapper/http_handler.cpp",
+      "line": 521,
+      "function": "HttpHandler::BusinessInitialize",
+      "type": "http",
+      "trust_level": "untrusted_network",
+      "justification": "Business HTTP endpoints for inference requests (OpenAI, TGI, vLLM, Triton APIs) accessible from external clients",
+      "description": "Registers HTTP POST handlers for inference API endpoints"
+    },
+    {
+      "file": "src/server/endpoint/grpc_wrapper/grpc_handler.cpp",
+      "line": 175,
+      "function": "GrpcHandler::InitGrpcService",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "gRPC server for inter-node communication in PD disaggregation mode, accessible from prefill nodes",
+      "description": "Initializes gRPC service for decode request handling"
+    },
+    {
+      "file": "src/executor/grpc_communicator.cpp",
+      "line": 158,
+      "function": "GRPCCommunicator::InitMaster",
+      "type": "network",
+      "trust_level": "semi_trusted",
+      "justification": "Master node gRPC server for multi-node inference, accepts connections from slave nodes",
+      "description": "Initializes gRPC server for master-slave coordination"
+    },
+    {
+      "file": "src/executor/grpc_communicator.cpp",
+      "line": 231,
+      "function": "GRPCCommunicator::InitSlave",
+      "type": "network",
+      "trust_level": "semi_trusted",
+      "justification": "Slave node gRPC client connecting to master node for multi-node inference",
+      "description": "Initializes gRPC client connecting to master node"
+    },
+    {
+      "file": "src/config_manager/config_manager_impl.cpp",
+      "line": 125,
+      "function": "ConfigManager::Impl::Impl",
+      "type": "file",
+      "trust_level": "trusted_admin",
+      "justification": "Configuration file parsing from config.json, typically managed by administrator",
+      "description": "Parses and validates configuration from JSON file"
+    },
+    {
+      "file": "src/executor/ipc_communicator.cpp",
+      "line": 152,
+      "function": "IPCCommunicator::SetupChannel",
+      "type": "ipc",
+      "trust_level": "semi_trusted",
+      "justification": "Shared memory IPC setup for executor communication, local process boundary",
+      "description": "Creates shared memory and semaphores for IPC"
+    },
+    {
+      "file": "src/server/endpoint/http_wrapper/http_handler.cpp",
+      "line": 1069,
+      "function": "HandleLoadLoraAdapter",
+      "type": "http",
+      "trust_level": "untrusted_network",
+      "justification": "HTTP POST endpoint for loading LoRA adapters from specified paths, accessible from external clients",
+      "description": "Handles LoRA adapter loading request"
+    },
+    {
+      "file": "src/server/daemon/llm_daemon.cpp",
+      "line": 354,
+      "function": "ParseCommandLineArgs",
+      "type": "cmdline",
+      "trust_level": "trusted_admin",
+      "justification": "Command line argument parsing for daemon startup, controlled by administrator",
+      "description": "Parses command line arguments for daemon configuration"
+    }
+  ],
+  "attack_surfaces": [
+    "HTTP REST API (Port configured in serverConfig.port): OpenAI, TGI, vLLM, Triton inference endpoints",
+    "HTTP Management API (Port configured in serverConfig.managementPort): Health checks, status, config query",
+    "HTTP Metrics API (Port configured in serverConfig.metricsPort): Prometheus metrics",
+    "gRPC Inter-node Communication (Port configured in serverConfig.interCommPort): PD disaggregation, multi-node inference",
+    "IPC Shared Memory: Executor communication via shared memory and semaphores",
+    "Configuration File Parsing: config.json, TLS certificates, CRL files",
+    "LoRA Adapter Loading: Dynamic loading of LoRA adapters via API"
+  ]
+}
