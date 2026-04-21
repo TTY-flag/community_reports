@@ -1,0 +1,526 @@
+{
+  "project_name": "MindStudio-Modeling",
+  "version": "1.0",
+  "generated_at": "2026-04-20",
+  "call_graph": {
+    "cli/inference/text_generate.py": {
+      "main": {
+        "calls": [
+          {
+            "target": "tensor_cast/utils.py:check_dependencies",
+            "line": 24,
+            "type": "function_call",
+            "risk": "high",
+            "description": "Dependency check that may execute pip install"
+          },
+          {
+            "target": "cli/utils.py:get_common_argparser",
+            "line": 28,
+            "type": "function_call"
+          },
+          {
+            "target": "cli/utils.py:check_string_valid",
+            "line": 98,
+            "type": "validator",
+            "description": "Model ID validation (regex-based, limited)"
+          },
+          {
+            "target": "tensor_cast/core/user_config.py:UserInputConfig.from_args",
+            "line": 310,
+            "type": "constructor"
+          },
+          {
+            "target": "tensor_cast/core/model_runner.py:ModelRunner.__init__",
+            "line": 314,
+            "type": "constructor"
+          },
+          {
+            "target": "tensor_cast/core/model_runner.py:ModelRunner.run_inference",
+            "line": 318,
+            "type": "function_call"
+          }
+        ]
+      }
+    },
+    "cli/inference/video_generate.py": {
+      "main": {
+        "calls": [
+          {
+            "target": "tensor_cast/utils.py:check_dependencies",
+            "line": 314,
+            "type": "function_call",
+            "risk": "high"
+          },
+          {
+            "target": "cli/inference/video_generate.py:run_inference",
+            "line": 453,
+            "type": "function_call"
+          }
+        ]
+      },
+      "run_inference": {
+        "calls": [
+          {
+            "target": "tensor_cast/device.py:DeviceProfile.all_device_profiles",
+            "line": 172,
+            "type": "lookup"
+          },
+          {
+            "target": "tensor_cast/diffusers/diffusers_model.py:build_diffusers_transformer_model",
+            "line": 194,
+            "type": "function_call",
+            "risk": "high",
+            "description": "Model building from user-controlled model_id path"
+          },
+          {
+            "target": "tensor_cast/runtime.py:Runtime.__enter__",
+            "line": 275,
+            "type": "context_manager"
+          },
+          {
+            "target": "tensor_cast/runtime.py:Runtime.export_chrome_trace",
+            "line": 309,
+            "type": "function_call",
+            "risk": "medium",
+            "description": "Chrome trace output to user-controlled path"
+          }
+        ]
+      }
+    },
+    "tensor_cast/utils.py": {
+      "check_dependencies": {
+        "calls": [
+          {
+            "target": "importlib.metadata.version",
+            "line": 182,
+            "type": "library_call"
+          },
+          {
+            "target": "subprocess.check_call",
+            "line": 196,
+            "type": "sink",
+            "risk": "critical",
+            "cwe": "CWE-78",
+            "description": "Command execution: pip install transformers==5.3.0"
+          }
+        ]
+      }
+    },
+    "tensor_cast/core/model_runner.py": {
+      "ModelRunner.__init__": {
+        "calls": [
+          {
+            "target": "tensor_cast/core/model_builder.py:build_model",
+            "line": 103,
+            "type": "function_call",
+            "risk": "high",
+            "description": "Model building with trust_remote_code possibility"
+          },
+          {
+            "target": "tensor_cast/performance_model/profiling_database/ProfilingDataSource",
+            "line": 76,
+            "type": "constructor",
+            "description": "Profiling database from user path"
+          }
+        ]
+      },
+      "run_inference": {
+        "calls": [
+          {
+            "target": "tensor_cast/core/input_generator.py:generate_inputs_varlen",
+            "line": 142,
+            "type": "function_call"
+          },
+          {
+            "target": "tensor_cast/runtime.py:Runtime",
+            "line": 151,
+            "type": "context_manager"
+          },
+          {
+            "target": "TransformerModel.forward",
+            "line": 158,
+            "type": "method_call"
+          },
+          {
+            "target": "tensor_cast/runtime.py:export_chrome_trace",
+            "line": 215,
+            "type": "function_call",
+            "risk": "medium"
+          }
+        ]
+      }
+    },
+    "tensor_cast/core/model_builder.py": {
+      "build_model": {
+        "calls": [
+          {
+            "target": "tensor_cast/core/config_resolver.py:ConfigResolver.__init__",
+            "line": 56,
+            "type": "constructor",
+            "risk": "high"
+          },
+          {
+            "target": "tensor_cast/core/config_resolver.py:ConfigResolver.resolve",
+            "line": 57,
+            "type": "function_call"
+          },
+          {
+            "target": "tensor_cast/transformers/model.py:TransformerModel.__init__",
+            "line": 58,
+            "type": "constructor",
+            "risk": "critical",
+            "description": "Model initialization with trust_remote_code"
+          },
+          {
+            "target": "torch.compile",
+            "line": 65,
+            "type": "library_call",
+            "risk": "medium"
+          }
+        ]
+      }
+    },
+    "tensor_cast/core/config_resolver.py": {
+      "ConfigResolver.__init__": {
+        "calls": [
+          {
+            "target": "tensor_cast/transformers/utils.py:AutoModelConfigLoader",
+            "line": 61,
+            "type": "constructor"
+          },
+          {
+            "target": "tensor_cast/transformers/utils.py:AutoModelConfigLoader.load_config",
+            "line": 62,
+            "type": "function_call",
+            "risk": "critical",
+            "description": "Config loading with trust_remote_code fallback"
+          }
+        ]
+      }
+    },
+    "tensor_cast/transformers/model.py": {
+      "TransformerModel.__init__": {
+        "calls": [
+          {
+            "target": "tensor_cast/transformers/utils.py:AutoModelConfigLoader.auto_load_model_and_config",
+            "line": 192,
+            "type": "function_call",
+            "risk": "critical"
+          },
+          {
+            "target": "tensor_cast/transformers/utils.py:AutoModelConfigLoader.load_model",
+            "line": 185,
+            "type": "function_call",
+            "risk": "critical"
+          },
+          {
+            "target": "tensor_cast/transformers/custom_model_registry/get_custom_model",
+            "line": 221,
+            "type": "function_call"
+          },
+          {
+            "target": "tensor_cast/transformers/transformations/wrap_model",
+            "line": 225,
+            "type": "function_call"
+          }
+        ]
+      }
+    },
+    "tensor_cast/transformers/utils.py": {
+      "AutoModelConfigLoader.load_config": {
+        "calls": [
+          {
+            "target": "AutoConfig.from_pretrained",
+            "line": 256,
+            "type": "library_call",
+            "risk": "high"
+          },
+          {
+            "target": "AutoConfig.from_pretrained(trust_remote_code=True)",
+            "line": 259,
+            "type": "sink",
+            "risk": "critical",
+            "cwe": "CWE-94",
+            "description": "Remote code execution via trust_remote_code=True"
+          }
+        ]
+      },
+      "AutoModelConfigLoader.load_model": {
+        "calls": [
+          {
+            "target": "AutoModelConfigLoader.try_to_load_model",
+            "line": 291,
+            "type": "function_call",
+            "risk": "critical"
+          }
+        ]
+      },
+      "AutoModelConfigLoader.try_to_load_model": {
+        "calls": [
+          {
+            "target": "AutoModel.from_config",
+            "line": 335,
+            "type": "sink",
+            "risk": "critical",
+            "cwe": "CWE-94",
+            "description": "Model instantiation with trust_remote_code"
+          },
+          {
+            "target": "AutoModelForCausalLM.from_config",
+            "line": 337,
+            "type": "sink",
+            "risk": "critical",
+            "cwe": "CWE-94"
+          }
+        ]
+      },
+      "auto_load_model_and_config": {
+        "calls": [
+          {
+            "target": "AutoModelConfigLoader.load_config",
+            "line": 318,
+            "type": "function_call",
+            "risk": "critical"
+          },
+          {
+            "target": "AutoModelConfigLoader.load_model",
+            "line": 321,
+            "type": "function_call",
+            "risk": "critical"
+          }
+        ]
+      }
+    },
+    "tensor_cast/diffusers/diffusers_model.py": {
+      "load_config_from_file": {
+        "calls": [
+          {
+            "target": "os.path.isdir",
+            "line": 56,
+            "type": "validator",
+            "description": "Path validation (only checks if directory exists)"
+          },
+          {
+            "target": "os.path.abspath",
+            "line": 60,
+            "type": "path_op",
+            "description": "Absolute path resolution (no traversal check)"
+          },
+          {
+            "target": "os.walk",
+            "line": 61,
+            "type": "path_op",
+            "risk": "medium",
+            "description": "Directory traversal on user path"
+          },
+          {
+            "target": "open(config_path)",
+            "line": 70,
+            "type": "sink",
+            "risk": "high",
+            "cwe": "CWE-22",
+            "description": "File open on user-controlled path"
+          },
+          {
+            "target": "json.load",
+            "line": 71,
+            "type": "library_call"
+          }
+        ]
+      },
+      "build_diffusers_transformer_model": {
+        "calls": [
+          {
+            "target": "load_config_from_file",
+            "line": 35,
+            "type": "function_call",
+            "risk": "high"
+          },
+          {
+            "target": "DiffusersTransformerModel.__init__",
+            "line": 43,
+            "type": "constructor"
+          }
+        ]
+      }
+    },
+    "serving_cast/config.py": {
+      "Config.__init__": {
+        "calls": [
+          {
+            "target": "Config._parse_instance_config",
+            "line": 98,
+            "type": "function_call",
+            "risk": "medium"
+          },
+          {
+            "target": "Config._parse_common_config",
+            "line": 101,
+            "type": "function_call",
+            "risk": "medium"
+          }
+        ]
+      },
+      "_parse_common_config": {
+        "calls": [
+          {
+            "target": "open(path)",
+            "line": 109,
+            "type": "sink",
+            "risk": "high",
+            "cwe": "CWE-22",
+            "description": "File open on user-provided config path"
+          },
+          {
+            "target": "yaml.safe_load",
+            "line": 110,
+            "type": "library_call",
+            "description": "Safe YAML loading (no deserialization RCE)"
+          }
+        ]
+      },
+      "_parse_instance_config": {
+        "calls": [
+          {
+            "target": "open(path)",
+            "line": 120,
+            "type": "sink",
+            "risk": "high",
+            "cwe": "CWE-22"
+          },
+          {
+            "target": "yaml.safe_load",
+            "line": 121,
+            "type": "library_call"
+          }
+        ]
+      }
+    },
+    "tensor_cast/runtime.py": {
+      "export_chrome_trace": {
+        "calls": [
+          {
+            "target": "open(trace_file, 'w')",
+            "line": 426,
+            "type": "sink",
+            "risk": "medium",
+            "cwe": "CWE-22",
+            "description": "File write to user-controlled path"
+          },
+          {
+            "target": "json.dump",
+            "line": 433,
+            "type": "library_call"
+          }
+        ]
+      }
+    },
+    "tools/linter/adapters/pip_init.py": {
+      "run_command": {
+        "calls": [
+          {
+            "target": "subprocess.run",
+            "line": 23,
+            "type": "sink",
+            "risk": "high",
+            "cwe": "CWE-78",
+            "description": "Command execution with user-provided package names"
+          }
+        ]
+      },
+      "main": {
+        "calls": [
+          {
+            "target": "run_command",
+            "line": 108,
+            "type": "function_call",
+            "risk": "high"
+          }
+        ]
+      }
+    },
+    "tensor_cast/core/input_generator.py": {
+      "_load_preprocessor_pixel_limits": {
+        "calls": [
+          {
+            "target": "AutoImageProcessor.from_pretrained",
+            "line": 247,
+            "type": "library_call",
+            "risk": "medium",
+            "description": "Remote model processor loading"
+          }
+        ]
+      }
+    }
+  },
+  "critical_paths": [
+    {
+      "path_id": "PATH-001",
+      "description": "CLI model_id to Remote Code Execution",
+      "severity": "Critical",
+      "cwe": "CWE-94",
+      "data_flow": [
+        {"step": 1, "file": "cli/inference/text_generate.py", "line": 255, "node": "args.model_id", "type": "source"},
+        {"step": 2, "file": "tensor_cast/core/user_config.py", "line": 29, "node": "UserInputConfig.model_id", "type": "propagation"},
+        {"step": 3, "file": "tensor_cast/core/config_resolver.py", "line": 60, "node": "ConfigResolver.model_id", "type": "propagation"},
+        {"step": 4, "file": "tensor_cast/transformers/utils.py", "line": 256, "node": "AutoConfig.from_pretrained(model_id)", "type": "call"},
+        {"step": 5, "file": "tensor_cast/transformers/utils.py", "line": 259, "node": "AutoConfig.from_pretrained(model_id, trust_remote_code=True)", "type": "sink"}
+      ]
+    },
+    {
+      "path_id": "PATH-002",
+      "description": "Dependency check pip install command execution",
+      "severity": "High",
+      "cwe": "CWE-78",
+      "data_flow": [
+        {"step": 1, "file": "cli/inference/text_generate.py", "line": 24, "node": "check_dependencies()", "type": "call"},
+        {"step": 2, "file": "tensor_cast/utils.py", "line": 182, "node": "importlib.metadata.version(pkg)", "type": "source"},
+        {"step": 3, "file": "tensor_cast/utils.py", "line": 196, "node": "subprocess.check_call([sys.executable, '-m', 'pip', 'install', f'{pkg}=={target_ver}'])", "type": "sink"}
+      ]
+    },
+    {
+      "path_id": "PATH-003",
+      "description": "Config file path traversal to YAML loading",
+      "severity": "High",
+      "cwe": "CWE-22",
+      "data_flow": [
+        {"step": 1, "file": "serving_cast/config.py", "line": 96, "node": "parsed_args.instance_config_path", "type": "source"},
+        {"step": 2, "file": "serving_cast/config.py", "line": 109, "node": "open(path)", "type": "sink"},
+        {"step": 3, "file": "serving_cast/config.py", "line": 110, "node": "yaml.safe_load(f)", "type": "sink"}
+      ]
+    },
+    {
+      "path_id": "PATH-004",
+      "description": "Video generate model path to config.json traversal",
+      "severity": "High",
+      "cwe": "CWE-22",
+      "data_flow": [
+        {"step": 1, "file": "cli/inference/video_generate.py", "line": 331, "node": "args.model_id", "type": "source"},
+        {"step": 2, "file": "tensor_cast/diffusers/diffusers_model.py", "line": 36, "node": "model_path=model_id", "type": "propagation"},
+        {"step": 3, "file": "tensor_cast/diffusers/diffusers_model.py", "line": 61, "node": "os.walk(model_path)", "type": "path_op"},
+        {"step": 4, "file": "tensor_cast/diffusers/diffusers_model.py", "line": 70, "node": "open(config_path)", "type": "sink"},
+        {"step": 5, "file": "tensor_cast/diffusers/diffusers_model.py", "line": 71, "node": "json.load(f)", "type": "sink"}
+      ]
+    },
+    {
+      "path_id": "PATH-005",
+      "description": "Chrome trace output path traversal",
+      "severity": "Medium",
+      "cwe": "CWE-22",
+      "data_flow": [
+        {"step": 1, "file": "cli/inference/text_generate.py", "line": 131, "node": "args.chrome_trace", "type": "source"},
+        {"step": 2, "file": "tensor_cast/core/user_config.py", "line": 37, "node": "UserInputConfig.chrome_trace", "type": "propagation"},
+        {"step": 3, "file": "tensor_cast/core/model_runner.py", "line": 215, "node": "runtime.export_chrome_trace(self.user_input.chrome_trace)", "type": "call"},
+        {"step": 4, "file": "tensor_cast/runtime.py", "line": 426, "node": "open(trace_file, 'w')", "type": "sink"}
+      ]
+    }
+  ],
+  "module_dependencies": {
+    "cli": ["tensor_cast.core", "tensor_cast.utils", "serving_cast"],
+    "tensor_cast.core": ["tensor_cast.transformers", "tensor_cast.performance_model", "tensor_cast.runtime"],
+    "tensor_cast.transformers": ["transformers library", "tensor_cast.layers", "tensor_cast.model_config"],
+    "tensor_cast.diffusers": ["diffusers library", "tensor_cast.layers"],
+    "serving_cast": ["tensor_cast.core", "serving_cast.config"],
+    "tools.linter": ["subprocess"]
+  }
+}

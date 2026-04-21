@@ -1,0 +1,78 @@
+{
+  "scan_id": "scan_20250420_203900",
+  "start_time": "2025-04-20T20:39:00+08:00",
+  "end_time": "2025-04-20T22:06:00+08:00",
+  "duration_seconds": 6840,
+  "status": "success",
+  "project_name": "MindStudio-Probe",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/shenteng/MindStudio/MindStudio-Probe",
+  "agents": [
+    {
+      "name": "architecture",
+      "start_time": "2025-04-20T21:05:00+08:00",
+      "end_time": "2025-04-20T21:12:00+08:00",
+      "duration_seconds": 420,
+      "status": "success",
+      "outputs": ["project_model.json", "call_graph.json", "threat_analysis_report.md"],
+      "summary": {"total_files": 502, "total_lines": 13198, "modules": 9, "entry_points": 10, "high_risk_files": 6}
+    },
+    {
+      "name": "dataflow-scanner",
+      "start_time": "2025-04-20T21:15:00+08:00",
+      "end_time": "2025-04-20T22:54:00+08:00",
+      "duration_seconds": 5940,
+      "status": "success",
+      "outputs": ["scan.db"],
+      "summary": {"modules_scanned": 9, "candidates_found": 34}
+    },
+    {
+      "name": "security-auditor",
+      "start_time": "2025-04-20T21:15:00+08:00",
+      "end_time": "2025-04-20T21:18:00+08:00",
+      "duration_seconds": 180,
+      "status": "success",
+      "outputs": [],
+      "summary": {"modules_scanned": 9}
+    },
+    {
+      "name": "verification",
+      "start_time": "2025-04-21T04:57:00+08:00",
+      "end_time": "2025-04-21T05:02:00+08:00",
+      "duration_seconds": 300,
+      "status": "success",
+      "outputs": ["scan.db (verified)"],
+      "summary": {"verified_total": 34, "confirmed": 7, "likely": 16, "possible": 5, "false_positive": 6, "critical": 4, "high": 14, "medium": 7, "low": 9}
+    },
+    {
+      "name": "details-analyzer",
+      "start_time": "2025-04-21T05:05:00+08:00",
+      "end_time": "2025-04-20T23:09:00+08:00",
+      "duration_seconds": 180,
+      "status": "success",
+      "outputs": ["VUL-CORE-001.md", "VULN-ACLGRAPH-001.md", "VULN-ACLGRAPH-002.md", "SEC-DLOPEN-ROOT-BYPASS-001.md", "SEC-ACL-SAVE-BYPASS-001.md", "CROSS-MODULE-002.md", "atb_probe_cwe426_dlopen_001.md"],
+      "summary": {"confirmed_vulns": 7, "reports_generated": 7, "note": "All CONFIRMED vulnerabilities have detailed analysis reports."}
+    },
+    {
+      "name": "reporter",
+      "start_time": "2025-04-20T22:05:00+08:00",
+      "end_time": "2025-04-20T22:06:00+08:00",
+      "duration_seconds": 60,
+      "status": "success",
+      "outputs": ["report_confirmed.md", "report_unconfirmed.md"],
+      "summary": {"confirmed_vulns": 7, "unconfirmed_vulns": 21, "total_vulns": 34}
+    }
+  ],
+  "summary": {
+    "total_vulnerabilities": 34,
+    "confirmed": 7,
+    "likely": 16,
+    "possible": 5,
+    "false_positive": 6,
+    "critical": 4,
+    "high": 14,
+    "medium": 7,
+    "low": 9,
+    "modules_scanned": 9,
+    "files_scanned": 502
+  }
+}

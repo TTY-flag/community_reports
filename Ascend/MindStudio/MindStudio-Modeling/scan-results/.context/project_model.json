@@ -1,0 +1,446 @@
+{
+  "project_name": "MindStudio-Modeling",
+  "project_type": "python",
+  "language": "Python",
+  "total_files": 150,
+  "total_lines": 28672,
+  "lsp_available": true,
+  "modules": [
+    {
+      "name": "cli",
+      "path": "cli/",
+      "risk_level": "Critical",
+      "description": "CLI entry points for inference simulation",
+      "entry_points": [
+        {
+          "type": "cli",
+          "file": "cli/inference/text_generate.py",
+          "function": "main",
+          "line": 23,
+          "description": "Text generation inference CLI entry point"
+        },
+        {
+          "type": "cli",
+          "file": "cli/inference/video_generate.py",
+          "function": "main",
+          "line": 313,
+          "description": "Video generation inference CLI entry point"
+        },
+        {
+          "type": "cli",
+          "file": "cli/inference/throughput_optimizer.py",
+          "function": "main",
+          "line": 1,
+          "description": "Throughput optimizer CLI entry point"
+        }
+      ],
+      "taint_sources": [
+        {
+          "type": "cli_arg",
+          "file": "cli/inference/text_generate.py",
+          "variable": "args.model_id",
+          "line": 255,
+          "description": "User-controlled model identifier/path",
+          "cwe": "CWE-22"
+        },
+        {
+          "type": "cli_arg",
+          "file": "cli/inference/text_generate.py",
+          "variable": "args.graph_log_url",
+          "line": 122,
+          "description": "User-controlled graph log output path",
+          "cwe": "CWE-22"
+        },
+        {
+          "type": "cli_arg",
+          "file": "cli/inference/text_generate.py",
+          "variable": "args.chrome_trace",
+          "line": 131,
+          "description": "User-controlled Chrome trace output path",
+          "cwe": "CWE-22"
+        },
+        {
+          "type": "cli_arg",
+          "file": "cli/inference/text_generate.py",
+          "variable": "args.profiling_database",
+          "line": 272,
+          "description": "User-controlled profiling database path",
+          "cwe": "CWE-22"
+        },
+        {
+          "type": "cli_arg",
+          "file": "cli/inference/video_generate.py",
+          "variable": "args.model_id",
+          "line": 331,
+          "description": "User-controlled model directory path",
+          "cwe": "CWE-22"
+        }
+      ],
+      "key_functions": [
+        "main",
+        "run_inference",
+        "check_dependencies"
+      ]
+    },
+    {
+      "name": "serving_cast",
+      "path": "serving_cast/",
+      "risk_level": "High",
+      "description": "Service layer for model serving simulation",
+      "entry_points": [
+        {
+          "type": "config_file",
+          "file": "serving_cast/config.py",
+          "function": "Config.__init__",
+          "line": 96,
+          "description": "Configuration loading from YAML files"
+        }
+      ],
+      "taint_sources": [
+        {
+          "type": "file_input",
+          "file": "serving_cast/config.py",
+          "variable": "path",
+          "line": 109,
+          "description": "User-provided config file path",
+          "cwe": "CWE-22"
+        }
+      ],
+      "taint_sinks": [
+        {
+          "type": "yaml_load",
+          "file": "serving_cast/config.py",
+          "function": "_parse_common_config",
+          "line": 110,
+          "description": "YAML safe_load from user-controlled path (safe but path traversal risk)",
+          "cwe": "CWE-22"
+        }
+      ],
+      "key_functions": [
+        "Config",
+        "Instance",
+        "Engine",
+        "ModelRunner",
+        "AsyncTaskManager"
+      ]
+    },
+    {
+      "name": "tensor_cast.core",
+      "path": "tensor_cast/core/",
+      "risk_level": "Critical",
+      "description": "Core model runner and builder logic",
+      "taint_sinks": [
+        {
+          "type": "remote_code_exec",
+          "file": "tensor_cast/core/model_builder.py",
+          "function": "build_model",
+          "line": 49,
+          "description": "Model loading with potential trust_remote_code",
+          "cwe": "CWE-94"
+        },
+        {
+          "type": "torch_compile",
+          "file": "tensor_cast/core/model_builder.py",
+          "function": "build_model",
+          "line": 65,
+          "description": "torch.compile on user-provided model",
+          "cwe": "CWE-94"
+        }
+      ],
+      "key_functions": [
+        "ModelRunner",
+        "build_model",
+        "ConfigResolver",
+        "UserInputConfig",
+        "generate_inputs"
+      ],
+      "calls_to": [
+        "tensor_cast.transformers",
+        "tensor_cast.performance_model"
+      ]
+    },
+    {
+      "name": "tensor_cast.transformers",
+      "path": "tensor_cast/transformers/",
+      "risk_level": "Critical",
+      "description": "Transformers model loading and configuration",
+      "taint_sources": [
+        {
+          "type": "remote_input",
+          "file": "tensor_cast/transformers/utils.py",
+          "function": "AutoModelConfigLoader.load_config",
+          "line": 256,
+          "description": "HuggingFace AutoConfig.from_pretrained with trust_remote_code fallback",
+          "cwe": "CWE-94"
+        }
+      ],
+      "taint_sinks": [
+        {
+          "type": "remote_code_exec",
+          "file": "tensor_cast/transformers/utils.py",
+          "function": "AutoConfig.from_pretrained",
+          "line": 259,
+          "description": "Loading remote code with trust_remote_code=True",
+          "cwe": "CWE-94"
+        },
+        {
+          "type": "remote_code_exec",
+          "file": "tensor_cast/transformers/utils.py",
+          "function": "AutoModel.from_config",
+          "line": 335,
+          "description": "Model instantiation from config with trust_remote_code",
+          "cwe": "CWE-94"
+        }
+      ],
+      "key_functions": [
+        "TransformerModel",
+        "AutoModelConfigLoader",
+        "load_config",
+        "load_model",
+        "auto_load_model_and_config"
+      ],
+      "calls_to": [
+        "transformers library (external)"
+      ]
+    },
+    {
+      "name": "tensor_cast.diffusers",
+      "path": "tensor_cast/diffusers/",
+      "risk_level": "High",
+      "description": "Diffusers model loading for video generation",
+      "taint_sources": [
+        {
+          "type": "file_input",
+          "file": "tensor_cast/diffusers/diffusers_model.py",
+          "function": "load_config_from_file",
+          "line": 61,
+          "description": "Walking user-provided model directory",
+          "cwe": "CWE-22"
+        }
+      ],
+      "taint_sinks": [
+        {
+          "type": "json_load",
+          "file": "tensor_cast/diffusers/diffusers_model.py",
+          "function": "load_config_from_file",
+          "line": 71,
+          "description": "JSON load from user-controlled config.json paths",
+          "cwe": "CWE-22"
+        }
+      ],
+      "key_functions": [
+        "DiffusersTransformerModel",
+        "load_config_from_file",
+        "build_diffusers_transformer_model"
+      ]
+    },
+    {
+      "name": "tensor_cast.runtime",
+      "path": "tensor_cast/runtime.py",
+      "risk_level": "Medium",
+      "description": "Runtime execution simulation",
+      "taint_sinks": [
+        {
+          "type": "file_write",
+          "file": "tensor_cast/runtime.py",
+          "function": "export_chrome_trace",
+          "line": 426,
+          "description": "Writing Chrome trace to user-controlled path",
+          "cwe": "CWE-22"
+        }
+      ],
+      "key_functions": [
+        "Runtime",
+        "export_chrome_trace",
+        "table_averages"
+      ]
+    },
+    {
+      "name": "tensor_cast.utils",
+      "path": "tensor_cast/utils.py",
+      "risk_level": "High",
+      "description": "Utility functions including dependency check",
+      "taint_sinks": [
+        {
+          "type": "command_exec",
+          "file": "tensor_cast/utils.py",
+          "function": "check_dependencies",
+          "line": 196,
+          "description": "subprocess.check_call for pip install",
+          "cwe": "CWE-78"
+        }
+      ],
+      "key_functions": [
+        "check_dependencies",
+        "pattern_match",
+        "str_to_dtype"
+      ]
+    },
+    {
+      "name": "tools.linter",
+      "path": "tools/linter/",
+      "risk_level": "High",
+      "description": "Linter adapters with subprocess execution",
+      "taint_sinks": [
+        {
+          "type": "command_exec",
+          "file": "tools/linter/adapters/pip_init.py",
+          "function": "run_command",
+          "line": 23,
+          "description": "subprocess.run for pip operations",
+          "cwe": "CWE-78"
+        },
+        {
+          "type": "command_exec",
+          "file": "tools/linter/adapters/ruff_linter.py",
+          "function": "_run_ruff",
+          "line": 71,
+          "description": "subprocess.run for ruff linting",
+          "cwe": "CWE-78"
+        }
+      ],
+      "key_functions": [
+        "pip_init.main",
+        "ruff_linter.run",
+        "flake8_linter.run"
+      ]
+    },
+    {
+      "name": "tensor_cast.performance_model",
+      "path": "tensor_cast/performance_model/",
+      "risk_level": "Low",
+      "description": "Performance modeling and profiling",
+      "key_functions": [
+        "AnalyticPerformanceModel",
+        "EmpiricalPerformanceModel",
+        "MemoryTracker",
+        "ProfilingDataSource"
+      ]
+    },
+    {
+      "name": "tensor_cast.layers",
+      "path": "tensor_cast/layers/",
+      "risk_level": "Low",
+      "description": "Neural network layer implementations",
+      "key_functions": [
+        "AttentionTensorCast",
+        "TensorCastQuantLinear",
+        "Sampler",
+        "MLA"
+      ]
+    },
+    {
+      "name": "tensor_cast.ops",
+      "path": "tensor_cast/ops/",
+      "risk_level": "Low",
+      "description": "Custom operators",
+      "key_functions": [
+        "register_tensor_cast_op",
+        "attention",
+        "mla",
+        "swiglu"
+      ]
+    },
+    {
+      "name": "tests",
+      "path": "tests/",
+      "risk_level": "Low",
+      "description": "Test files (excluded from production analysis)",
+      "excluded": true
+    }
+  ],
+  "attack_surface": {
+    "entry_points": [
+      {
+        "type": "CLI",
+        "description": "Command-line interface for inference simulation",
+        "attack_vector": "User-controlled model paths and configuration",
+        "files": [
+          "cli/inference/text_generate.py",
+          "cli/inference/video_generate.py",
+          "cli/inference/throughput_optimizer.py"
+        ]
+      },
+      {
+        "type": "Config File",
+        "description": "YAML configuration file loading",
+        "attack_vector": "User-provided config file paths",
+        "files": [
+          "serving_cast/config.py"
+        ]
+      },
+      {
+        "type": "Model Loading",
+        "description": "HuggingFace/ModelScope model loading",
+        "attack_vector": "Remote code execution via trust_remote_code",
+        "files": [
+          "tensor_cast/transformers/utils.py",
+          "tensor_cast/transformers/model.py"
+        ]
+      }
+    ],
+    "high_risk_operations": [
+      {
+        "operation": "trust_remote_code execution",
+        "files": [
+          "tensor_cast/transformers/utils.py:259",
+          "tensor_cast/transformers/model.py:188"
+        ],
+        "cwe": "CWE-94",
+        "severity": "Critical"
+      },
+      {
+        "operation": "subprocess command execution",
+        "files": [
+          "tensor_cast/utils.py:196",
+          "tools/linter/adapters/pip_init.py:23",
+          "tools/linter/adapters/ruff_linter.py:71"
+        ],
+        "cwe": "CWE-78",
+        "severity": "High"
+      },
+      {
+        "operation": "file path operations",
+        "files": [
+          "cli/inference/text_generate.py:255",
+          "tensor_cast/diffusers/diffusers_model.py:61",
+          "serving_cast/config.py:109",
+          "tensor_cast/runtime.py:426"
+        ],
+        "cwe": "CWE-22",
+        "severity": "High"
+      }
+    ]
+  },
+  "file_priority": {
+    "critical": [
+      "cli/inference/text_generate.py",
+      "cli/inference/video_generate.py",
+      "tensor_cast/utils.py",
+      "tensor_cast/transformers/utils.py",
+      "tensor_cast/transformers/model.py",
+      "tensor_cast/core/model_builder.py",
+      "tensor_cast/core/config_resolver.py",
+      "tensor_cast/runtime.py"
+    ],
+    "high": [
+      "tensor_cast/diffusers/diffusers_model.py",
+      "serving_cast/config.py",
+      "serving_cast/model_runner.py",
+      "tools/linter/adapters/pip_init.py",
+      "tools/linter/adapters/ruff_linter.py"
+    ],
+    "medium": [
+      "cli/utils.py",
+      "tensor_cast/core/model_runner.py",
+      "tensor_cast/core/user_config.py",
+      "tensor_cast/core/input_generator.py"
+    ],
+    "low": [
+      "tensor_cast/performance_model/",
+      "tensor_cast/layers/",
+      "tensor_cast/ops/",
+      "tensor_cast/compilation/"
+    ]
+  }
+}

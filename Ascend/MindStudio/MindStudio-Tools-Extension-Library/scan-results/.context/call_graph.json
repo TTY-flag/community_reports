@@ -1,0 +1,265 @@
+{
+  "functions": {
+    "mstxInitWithInjectionLib@c/include/mstx/mstx_detail/mstx_impl.h": {
+      "defined_at": 174,
+      "calls": [
+        "getenv@c/include/mstx/mstx_detail/mstx_impl.h:178",
+        "dlopen@c/include/mstx/mstx_detail/mstx_impl.h:180",
+        "dlsym@c/include/mstx/mstx_detail/mstx_impl.h:183"
+      ],
+      "called_by": [
+        "mstxInitOnce@c/include/mstx/mstx_detail/mstx_impl.h:260"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "从环境变量 MSTX_INJECTION_PATH 加载动态库，初始化注入功能"
+    },
+    "mstxInitOnce@c/include/mstx/mstx_detail/mstx_impl.h": {
+      "defined_at": 251,
+      "calls": [
+        "mstxInitWithInjectionLib@c/include/mstx/mstx_detail/mstx_impl.h:260",
+        "refreshUninitMstxContextFuncPtr@c/include/mstx/mstx_detail/mstx_impl.h:261",
+        "__sync_val_compare_and_swap@c/include/mstx/mstx_detail/mstx_impl.h:257",
+        "__sync_lock_test_and_set@c/include/mstx/mstx_detail/mstx_impl.h:263",
+        "sched_yield@c/include/mstx/mstx_detail/mstx_impl.h:268"
+      ],
+      "called_by": [
+        "mstxMarkAInit@c/include/mstx/mstx_detail/mstx_init_defs.h:24",
+        "mstxRangeStartAInit@c/include/mstx/mstx_detail/mstx_init_defs.h:30",
+        "mstxRangeEndInit@c/include/mstx/mstx_detail/mstx_init_defs.h:36",
+        "mstxGetToolIdInit@c/include/mstx/mstx_detail/mstx_init_defs.h:42",
+        "mstxMemHeapRegisterInit@c/include/mstx/mstx_detail/mstx_init_defs.h:49",
+        "mstxMemHeapUnregisterInit@c/include/mstx/mstx_detail/mstx_init_defs.h:55",
+        "mstxMemRegionsRegisterInit@c/include/mstx/mstx_detail/mstx_init_defs.h:62",
+        "mstxMemRegionsUnregisterInit@c/include/mstx/mstx_detail/mstx_init_defs.h:68",
+        "mstxMemPermissionsAssignInit@c/include/mstx/mstx_detail/mstx_init_defs.h:75",
+        "mstxDomainCreateAInit@c/include/mstx/mstx_detail/mstx_init_defs.h:81",
+        "mstxDomainDestroyInit@c/include/mstx/mstx_detail/mstx_init_defs.h:87",
+        "mstxDomainMarkAInit@c/include/mstx/mstx_detail/mstx_init_defs.h:93",
+        "mstxDomainRangeStartAInit@c/include/mstx/mstx_detail/mstx_init_defs.h:99",
+        "mstxDomainRangeEndInit@c/include/mstx/mstx_detail/mstx_init_defs.h:105"
+      ],
+      "receives_external_input": false,
+      "risk": "Critical",
+      "description": "线程安全的初始化函数，使用 CAS 锁实现单例模式"
+    },
+    "mstxMarkA@c/include/mstx/mstx_detail/mstx_impl_core.h": {
+      "defined_at": 22,
+      "calls": [
+        "mstxMarkAFunc@c/include/mstx/mstx_detail/mstx_impl_core.h:27"
+      ],
+      "called_by": [
+        "mstxMarkAInit@c/include/mstx/mstx_detail/mstx_init_defs.h:25",
+        "WrapMstxMarkA@python/mstx_api.cpp:53"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "标记点 API，接收 message 字符串参数，文档声明不可为 NULL 但无代码检查"
+    },
+    "mstxRangeStartA@c/include/mstx/mstx_detail/mstx_impl_core.h": {
+      "defined_at": 32,
+      "calls": [
+        "mstxRangeStartAFunc@c/include/mstx/mstx_detail/mstx_impl_core.h:36"
+      ],
+      "called_by": [
+        "mstxRangeStartAInit@c/include/mstx/mstx_detail/mstx_init_defs.h:31",
+        "WrapMstxRangeStartA@python/mstx_api.cpp:70"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "范围开始 API，接收 message 字符串参数，返回 range ID"
+    },
+    "mstxRangeEnd@c/include/mstx/mstx_detail/mstx_impl_core.h": {
+      "defined_at": 46,
+      "calls": [
+        "mstxRangeEndFunc@c/include/mstx/mstx_detail/mstx_impl_core.h:50"
+      ],
+      "called_by": [
+        "mstxRangeEndInit@c/include/mstx/mstx_detail/mstx_init_defs.h:37",
+        "WrapMstxRangeEnd@python/mstx_api.cpp:83"
+      ],
+      "receives_external_input": false,
+      "risk": "Low",
+      "description": "范围结束 API，接收 range ID 参数"
+    },
+    "mstxGetToolId@c/include/mstx/mstx_detail/mstx_impl_core.h": {
+      "defined_at": 168,
+      "calls": [
+        "mstxGetToolIdFunc@c/include/mstx/mstx_detail/mstx_impl_core.h:175"
+      ],
+      "called_by": [
+        "mstxGetToolIdInit@c/include/mstx/mstx_detail/mstx_init_defs.h:43",
+        "WrapMstxGetToolId@python/mstx_api.cpp:93"
+      ],
+      "receives_external_input": false,
+      "risk": "Low",
+      "description": "获取工具 ID API，有 NULL 检查保护"
+    },
+    "mstxMemHeapRegister@c/include/mstx/mstx_detail/mstx_impl_core.h": {
+      "defined_at": 56,
+      "calls": [
+        "mstxMemHeapRegisterFunc@c/include/mstx/mstx_detail/mstx_impl_core.h:61"
+      ],
+      "called_by": [
+        "mstxMemHeapRegisterInit@c/include/mstx/mstx_detail/mstx_init_defs.h:50"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "内存池注册 API，接收包含泛型指针的结构体"
+    },
+    "mstxMemRegionsRegister@c/include/mstx/mstx_detail/mstx_impl_core.h": {
+      "defined_at": 80,
+      "calls": [
+        "mstxMemRegionsRegisterFunc@c/include/mstx/mstx_detail/mstx_impl_core.h:85"
+      ],
+      "called_by": [
+        "mstxMemRegionsRegisterInit@c/include/mstx/mstx_detail/mstx_init_defs.h:63"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "内存区域批量注册 API，接收批量结构体指针"
+    },
+    "WrapMstxMarkA@python/mstx_api.cpp": {
+      "defined_at": 41,
+      "calls": [
+        "ParseArgs@python/mstx_api.cpp:45",
+        "mstxMarkA@c/include/mstx/mstx_detail/mstx_impl_core.h:53"
+      ],
+      "called_by": [
+        "Python interpreter"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "Python 绑定入口，解析参数后调用底层 C API"
+    },
+    "WrapMstxRangeStartA@python/mstx_api.cpp": {
+      "defined_at": 58,
+      "calls": [
+        "ParseArgs@python/mstx_api.cpp:62",
+        "mstxRangeStartA@c/include/mstx/mstx_detail/mstx_impl_core.h:70"
+      ],
+      "called_by": [
+        "Python interpreter"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "Python 绑定入口，解析参数后调用底层 C API"
+    },
+    "WrapMstxRangeEnd@python/mstx_api.cpp": {
+      "defined_at": 75,
+      "calls": [
+        "PyArg_ParseTupleAndKeywords@python/mstx_api.cpp:80",
+        "mstxRangeEnd@c/include/mstx/mstx_detail/mstx_impl_core.h:83"
+      ],
+      "called_by": [
+        "Python interpreter"
+      ],
+      "receives_external_input": false,
+      "risk": "Low",
+      "description": "Python 绑定入口，解析 rangeId 参数后调用底层 C API"
+    },
+    "WrapMstxGetToolId@python/mstx_api.cpp": {
+      "defined_at": 88,
+      "calls": [
+        "mstxGetToolId@c/include/mstx/mstx_detail/mstx_impl_core.h:93"
+      ],
+      "called_by": [
+        "Python interpreter"
+      ],
+      "receives_external_input": false,
+      "risk": "Low",
+      "description": "Python 绑定入口，无参数，直接调用底层 C API"
+    },
+    "ParseArgs@python/mstx_api.cpp": {
+      "defined_at": 31,
+      "calls": [
+        "PyArg_ParseTupleAndKeywords@python/mstx_api.cpp:38"
+      ],
+      "called_by": [
+        "WrapMstxMarkA@python/mstx_api.cpp:45",
+        "WrapMstxRangeStartA@python/mstx_api.cpp:62"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "参数解析函数，使用 PyArg_ParseTupleAndKeywords 解析 message 和 stream"
+    },
+    "proc_artifact@download_dependencies.py": {
+      "defined_at": 93,
+      "calls": [
+        "curl@download_dependencies.py:104",
+        "hashlib.sha256@download_dependencies.py:106",
+        "tar@download_dependencies.py:112",
+        "shutil.unpack_archive@download_dependencies.py:116"
+      ],
+      "called_by": [
+        "run@download_dependencies.py:140"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "从远程 URL 下载依赖包并解压"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "getenv(MSTX_INJECTION_PATH)@c/include/mstx/mstx_detail/mstx_impl.h:178",
+      "path": [
+        "mstxInitWithInjectionLib@c/include/mstx/mstx_detail/mstx_impl.h:178",
+        "dlopen@c/include/mstx/mstx_detail/mstx_impl.h:180",
+        "dlsym(InitInjectionMstx)@c/include/mstx/mstx_detail/mstx_impl.h:183",
+        "initFunc@c/include/mstx/mstx_detail/mstx_impl.h:185"
+      ],
+      "sink": "dlopen@c/include/mstx/mstx_detail/mstx_impl.h:180",
+      "sink_type": "library_loading",
+      "risk": "Critical",
+      "description": "环境变量 → 动态库加载，攻击者可通过控制 MSTX_INJECTION_PATH 加载恶意库"
+    },
+    {
+      "source": "Python args@python/mstx_api.cpp:38",
+      "path": [
+        "PyArg_ParseTupleAndKeywords@python/mstx_api.cpp:38",
+        "message@python/mstx_api.cpp:33",
+        "mstxMarkA@c/include/mstx/mstx_detail/mstx_impl_core.h:53"
+      ],
+      "sink": "mstxMarkAFunc(message, stream)@c/include/mstx/mstx_detail/mstx_impl_core.h:27",
+      "sink_type": "function_pointer",
+      "risk": "High",
+      "description": "Python 参数 → message 字符串 → 函数指针调用，无 NULL 检查"
+    },
+    {
+      "source": "Python args@python/mstx_api.cpp:38",
+      "path": [
+        "PyArg_ParseTupleAndKeywords@python/mstx_api.cpp:38",
+        "message@python/mstx_api.cpp:33",
+        "mstxRangeStartA@c/include/mstx/mstx_detail/mstx_impl_core.h:70"
+      ],
+      "sink": "mstxRangeStartAFunc(message, stream)@c/include/mstx/mstx_detail/mstx_impl_core.h:36",
+      "sink_type": "function_pointer",
+      "risk": "High",
+      "description": "Python 参数 → message 字符串 → 函数指针调用，无 NULL 检查"
+    },
+    {
+      "source": "url@download_dependencies.py:101",
+      "path": [
+        "curl -Lfk -o@download_dependencies.py:104",
+        "archive_path@download_dependencies.py:103",
+        "tar -xf@download_dependencies.py:112",
+        "target@download_dependencies.py:124"
+      ],
+      "sink": "shutil.move(source, target)@download_dependencies.py:124",
+      "sink_type": "file_operation",
+      "risk": "High",
+      "description": "远程 URL → 文件下载 → 解压 → 写入本地目录，存在恶意文件注入风险"
+    },
+    {
+      "source": "mstxMemHeapDesc_t@c/include/mstx/ms_tools_ext_mem.h:81",
+      "path": [
+        "mstxMemHeapRegister@c/include/mstx/mstx_detail/mstx_impl_core.h:61",
+        "mstxMemHeapRegisterFunc(domain, desc)@c/include/mstx/mstx_detail/mstx_impl_core.h:61"
+      ],
+      "sink": "mstxMemHeapRegisterFunc@c/include/mstx/mstx_detail/mstx_impl_core.h:61",
+      "sink_type": "function_pointer",
+      "risk": "Medium",
+      "description": "复杂结构体包含 void const *typeSpecificDesc 泛型指针，可能存在类型混淆"
+    }
+  ]
+}

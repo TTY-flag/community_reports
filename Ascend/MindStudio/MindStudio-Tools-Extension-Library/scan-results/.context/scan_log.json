@@ -1,0 +1,92 @@
+{
+  "scan_id": "scan_20260420_234800",
+  "start_time": "2026-04-20T23:48:00Z",
+  "project_name": "MindStudio-Tools-Extension-Library",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/shenteng/MindStudio/MindStudio-Tools-Extension-Library",
+  "status": "success",
+  "mode": "autonomous",
+  "threat_md_exists": false,
+  "agents": [
+    {
+      "name": "architecture",
+      "phase": 2,
+      "status": "success",
+      "start_time": "2026-04-20T23:49:00Z",
+      "end_time": "2026-04-20T23:53:30Z",
+      "duration_seconds": 274,
+      "output_files": [
+        "project_model.json",
+        "call_graph.json",
+        "threat_analysis_report.md"
+      ],
+      "modules_identified": 3,
+      "entry_points": 8
+    },
+    {
+      "name": "dataflow-scanner",
+      "phase": 3,
+      "status": "success",
+      "start_time": "2026-04-20T23:54:00Z",
+      "end_time": "2026-04-20T23:57:04Z",
+      "duration_seconds": 184,
+      "vulnerabilities_found": 6,
+      "modules_scanned": ["c_core", "python_binding", "build_scripts"]
+    },
+    {
+      "name": "security-auditor",
+      "phase": 3,
+      "status": "success",
+      "start_time": "2026-04-20T23:54:00Z",
+      "end_time": "2026-04-20T23:57:39Z",
+      "duration_seconds": 219,
+      "vulnerabilities_found": 11,
+      "modules_scanned": ["c_core", "python_binding", "build_scripts"]
+    },
+    {
+      "name": "verification",
+      "phase": 4,
+      "status": "success",
+      "start_time": "2026-04-20T23:58:00Z",
+      "end_time": "2026-04-21T00:01:46Z",
+      "duration_seconds": 226,
+      "vulnerabilities_verified": 17,
+      "confirmed": 2,
+      "likely": 10,
+      "possible": 4,
+      "false_positive": 1
+    },
+    {
+      "name": "details-analyzer",
+      "phase": 4.5,
+      "status": "success",
+      "start_time": "2026-04-21T00:04:00Z",
+      "end_time": "2026-04-21T00:08:41Z",
+      "duration_seconds": 281,
+      "confirmed_analyzed": 2,
+      "output_files": ["details/VULN-DF-LIB-001.md", "details/SEC-001.md"]
+    },
+    {
+      "name": "reporter",
+      "phase": 5,
+      "status": "success",
+      "start_time": "2026-04-21T00:09:00Z",
+      "end_time": "2026-04-21T00:12:00Z",
+      "duration_seconds": 180,
+      "output_files": ["report_confirmed.md", "report_unconfirmed.md"]
+    }
+  ],
+  "end_time": "2026-04-21T00:12:00Z",
+  "duration_seconds": 1440,
+  "summary": {
+    "total_vulnerabilities": 17,
+    "confirmed": 2,
+    "likely": 10,
+    "possible": 4,
+    "false_positive": 1,
+    "critical_severity": 2,
+    "high_severity": 11,
+    "medium_severity": 4,
+    "modules_scanned": 3,
+    "files_analyzed": 15
+  }
+}

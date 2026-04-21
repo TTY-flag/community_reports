@@ -1,0 +1,338 @@
+{
+  "project_name": "MindStudio-Profiler",
+  "scan_time": "2026-04-20T21:50:00Z",
+  "lsp_available": true,
+  "total_files": 1972,
+  "total_lines": 132693,
+  "project_profile": {
+    "project_type": "cli_tool_python",
+    "deployment_model": "本地服务器上的命令行工具，通过 `msprof` 命令调用，接收用户提供的性能数据目录路径，进行数据解析和分析，生成性能分析报告",
+    "trust_boundaries": [
+      {
+        "boundary": "CLI 参数接口",
+        "trusted_side": "msprof 工具内部逻辑",
+        "untrusted_side": "本地用户提供的路径参数和数据目录",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "文件系统接口",
+        "trusted_side": "msprof 工具的文件操作",
+        "untrusted_side": "用户提供的性能数据文件内容",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "配置文件接口",
+        "trusted_side": "msprof 工具的配置读取",
+        "untrusted_side": "用户提供的 JSON 配置文件",
+        "risk": "Low"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "msinterface",
+      "path": "analysis/msinterface",
+      "language": "python",
+      "components": ["msprof_entrance.py", "msprof_export.py", "msprof_query.py", "msprof_import.py", "msprof_analyze.py", "msprof_c_interface.py"],
+      "description": "CLI 入口和命令处理模块，接收用户参数并调度其他模块"
+    },
+    {
+      "name": "common_func",
+      "path": "analysis/common_func",
+      "language": "python",
+      "components": ["file_manager.py", "db_manager.py", "path_manager.py", "json_manager.py", "msprof_common.py", "info_conf_reader.py"],
+      "description": "公共功能模块，包含文件操作、数据库操作、路径管理、JSON 解析等核心功能"
+    },
+    {
+      "name": "msparser",
+      "path": "analysis/msparser",
+      "language": "python",
+      "components": ["hardware/", "cluster/", "aicpu/", "step_trace/", "parallel/", "stars/", "biu_perf/"],
+      "description": "数据解析模块，解析各类性能数据文件（二进制、CSV、JSON等）"
+    },
+    {
+      "name": "mscalculate",
+      "path": "analysis/mscalculate",
+      "language": "python",
+      "components": ["aic/", "ascend_task/", "cluster/", "hccl/", "data_analysis/", "step_trace/", "stars/"],
+      "description": "计算模块，进行性能数据分析、统计计算、任务调度分析"
+    },
+    {
+      "name": "viewer",
+      "path": "analysis/viewer",
+      "language": "python",
+      "components": ["ai_core_op_report.py", "cpu_usage_report.py", "hardware_info_report.py", "runtime_report.py", "get_msvp_summary.py"],
+      "description": "视图模块，生成各类性能分析报告（CSV、JSON、文本格式）"
+    },
+    {
+      "name": "msmodel",
+      "path": "analysis/msmodel",
+      "language": "python",
+      "components": ["interface/", "hardware/", "aic/", "hccl/", "ge/", "ai_cpu/", "cluster_info/", "step_trace/"],
+      "description": "数据模型模块，定义性能数据的结构和业务逻辑"
+    },
+    {
+      "name": "profiling_bean",
+      "path": "analysis/profiling_bean",
+      "language": "python",
+      "components": ["basic_info/", "db_dto/", "struct_info/"],
+      "description": "数据 Bean 模块，定义数据库 DTO 和基础信息结构"
+    },
+    {
+      "name": "host_prof",
+      "path": "analysis/host_prof",
+      "language": "python",
+      "components": ["host_cpu_usage/", "host_mem_usage/", "host_disk_usage/", "host_network_usage/", "host_syscall/"],
+      "description": "主机性能分析模块，分析 CPU、内存、磁盘、网络等主机性能指标"
+    },
+    {
+      "name": "tuning",
+      "path": "analysis/tuning",
+      "language": "python",
+      "components": ["cluster/", "data_manager.py"],
+      "description": "调优模块，提供性能调优建议和集群调优功能"
+    },
+    {
+      "name": "analyzer",
+      "path": "analysis/analyzer",
+      "language": "python",
+      "components": ["communication_analyzer.py", "communication_matrix_analyzer.py"],
+      "description": "分析器模块，进行通信分析和矩阵分析"
+    },
+    {
+      "name": "interface",
+      "path": "analysis/interface",
+      "language": "python",
+      "components": ["get_msprof_info.py"],
+      "description": "接口模块，提供基本信息查询接口"
+    },
+    {
+      "name": "msconfig",
+      "path": "analysis/msconfig",
+      "language": "python",
+      "components": ["config_manager.py", "filename_introduction_config.py", "tables_config.py", "ai_core_config.py"],
+      "description": "配置管理模块，管理工具配置和表格配置"
+    },
+    {
+      "name": "misc_tools",
+      "path": "misc",
+      "language": "python",
+      "components": ["function_monitor/", "gil_tracer/", "host_analyzer/"],
+      "description": "辅助工具模块，包含函数监控、GIL追踪、主机分析工具"
+    },
+    {
+      "name": "samples_cpp",
+      "path": "samples",
+      "language": "c_cpp",
+      "components": ["common/util_acl.h", "common/util_mstx.h", "mstx_with_domain/mstx_with_domain.cpp"],
+      "description": "C++ 示例代码，展示如何使用 msprof API"
+    },
+    {
+      "name": "csrc",
+      "path": "analysis/csrc",
+      "language": "mixed",
+      "components": ["lib64/"],
+      "description": "C 扩展库，提供高性能计算功能"
+    }
+  ],
+  "files": [
+    {
+      "path": "analysis/msinterface/msprof_entrance.py",
+      "language": "python",
+      "risk": "High",
+      "module": "msinterface",
+      "lines": 258,
+      "priority": 1,
+      "description": "主 CLI 入口，接收用户路径参数，存在路径验证和命令处理逻辑"
+    },
+    {
+      "path": "analysis/common_func/file_manager.py",
+      "language": "python",
+      "risk": "High",
+      "module": "common_func",
+      "lines": 355,
+      "priority": 2,
+      "description": "文件管理核心模块，处理文件操作和路径验证"
+    },
+    {
+      "path": "analysis/common_func/path_manager.py",
+      "language": "python",
+      "risk": "High",
+      "module": "common_func",
+      "lines": 200,
+      "priority": 3,
+      "description": "路径管理模块，处理路径构建和验证"
+    },
+    {
+      "path": "analysis/common_func/db_manager.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "common_func",
+      "lines": 580,
+      "priority": 4,
+      "description": "数据库管理模块，操作 SQLite 数据库"
+    },
+    {
+      "path": "analysis/common_func/json_manager.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "common_func",
+      "lines": 150,
+      "priority": 5,
+      "description": "JSON 配置解析模块，解析 JSON 配置文件"
+    },
+    {
+      "path": "analysis/common_func/msprof_common.py",
+      "language": "python",
+      "risk": "High",
+      "module": "common_func",
+      "lines": 300,
+      "priority": 6,
+      "description": "公共验证函数，包含路径字符验证和路径有效性检查"
+    },
+    {
+      "path": "analysis/interface/get_msprof_info.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "interface",
+      "lines": 120,
+      "priority": 7,
+      "description": "基本信息查询入口，接收用户路径参数"
+    },
+    {
+      "path": "misc/function_monitor/function_monitor.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "misc_tools",
+      "lines": 231,
+      "priority": 8,
+      "description": "函数监控工具，使用环境变量控制，涉及文件操作和进程监控"
+    },
+    {
+      "path": "misc/host_analyzer/entrance.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "misc_tools",
+      "lines": 35,
+      "priority": 9,
+      "description": "主机分析工具入口，接收配置文件路径参数"
+    },
+    {
+      "path": "analysis/msparser/hardware/cpu_parser.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "msparser",
+      "lines": 250,
+      "priority": 10,
+      "description": "硬件性能数据解析器，解析二进制性能数据文件"
+    },
+    {
+      "path": "analysis/msparser/cluster/cluster_data_preparation_parser.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "msparser",
+      "lines": 300,
+      "priority": 11,
+      "description": "集群数据解析器，解析集群性能数据"
+    },
+    {
+      "path": "analysis/viewer/get_msvp_summary.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "viewer",
+      "lines": 200,
+      "priority": 12,
+      "description": "报告生成模块，生成性能分析报告"
+    },
+    {
+      "path": "samples/mstx_with_domain/mstx_with_domain.cpp",
+      "language": "c_cpp",
+      "risk": "Low",
+      "module": "samples_cpp",
+      "lines": 100,
+      "priority": 13,
+      "description": "C++ 示例代码，展示 msprof API 使用"
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "analysis/msinterface/msprof_entrance.py",
+      "line": 107,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "CLI 工具的主入口，用户可通过命令行调用，提供的路径参数和数据目录由本地用户控制",
+      "description": "主 CLI 入口，解析命令行参数并执行 export/query/import/analyze 子命令"
+    },
+    {
+      "file": "analysis/msinterface/msprof_entrance.py",
+      "line": 49,
+      "function": "_add_collect_path_argument",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "接收用户提供的 collection_path 参数，该路径指向用户的性能数据目录，由用户完全控制",
+      "description": "解析 -dir/--collection-dir 参数，接收用户数据目录路径"
+    },
+    {
+      "file": "analysis/msinterface/msprof_entrance.py",
+      "line": 56,
+      "function": "_add_reports_argument",
+      "type": "cmdline",
+      "trust_level": "semi_trusted",
+      "justification": "接收用户提供的 reports_path 参数（JSON 配置文件路径），配置文件需要用户有一定权限才能创建和修改",
+      "description": "解析 --reports 参数，接收 JSON 配置文件路径"
+    },
+    {
+      "file": "analysis/interface/get_msprof_info.py",
+      "line": 80,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "基本信息查询工具的入口，用户通过命令行调用，提供的路径参数由本地用户控制",
+      "description": "基本信息查询入口，接收 collection_path 参数"
+    },
+    {
+      "file": "misc/host_analyzer/entrance.py",
+      "line": 14,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "semi_trusted",
+      "justification": "主机分析工具入口，接收配置文件路径参数，配置文件需要用户有一定权限才能创建",
+      "description": "主机分析工具入口，接收 -c/--config 配置文件路径参数"
+    },
+    {
+      "file": "misc/function_monitor/function_monitor.py",
+      "line": 30,
+      "function": "ENABLE_LIBKPERF",
+      "type": "env",
+      "trust_level": "semi_trusted",
+      "justification": "通过环境变量 ENABLE_LIBKPERF 控制功能开关，环境变量由启动进程的用户设置",
+      "description": "环境变量控制，启用/禁用 libkperf 功能"
+    },
+    {
+      "file": "misc/function_monitor/function_monitor.py",
+      "line": 31,
+      "function": "ENABLE_FUNCTION_MONITOR",
+      "type": "env",
+      "trust_level": "semi_trusted",
+      "justification": "通过环境变量 ENABLE_FUNCTION_MONITOR 控制功能开关，环境变量由启动进程的用户设置",
+      "description": "环境变量控制，启用/禁用函数监控功能"
+    },
+    {
+      "file": "misc/function_monitor/function_monitor.py",
+      "line": 62,
+      "function": "get_log_path",
+      "type": "env",
+      "trust_level": "semi_trusted",
+      "justification": "通过环境变量 FUNCTION_MONITOR_LOG_PATH 设置日志路径，环境变量由启动进程的用户设置",
+      "description": "环境变量控制，设置日志输出路径"
+    }
+  ],
+  "attack_surfaces": [
+    "CLI 参数接口：用户提供的路径参数（collection_path、reports_path）",
+    "文件系统接口：用户提供的性能数据文件（二进制、CSV、JSON 格式）",
+    "配置文件接口：用户提供的 JSON 配置文件",
+    "环境变量接口：misc 工具通过环境变量控制功能开关和路径",
+    "SQLite 数据库接口：工具生成的数据库文件（内部数据，风险较低）"
+  ]
+}

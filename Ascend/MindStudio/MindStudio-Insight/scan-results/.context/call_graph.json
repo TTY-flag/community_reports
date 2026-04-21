@@ -1,0 +1,355 @@
+{
+  "functions": {
+    "OnMessageCb@server/src/server/WsServer.cpp:165": {
+      "defined_at": 165,
+      "calls": [
+        "WsSessionImpl::OnRequestMessage@server/src/server/WsSessionImpl.cpp:145"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "WebSocket 消息接收回调，处理来自客户端的 WebSocket 消息"
+    },
+    "OnRequestMessage@server/src/server/WsSessionImpl.cpp:145": {
+      "defined_at": 145,
+      "calls": [
+        "ProtocolMessageBuffer::operator<<@server/src/protocol/ProtocolMessageBuffer.cpp:48"
+      ],
+      "called_by": [
+        "OnMessageCb@server/src/server/WsServer.cpp:165"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "将 WebSocket 消息字符串传递给消息缓冲区"
+    },
+    "operator<<@server/src/protocol/ProtocolMessageBuffer.cpp:48": {
+      "defined_at": 48,
+      "calls": [],
+      "called_by": [
+        "WsSessionImpl::OnRequestMessage@server/src/server/WsSessionImpl.cpp:145"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "将消息数据追加到缓冲区，检查长度限制"
+    },
+    "Pop@server/src/protocol/ProtocolMessageBuffer.cpp:67": {
+      "defined_at": 67,
+      "calls": [
+        "ProtocolManager::FromJson@server/src/modules/ProtocolManager.cpp:55"
+      ],
+      "called_by": [
+        "WsSessionImpl::BatchHandleMsg@server/src/server/WsSessionImpl.cpp:53"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "从缓冲区提取 JSON 字符串并解析为 Request 对象"
+    },
+    "FromJson@server/src/modules/ProtocolManager.cpp:55": {
+      "defined_at": 55,
+      "calls": [
+        "JsonUtil::TryParse@server/msinsight/src/utils/JsonUtil.h",
+        "ProtocolUtil::FromJson@server/msinsight/src/base/ProtocolUtil.cpp"
+      ],
+      "called_by": [
+        "ProtocolMessageBuffer::Pop@server/src/protocol/ProtocolMessageBuffer.cpp:67"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "解析 JSON 字符串，提取 moduleName 并调用对应模块的协议解析"
+    },
+    "OnDispatchModuleRequest@server/src/modules/ModuleManager.cpp:62": {
+      "defined_at": 62,
+      "calls": [
+        "BaseModule::OnRequest@server/src/modules/base/BaseModule.cpp"
+      ],
+      "called_by": [
+        "WsSessionImpl::BatchHandleMsg@server/src/server/WsSessionImpl.cpp:53"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "根据 moduleName 分发请求到对应模块"
+    },
+    "BatchHandleMsg@server/src/server/WsSessionImpl.cpp:53": {
+      "defined_at": 53,
+      "calls": [
+        "ProtocolMessageBuffer::Pop@server/src/protocol/ProtocolMessageBuffer.cpp:67",
+        "ModuleManager::OnDispatchModuleRequest@server/src/modules/ModuleManager.cpp:62"
+      ],
+      "called_by": [
+        "WsSessionImpl::OnHandleMsgBuffer@server/src/server/WsSessionImpl.cpp:37"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "批量处理消息缓冲区中的请求"
+    },
+    "AddPostHandler@server/src/server/WsServer.cpp:205": {
+      "defined_at": 205,
+      "calls": [
+        "ApiHandler::run@server/msinsight/include/ApiHandler.h"
+      ],
+      "called_by": [
+        "WsServer::LoadHandlers@server/src/server/WsServer.cpp:178"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "注册 HTTP POST 处理器，接收 body 数据"
+    },
+    "ParseCommunication@server/src/modules/communication/parser/ClusterFileParser.cpp:41": {
+      "defined_at": 41,
+      "calls": [
+        "FileUtil::PathPreprocess@server/msinsight/src/utils/FileUtil.cpp",
+        "ClusterFileParser::SaxParseJsonFile@server/src/modules/communication/parser/ClusterFileParser.cpp:63"
+      ],
+      "called_by": [
+        "ImportActionHandler::run@server/src/modules/timeline/handler/ImportActionHandler.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "解析用户指定的通信分析 JSON 文件"
+    },
+    "SaxParseJsonFile@server/src/modules/communication/parser/ClusterFileParser.cpp:63": {
+      "defined_at": 63,
+      "calls": [
+        "FileUtil::CheckPathSecurity@server/msinsight/src/utils/FileUtil.cpp:205",
+        "fopen@libc",
+        "rapidjson::Reader::Parse@rapidjson"
+      ],
+      "called_by": [
+        "ClusterFileParser::ParseCommunication@server/src/modules/communication/parser/ClusterFileParser.cpp:41"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "使用 SAX 解析器处理用户上传的 JSON 文件"
+    },
+    "CheckPathSecurity@server/msinsight/src/utils/FileUtil.cpp:205": {
+      "defined_at": 205,
+      "calls": [
+        "FileUtil::CheckPathComm@server/msinsight/src/utils/FileUtil.cpp:246",
+        "FileUtil::IsRegularFile@server/msinsight/src/utils/FileUtil.cpp:187",
+        "FileUtil::CheckFileSize@server/msinsight/src/utils/FileUtil.cpp:610"
+      ],
+      "called_by": [
+        "ClusterFileParser::SaxParseJsonFile@server/src/modules/communication/parser/ClusterFileParser.cpp:63"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "验证文件路径安全性（长度、非法字符、owner、权限）"
+    },
+    "AttAnalyze@server/src/modules/communication/parser/ClusterFileParser.cpp:428": {
+      "defined_at": 428,
+      "calls": [
+        "StringUtil::ValidateCommandFilePathParam@server/msinsight/src/utils/StringUtil.h",
+        "PythonUtil::ExecuteScript@server/msinsight/src/utils/PythonUtil.cpp:44"
+      ],
+      "called_by": [
+        "ClusterFileParser::InitBaseInfoAndMatrixData@server/src/modules/communication/parser/ClusterFileParser.cpp:228"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "执行外部 Python 脚本进行集群分析"
+    },
+    "ExecuteScript@server/msinsight/src/utils/PythonUtil.cpp:44": {
+      "defined_at": 44,
+      "calls": [
+        "PythonUtil::GetPythonCommand@server/msinsight/src/utils/PythonUtil.cpp:59",
+        "PythonUtil::ExecuteCommand@server/msinsight/src/utils/PythonUtil.cpp:77"
+      ],
+      "called_by": [
+        "ClusterFileParser::AttAnalyze@server/src/modules/communication/parser/ClusterFileParser.cpp:428"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "执行 Python 脚本，传入脚本路径和参数"
+    },
+    "ExecuteCommand@server/msinsight/src/utils/PythonUtil.cpp:77": {
+      "defined_at": 77,
+      "calls": [
+        "posix_spawnp@libc",
+        "waitpid@libc"
+      ],
+      "called_by": [
+        "PythonUtil::ExecuteScript@server/msinsight/src/utils/PythonUtil.cpp:44"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "使用 posix_spawnp 执行外部命令"
+    },
+    "handle_websocket_connection@plugins/ProfilerServerProxy/core/proxy/multi_aio_proxy_server.py:78": {
+      "defined_at": 78,
+      "calls": [
+        "forward_to_backend@plugins/ProfilerServerProxy/core/proxy/multi_aio_proxy_server.py:41",
+        "forward_to_frontend@plugins/ProfilerServerProxy/core/proxy/multi_aio_proxy_server.py:61"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "Python WebSocket 代理服务器接收前端连接"
+    },
+    "_initialize@plugins/ProfilerServerProxy/core/server/profiler_server.py:76": {
+      "defined_at": 76,
+      "calls": [
+        "start_monitor_process@plugins/ProfilerServerProxy/utils/sys_util.py",
+        "subprocess.Popen@python_stdlib"
+      ],
+      "called_by": [
+        "ProfilerServerManager::start@plugins/ProfilerServerProxy/core/server/__init__.py"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "启动 C++ WebSocket 服务器子进程"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "OnMessageCb@server/src/server/WsServer.cpp:165",
+      "path": [
+        "WsSessionImpl::OnRequestMessage@server/src/server/WsSessionImpl.cpp:145",
+        "ProtocolMessageBuffer::operator<<@server/src/protocol/ProtocolMessageBuffer.cpp:48",
+        "ProtocolMessageBuffer::Pop@server/src/protocol/ProtocolMessageBuffer.cpp:67",
+        "ProtocolManager::FromJson@server/src/modules/ProtocolManager.cpp:55"
+      ],
+      "sink": "ModuleManager::OnDispatchModuleRequest@server/src/modules/ModuleManager.cpp:62",
+      "sink_type": "request_dispatch",
+      "data_type": "WebSocket JSON message",
+      "trust_level": "untrusted_network",
+      "description": "WebSocket 客户端消息 -> JSON 解析 -> 模块分发"
+    },
+    {
+      "source": "AddPostHandler@server/src/server/WsServer.cpp:205",
+      "path": [
+        "res->onData@uWS::HttpResponse",
+        "bodyBuffer.append@std::string"
+      ],
+      "sink": "handler->run(bodyBuffer, result)@server/src/server/WsServer.cpp:221",
+      "sink_type": "handler_execution",
+      "data_type": "HTTP POST body",
+      "trust_level": "untrusted_network",
+      "description": "HTTP POST 请求 body -> Handler 执行"
+    },
+    {
+      "source": "ParseCommunication@server/src/modules/communication/parser/ClusterFileParser.cpp:41",
+      "path": [
+        "FileUtil::PathPreprocess@server/msinsight/src/utils/FileUtil.cpp",
+        "ClusterFileParser::SaxParseJsonFile@server/src/modules/communication/parser/ClusterFileParser.cpp:63",
+        "FileUtil::CheckPathSecurity@server/msinsight/src/utils/FileUtil.cpp:205"
+      ],
+      "sink": "fopen(filePath.c_str(), \"rb\")@server/src/modules/communication/parser/ClusterFileParser.cpp:76",
+      "sink_type": "file_open",
+      "data_type": "File path from user request",
+      "trust_level": "untrusted_local",
+      "description": "用户请求文件路径 -> 路径检查 -> 打开文件"
+    },
+    {
+      "source": "SaxParseJsonFile@server/src/modules/communication/parser/ClusterFileParser.cpp:63",
+      "path": [
+        "fopen@libc",
+        "rapidjson::FileReadStream@rapidjson",
+        "rapidjson::Reader::Parse@rapidjson"
+      ],
+      "sink": "CommunicationRapidSaxHandler::Default@server/src/modules/communication/parser/CommunicationRapidSaxHandler.cpp",
+      "sink_type": "json_parser",
+      "data_type": "File content from user upload",
+      "trust_level": "untrusted_local",
+      "description": "文件内容 -> rapidjson SAX 解析 -> Handler 处理"
+    },
+    {
+      "source": "AttAnalyze@server/src/modules/communication/parser/ClusterFileParser.cpp:428",
+      "path": [
+        "StringUtil::ValidateCommandFilePathParam@server/msinsight/src/utils/StringUtil.h",
+        "PythonUtil::ExecuteScript@server/msinsight/src/utils/PythonUtil.cpp:44",
+        "PythonUtil::ExecuteCommand@server/msinsight/src/utils/PythonUtil.cpp:77"
+      ],
+      "sink": "posix_spawnp@libc",
+      "sink_type": "process_spawn",
+      "data_type": "Arguments from user request (selectedPath, mode)",
+      "trust_level": "semi_trusted",
+      "description": "用户请求参数 -> 参数验证 -> 执行 Python 脚本"
+    },
+    {
+      "source": "handle_websocket_connection@plugins/ProfilerServerProxy/core/proxy/multi_aio_proxy_server.py:78",
+      "path": [
+        "forward_to_backend@plugins/ProfilerServerProxy/core/proxy/multi_aio_proxy_server.py:41",
+        "backend_ws.send_str(msg.data)@aiohttp"
+      ],
+      "sink": "WsServer::OnMessageCb@server/src/server/WsServer.cpp:165",
+      "sink_type": "websocket_forward",
+      "data_type": "WebSocket message via Python proxy",
+      "trust_level": "untrusted_network",
+      "description": "前端 WebSocket -> Python 代理转发 -> C++ WebSocket 服务器"
+    }
+  ],
+  "cross_file_calls": [
+    {
+      "caller_file": "server/src/server/WsServer.cpp",
+      "caller_function": "OnMessageCb",
+      "callee_file": "server/src/server/WsSessionImpl.cpp",
+      "callee_function": "OnRequestMessage",
+      "data_passed": "std::string_view message",
+      "line": 175
+    },
+    {
+      "caller_file": "server/src/server/WsSessionImpl.cpp",
+      "caller_function": "BatchHandleMsg",
+      "callee_file": "server/src/protocol/ProtocolMessageBuffer.cpp",
+      "callee_function": "Pop",
+      "data_passed": "buffer content",
+      "line": 57
+    },
+    {
+      "caller_file": "server/src/protocol/ProtocolMessageBuffer.cpp",
+      "caller_function": "Pop",
+      "callee_file": "server/src/modules/ProtocolManager.cpp",
+      "callee_function": "FromJson",
+      "data_passed": "std::string bodyStr (JSON)",
+      "line": 92
+    },
+    {
+      "caller_file": "server/src/server/WsSessionImpl.cpp",
+      "caller_function": "BatchHandleMsg",
+      "callee_file": "server/src/modules/ModuleManager.cpp",
+      "callee_function": "OnDispatchModuleRequest",
+      "data_passed": "std::unique_ptr<Request> reqPtr",
+      "line": 64
+    },
+    {
+      "caller_file": "server/src/modules/communication/parser/ClusterFileParser.cpp",
+      "caller_function": "ParseCommunication",
+      "callee_file": "server/msinsight/src/utils/FileUtil.cpp",
+      "callee_function": "PathPreprocess",
+      "data_passed": "std::string filePath",
+      "line": 47
+    },
+    {
+      "caller_file": "server/src/modules/communication/parser/ClusterFileParser.cpp",
+      "caller_function": "SaxParseJsonFile",
+      "callee_file": "server/msinsight/src/utils/FileUtil.cpp",
+      "callee_function": "CheckPathSecurity",
+      "data_passed": "std::string filePath, int mode",
+      "line": 66
+    },
+    {
+      "caller_file": "server/src/modules/communication/parser/ClusterFileParser.cpp",
+      "caller_function": "AttAnalyze",
+      "callee_file": "server/msinsight/src/utils/PythonUtil.cpp",
+      "callee_function": "ExecuteScript",
+      "data_passed": "std::string scriptPath, std::vector<std::string> arguments",
+      "line": 444
+    },
+    {
+      "caller_file": "server/msinsight/src/utils/PythonUtil.cpp",
+      "caller_function": "ExecuteCommand",
+      "callee_file": "libc",
+      "callee_function": "posix_spawnp",
+      "data_passed": "const char* executablePath, char** argv",
+      "line": 113
+    },
+    {
+      "caller_file": "server/src/modules/ModuleManager.cpp",
+      "caller_function": "OnDispatchModuleRequest",
+      "callee_file": "server/src/modules/base/BaseModule.cpp",
+      "callee_function": "OnRequest",
+      "data_passed": "std::unique_ptr<Request> request",
+      "line": 73
+    }
+  ]
+}

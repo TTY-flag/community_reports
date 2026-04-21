@@ -1,0 +1,427 @@
+{
+  "project_name": "MindStudio-Ops-Profiler",
+  "scan_time": "2026-04-20T21:50:00Z",
+  "lsp_available": false,
+  "total_files": 247,
+  "total_lines": 46300,
+  "project_profile": {
+    "project_type": "cli_tool",
+    "deployment_model": "作为命令行工具在本地执行，用于分析昇腾AI处理器上的算子性能数据。可接受JSON配置文件或命令行参数指定待分析的可执行文件或二进制.o文件。",
+    "trust_boundaries": [
+      {
+        "boundary": "CLI Interface",
+        "trusted_side": "Application logic",
+        "untrusted_side": "Local user (command line args, config files)",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Binary Execution",
+        "trusted_side": "Profiler tool",
+        "untrusted_side": "User-provided executable/binary files",
+        "risk": "High"
+      },
+      {
+        "boundary": "File Input",
+        "trusted_side": "Parser logic",
+        "untrusted_side": "User-provided JSON config and performance data files",
+        "risk": "High"
+      },
+      {
+        "boundary": "Dynamic Library Loading",
+        "trusted_side": "Tool runtime",
+        "untrusted_side": "System libraries (runtime, HAL, DCMI)",
+        "risk": "Medium"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "interface",
+      "path": "csrc/op_profiling/interface",
+      "language": "c_cpp",
+      "components": ["ms_op_prof.cpp", "ms_op_prof.h"],
+      "risk": "High",
+      "category": "请求处理"
+    },
+    {
+      "name": "argparser",
+      "path": "csrc/op_profiling/argparser",
+      "language": "c_cpp",
+      "components": ["arg_checker.cpp", "arg_normalize.cpp", "parser.cpp", "utils.cpp"],
+      "risk": "High",
+      "category": "请求处理"
+    },
+    {
+      "name": "profiling_core",
+      "path": "csrc/op_profiling/profiling",
+      "language": "c_cpp",
+      "components": ["op_prof.cpp", "op_prof_task.cpp", "op_prof_data_parse.cpp"],
+      "risk": "Critical",
+      "category": "命令/代码执行"
+    },
+    {
+      "name": "profiling_device",
+      "path": "csrc/op_profiling/profiling/device",
+      "language": "c_cpp",
+      "components": ["run/device_task.cpp", "data_parse/*.cpp", "data_visualize/*.cpp"],
+      "risk": "High",
+      "category": "数据处理"
+    },
+    {
+      "name": "profiling_simulator",
+      "path": "csrc/op_profiling/profiling/simulator",
+      "language": "c_cpp",
+      "components": ["run/simulator_task.cpp", "data_parse/sim_data_parse.cpp"],
+      "risk": "High",
+      "category": "数据处理"
+    },
+    {
+      "name": "parse",
+      "path": "csrc/op_profiling/parse",
+      "language": "c_cpp",
+      "components": ["data_parser/*.cpp", "data_visualizer/*.cpp", "data_calculator/*.cpp"],
+      "risk": "Medium",
+      "category": "数据处理"
+    },
+    {
+      "name": "plugin",
+      "path": "csrc/op_profiling/plugin",
+      "language": "c_cpp",
+      "components": ["instr_prof_start/*.cpp", "instr_prof_end/*.cpp", "memory_chart/*.cpp", "operand_record/*.cpp"],
+      "risk": "Medium",
+      "category": "数据处理"
+    },
+    {
+      "name": "common",
+      "path": "csrc/op_profiling/common",
+      "language": "c_cpp",
+      "components": ["prof_args.cpp", "hal_helper.cpp", "runtime_helper.cpp", "visualize.cpp"],
+      "risk": "High",
+      "category": "配置/反序列化"
+    },
+    {
+      "name": "utils",
+      "path": "csrc/utils/cpputils",
+      "language": "c_cpp",
+      "components": ["cmd_execute.cpp", "filesystem.cpp", "json_parser.cpp", "csv_parser.cpp", "log.cpp"],
+      "risk": "Critical",
+      "category": "命令/代码执行"
+    },
+    {
+      "name": "op_runner",
+      "path": "csrc/op_runner",
+      "language": "c_cpp",
+      "components": ["runner_impl/exec_binary_runner.cpp"],
+      "risk": "Critical",
+      "category": "命令/代码执行"
+    },
+    {
+      "name": "python_scripts",
+      "path": "package/script",
+      "language": "python",
+      "components": ["parser.py"],
+      "risk": "Medium",
+      "category": "文件操作"
+    },
+    {
+      "name": "build_scripts",
+      "path": ".",
+      "language": "python",
+      "components": ["build.py", "download_dependencies.py"],
+      "risk": "Low",
+      "category": "配置/反序列化"
+    }
+  ],
+  "files": [
+    {
+      "path": "csrc/op_profiling/main.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "interface",
+      "lines": 49,
+      "priority": 1,
+      "category": "CLI入口",
+      "entry_type": "cmdline"
+    },
+    {
+      "path": "csrc/utils/cpputils/cmd_execute.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "utils",
+      "lines": 168,
+      "priority": 1,
+      "category": "命令执行",
+      "entry_type": "command_exec"
+    },
+    {
+      "path": "csrc/op_runner/runner_impl/exec_binary_runner.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "op_runner",
+      "lines": 98,
+      "priority": 2,
+      "category": "命令执行",
+      "entry_type": "binary_exec"
+    },
+    {
+      "path": "csrc/op_profiling/common/runtime_helper.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "common",
+      "lines": 250,
+      "priority": 3,
+      "category": "动态库加载",
+      "entry_type": "dlopen"
+    },
+    {
+      "path": "csrc/op_profiling/common/hal_helper.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "common",
+      "lines": 300,
+      "priority": 4,
+      "category": "动态库加载",
+      "entry_type": "dlopen"
+    },
+    {
+      "path": "csrc/utils/cpputils/json_parser.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "utils",
+      "lines": 437,
+      "priority": 5,
+      "category": "文件解析",
+      "entry_type": "json_parse"
+    },
+    {
+      "path": "csrc/utils/cpputils/filesystem.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "utils",
+      "lines": 792,
+      "priority": 6,
+      "category": "文件操作",
+      "entry_type": "file_io"
+    },
+    {
+      "path": "csrc/op_profiling/profiling/op_prof_task.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "profiling_core",
+      "lines": 383,
+      "priority": 7,
+      "category": "任务执行",
+      "entry_type": "dlopen"
+    },
+    {
+      "path": "csrc/op_profiling/interface/ms_op_prof.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "interface",
+      "lines": 328,
+      "priority": 8,
+      "category": "参数解析",
+      "entry_type": "cmdline"
+    },
+    {
+      "path": "csrc/op_profiling/argparser/arg_checker.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "argparser",
+      "lines": 508,
+      "priority": 9,
+      "category": "参数校验",
+      "entry_type": "cmdline"
+    },
+    {
+      "path": "csrc/op_profiling/profiling/device/data_parse/dbi_parser.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "profiling_device",
+      "lines": 1115,
+      "priority": 10,
+      "category": "数据解析",
+      "entry_type": "binary_parse"
+    },
+    {
+      "path": "csrc/op_profiling/profiling/device/data_parse/metric_data_handler.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "profiling_device",
+      "lines": 947,
+      "priority": 11,
+      "category": "数据处理",
+      "entry_type": "data_handle"
+    },
+    {
+      "path": "csrc/op_profiling/profiling/device/data_parse/tlv_parse.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "profiling_device",
+      "lines": 644,
+      "priority": 12,
+      "category": "数据解析",
+      "entry_type": "binary_parse"
+    },
+    {
+      "path": "csrc/op_profiling/profiling/device/data_parse/device_data_parse.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "profiling_device",
+      "lines": 627,
+      "priority": 13,
+      "category": "数据解析",
+      "entry_type": "binary_parse"
+    },
+    {
+      "path": "csrc/op_profiling/profiling/device/data_visualize/storage_access.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "profiling_device",
+      "lines": 1719,
+      "priority": 14,
+      "category": "数据可视化",
+      "entry_type": "data_visualize"
+    },
+    {
+      "path": "package/script/parser.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "python_scripts",
+      "lines": 526,
+      "priority": 15,
+      "category": "打包脚本",
+      "entry_type": "xml_parse"
+    },
+    {
+      "path": "build.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "build_scripts",
+      "lines": 102,
+      "priority": 16,
+      "category": "构建脚本",
+      "entry_type": "subprocess"
+    },
+    {
+      "path": "download_dependencies.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "build_scripts",
+      "lines": 163,
+      "priority": 17,
+      "category": "依赖下载",
+      "entry_type": "subprocess"
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "csrc/op_profiling/main.cpp",
+      "line": 24,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "main() 接收 argc/argv，本地用户通过命令行启动工具，可控制所有参数",
+      "description": "CLI 主入口，接收命令行参数"
+    },
+    {
+      "file": "csrc/op_profiling/interface/ms_op_prof.cpp",
+      "line": 60,
+      "function": "BuildDeviceArgParser",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "解析 --application、--config、--output 等命令行参数，用户可控制待执行的应用路径和配置",
+      "description": "设备模式参数解析器"
+    },
+    {
+      "file": "csrc/op_profiling/interface/ms_op_prof.cpp",
+      "line": 81,
+      "function": "BuildSimulatorArgParser",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "解析仿真模式命令行参数，包括 --application、--config、--export 等",
+      "description": "仿真模式参数解析器"
+    },
+    {
+      "file": "csrc/utils/cpputils/json_parser.cpp",
+      "line": 395,
+      "function": "ParseRunConfigJson",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "解析用户提供的 JSON 配置文件，包含 kernel_path、data_path、application 等敏感路径字段",
+      "description": "解析用户JSON配置文件"
+    },
+    {
+      "file": "csrc/utils/cpputils/cmd_execute.cpp",
+      "line": 111,
+      "function": "CmdExecute",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "执行外部命令，命令参数来自上层解析（JSON配置或命令行），存在命令注入风险",
+      "description": "执行外部命令（fork/execvpe）"
+    },
+    {
+      "file": "csrc/op_runner/runner_impl/exec_binary_runner.cpp",
+      "line": 36,
+      "function": "ExecBinaryRunner::Run",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "通过 posix_spawnp 执行用户指定的二进制文件（来自 --application 或 JSON 配置），存在恶意代码执行风险",
+      "description": "执行用户提供的二进制文件"
+    },
+    {
+      "file": "csrc/op_profiling/common/runtime_helper.cpp",
+      "line": 57,
+      "function": "RuntimeHelper::Init",
+      "type": "decorator",
+      "trust_level": "trusted_admin",
+      "justification": "通过 dlopen 加载系统运行时库（libruntime.so），路径由 ASCEND_HOME_PATH 环境变量控制，管理员可控",
+      "description": "动态加载 runtime 库"
+    },
+    {
+      "file": "csrc/op_profiling/common/hal_helper.cpp",
+      "line": 39,
+      "function": "HalHelper::Init",
+      "type": "decorator",
+      "trust_level": "trusted_admin",
+      "justification": "通过 dlopen 加载系统 HAL 库，路径由环境变量控制，管理员可控",
+      "description": "动态加载 HAL 和 DCMI 库"
+    },
+    {
+      "file": "csrc/utils/cpputils/ascend_helper.cpp",
+      "line": 30,
+      "function": "GetAscendHomePath",
+      "type": "env",
+      "trust_level": "trusted_admin",
+      "justification": "读取 ASCEND_HOME_PATH 环境变量确定工具安装路径，由部署人员控制",
+      "description": "读取 ASCEND_HOME_PATH 环境变量"
+    },
+    {
+      "file": "csrc/utils/cpputils/log.cpp",
+      "line": 80,
+      "function": "SetLogLevelByEnvVar",
+      "type": "env",
+      "trust_level": "untrusted_local",
+      "justification": "读取 MSOPT_LOG_LEVEL 环境变量设置日志级别，本地用户可控制",
+      "description": "读取日志级别环境变量"
+    },
+    {
+      "file": "csrc/op_profiling/profiling/op_prof_task.cpp",
+      "line": 44,
+      "function": "OpProfTask::RunSimulator",
+      "type": "decorator",
+      "trust_level": "semi_trusted",
+      "justification": "通过 dlopen 加载仿真器库（simulator.so），路径来自系统安装目录或用户配置",
+      "description": "动态加载仿真器库"
+    }
+  ],
+  "attack_surfaces": [
+    "CLI 参数注入：通过 --application 参数指定恶意可执行文件",
+    "JSON 配置注入：通过 JSON 文件中的 kernel_path、data_path 字段控制文件路径",
+    "命令注入：CmdExecute 函数执行用户控制的命令参数",
+    "动态库加载：dlopen 加载系统库，路径受环境变量影响",
+    "文件路径遍历：JSON 配置文件中的路径可能指向任意位置",
+    "环境变量操纵：MSOPT_LOG_LEVEL、ASCEND_HOME_PATH 等可被本地用户修改",
+    "二进制数据解析：解析性能数据文件时可能触发缓冲区溢出"
+  ]
+}

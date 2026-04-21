@@ -1,0 +1,240 @@
+{
+  "functions": {
+    "main@python/msprobe/msprobe.py": {
+      "defined_at": 36,
+      "calls": [
+        "compare_cli@python/msprobe/core/compare/compare_cli.py",
+        "acc_check_cli@python/msprobe/core/acc_check/acc_check_cli.py",
+        "parse_cli@python/msprobe/core/parse/parse_cli.py",
+        "offline_dump_cli@python/msprobe/infer/offline/compare/msquickcmp/main.py"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "parse_cli@python/msprobe/core/parse/parse_cli.py": {
+      "defined_at": 35,
+      "calls": [
+        "parse@python/msprobe/core/parse/tensor_bin_parser.py",
+        "parse@python/msprobe/core/parse/msaccucmp_parser.py"
+      ],
+      "called_by": ["main@python/msprobe/msprobe.py"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "parse@python/msprobe/core/parse/tensor_bin_parser.py": {
+      "defined_at": 39,
+      "calls": [
+        "TensorBinFile@python/msprobe/core/compare/atb_data_compare.py",
+        "save_npy@python/msprobe/core/common/file_utils.py",
+        "torch.save@stdlib"
+      ],
+      "called_by": ["parse_cli@python/msprobe/core/parse/parse_cli.py"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "safe_torch_load@python/msprobe/infer/utils/util.py": {
+      "defined_at": 80,
+      "calls": [
+        "torch.load@stdlib",
+        "confirmation_interaction@python/msprobe/infer/utils/util.py"
+      ],
+      "called_by": [
+        "_load_session@python/msprobe/infer/offline/compare/msquickcmp/onnx_model/onnx_dump_data.py",
+        "load_pt_file@python/msprobe/pytorch/common/utils.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "torch.load@python/msprobe/pytorch/common/utils.py": {
+      "defined_at": 340,
+      "calls": ["torch.load@stdlib"],
+      "called_by": ["multiple_functions"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "load_yaml@python/msprobe/core/common/file_utils.py": {
+      "defined_at": 464,
+      "calls": ["yaml.safe_load@stdlib"],
+      "called_by": ["config_loaders"],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "load_npy@python/msprobe/core/common/file_utils.py": {
+      "defined_at": 476,
+      "calls": ["np.load@stdlib"],
+      "called_by": ["data_loaders"],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "load_json@python/msprobe/core/common/file_utils.py": {
+      "defined_at": 486,
+      "calls": ["json.load@stdlib"],
+      "called_by": ["config_loaders"],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "offline_dump_cli@python/msprobe/infer/offline/compare/msquickcmp/main.py": {
+      "defined_at": 106,
+      "calls": [
+        "dump_process@python/msprobe/infer/offline/compare/msquickcmp/dump/dump_process.py",
+        "cmp_process@python/msprobe/infer/offline/compare/msquickcmp/cmp_process.py"
+      ],
+      "called_by": ["main@python/msprobe/msprobe.py"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "_load_onnx@python/msprobe/infer/offline/compare/msquickcmp/onnx_model/onnx_dump_data.py": {
+      "defined_at": 166,
+      "calls": [
+        "onnx.load_model@stdlib",
+        "onnxruntime.InferenceSession@stdlib"
+      ],
+      "called_by": ["OnnxDumpData.__init__"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "_load_json_file@python/msprobe/infer/offline/compare/msquickcmp/npu/om_parser.py": {
+      "defined_at": 95,
+      "calls": ["json.load@stdlib"],
+      "called_by": ["OmParser.__init__"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "_detect_framework_from_api_info@python/msprobe/core/acc_check/acc_check_cli.py": {
+      "defined_at": 25,
+      "calls": ["json.load@stdlib"],
+      "called_by": ["acc_check_cli"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "LoadConfig@ccsrc/adump/base/DebuggerConfig.cpp": {
+      "defined_at": 464,
+      "calls": [
+        "Parse@ccsrc/adump/base/DebuggerConfig.cpp",
+        "FileUtils::CheckFileBeforeRead@ccsrc/adump/utils/FileUtils.cpp"
+      ],
+      "called_by": ["Initialize@ccsrc/adump/core/PrecisionDebugger.cpp"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "Parse@ccsrc/adump/base/DebuggerConfig.cpp": {
+      "defined_at": 425,
+      "calls": ["FileUtils::OpenFile@ccsrc/adump/utils/FileUtils.cpp"],
+      "called_by": ["LoadConfig@ccsrc/adump/base/DebuggerConfig.cpp"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "OpenFile@ccsrc/adump/utils/FileUtils.cpp": {
+      "defined_at": 432,
+      "calls": ["CheckFileBeforeRead@ccsrc/adump/utils/FileUtils.cpp"],
+      "called_by": ["Parse@ccsrc/adump/base/DebuggerConfig.cpp"],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "DumpNpy@ccsrc/adump/utils/FileOperation.cpp": {
+      "defined_at": 158,
+      "calls": ["FileUtils::OpenFile@ccsrc/adump/utils/FileUtils.cpp"],
+      "called_by": ["dump_operations"],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "start_compare@python/msprobe/msaccucmp/msaccucmp.py": {
+      "defined_at": 314,
+      "calls": [
+        "PytorchComparison.compare",
+        "VectorComparison.compare",
+        "AlgorithmManagerMain.process"
+      ],
+      "called_by": ["_do_compare@python/msprobe/msaccucmp/msaccucmp.py"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "compare_cli@python/msprobe/core/compare/compare_cli.py": {
+      "defined_at": 68,
+      "calls": [
+        "compare_auto_mode",
+        "compare_offline_data_mode",
+        "compare_offline_model_mode",
+        "compare_atb_mode"
+      ],
+      "called_by": ["main@python/msprobe/msprobe.py"],
+      "receives_external_input": true,
+      "risk": "High"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "sys.argv@python/msprobe/msprobe.py:109",
+      "path": [
+        "argparse.parse_args@python/msprobe/msprobe.py",
+        "compare_cli@python/msprobe/core/compare/compare_cli.py:68",
+        "VectorComparison.compare@python/msprobe/msaccucmp/vector_cmp/vector_comparison.py"
+      ],
+      "sink": "file_path_operations",
+      "sink_type": "file_operation"
+    },
+    {
+      "source": "args.dump_path@python/msprobe/core/parse/parse_cli.py:36",
+      "path": [
+        "parse@python/msprobe/core/parse/tensor_bin_parser.py:39",
+        "TensorBinFile@python/msprobe/core/compare/atb_data_compare.py"
+      ],
+      "sink": "tensor_bin_parser",
+      "sink_type": "file_operation"
+    },
+    {
+      "source": "args.model_path@python/msprobe/infer/offline/compare/msquickcmp/main.py:106",
+      "path": [
+        "OnnxDumpData.__init__@python/msprobe/infer/offline/compare/msquickcmp/onnx_model/onnx_dump_data.py",
+        "_load_onnx@python/msprobe/infer/offline/compare/msquickcmp/onnx_model/onnx_dump_data.py:166"
+      ],
+      "sink": "onnx.load_model@stdlib",
+      "sink_type": "file_operation"
+    },
+    {
+      "source": "args.api_info@python/msprobe/core/acc_check/acc_check_cli.py:74",
+      "path": [
+        "_detect_framework_from_api_info@python/msprobe/core/acc_check/acc_check_cli.py:25",
+        "json.load@stdlib"
+      ],
+      "sink": "json.load@python/msprobe/core/acc_check/acc_check_cli.py:36",
+      "sink_type": "file_operation"
+    },
+    {
+      "source": "cfgFilePath@ccsrc/adump/base/DebuggerConfig.cpp:464",
+      "path": [
+        "FileUtils::GetAbsPath@ccsrc/adump/utils/FileUtils.cpp:90",
+        "FileUtils::CheckFileBeforeRead@ccsrc/adump/utils/FileUtils.cpp:559",
+        "Parse@ccsrc/adump/base/DebuggerConfig.cpp:425"
+      ],
+      "sink": "ifstream >> content@ccsrc/adump/base/DebuggerConfig.cpp:437",
+      "sink_type": "file_operation"
+    },
+    {
+      "source": "path@python/msprobe/infer/utils/util.py:87",
+      "path": [
+        "torch.load@stdlib"
+      ],
+      "sink": "pickle.loads@stdlib",
+      "sink_type": "deserialization"
+    },
+    {
+      "source": "args.golden_path@python/msprobe/infer/offline/compare/msquickcmp/main.py",
+      "path": [
+        "_load_onnx@python/msprobe/infer/offline/compare/msquickcmp/onnx_model/onnx_dump_data.py",
+        "onnx.load_model@stdlib"
+      ],
+      "sink": "onnx_model@python/msprobe/infer/offline/compare/msquickcmp/onnx_model/onnx_dump_data.py",
+      "sink_type": "model_operation"
+    },
+    {
+      "source": "npu_dump_data_path@python/msprobe/infer/offline/compare/msquickcmp/npu/npu_dump_data.py",
+      "path": [
+        "OmParser._load_json_file@python/msprobe/infer/offline/compare/msquickcmp/npu/om_parser.py:95"
+      ],
+      "sink": "json.load@python/msprobe/infer/offline/compare/msquickcmp/npu/om_parser.py:110",
+      "sink_type": "file_operation"
+    }
+  ]
+}

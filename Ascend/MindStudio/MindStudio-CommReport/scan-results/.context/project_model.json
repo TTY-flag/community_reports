@@ -1,0 +1,396 @@
+{
+  "project_name": "MindStudio-CommReport",
+  "scan_time": "2026-04-20T00:00:00Z",
+  "lsp_available": false,
+  "total_files": 88,
+  "total_lines": 11626,
+  "project_profile": {
+    "project_type": "cli_tool_python",
+    "deployment_model": "用户本地执行的命令行工具，用于分析HCCL通信故障日志。工具读取用户指定的日志目录，解析配置文件，检测故障并生成诊断报告。",
+    "trust_boundaries": [
+      {
+        "boundary": "命令行接口",
+        "trusted_side": "工具内部逻辑",
+        "untrusted_side": "用户提供的命令行参数和日志目录",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "配置文件",
+        "trusted_side": "工具配置逻辑",
+        "untrusted_side": "管理员配置的YAML文件",
+        "risk": "Low"
+      },
+      {
+        "boundary": "日志文件输入",
+        "trusted_side": "日志解析器",
+        "untrusted_side": "用户提供的日志文件内容",
+        "risk": "High"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "cli",
+      "path": "log_analyzer/cli",
+      "language": "python",
+      "components": [
+        "__init__.py",
+        "__main__.py",
+        "main.py",
+        "formatters.py"
+      ]
+    },
+    {
+      "name": "config",
+      "path": "log_analyzer/config",
+      "language": "python",
+      "components": [
+        "__init__.py",
+        "loader.py",
+        "parser.py",
+        "models.py",
+        "replacer.py",
+        "extractor.py",
+        "validator.py"
+      ]
+    },
+    {
+      "name": "parser",
+      "path": "log_analyzer/parser",
+      "language": "python",
+      "components": [
+        "__init__.py",
+        "file_parser.py",
+        "log_parser.py",
+        "worker_parser.py",
+        "extractors.py",
+        "models.py",
+        "context_models.py",
+        "comm_domain_creation_parser.py"
+      ]
+    },
+    {
+      "name": "detector",
+      "path": "log_analyzer/detector",
+      "language": "python",
+      "components": [
+        "__init__.py",
+        "fault_detector.py",
+        "fault_analyzer.py",
+        "pattern_matcher.py",
+        "fault_deduplicator.py",
+        "statistics_calculator.py",
+        "models.py",
+        "fault_constants.py"
+      ]
+    },
+    {
+      "name": "processors",
+      "path": "log_analyzer/detector/processors",
+      "language": "python",
+      "components": [
+        "__init__.py",
+        "base.py"
+      ]
+    },
+    {
+      "name": "rank_not_connected",
+      "path": "log_analyzer/detector/processors/rank_not_connected",
+      "language": "python",
+      "components": [
+        "__init__.py",
+        "decision_engine.py",
+        "collectors/",
+        "rules/"
+      ]
+    },
+    {
+      "name": "exec_timeout",
+      "path": "log_analyzer/detector/processors/exec_timeout",
+      "language": "python",
+      "components": [
+        "__init__.py",
+        "decision_engine.py",
+        "collectors/",
+        "rules/"
+      ]
+    },
+    {
+      "name": "exec_diff",
+      "path": "log_analyzer/detector/processors/exec_diff",
+      "language": "python",
+      "components": [
+        "__init__.py",
+        "decision_engine.py",
+        "collectors/",
+        "rules/"
+      ]
+    },
+    {
+      "name": "param_plane_link_establish",
+      "path": "log_analyzer/detector/processors/param_plane_link_establish",
+      "language": "python",
+      "components": [
+        "__init__.py",
+        "decision_engine.py",
+        "rule_base.py",
+        "collectors/",
+        "rules/"
+      ]
+    }
+  ],
+  "files": [
+    {
+      "path": "log_analyzer/cli/main.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "cli",
+      "lines": 301,
+      "priority": 1
+    },
+    {
+      "path": "log_analyzer/config/loader.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "config",
+      "lines": 177,
+      "priority": 2
+    },
+    {
+      "path": "log_analyzer/config/parser.py",
+      "language": "python",
+      "risk": "High",
+      "module": "config",
+      "lines": 223,
+      "priority": 1
+    },
+    {
+      "path": "log_analyzer/config/validator.py",
+      "language": "python",
+      "risk": "High",
+      "module": "config",
+      "lines": 263,
+      "priority": 1
+    },
+    {
+      "path": "log_analyzer/config/extractor.py",
+      "language": "python",
+      "risk": "High",
+      "module": "config",
+      "lines": 252,
+      "priority": 1
+    },
+    {
+      "path": "log_analyzer/config/replacer.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "config",
+      "lines": 123,
+      "priority": 3
+    },
+    {
+      "path": "log_analyzer/parser/file_parser.py",
+      "language": "python",
+      "risk": "High",
+      "module": "parser",
+      "lines": 119,
+      "priority": 1
+    },
+    {
+      "path": "log_analyzer/parser/worker_parser.py",
+      "language": "python",
+      "risk": "High",
+      "module": "parser",
+      "lines": 376,
+      "priority": 1
+    },
+    {
+      "path": "log_analyzer/parser/log_parser.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "parser",
+      "lines": 85,
+      "priority": 2
+    },
+    {
+      "path": "log_analyzer/parser/extractors.py",
+      "language": "python",
+      "risk": "High",
+      "module": "parser",
+      "lines": 132,
+      "priority": 1
+    },
+    {
+      "path": "log_analyzer/detector/fault_detector.py",
+      "language": "python",
+      "risk": "High",
+      "module": "detector",
+      "lines": 334,
+      "priority": 1
+    },
+    {
+      "path": "log_analyzer/detector/fault_analyzer.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "detector",
+      "lines": 152,
+      "priority": 2
+    },
+    {
+      "path": "log_analyzer/detector/pattern_matcher.py",
+      "language": "python",
+      "risk": "High",
+      "module": "detector",
+      "lines": 91,
+      "priority": 1
+    },
+    {
+      "path": "log_analyzer/detector/fault_deduplicator.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "detector",
+      "lines": 222,
+      "priority": 3
+    },
+    {
+      "path": "log_analyzer/detector/models.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "detector",
+      "lines": 480,
+      "priority": 3
+    },
+    {
+      "path": "log_analyzer/detector/processors/base.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "processors",
+      "lines": 100,
+      "priority": 3
+    },
+    {
+      "path": "log_analyzer/detector/processors/rank_not_connected/decision_engine.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "rank_not_connected",
+      "lines": 78,
+      "priority": 2
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "log_analyzer/cli/main.py",
+      "line": 287,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "semi_trusted",
+      "justification": "CLI主入口函数，通过argparse解析用户提供的命令行参数。参数包括日志目录路径（-d/--log-dir），该路径由用户控制。",
+      "description": "命令行参数解析入口"
+    },
+    {
+      "file": "log_analyzer/cli/main.py",
+      "line": 253,
+      "function": "create_parser",
+      "type": "cmdline",
+      "trust_level": "semi_trusted",
+      "justification": "创建argparse参数解析器，解析用户命令行输入。",
+      "description": "argparse参数解析器创建"
+    },
+    {
+      "file": "log_analyzer/config/loader.py",
+      "line": 42,
+      "function": "load_yaml_file",
+      "type": "file",
+      "trust_level": "trusted_admin",
+      "justification": "从管理员控制的配置文件路径读取YAML配置，使用yaml.safe_load安全加载。",
+      "description": "YAML配置文件加载"
+    },
+    {
+      "file": "log_analyzer/parser/file_parser.py",
+      "line": 46,
+      "function": "parse_file",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "解析用户提供的日志文件，文件内容完全由外部控制，用于正则表达式匹配。",
+      "description": "日志文件解析入口"
+    },
+    {
+      "file": "log_analyzer/parser/file_parser.py",
+      "line": 99,
+      "function": "_parse_content",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "读取并解析日志文件内容，内容来自用户提供的文件系统。",
+      "description": "日志文件内容解析"
+    },
+    {
+      "file": "log_analyzer/parser/worker_parser.py",
+      "line": 47,
+      "function": "parse_with_context",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "解析用户提供的日志目录，遍历文件系统收集日志文件。",
+      "description": "日志目录解析入口"
+    },
+    {
+      "file": "log_analyzer/parser/worker_parser.py",
+      "line": 325,
+      "function": "_confirm_large_files",
+      "type": "stdin",
+      "trust_level": "semi_trusted",
+      "justification": "当文件总大小超过限制时，通过input()请求用户确认是否继续。仅接收y/n响应。",
+      "description": "用户确认交互"
+    },
+    {
+      "file": "log_analyzer/config/parser.py",
+      "line": 47,
+      "function": "parse_fault_categories",
+      "type": "file",
+      "trust_level": "trusted_admin",
+      "justification": "解析YAML配置中的故障分类，包含正则表达式模式。正则表达式经过安全验证。",
+      "description": "故障分类配置解析"
+    },
+    {
+      "file": "log_analyzer/config/validator.py",
+      "line": 178,
+      "function": "validate",
+      "type": "file",
+      "trust_level": "trusted_admin",
+      "justification": "验证配置文件中的正则表达式安全性，检测危险的ReDoS模式。",
+      "description": "正则表达式安全验证"
+    },
+    {
+      "file": "log_analyzer/detector/pattern_matcher.py",
+      "line": 46,
+      "function": "_compile_patterns",
+      "type": "file",
+      "trust_level": "trusted_admin",
+      "justification": "编译配置文件中的故障检测正则表达式，正则来自管理员配置。",
+      "description": "正则表达式编译"
+    },
+    {
+      "file": "log_analyzer/detector/fault_detector.py",
+      "line": 153,
+      "function": "detect_in_entry",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "使用正则表达式匹配日志条目，日志内容来自用户提供的文件。",
+      "description": "故障模式匹配"
+    },
+    {
+      "file": "log_analyzer/config/extractor.py",
+      "line": 175,
+      "function": "_extract_all_matches",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "使用正则表达式从日志内容中提取变量，日志内容来自用户文件。",
+      "description": "变量提取（正则匹配）"
+    }
+  ],
+  "attack_surfaces": [
+    "命令行参数: -d/--log-dir 日志目录路径",
+    "配置文件: config/fault_config.yaml YAML配置",
+    "日志文件: 用户指定的日志目录下的 .log 文件",
+    "用户交互: input() 确认大文件解析"
+  ]
+}

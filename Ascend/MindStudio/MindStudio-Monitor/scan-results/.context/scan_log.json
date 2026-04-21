@@ -1,0 +1,75 @@
+{
+  "scan_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "start_time": "2026-04-20T20:30:00Z",
+  "end_time": "2026-04-21T04:21:00Z",
+  "duration_seconds": 23460,
+  "status": "completed",
+  "project_name": "MindStudio-Monitor",
+  "agents": [
+    {
+      "name": "architecture",
+      "start_time": "2026-04-20T20:30:00Z",
+      "end_time": "2026-04-20T20:38:45Z",
+      "duration_seconds": 525,
+      "status": "success",
+      "outputs": ["project_model.json", "call_graph.json", "threat_analysis_report.md"],
+      "error": null
+    },
+    {
+      "name": "dataflow-scanner",
+      "start_time": "2026-04-20T20:40:00Z",
+      "end_time": "2026-04-20T20:45:56Z",
+      "duration_seconds": 356,
+      "status": "success",
+      "outputs": ["scan.db"],
+      "error": null
+    },
+    {
+      "name": "security-auditor",
+      "start_time": "2026-04-20T20:40:00Z",
+      "end_time": "2026-04-21T01:18:52Z",
+      "duration_seconds": 2332,
+      "status": "success",
+      "outputs": ["scan.db"],
+      "error": null
+    },
+    {
+      "name": "verification",
+      "start_time": "2026-04-21T04:08:00Z",
+      "end_time": "2026-04-21T04:12:00Z",
+      "duration_seconds": 240,
+      "status": "success",
+      "outputs": ["scan.db"],
+      "error": null
+    },
+    {
+      "name": "details-analyzer",
+      "start_time": "2026-04-21T04:13:00Z",
+      "end_time": "2026-04-21T04:18:00Z",
+      "duration_seconds": 300,
+      "status": "success",
+      "outputs": ["details/DF-008.md", "details/VULN-SEC-BIND-001.md"],
+      "error": null
+    },
+    {
+      "name": "reporter",
+      "start_time": "2026-04-21T04:18:00Z",
+      "end_time": "2026-04-21T04:21:00Z",
+      "duration_seconds": 180,
+      "status": "success",
+      "outputs": ["report_confirmed.md", "report_unconfirmed.md"],
+      "error": null
+    }
+  ],
+  "summary": {
+    "project_type": "network_service",
+    "total_files_scanned": 87,
+    "total_lines": 12000,
+    "candidates_found": 32,
+    "confirmed_vulnerabilities": 2,
+    "likely_vulnerabilities": 6,
+    "possible_vulnerabilities": 22,
+    "false_positives": 2,
+    "lsp_available": false
+  }
+}

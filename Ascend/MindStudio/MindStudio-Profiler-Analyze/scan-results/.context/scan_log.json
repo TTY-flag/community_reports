@@ -1,0 +1,64 @@
+{
+  "scan_id": "4f55eaad-5f59-4909-adba-e307ea167f96",
+  "start_time": "2026-04-20T21:51:51.007213",
+  "end_time": "2026-04-20T22:49:20.709443",
+  "project_name": "MindStudio-Profiler-Analyze",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/shenteng/MindStudio/MindStudio-Profiler-Analyze",
+  "status": "success",
+  "agents": [
+    {
+      "name": "architecture",
+      "start_time": "2026-04-20T22:20:00",
+      "end_time": "2026-04-20T22:26:17",
+      "status": "success",
+      "modules_processed": ["cli", "prof_common", "advisor", "cluster_analyse", "compare_tools", "prof_exports", "misc_autofuse"],
+      "items_found": 14,
+      "outputs": ["project_model.json", "call_graph.json", "threat_analysis_report.md"]
+    },
+    {
+      "name": "dataflow-scanner",
+      "start_time": "2026-04-21T05:30:00",
+      "end_time": "2026-04-21T05:33:38",
+      "duration_seconds": 218,
+      "status": "success",
+      "modules_processed": ["prof_common", "prof_exports"],
+      "items_found": 5,
+      "vulnerability_types": ["sql_injection"]
+    },
+    {
+      "name": "security-auditor",
+      "start_time": "2026-04-21T05:29:00",
+      "end_time": "2026-04-21T05:33:26",
+      "duration_seconds": 266,
+      "status": "success",
+      "modules_processed": ["prof_common", "prof_exports", "cli", "advisor", "cluster_analyse", "compare_tools", "misc_autofuse"],
+      "items_found": 5,
+      "vulnerability_types": ["sql_injection"]
+    },
+    {
+      "name": "verification",
+      "start_time": "2026-04-21T05:36:00",
+      "end_time": "2026-04-21T05:44:14",
+      "duration_seconds": 494,
+      "status": "success",
+      "items_processed": 5,
+      "results": {"CONFIRMED": 0, "LIKELY": 0, "POSSIBLE": 0, "FALSE_POSITIVE": 5}
+    },
+    {
+      "name": "reporter",
+      "start_time": "2026-04-21T05:45:00",
+      "end_time": "2026-04-21T05:48:00",
+      "duration_seconds": 176,
+      "status": "success",
+      "outputs": ["report_confirmed.md", "report_unconfirmed.md"]
+    }
+  ],
+  "summary": {
+    "total_files_scanned": 440,
+    "total_lines_analyzed": 43019,
+    "candidate_vulnerabilities": 5,
+    "confirmed_vulnerabilities": 0,
+    "false_positives": 5,
+    "scan_duration_total": "约 45 分钟"
+  }
+}

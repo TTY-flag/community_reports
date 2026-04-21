@@ -1,0 +1,457 @@
+{
+  "project_name": "MindStudio-Insight",
+  "scan_time": "2026-04-20T20:15:00Z",
+  "lsp_available": true,
+  "total_files": 366,
+  "total_lines": 150000,
+  "project_profile": {
+    "project_type": "network_service",
+    "deployment_model": "Linux/Windows/macOS 服务器上的 WebSocket 守护进程，监听 host:wsPort 端口，接收前端客户端的 WebSocket 连接和 HTTP API 请求。典型部署为本地工具（localhost），但可配置监听任意网络接口。",
+    "trust_boundaries": [
+      {
+        "boundary": "WebSocket Network Interface",
+        "trusted_side": "Application logic (C++ server, protocol handlers, database operations)",
+        "untrusted_side": "Remote WebSocket clients (前端浏览器、JupyterLab 插件、ProfilerServerProxy)",
+        "risk": "Critical"
+      },
+      {
+        "boundary": "HTTP API Interface",
+        "trusted_side": "Application handlers (ApiHandler implementations)",
+        "untrusted_side": "HTTP POST requests from frontend",
+        "risk": "High"
+      },
+      {
+        "boundary": "File System Interface",
+        "trusted_side": "Database (SQLite cluster.db, trace.db)",
+        "untrusted_side": "User-provided profiler data files (JSON, CSV, .db files)",
+        "risk": "High"
+      },
+      {
+        "boundary": "Process Execution Interface",
+        "trusted_side": "Python scripts (msprof_analyze/cluster_analysis.py)",
+        "untrusted_side": "Arguments passed from user requests (selectedPath, mode)",
+        "risk": "High"
+      },
+      {
+        "boundary": "Python WebSocket Proxy Interface",
+        "trusted_side": "ProfilerServerProxy backend (C++ WsServer)",
+        "untrusted_side": "Frontend WebSocket clients via Python proxy",
+        "risk": "Critical"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "server",
+      "path": "server/src/server",
+      "language": "c_cpp",
+      "components": ["WsServer.cpp", "WsServer.h", "WsSessionImpl.cpp", "WsSessionImpl.h", "BaseServer.h", "ServerDefs.h"]
+    },
+    {
+      "name": "protocol",
+      "path": "server/src/protocol",
+      "language": "c_cpp",
+      "components": ["ProtocolMessageBuffer.cpp", "ProtocolMessageBuffer.h"]
+    },
+    {
+      "name": "communication",
+      "path": "server/src/modules/communication",
+      "language": "c_cpp",
+      "components": ["parser/ClusterFileParser.cpp", "parser/CommunicationRapidSaxHandler.cpp", "database/TextClusterDatabase.cpp", "database/VirtualClusterDatabase.cpp"]
+    },
+    {
+      "name": "timeline",
+      "path": "server/src/modules/timeline",
+      "language": "c_cpp",
+      "components": ["handler/*.cpp", "protocol/TimelineProtocol.cpp", "core/parser/EventParser.cpp"]
+    },
+    {
+      "name": "memory",
+      "path": "server/src/modules/memory",
+      "language": "c_cpp",
+      "components": ["parser/MemoryParse.cpp", "database/TextMemoryDataBase.cpp", "handler/*.cpp"]
+    },
+    {
+      "name": "advisor",
+      "path": "server/src/modules/advisor",
+      "language": "c_cpp",
+      "components": ["process/*.cpp", "handler/*.cpp", "protocol/*.cpp"]
+    },
+    {
+      "name": "operator",
+      "path": "server/src/modules/operator",
+      "language": "c_cpp",
+      "components": ["parser/KernelParse.cpp", "database/*.cpp", "handler/*.cpp"]
+    },
+    {
+      "name": "global",
+      "path": "server/src/modules/global",
+      "language": "c_cpp",
+      "components": ["handler/*.cpp", "core/ProjectExplorerManager.cpp", "database/SystemMemoryDatabase.cpp"]
+    },
+    {
+      "name": "triton",
+      "path": "server/src/modules/triton",
+      "language": "c_cpp",
+      "components": ["parser/TritonParser.cpp", "service/TritonService.cpp", "handler/*.cpp"]
+    },
+    {
+      "name": "source",
+      "path": "server/src/modules/source",
+      "language": "c_cpp",
+      "components": ["parser/SourceInstructionParser.cpp", "handler/*.cpp"]
+    },
+    {
+      "name": "summary",
+      "path": "server/src/modules/summary",
+      "language": "c_cpp",
+      "components": ["handler/*.cpp", "protocol/*.cpp"]
+    },
+    {
+      "name": "servitization",
+      "path": "server/src/modules/servitization",
+      "language": "c_cpp",
+      "components": ["handler/*.cpp"]
+    },
+    {
+      "name": "memscope",
+      "path": "server/src/modules/memscope",
+      "language": "c_cpp",
+      "components": ["handler/*.cpp", "parser/*.cpp"]
+    },
+    {
+      "name": "memsnapshot",
+      "path": "server/src/modules/memsnapshot",
+      "language": "c_cpp",
+      "components": ["parser/MemSnapshotParser.cpp", "handler/*.cpp"]
+    },
+    {
+      "name": "rl",
+      "path": "server/src/modules/rl",
+      "language": "c_cpp",
+      "components": ["handler/*.cpp", "protocol/*.cpp"]
+    },
+    {
+      "name": "full_db",
+      "path": "server/src/modules/full_db",
+      "language": "c_cpp",
+      "components": ["ParseUnit/ParseUnitManager.cpp"]
+    },
+    {
+      "name": "utils",
+      "path": "server/msinsight/src/utils",
+      "language": "c_cpp",
+      "components": ["FileUtil.cpp", "PythonUtil.cpp", "StringUtil.cpp", "JsonUtil.cpp"]
+    },
+    {
+      "name": "msprof_analyze",
+      "path": "scripts/msprof_analyze",
+      "language": "python",
+      "components": ["cluster_analyse/cluster_analysis.py"]
+    },
+    {
+      "name": "cpu_binding_tools",
+      "path": "scripts/cpu_binding_tools",
+      "language": "python",
+      "components": ["cpu_affinity_data_collection.py", "cpu_binding_suggestion.py"]
+    },
+    {
+      "name": "ftrace_tools",
+      "path": "scripts/ftrace_tools",
+      "language": "python",
+      "components": ["trace_record.py", "trace_convert.py"]
+    },
+    {
+      "name": "memscope_adaptors",
+      "path": "scripts/memscope_adaptors",
+      "language": "python",
+      "components": ["prof2memscope/prof_adaptor.py", "memscope/database.py"]
+    },
+    {
+      "name": "MemSnapDump",
+      "path": "scripts/MemSnapDump",
+      "language": "python",
+      "components": ["tools/dump2db.py", "tools/adaptors/database/snapshot_db.py"]
+    },
+    {
+      "name": "ProfilerServerProxy",
+      "path": "plugins/ProfilerServerProxy",
+      "language": "python",
+      "components": ["core/proxy/multi_aio_proxy_server.py", "core/server/profiler_server.py", "run.py"]
+    },
+    {
+      "name": "jupyterlab",
+      "path": "plugins/jupyterlab",
+      "language": "python",
+      "components": ["mindstudio_insight_jupyterlab/handlers.py"]
+    }
+  ],
+  "files": [
+    {
+      "path": "server/src/server/WsServer.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "server",
+      "lines": 251,
+      "priority": 1
+    },
+    {
+      "path": "server/src/server/WsSessionImpl.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "server",
+      "lines": 291,
+      "priority": 2
+    },
+    {
+      "path": "server/src/protocol/ProtocolMessageBuffer.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "protocol",
+      "lines": 109,
+      "priority": 3
+    },
+    {
+      "path": "server/src/modules/communication/parser/ClusterFileParser.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "communication",
+      "lines": 627,
+      "priority": 4
+    },
+    {
+      "path": "server/msinsight/src/utils/FileUtil.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "utils",
+      "lines": 972,
+      "priority": 5
+    },
+    {
+      "path": "server/msinsight/src/utils/PythonUtil.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "utils",
+      "lines": 127,
+      "priority": 6
+    },
+    {
+      "path": "server/src/modules/ModuleManager.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "modules",
+      "lines": 76,
+      "priority": 7
+    },
+    {
+      "path": "server/src/modules/ProtocolManager.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "protocol",
+      "lines": 101,
+      "priority": 8
+    },
+    {
+      "path": "server/src/modules/timeline/core/parser/EventParser.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "timeline",
+      "lines": 500,
+      "priority": 9
+    },
+    {
+      "path": "server/src/modules/memory/parser/MemoryParse.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "memory",
+      "lines": 400,
+      "priority": 10
+    },
+    {
+      "path": "plugins/ProfilerServerProxy/core/proxy/multi_aio_proxy_server.py",
+      "language": "python",
+      "risk": "Critical",
+      "module": "ProfilerServerProxy",
+      "lines": 151,
+      "priority": 11
+    },
+    {
+      "path": "plugins/ProfilerServerProxy/core/server/profiler_server.py",
+      "language": "python",
+      "risk": "High",
+      "module": "ProfilerServerProxy",
+      "lines": 204,
+      "priority": 12
+    },
+    {
+      "path": "server/src/modules/communication/parser/CommunicationRapidSaxHandler.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "communication",
+      "lines": 300,
+      "priority": 13
+    },
+    {
+      "path": "server/src/modules/communication/database/TextClusterDatabase.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "communication",
+      "lines": 350,
+      "priority": 14
+    },
+    {
+      "path": "server/src/modules/global/core/ProjectExplorerManager.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "global",
+      "lines": 200,
+      "priority": 15
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "server/src/server/WsServer.cpp",
+      "line": 165,
+      "function": "OnMessageCb",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "WebSocket 服务器监听配置的 host:wsPort 端口，接收任意客户端的 WebSocket 消息。消息直接传递给 OnRequestMessage 进行解析，攻击者可通过 WebSocket 连接发送恶意 JSON 请求。",
+      "description": "接收 WebSocket 客户端消息"
+    },
+    {
+      "file": "server/src/server/WsServer.cpp",
+      "line": 205,
+      "function": "AddPostHandler",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "HTTP POST 处理器接收前端发送的 HTTP 请求，请求 body 来自网络客户端，未经过认证或授权检查。bodyBuffer 直接传递给 handler->run() 处理。",
+      "description": "处理 HTTP POST API 请求"
+    },
+    {
+      "file": "server/src/server/WsServer.cpp",
+      "line": 192,
+      "function": "AddGetHandler",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "HTTP GET 处理器接收前端发送的 HTTP 请求，query 参数来自 URL，攻击者可控制查询参数内容。",
+      "description": "处理 HTTP GET API 请求"
+    },
+    {
+      "file": "server/src/protocol/ProtocolMessageBuffer.cpp",
+      "line": 48,
+      "function": "operator<<",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "接收来自 WebSocket 的原始消息数据，数据内容完全由客户端控制。消息被追加到 buffer 中等待解析，可能包含恶意构造的 JSON。",
+      "description": "接收 WebSocket 消息数据流"
+    },
+    {
+      "file": "server/src/protocol/ProtocolMessageBuffer.cpp",
+      "line": 92,
+      "function": "Pop",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "从 buffer 中提取 JSON 字符串并调用 ProtocolManager::FromJson 解析为 Request 对象。JSON 内容来自 WebSocket 客户端，可能包含恶意构造的 moduleName、command、params 等字段。",
+      "description": "解析 WebSocket JSON 请求"
+    },
+    {
+      "file": "server/src/modules/communication/parser/ClusterFileParser.cpp",
+      "line": 41,
+      "function": "ParseCommunication",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "解析用户指定的性能分析数据文件（filePathList[0]），文件路径来自用户请求的 params。虽然有 CheckPathSecurity 检查，但攻击者可尝试路径遍历或恶意文件内容注入。",
+      "description": "解析用户上传的通信分析 JSON 文件"
+    },
+    {
+      "file": "server/src/modules/communication/parser/ClusterFileParser.cpp",
+      "line": 63,
+      "function": "SaxParseJsonFile",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "使用 fopen 打开用户指定的文件路径，然后使用 rapidjson SAX 解析器处理。文件内容由用户控制，可能包含超大 JSON 或恶意构造的数据导致解析器崩溃或内存耗尽。",
+      "description": "SAX 解析用户上传的 JSON 文件"
+    },
+    {
+      "file": "server/src/modules/communication/parser/ClusterFileParser.cpp",
+      "line": 428,
+      "function": "AttAnalyze",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "执行外部 Python 脚本 cluster_analysis.py，参数 selectedPath 来自用户请求。虽然有 ValidateCommandFilePathParam 检查，但参数传递到命令行可能存在注入风险。脚本路径硬编码为 msprof_analyze/cluster_analyse/cluster_analysis.py。",
+      "description": "执行 Python 集群分析脚本"
+    },
+    {
+      "file": "server/msinsight/src/utils/PythonUtil.cpp",
+      "line": 44,
+      "function": "ExecuteScript",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "使用 posix_spawnp 执行 Python 命令，脚本路径和 arguments 由调用者传入。arguments 内容来自用户请求参数，如果未正确过滤可能导致命令注入。Linux 上使用 python3 命令从 PATH 查找。",
+      "description": "执行外部 Python 脚本"
+    },
+    {
+      "file": "server/msinsight/src/utils/FileUtil.cpp",
+      "line": 205,
+      "function": "CheckPathSecurity",
+      "type": "file",
+      "trust_level": "trusted_admin",
+      "justification": "路径安全检查函数，验证路径长度、非法字符、软链接、owner、权限等。路径由调用者传入，通常来自用户请求参数。虽然有检查，但绕过方式可能存在（如 TOCTOU）。",
+      "description": "验证文件路径安全性"
+    },
+    {
+      "file": "server/src/modules/ModuleManager.cpp",
+      "line": 62,
+      "function": "OnDispatchModuleRequest",
+      "type": "rpc",
+      "trust_level": "untrusted_network",
+      "justification": "根据 Request 的 moduleName 分发请求到对应模块处理。moduleName 和 request 内容来自 WebSocket 客户端的 JSON 解析结果，攻击者可控制分发目标。",
+      "description": "分发 WebSocket 请求到模块处理器"
+    },
+    {
+      "file": "plugins/ProfilerServerProxy/core/proxy/multi_aio_proxy_server.py",
+      "line": 78,
+      "function": "handle_websocket_connection",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "Python 实现的 WebSocket 代理服务器，接收前端客户端 WebSocket 连接并转发到后端 C++ WsServer。前端消息完全由攻击者控制，通过 proxy 转发可能绕过 C++ 服务器的安全检查。",
+      "description": "Python WebSocket 代理接收前端连接"
+    },
+    {
+      "file": "plugins/ProfilerServerProxy/core/server/profiler_server.py",
+      "line": 76,
+      "function": "_initialize",
+      "type": "rpc",
+      "trust_level": "trusted_admin",
+      "justification": "启动 profiler_server C++ 子进程，参数包括 wsPort、host、logPath、eventDir 等。参数由 ProfilerServerProxy 配置决定，不由用户直接控制。",
+      "description": "启动 C++ WebSocket 服务器子进程"
+    },
+    {
+      "file": "server/src/entry/server/bin/main.cpp",
+      "line": 95,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "trusted_admin",
+      "justification": "命令行入口，解析 argc/argv 参数启动服务器。参数包括 host、wsPort、logPath、eventDir 等。由用户在启动服务器时指定，非运行时攻击入口。",
+      "description": "服务器启动命令行入口"
+    },
+    {
+      "file": "server/src/server/WsServer.cpp",
+      "line": 228,
+      "function": "PreLoadEventDir",
+      "type": "file",
+      "trust_level": "trusted_admin",
+      "justification": "预加载 eventDir 目录，目录路径由命令行参数 eventDir 指定。由管理员在启动服务器时配置，非运行时攻击入口。",
+      "description": "预加载服务器启动时指定的 eventDir"
+    }
+  ],
+  "attack_surfaces": [
+    "WebSocket Network Interface: host:wsPort 端口监听，接收前端 WebSocket 连接和消息",
+    "HTTP API Interface: POST/GET 处理器接收前端 HTTP 请求",
+    "File Parsing Interface: 解析用户上传的 JSON/CSV/.db 性能分析数据文件",
+    "Process Execution Interface: 执行外部 Python 脚本（cluster_analysis.py）处理集群分析",
+    "Python WebSocket Proxy: ProfilerServerProxy 作为前端和 C++ 服务器之间的代理",
+    "SQLite Database Interface: cluster.db、trace.db 等数据库文件读写",
+    "JupyterLab Plugin Interface: 通过 JupyterLab 扩展访问 WebSocket 服务器"
+  ]
+}

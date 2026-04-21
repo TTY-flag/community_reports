@@ -1,0 +1,139 @@
+{
+  "scan_id": "550e8400-e29b-41d4-a716-446655440000",
+  "start_time": "2026-04-20T13:48:00Z",
+  "end_time": "2026-04-20T15:18:00Z",
+  "duration_seconds": 5400,
+  "project_name": "MindStudio-Ops-Common",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/shenteng/MindStudio/MindStudio-Ops-Common",
+  "status": "success",
+  "agents": [
+    {
+      "name": "architecture",
+      "start_time": "2026-04-20T13:48:30Z",
+      "end_time": "2026-04-20T13:58:32Z",
+      "duration_seconds": 602,
+      "status": "success",
+      "output_files": [
+        "scan-results/.context/project_model.json",
+        "scan-results/.context/call_graph.json",
+        "scan-results/threat_analysis_report.md"
+      ],
+      "summary": {
+        "total_files": 257,
+        "modules_count": 14,
+        "entry_points_count": 11,
+        "high_risk_files_count": 5,
+        "language": "C++/Python混合"
+      }
+    },
+    {
+      "name": "dataflow-scanner",
+      "start_time": "2026-04-20T14:00:00Z",
+      "end_time": "2026-04-20T14:12:22Z",
+      "duration_seconds": 742,
+      "status": "success",
+      "output_files": [],
+      "summary": {
+        "modules_scanned": 6,
+        "candidates_found": 43,
+        "critical_count": 2,
+        "high_count": 9,
+        "medium_count": 18,
+        "low_count": 4,
+        "modules_with_vulns": ["tools", "core", "runtime", "bind", "acl_rt_impl", "utils"]
+      }
+    },
+    {
+      "name": "security-auditor",
+      "start_time": "2026-04-20T14:00:00Z",
+      "end_time": "2026-04-20T14:05:51Z",
+      "duration_seconds": 351,
+      "status": "success",
+      "output_files": [],
+      "summary": {
+        "modules_audited": 8,
+        "candidates_found": 26,
+        "critical_count": 2,
+        "high_count": 6,
+        "medium_count": 14,
+        "low_count": 4,
+        "key_vulnerabilities": ["SEC-001 ElfLoader越界读取", "SEC-002 不安全动态库加载", "SEC-004 IPC凭证绕过风险", "SEC-005 环境变量注入风险"]
+      }
+    },
+    {
+      "name": "verification",
+      "start_time": "2026-04-20T14:14:00Z",
+      "end_time": "2026-04-20T14:31:57Z",
+      "duration_seconds": 1077,
+      "status": "success",
+      "output_files": [],
+      "summary": {
+        "candidates_before_dedup": 43,
+        "candidates_after_dedup": 42,
+        "confirmed_count": 7,
+        "likely_count": 16,
+        "possible_count": 17,
+        "false_positive_count": 2,
+        "critical_count": 2,
+        "high_count": 12,
+        "medium_count": 18,
+        "low_count": 10
+      }
+    },
+    {
+      "name": "details-analyzer",
+      "start_time": "2026-04-20T14:35:00Z",
+      "end_time": "2026-04-20T15:02:54Z",
+      "duration_seconds": 1674,
+      "status": "success",
+      "output_files": [
+        "scan-results/details/VULN-CORE-001.md",
+        "scan-results/details/VULN-CORE-003.md",
+        "scan-results/details/VULN-runtime-001.md",
+        "scan-results/details/VUL-TOOLS-001.md",
+        "scan-results/details/VUL-TOOLS-002.md",
+        "scan-results/details/VUL-TOOLS-005.md",
+        "scan-results/details/VUL-TOOLS-007.md"
+      ],
+      "summary": {
+        "confirmed_vulns_analyzed": 7,
+        "reports_generated": 7,
+        "critical_count": 2,
+        "high_count": 5,
+        "vulnerability_types": ["函数指针执行", "动态库加载", "命令注入", "路径遍历", "文件路径注入"]
+      }
+    },
+    {
+      "name": "reporter",
+      "start_time": "2026-04-20T15:10:00Z",
+      "end_time": "2026-04-20T15:14:06Z",
+      "duration_seconds": 246,
+      "status": "success",
+      "output_files": [
+        "scan-results/report_confirmed.md",
+        "scan-results/report_unconfirmed.md"
+      ],
+      "summary": {
+        "confirmed_report_lines": 548,
+        "unconfirmed_report_lines": 868,
+        "executive_summary_added": true,
+        "top5_deep_analysis_added": true,
+        "remediation_recommendations_added": true
+      }
+    }
+  ],
+  "summary": {
+    "total_vulnerabilities": 42,
+    "confirmed_count": 7,
+    "likely_count": 16,
+    "possible_count": 17,
+    "false_positive_count": 2,
+    "critical_count": 2,
+    "high_count": 12,
+    "medium_count": 18,
+    "low_count": 10,
+    "modules_scanned": 6,
+    "total_files_analyzed": 257,
+    "scan_mode": "自主分析模式"
+  }
+}

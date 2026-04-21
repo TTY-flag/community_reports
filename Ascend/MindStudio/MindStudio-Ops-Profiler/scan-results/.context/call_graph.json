@@ -1,0 +1,333 @@
+{
+  "functions": {
+    "main@csrc/op_profiling/main.cpp": {
+      "defined_at": 24,
+      "calls": [
+        "Utility::SetLogLevelByEnvVar@csrc/utils/cpputils/log.cpp:80",
+        "Interface::ProfArgsInit@csrc/op_profiling/interface/ms_op_prof.cpp:180",
+        "Common::RuntimeHelper::Init@csrc/op_profiling/common/runtime_helper.cpp:57",
+        "Interface::PrintDeviceHelp@csrc/op_profiling/interface/ms_op_prof.cpp:101",
+        "Interface::PrintSimulatorHelp@csrc/op_profiling/interface/ms_op_prof.cpp:151",
+        "Interface::ProfilingRun@csrc/op_profiling/interface/ms_op_prof.cpp:260"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "程序主入口，接收命令行参数和环境变量"
+    },
+    "Interface::ProfArgsInit@csrc/op_profiling/interface/ms_op_prof.cpp": {
+      "defined_at": 180,
+      "calls": [
+        "BuildDeviceArgParser@csrc/op_profiling/interface/ms_op_prof.cpp:60",
+        "BuildSimulatorArgParser@csrc/op_profiling/interface/ms_op_prof.cpp:81",
+        "ArgParser::Parse@csrc/op_profiling/argparser/parser.cpp",
+        "ArgChecker::Check@csrc/op_profiling/argparser/arg_checker.cpp"
+      ],
+      "called_by": [
+        "main@csrc/op_profiling/main.cpp:28"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "初始化并解析命令行参数"
+    },
+    "Interface::ProfilingRun@csrc/op_profiling/interface/ms_op_prof.cpp": {
+      "defined_at": 260,
+      "calls": [
+        "ParseRunConfigJson@csrc/utils/cpputils/json_parser.cpp:395",
+        "Profiling::OpProf::Run@csrc/op_profiling/profiling/op_prof.cpp",
+        "Profiling::Task::Run@csrc/op_profiling/profiling/op_prof_task.cpp"
+      ],
+      "called_by": [
+        "main@csrc/op_profiling/main.cpp:45"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "运行性能分析任务，调用JSON解析和任务执行"
+    },
+    "ParseRunConfigJson@csrc/utils/cpputils/json_parser.cpp": {
+      "defined_at": 395,
+      "calls": [
+        "CheckInputFileValid@csrc/utils/cpputils/filesystem.cpp",
+        "GetJsonData@csrc/utils/cpputils/json_parser.cpp:168",
+        "ParseCaseConfig@csrc/utils/cpputils/json_parser.cpp:256"
+      ],
+      "called_by": [
+        "Interface::ProfilingRun@csrc/op_profiling/interface/ms_op_prof.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "解析用户提供的JSON配置文件，包含kernel_path、data_path等路径"
+    },
+    "GetJsonData@csrc/utils/cpputils/json_parser.cpp": {
+      "defined_at": 168,
+      "calls": [
+        "std::ifstream::open",
+        "nlohmann::json::parse"
+      ],
+      "called_by": [
+        "ParseRunConfigJson@csrc/utils/cpputils/json_parser.cpp:423"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "读取并解析JSON文件内容"
+    },
+    "CmdExecute@csrc/utils/cpputils/cmd_execute.cpp": {
+      "defined_at": 111,
+      "calls": [
+        "fork",
+        "execvp",
+        "execvpe",
+        "JoinWithSystemEnv@csrc/utils/cpputils/cmd_execute.cpp:39"
+      ],
+      "called_by": [
+        "Profiling::Task::Run@csrc/op_profiling/profiling/op_prof_task.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "通过fork/execvp执行外部命令，命令参数来自用户输入"
+    },
+    "CmdExecuteWithOutput@csrc/utils/cpputils/cmd_execute.cpp": {
+      "defined_at": 80,
+      "calls": [
+        "posix_spawnp",
+        "waitpid"
+      ],
+      "called_by": [
+        "Profiling::Task::Run@csrc/op_profiling/profiling/op_prof_task.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "通过posix_spawnp执行命令并捕获输出"
+    },
+    "ExecBinaryRunner::Run@csrc/op_runner/runner_impl/exec_binary_runner.cpp": {
+      "defined_at": 36,
+      "calls": [
+        "ToRawCArgv@csrc/utils/cpputils/cmd_execute.cpp:29",
+        "JoinWithSystemEnv@csrc/utils/cpputils/cmd_execute.cpp:39",
+        "posix_spawnp",
+        "Timer::Start",
+        "KillBinaryProcess@csrc/op_runner/runner_impl/exec_binary_runner.cpp:89"
+      ],
+      "called_by": [
+        "Profiling::OpProf::Run@csrc/op_profiling/profiling/op_prof.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "执行用户提供的二进制文件（来自--application参数或JSON配置）"
+    },
+    "RuntimeHelper::Init@csrc/op_profiling/common/runtime_helper.cpp": {
+      "defined_at": 57,
+      "calls": [
+        "GetAscendHomePath@csrc/utils/cpputils/ascend_helper.cpp:30",
+        "dlopen",
+        "dlsym"
+      ],
+      "called_by": [
+        "main@csrc/op_profiling/main.cpp:31"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "动态加载runtime库，路径来自环境变量"
+    },
+    "HalHelper::Init@csrc/op_profiling/common/hal_helper.cpp": {
+      "defined_at": 39,
+      "calls": [
+        "GetAscendHomePath@csrc/utils/cpputils/ascend_helper.cpp:30",
+        "dlopen",
+        "dlsym"
+      ],
+      "called_by": [
+        "Interface::ProfArgsInit@csrc/op_profiling/interface/ms_op_prof.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "动态加载HAL和DCMI库，路径来自环境变量"
+    },
+    "GetAscendHomePath@csrc/utils/cpputils/ascend_helper.cpp": {
+      "defined_at": 30,
+      "calls": [
+        "getenv"
+      ],
+      "called_by": [
+        "RuntimeHelper::Init@csrc/op_profiling/common/runtime_helper.cpp:57",
+        "HalHelper::Init@csrc/op_profiling/common/hal_helper.cpp:39"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "读取ASCEND_HOME_PATH环境变量"
+    },
+    "SetLogLevelByEnvVar@csrc/utils/cpputils/log.cpp": {
+      "defined_at": 80,
+      "calls": [
+        "secure_getenv"
+      ],
+      "called_by": [
+        "main@csrc/op_profiling/main.cpp:26"
+      ],
+      "receives_external_input": true,
+      "risk": "Low",
+      "description": "读取MSOPT_LOG_LEVEL环境变量设置日志级别"
+    },
+    "Profiling::Task::Run@csrc/op_profiling/profiling/op_prof_task.cpp": {
+      "defined_at": 68,
+      "calls": [
+        "dlopen",
+        "CmdExecute@csrc/utils/cpputils/cmd_execute.cpp:111",
+        "CmdExecuteWithOutput@csrc/utils/cpputils/cmd_execute.cpp:80",
+        "ExecBinaryRunner::Run@csrc/op_runner/runner_impl/exec_binary_runner.cpp:36"
+      ],
+      "called_by": [
+        "Interface::ProfilingRun@csrc/op_profiling/interface/ms_op_prof.cpp:260"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "运行性能分析任务，执行用户提供的应用或加载仿真器"
+    },
+    "CheckInputFileValid@csrc/utils/cpputils/filesystem.cpp": {
+      "defined_at": 400,
+      "calls": [
+        "realpath",
+        "stat",
+        "CheckOwnerPermission@csrc/utils/cpputils/filesystem.cpp"
+      ],
+      "called_by": [
+        "ParseRunConfigJson@csrc/utils/cpputils/json_parser.cpp:401"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "检查用户提供的文件路径是否有效和安全"
+    },
+    "TlvParse::ReadData@csrc/op_profiling/profiling/device/data_parse/tlv_parse.cpp": {
+      "defined_at": 32,
+      "calls": [
+        "memcpy_s",
+        "std::ifstream::read"
+      ],
+      "called_by": [
+        "DeviceDataParse::Parse@csrc/op_profiling/profiling/device/data_parse/device_data_parse.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "解析TLV格式二进制数据，使用memcpy_s安全复制"
+    },
+    "DataBean::Load@csrc/op_profiling/profiling/device/data_parse/data_bean.cpp": {
+      "defined_at": 53,
+      "calls": [
+        "memcpy_s"
+      ],
+      "called_by": [
+        "MetricDataHandler::Handle@csrc/op_profiling/profiling/device/data_parse/metric_data_handler.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "加载二进制数据到结构体，使用memcpy_s安全复制"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "argc/argv@csrc/op_profiling/main.cpp:24",
+      "path": [
+        "Interface::ProfArgsInit@csrc/op_profiling/interface/ms_op_prof.cpp:180",
+        "BuildDeviceArgParser@csrc/op_profiling/interface/ms_op_prof.cpp:60",
+        "ArgParser::Parse@csrc/op_profiling/argparser/parser.cpp"
+      ],
+      "sink": "args.argApplication@csrc/op_profiling/common/prof_args.h",
+      "sink_type": "command_exec",
+      "description": "命令行参数 --application 流向应用执行"
+    },
+    {
+      "source": "argc/argv@csrc/op_profiling/main.cpp:24",
+      "path": [
+        "Interface::ProfArgsInit@csrc/op_profiling/interface/ms_op_prof.cpp:180",
+        "BuildDeviceArgParser@csrc/op_profiling/interface/ms_op_prof.cpp:60",
+        "ArgParser::Parse@csrc/op_profiling/argparser/parser.cpp"
+      ],
+      "sink": "args.argConfig@csrc/op_profiling/common/prof_args.h",
+      "sink_type": "file_parse",
+      "description": "命令行参数 --config 流向JSON解析"
+    },
+    {
+      "source": "args.argConfig@csrc/op_profiling/common/prof_args.h",
+      "path": [
+        "Interface::ProfilingRun@csrc/op_profiling/interface/ms_op_prof.cpp:260",
+        "ParseRunConfigJson@csrc/utils/cpputils/json_parser.cpp:395",
+        "GetJsonData@csrc/utils/cpputils/json_parser.cpp:168"
+      ],
+      "sink": "std::ifstream::open@csrc/utils/cpputils/json_parser.cpp:171",
+      "sink_type": "file_io",
+      "description": "配置文件路径流向文件打开操作"
+    },
+    {
+      "source": "jsonData@csrc/utils/cpputils/json_parser.cpp:178",
+      "path": [
+        "ParseCaseConfig@csrc/utils/cpputils/json_parser.cpp:256",
+        "ParseKernelConfig@csrc/utils/cpputils/json_parser.cpp:240"
+      ],
+      "sink": "kernelConfig.kernelBinaryPath@csrc/utils/cpputils/json_parser.cpp:246",
+      "sink_type": "command_exec",
+      "description": "JSON中的kernel_path字段流向二进制执行"
+    },
+    {
+      "source": "jsonData@csrc/utils/cpputils/json_parser.cpp:178",
+      "path": [
+        "ParseCaseConfig@csrc/utils/cpputils/json_parser.cpp:256",
+        "ParseParamDesc@csrc/utils/cpputils/json_parser.cpp:226"
+      ],
+      "sink": "param.dataPath@csrc/utils/cpputils/json_parser.cpp:35",
+      "sink_type": "file_io",
+      "description": "JSON中的data_path字段流向文件读取"
+    },
+    {
+      "source": "executeCmd@csrc/utils/cpputils/cmd_execute.cpp:111",
+      "path": [
+        "ToRawCArgv@csrc/utils/cpputils/cmd_execute.cpp:29",
+        "fork@csrc/utils/cpputils/cmd_execute.cpp:119",
+        "execvpe@csrc/utils/cpputils/cmd_execute.cpp:140"
+      ],
+      "sink": "execvpe@csrc/utils/cpputils/cmd_execute.cpp:140",
+      "sink_type": "command_exec",
+      "description": "命令参数流向execvpe执行"
+    },
+    {
+      "source": "executeCmd@csrc/op_runner/runner_impl/exec_binary_runner.cpp:36",
+      "path": [
+        "ToRawCArgv@csrc/utils/cpputils/cmd_execute.cpp:29",
+        "JoinWithSystemEnv@csrc/utils/cpputils/cmd_execute.cpp:39",
+        "posix_spawnp@csrc/op_runner/runner_impl/exec_binary_runner.cpp:55"
+      ],
+      "sink": "posix_spawnp@csrc/op_runner/runner_impl/exec_binary_runner.cpp:55",
+      "sink_type": "command_exec",
+      "description": "二进制执行命令流向posix_spawnp"
+    },
+    {
+      "source": "ASCEND_HOME_PATH@csrc/utils/cpputils/ascend_helper.cpp:30",
+      "path": [
+        "GetAscendHomePath@csrc/utils/cpputils/ascend_helper.cpp:30",
+        "RuntimeHelper::Init@csrc/op_profiling/common/runtime_helper.cpp:57"
+      ],
+      "sink": "dlopen@csrc/op_profiling/common/runtime_helper.cpp:57",
+      "sink_type": "dynamic_load",
+      "description": "环境变量ASCEND_HOME_PATH影响动态库加载路径"
+    },
+    {
+      "source": "MSOPT_LOG_LEVEL@csrc/utils/cpputils/log.cpp:80",
+      "path": [
+        "SetLogLevelByEnvVar@csrc/utils/cpputils/log.cpp:80",
+        "secure_getenv@csrc/utils/cpputils/log.cpp:80"
+      ],
+      "sink": "logLevel@csrc/utils/cpputils/log.cpp:80",
+      "sink_type": "config",
+      "description": "环境变量MSOPT_LOG_LEVEL影响日志级别"
+    },
+    {
+      "source": "binaryData@csrc/op_profiling/profiling/device/data_parse/tlv_parse.cpp:119",
+      "path": [
+        "TlvParse::ReadData@csrc/op_profiling/profiling/device/data_parse/tlv_parse.cpp:32",
+        "memcpy_s@csrc/op_profiling/profiling/device/data_parse/tlv_parse.cpp:32"
+      ],
+      "sink": "memcpy_s@csrc/op_profiling/profiling/device/data_parse/tlv_parse.cpp:32",
+      "sink_type": "memory_operation",
+      "description": "二进制数据流向memcpy_s内存复制（使用安全函数）"
+    }
+  ]
+}

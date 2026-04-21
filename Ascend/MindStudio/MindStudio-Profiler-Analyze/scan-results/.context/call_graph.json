@@ -1,0 +1,406 @@
+{
+  "functions": {
+    "msprof_analyze_cli@msprof_analyze/cli/entrance.py": {
+      "defined_at": 77,
+      "calls": [
+        "cluster_cli@msprof_analyze/cli/cluster_cli.py",
+        "analyze_cli@msprof_analyze/cli/analyze_cli.py",
+        "compare_cli@msprof_analyze/cli/compare_cli.py",
+        "auto_complete_cli@msprof_analyze/cli/complete_cli.py",
+        "is_root@msprof_analyze/prof_common/path_manager.py",
+        "get_logger@msprof_analyze/prof_common/logger.py"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "analyze_all@msprof_analyze/cli/analyze_cli.py": {
+      "defined_at": 72,
+      "calls": [
+        "AnalyzerController.do_analysis@msprof_analyze/advisor/analyzer/analyzer_controller.py",
+        "PathManager.expanduser_for_cli@msprof_analyze/prof_common/path_manager.py"
+      ],
+      "called_by": [
+        "msprof_analyze_cli@msprof_analyze/cli/entrance.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "analyze_schedule@msprof_analyze/cli/analyze_cli.py": {
+      "defined_at": 111,
+      "calls": [
+        "AnalyzerController.do_analysis@msprof_analyze/advisor/analyzer/analyzer_controller.py",
+        "PathManager.expanduser_for_cli@msprof_analyze/prof_common/path_manager.py"
+      ],
+      "called_by": [
+        "msprof_analyze_cli@msprof_analyze/cli/entrance.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "analyze_computation@msprof_analyze/cli/analyze_cli.py": {
+      "defined_at": 150,
+      "calls": [
+        "AnalyzerController.do_analysis@msprof_analyze/advisor/analyzer/analyzer_controller.py",
+        "PathManager.expanduser_for_cli@msprof_analyze/prof_common/path_manager.py"
+      ],
+      "called_by": [
+        "msprof_analyze_cli@msprof_analyze/cli/entrance.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "cluster_cli@msprof_analyze/cli/cluster_cli.py": {
+      "defined_at": 44,
+      "calls": [
+        "Interface.run@msprof_analyze/cluster_analyse/cluster_analysis.py",
+        "PathManager.expanduser_for_cli@msprof_analyze/prof_common/path_manager.py"
+      ],
+      "called_by": [
+        "msprof_analyze_cli@msprof_analyze/cli/entrance.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "compare_cli@msprof_analyze/cli/compare_cli.py": {
+      "defined_at": 20,
+      "calls": [
+        "PathManager.expanduser_for_cli@msprof_analyze/prof_common/path_manager.py"
+      ],
+      "called_by": [
+        "msprof_analyze_cli@msprof_analyze/cli/entrance.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "read_json_file@msprof_analyze/prof_common/file_manager.py": {
+      "defined_at": 31,
+      "calls": [
+        "PathManager.check_input_file_path@msprof_analyze/prof_common/path_manager.py",
+        "json.loads@stdlib",
+        "AdditionalArgsManager.force@msprof_analyze/prof_common/additional_args_manager.py"
+      ],
+      "called_by": [
+        "_parse_json@msprof_analyze/advisor/dataset/profiling/profiling_parser.py",
+        "read_yaml_file@msprof_analyze/prof_common/file_manager.py",
+        "check_json_type@msprof_analyze/prof_common/file_manager.py",
+        "_load_timeline_data@msprof_analyze/advisor/dataset/timeline_event_dataset.py",
+        "_parse_json_file@msprof_analyze/compare_tools/compare_backend/profiling_parser/base_profiling_parser.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "read_csv_file@msprof_analyze/prof_common/file_manager.py": {
+      "defined_at": 50,
+      "calls": [
+        "PathManager.check_input_file_path@msprof_analyze/prof_common/path_manager.py",
+        "csv.DictReader@stdlib",
+        "AdditionalArgsManager.force@msprof_analyze/prof_common/additional_args_manager.py"
+      ],
+      "called_by": [
+        "_parse_csv@msprof_analyze/advisor/dataset/profiling/profiling_parser.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "read_yaml_file@msprof_analyze/prof_common/file_manager.py": {
+      "defined_at": 79,
+      "calls": [
+        "PathManager.check_input_file_path@msprof_analyze/prof_common/path_manager.py",
+        "yaml.safe_load@stdlib",
+        "AdditionalArgsManager.force@msprof_analyze/prof_common/additional_args_manager.py"
+      ],
+      "called_by": [
+        "read_environment_info@msprof_analyze/advisor/analyzer/overall/environment_variable_checker.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "read_common_file@msprof_analyze/prof_common/file_manager.py": {
+      "defined_at": 97,
+      "calls": [
+        "PathManager.check_input_file_path@msprof_analyze/prof_common/path_manager.py",
+        "AdditionalArgsManager.force@msprof_analyze/prof_common/additional_args_manager.py"
+      ],
+      "called_by": [
+        "setup.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "create_common_file@msprof_analyze/prof_common/file_manager.py": {
+      "defined_at": 114,
+      "calls": [
+        "PathManager.check_output_directory_path@msprof_analyze/prof_common/path_manager.py",
+        "os.open@stdlib",
+        "os.fdopen@stdlib"
+      ],
+      "called_by": [],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "check_input_file_path@msprof_analyze/prof_common/path_manager.py": {
+      "defined_at": 62,
+      "calls": [
+        "input_path_common_check@msprof_analyze/prof_common/path_manager.py",
+        "check_path_owner_consistent@msprof_analyze/prof_common/path_manager.py",
+        "check_path_readable@msprof_analyze/prof_common/path_manager.py",
+        "check_others_writable@msprof_analyze/prof_common/path_manager.py"
+      ],
+      "called_by": [
+        "read_json_file@msprof_analyze/prof_common/file_manager.py",
+        "read_csv_file@msprof_analyze/prof_common/file_manager.py",
+        "read_yaml_file@msprof_analyze/prof_common/file_manager.py",
+        "read_common_file@msprof_analyze/prof_common/file_manager.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "check_input_directory_path@msprof_analyze/prof_common/path_manager.py": {
+      "defined_at": 39,
+      "calls": [
+        "input_path_common_check@msprof_analyze/prof_common/path_manager.py",
+        "check_path_owner_consistent@msprof_analyze/prof_common/path_manager.py",
+        "check_path_readable@msprof_analyze/prof_common/path_manager.py",
+        "check_path_executable@msprof_analyze/prof_common/path_manager.py",
+        "check_others_writable@msprof_analyze/prof_common/path_manager.py"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "input_path_common_check@msprof_analyze/prof_common/path_manager.py": {
+      "defined_at": 109,
+      "calls": [
+        "check_path_length@msprof_analyze/prof_common/path_manager.py",
+        "re.fullmatch@stdlib"
+      ],
+      "called_by": [
+        "check_input_file_path@msprof_analyze/prof_common/path_manager.py",
+        "check_input_directory_path@msprof_analyze/prof_common/path_manager.py",
+        "check_output_directory_path@msprof_analyze/prof_common/path_manager.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "create_connect_db@msprof_analyze/prof_common/db_manager.py": {
+      "defined_at": 39,
+      "calls": [
+        "check_db_path_valid@msprof_analyze/prof_common/file_manager.py",
+        "sqlite3.connect@stdlib",
+        "os.chmod@stdlib",
+        "conn.create_aggregate@stdlib"
+      ],
+      "called_by": [
+        "judge_table_exists@msprof_analyze/prof_common/db_manager.py",
+        "create_tables@msprof_analyze/prof_common/db_manager.py",
+        "fetch_all_data@msprof_analyze/prof_common/db_manager.py",
+        "_execute_sql@msprof_analyze/advisor/dataset/profiling/profiling_parser.py",
+        "_check_table_column_exists@msprof_analyze/advisor/dataset/profiling/profiling_parser.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "execute_sql@msprof_analyze/prof_common/db_manager.py": {
+      "defined_at": 118,
+      "calls": [
+        "conn.cursor().execute@stdlib",
+        "conn.commit@stdlib"
+      ],
+      "called_by": [
+        "create_tables@msprof_analyze/prof_common/db_manager.py",
+        "insert_data_into_table@msprof_analyze/prof_common/db_manager.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "fetch_all_data@msprof_analyze/prof_common/db_manager.py": {
+      "defined_at": 210,
+      "calls": [
+        "curs.execute@stdlib",
+        "curs.fetchmany@stdlib",
+        "CustomizedDictFactory.generate_dict_from_db@msprof_analyze/prof_common/db_manager.py"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "_execute_sql@msprof_analyze/advisor/dataset/profiling/profiling_parser.py": {
+      "defined_at": 94,
+      "calls": [
+        "DBManager.create_connect_db@msprof_analyze/prof_common/db_manager.py",
+        "DBManager.judge_table_exists@msprof_analyze/prof_common/db_manager.py",
+        "pd.read_sql@stdlib",
+        "DBManager.destroy_db_connect@msprof_analyze/prof_common/db_manager.py"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "_parse_csv@msprof_analyze/advisor/dataset/profiling/profiling_parser.py": {
+      "defined_at": 166,
+      "calls": [
+        "FileManager.check_file_size@msprof_analyze/prof_common/file_manager.py",
+        "SafeOpen@msprof_analyze/advisor/utils/utils.py",
+        "csv.reader@stdlib"
+      ],
+      "called_by": [
+        "parse_from_file@msprof_analyze/advisor/dataset/profiling/profiling_parser.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "_parse_json@msprof_analyze/advisor/dataset/profiling/profiling_parser.py": {
+      "defined_at": 193,
+      "calls": [
+        "FileManager.read_json_file@msprof_analyze/prof_common/file_manager.py"
+      ],
+      "called_by": [
+        "parse_from_file@msprof_analyze/advisor/dataset/profiling/profiling_parser.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "get_logger@msprof_analyze/prof_common/logger.py": {
+      "defined_at": 20,
+      "calls": [
+        "os.getenv@stdlib"
+      ],
+      "called_by": [
+        "msprof_analyze_cli@msprof_analyze/cli/entrance.py",
+        "FileManager@msprof_analyze/prof_common/file_manager.py",
+        "PathManager@msprof_analyze/prof_common/path_manager.py",
+        "DBManager@msprof_analyze/prof_common/db_manager.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Low"
+    },
+    "get_analyze_processes@msprof_analyze/advisor/utils/utils.py": {
+      "defined_at": 129,
+      "calls": [
+        "os.getenv@stdlib"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Low"
+    },
+    "_load_timeline_data@msprof_analyze/advisor/dataset/timeline_event_dataset.py": {
+      "defined_at": 176,
+      "calls": [
+        "open@stdlib",
+        "json.loads@stdlib"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "_parse_json_file@msprof_analyze/compare_tools/compare_backend/profiling_parser/base_profiling_parser.py": {
+      "defined_at": 407,
+      "calls": [
+        "open@stdlib",
+        "json.loads@stdlib"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "Interface.run@msprof_analyze/cluster_analyse/cluster_analysis.py": {
+      "defined_at": 50,
+      "calls": [
+        "create_connect_db@msprof_analyze/prof_common/db_manager.py",
+        "execute_sql@msprof_analyze/prof_common/db_manager.py"
+      ],
+      "called_by": [
+        "cluster_cli@msprof_analyze/cli/cluster_cli.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "click.option@msprof_analyze/cli/analyze_cli.py:40",
+      "path": [
+        "PathManager.expanduser_for_cli@msprof_analyze/cli/analyze_cli.py:42",
+        "AnalyzerController.do_analysis@msprof_analyze/cli/analyze_cli.py:74"
+      ],
+      "sink": "read_json_file@msprof_analyze/prof_common/file_manager.py:44",
+      "sink_type": "file_read"
+    },
+    {
+      "source": "click.option@msprof_analyze/cli/cluster_cli.py:28",
+      "path": [
+        "PathManager.expanduser_for_cli@msprof_analyze/cli/cluster_cli.py:29",
+        "Interface.run@msprof_analyze/cli/cluster_cli.py:51"
+      ],
+      "sink": "create_connect_db@msprof_analyze/prof_common/db_manager.py:47",
+      "sink_type": "database_connection"
+    },
+    {
+      "source": "open(file_path, 'r')@msprof_analyze/prof_common/file_manager.py:43",
+      "path": [
+        "json_file.read()@msprof_analyze/prof_common/file_manager.py:44"
+      ],
+      "sink": "json.loads@msprof_analyze/prof_common/file_manager.py:44",
+      "sink_type": "json_parse"
+    },
+    {
+      "source": "open(file_path, 'r')@msprof_analyze/prof_common/file_manager.py:90",
+      "path": [
+        "yaml_file.read()@msprof_analyze/prof_common/file_manager.py:91"
+      ],
+      "sink": "yaml.safe_load@msprof_analyze/prof_common/file_manager.py:91",
+      "sink_type": "yaml_parse"
+    },
+    {
+      "source": "sqlite3.connect(db_path)@msprof_analyze/prof_common/db_manager.py:47",
+      "path": [
+        "conn.cursor()@msprof_analyze/prof_common/db_manager.py:63"
+      ],
+      "sink": "curs.execute(sql)@msprof_analyze/prof_common/db_manager.py:127",
+      "sink_type": "sql_execution"
+    },
+    {
+      "source": "open(file, encoding='utf-8')@msprof_analyze/advisor/dataset/profiling/profiling_parser.py:174",
+      "path": [
+        "csv.reader(csv_file)@msprof_analyze/advisor/dataset/profiling/profiling_parser.py:176"
+      ],
+      "sink": "row_data.append(row)@msprof_analyze/advisor/dataset/profiling/profiling_parser.py:177",
+      "sink_type": "csv_parse"
+    },
+    {
+      "source": "os.getenv@msprof_analyze/prof_common/logger.py:20",
+      "path": [],
+      "sink": "log_level.upper()@msprof_analyze/prof_common/logger.py:20",
+      "sink_type": "config_read"
+    },
+    {
+      "source": "os.getenv@msprof_analyze/advisor/utils/utils.py:129",
+      "path": [],
+      "sink": "min(int(...), Constant.ADVISOR_MAX_PROCESSES)@msprof_analyze/advisor/utils/utils.py:129",
+      "sink_type": "config_read"
+    },
+    {
+      "source": "open(self.timeline_file, 'r')@msprof_analyze/advisor/dataset/timeline_event_dataset.py:176",
+      "path": [
+        "f.read()@msprof_analyze/advisor/dataset/timeline_event_dataset.py:177"
+      ],
+      "sink": "json.loads@msprof_analyze/advisor/dataset/timeline_event_dataset.py:178",
+      "sink_type": "json_parse"
+    },
+    {
+      "source": "open(self._json_path, 'r')@msprof_analyze/compare_tools/compare_backend/profiling_parser/base_profiling_parser.py:407",
+      "path": [
+        "file.read()@msprof_analyze/compare_tools/compare_backend/profiling_parser/base_profiling_parser.py:408"
+      ],
+      "sink": "json.loads@msprof_analyze/compare_tools/compare_backend/profiling_parser/base_profiling_parser.py:409",
+      "sink_type": "json_parse"
+    },
+    {
+      "source": "pd.read_sql(sql, conn)@msprof_analyze/advisor/dataset/profiling/profiling_parser.py:105",
+      "path": [],
+      "sink": "data@msprof_analyze/advisor/dataset/profiling/profiling_parser.py:106",
+      "sink_type": "sql_query"
+    }
+  ]
+}

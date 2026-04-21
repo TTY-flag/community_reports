@@ -1,0 +1,408 @@
+{
+  "functions": {
+    "CustomDBI::SetConfig@csrc/core/BinaryInstrumentation.cpp:250": {
+      "defined_at": 250,
+      "calls": [
+        "dlopen@libc",
+        "dlsym@libc"
+      ],
+      "called_by": [
+        "DBIFactory::Create@csrc/core/BinaryInstrumentation.cpp:286"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "加载用户指定的插件 SO 文件并查找 MSBitStart 函数"
+    },
+    "CustomDBI::Convert@csrc/core/BinaryInstrumentation.cpp:201": {
+      "defined_at": 201,
+      "calls": [
+        "GenerateTempProbe@csrc/core/BinaryInstrumentation.cpp:171",
+        "GenerateOrderingFile@csrc/core/BinaryInstrumentation.cpp:131",
+        "GenerateKernelWithProbe@csrc/core/BinaryInstrumentation.cpp:184",
+        "PipeCall@csrc/utils/PipeCall.cpp:156",
+        "Chmod@csrc/utils/FileSystem.cpp:48",
+        "WriteStringToFile@csrc/utils/FileSystem.cpp:137",
+        "JoinPath@csrc/utils/FileSystem.cpp:56"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "执行自定义二进制插桩，调用多个外部工具处理 kernel 文件"
+    },
+    "BBCountDBI::Convert@csrc/core/BinaryInstrumentation.cpp:65": {
+      "defined_at": 65,
+      "calls": [
+        "PipeCall@csrc/utils/PipeCall.cpp:156",
+        "Chmod@csrc/utils/FileSystem.cpp:48"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "执行 bbcount 插桩，调用 bisheng-tune 工具"
+    },
+    "PGODBI::Convert@csrc/core/BinaryInstrumentation.cpp:106": {
+      "defined_at": 106,
+      "calls": [
+        "PipeCall@csrc/utils/PipeCall.cpp:156",
+        "Chmod@csrc/utils/FileSystem.cpp:48"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "执行 PGO 插桩，调用 bisheng-tune 工具"
+    },
+    "PipeCall@csrc/utils/PipeCall.cpp:156": {
+      "defined_at": 156,
+      "calls": [
+        "fork@libc",
+        "execvp@libc",
+        "dup2@libc",
+        "close@libc",
+        "write@libc",
+        "read@libc",
+        "waitpid@libc"
+      ],
+      "called_by": [
+        "BBCountDBI::Convert@csrc/core/BinaryInstrumentation.cpp:98",
+        "PGODBI::Convert@csrc/core/BinaryInstrumentation.cpp:120",
+        "CustomDBI::GenerateTempProbe@csrc/core/BinaryInstrumentation.cpp:177",
+        "CustomDBI::GenerateOrderingFile@csrc/core/BinaryInstrumentation.cpp:137",
+        "CustomDBI::GenerateKernelWithProbe@csrc/core/BinaryInstrumentation.cpp:193",
+        "CustomDBI::Convert@csrc/core/BinaryInstrumentation.cpp:242",
+        "RegisterContext::ParseBinary@csrc/runtime/inject_helpers/RegisterContext.cpp:68"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "使用 fork+execvp 执行外部命令，存在命令注入风险"
+    },
+    "DomainSocketServer::ListenAndBind@csrc/core/DomainSocket.cpp:54": {
+      "defined_at": 54,
+      "calls": [
+        "socket@libc",
+        "bind@libc",
+        "listen@libc"
+      ],
+      "called_by": [],
+      "receives_external_input": false,
+      "risk": "High",
+      "description": "Unix Domain Socket 服务端绑定和监听"
+    },
+    "DomainSocketServer::Accept@csrc/core/DomainSocket.cpp:61": {
+      "defined_at": 61,
+      "calls": [
+        "accept@libc"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "接受客户端连接，潜在 IPC 数据接收风险"
+    },
+    "DomainSocketServer::Read@csrc/core/DomainSocket.cpp:77": {
+      "defined_at": 77,
+      "calls": [
+        "read@libc"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "从 IPC 客户端读取数据"
+    },
+    "DomainSocketServer::Write@csrc/core/DomainSocket.cpp:87": {
+      "defined_at": 87,
+      "calls": [
+        "write@libc"
+      ],
+      "called_by": [],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "向 IPC 客户端写入数据"
+    },
+    "ReadBinary@csrc/utils/FileSystem.cpp:114": {
+      "defined_at": 114,
+      "calls": [
+        "open@libc",
+        "read@libc",
+        "close@libc"
+      ],
+      "called_by": [
+        "KernelRunner::LoadKernel@csrc/tools/kernel_launcher/KernelRunner.cpp:46",
+        "KernelReplacement::LoadKernel@csrc/runtime/inject_helpers/KernelReplacement.cpp:75",
+        "RegisterContext::ParseBinary@csrc/runtime/inject_helpers/RegisterContext.cpp:308"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "读取二进制文件，潜在路径遍历风险"
+    },
+    "ReadFile@csrc/utils/FileSystem.cpp:124": {
+      "defined_at": 124,
+      "calls": [
+        "open@libc",
+        "read@libc",
+        "close@libc"
+      ],
+      "called_by": [
+        "Launcher::Launch@csrc/tools/kernel_launcher/Launcher.cpp:146",
+        "KernelRunner::Run@csrc/tools/kernel_launcher/KernelRunner.cpp:141"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "读取文件到缓冲区，需要确保路径安全"
+    },
+    "WriteBinary@csrc/utils/FileSystem.cpp:125": {
+      "defined_at": 125,
+      "calls": [
+        "open@libc",
+        "write@libc",
+        "close@libc"
+      ],
+      "called_by": [
+        "ProfTask::Dump@csrc/runtime/inject_helpers/ProfTask.cpp:583",
+        "BBCountDumper::Dump@csrc/runtime/inject_helpers/BBCountDumper.cpp:116",
+        "KernelContext::WriteKernel@csrc/runtime/inject_helpers/KernelContext.cpp:294"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "写入二进制数据到文件"
+    },
+    "GetEnv@csrc/utils/FileSystem.cpp:118": {
+      "defined_at": 118,
+      "calls": [
+        "getenv@libc"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "读取环境变量"
+    },
+    "GetAscendHomePath@csrc/utils/Environment.cpp:24": {
+      "defined_at": 24,
+      "calls": [
+        "getenv@libc"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "从环境变量获取 ASCEND_HOME_PATH"
+    },
+    "FunctionLoader::Load@csrc/core/FunctionLoader.cpp:52": {
+      "defined_at": 52,
+      "calls": [
+        "dlopen@libc",
+        "dlsym@libc"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "加载动态库并查找函数符号"
+    },
+    "HijackedFuncOfKernelLaunch::Pre@csrc/runtime/HijackedFuncOfKernelLaunch.cpp:87": {
+      "defined_at": 87,
+      "calls": [
+        "InitParam@csrc/runtime/HijackedFuncOfKernelLaunch.cpp:93",
+        "ProfPre@csrc/runtime/HijackedFuncOfKernelLaunch.cpp:95",
+        "SanitizerPre@csrc/runtime/HijackedFuncOfKernelLaunch.cpp:97"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "劫持 kernel launch API，处理用户参数"
+    },
+    "HijackedFuncOfMalloc::Pre@csrc/runtime/HijackedFuncOfMalloc.cpp:365": {
+      "defined_at": 365,
+      "calls": [],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "劫持内存分配 API，记录内存分配请求"
+    },
+    "HijackedFuncOfMemcpy::Pre@csrc/runtime/HijackedFuncOfMemcpy.cpp:409": {
+      "defined_at": 409,
+      "calls": [],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "劫持内存拷贝 API，记录内存拷贝操作"
+    },
+    "ProfDataCollect::Launch@csrc/runtime/inject_helpers/ProfDataCollect.cpp:439": {
+      "defined_at": 439,
+      "calls": [
+        "fork@libc",
+        "execvpe@libc"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "fork+execvpe 执行 kernel launcher 工具"
+    },
+    "RegisterContext::ParseBinary@csrc/runtime/inject_helpers/RegisterContext.cpp:68": {
+      "defined_at": 68,
+      "calls": [
+        "PipeCall@csrc/utils/PipeCall.cpp:156"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "解析 kernel 二进制文件，调用 llvm-objdump 和 grep"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "config.pluginPath@BinaryInstrumentation.h:53",
+      "path": [
+        "CustomDBI::SetConfig@csrc/core/BinaryInstrumentation.cpp:250",
+        "dlopen@csrc/core/BinaryInstrumentation.cpp:260"
+      ],
+      "sink": "handle_@BinaryInstrumentation.h:119",
+      "sink_type": "dynamic_library_handle"
+    },
+    {
+      "source": "handle_@BinaryInstrumentation.h:119",
+      "path": [
+        "dlsym@csrc/core/BinaryInstrumentation.cpp:265"
+      ],
+      "sink": "initFunc_@BinaryInstrumentation.h:118",
+      "sink_type": "function_pointer"
+    },
+    {
+      "source": "initFunc_@BinaryInstrumentation.h:118",
+      "path": [
+        "CustomDBI::Convert@csrc/core/BinaryInstrumentation.cpp:227"
+      ],
+      "sink": "PluginInitFunc call@csrc/core/BinaryInstrumentation.cpp:227",
+      "sink_type": "function_call"
+    },
+    {
+      "source": "oldKernelFile@BinaryInstrumentation.h:63",
+      "path": [
+        "CustomDBI::Convert@csrc/core/BinaryInstrumentation.cpp:218",
+        "GenerateOrderingFile@csrc/core/BinaryInstrumentation.cpp:131",
+        "PipeCall@csrc/utils/PipeCall.cpp:156",
+        "llvm-objdump@BinaryInstrumentation.cpp:135"
+      ],
+      "sink": "execvp@csrc/utils/PipeCall.cpp:190",
+      "sink_type": "process_execution"
+    },
+    {
+      "source": "args@PipeCall.cpp:156",
+      "path": [
+        "ToRawCArgv@PipeCall.cpp",
+        "execvp@csrc/utils/PipeCall.cpp:190"
+      ],
+      "sink": "process_execution",
+      "sink_type": "process_execution"
+    },
+    {
+      "source": "cmd@RegisterContext.cpp:68",
+      "path": [
+        "PipeCall@csrc/utils/PipeCall.cpp:156",
+        "fork@csrc/utils/PipeCall.cpp:173",
+        "execvp@csrc/utils/PipeCall.cpp:190"
+      ],
+      "sink": "llvm-objdump process",
+      "sink_type": "process_execution"
+    },
+    {
+      "source": "binaryData@RegisterContext.cpp:68",
+      "path": [
+        "PipeCall@csrc/utils/PipeCall.cpp:156",
+        "write@csrc/utils/PipeCall.cpp:132"
+      ],
+      "sink": "child process stdin",
+      "sink_type": "stdin_pipe"
+    },
+    {
+      "source": "filename@FileSystem.cpp:114",
+      "path": [
+        "ReadBinary@csrc/utils/FileSystem.cpp:114",
+        "open@libc",
+        "read@libc"
+      ],
+      "sink": "data buffer",
+      "sink_type": "memory_buffer"
+    },
+    {
+      "source": "filePath@FileSystem.cpp:124",
+      "path": [
+        "ReadFile@csrc/utils/FileSystem.cpp:124",
+        "open@libc",
+        "read@libc"
+      ],
+      "sink": "buffer",
+      "sink_type": "memory_buffer"
+    },
+    {
+      "source": "socketPath@DomainSocket.cpp:33",
+      "path": [
+        "DomainSocketServer::ListenAndBind@csrc/core/DomainSocket.cpp:54",
+        "bind@libc"
+      ],
+      "sink": "socket file",
+      "sink_type": "socket_binding"
+    },
+    {
+      "source": "args@HijackedFuncOfKernelLaunch.cpp:87",
+      "path": [
+        "HijackedFuncOfKernelLaunch::Pre@csrc/runtime/HijackedFuncOfKernelLaunch.cpp:87",
+        "InitParam@csrc/runtime/HijackedFuncOfKernelLaunch.cpp:93",
+        "argsVec_@HijackedFunc.h:113"
+      ],
+      "sink": "memory copy",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "args@HijackedFuncOfKernelLaunch.cpp:87",
+      "path": [
+        "ProfPre@csrc/runtime/HijackedFuncOfKernelLaunch.cpp:95",
+        "ProfDataCollect@csrc/runtime/inject_helpers/ProfDataCollect.cpp"
+      ],
+      "sink": "profiling data collection",
+      "sink_type": "data_collection"
+    },
+    {
+      "source": "devPtr@HijackedFuncOfMalloc.cpp:365",
+      "path": [
+        "HijackedFuncOfMalloc::Pre@csrc/runtime/HijackedFuncOfMalloc.cpp:365",
+        "size_@HijackedFunc.h:369"
+      ],
+      "sink": "memory allocation tracking",
+      "sink_type": "memory_tracking"
+    },
+    {
+      "source": "src@HijackedFuncOfMemcpy.cpp:409",
+      "path": [
+        "HijackedFuncOfMemcpy::Pre@csrc/runtime/HijackedFuncOfMemcpy.cpp:409",
+        "SanitizerPre@csrc/runtime/HijackedFuncOfKernelLaunch.cpp:97"
+      ],
+      "sink": "memory sanitizer check",
+      "sink_type": "sanitizer_check"
+    },
+    {
+      "source": "envKey@FileSystem.cpp:118",
+      "path": [
+        "GetEnv@csrc/utils/FileSystem.cpp:118",
+        "getenv@libc"
+      ],
+      "sink": "environment value",
+      "sink_type": "env_value"
+    },
+    {
+      "source": "ASCEND_HOME_PATH env",
+      "path": [
+        "GetAscendHomePath@csrc/utils/Environment.cpp:24",
+        "getenv@libc"
+      ],
+      "sink": "ascendHomePath string",
+      "sink_type": "path_value"
+    },
+    {
+      "source": "kernelLaunchBinPath_@ProfDataCollect.cpp:439",
+      "path": [
+        "ProfDataCollect::Launch@csrc/runtime/inject_helpers/ProfDataCollect.cpp:439",
+        "fork@libc",
+        "execvpe@libc"
+      ],
+      "sink": "kernel launcher process",
+      "sink_type": "process_execution"
+    }
+  ]
+}

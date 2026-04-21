@@ -1,0 +1,68 @@
+{
+  "scan_id": "72cc2094-f0eb-4cdd-ac4c-fd6a9344c713",
+  "start_time": "2026-04-20T23:50:00+08:00",
+  "end_time": "2026-04-21T00:15:00+08:00",
+  "duration_seconds": 1500,
+  "status": "success",
+  "project_name": "MindStudio-CommReport",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/shenteng/MindStudio/MindStudio-CommReport",
+  "language": "python",
+  "source_files": 88,
+  "code_lines": 11626,
+  "agents": [
+    {
+      "name": "architecture",
+      "phase": 2,
+      "status": "success",
+      "duration_seconds": 392,
+      "output_files": [
+        "scan-results/.context/project_model.json",
+        "scan-results/.context/call_graph.json"
+      ]
+    },
+    {
+      "name": "dataflow-scanner",
+      "phase": 3,
+      "status": "success",
+      "duration_seconds": 364,
+      "findings": 3,
+      "modules_scanned": ["config", "parser"]
+    },
+    {
+      "name": "security-auditor",
+      "phase": 3,
+      "status": "success",
+      "duration_seconds": 285,
+      "findings": 7,
+      "modules_scanned": ["cli", "config", "parser", "detector"]
+    },
+    {
+      "name": "verification",
+      "phase": 4,
+      "status": "success",
+      "duration_seconds": 193,
+      "findings_verified": 10,
+      "false_positives": 8,
+      "possible": 2,
+      "confirmed": 0
+    },
+    {
+      "name": "reporter",
+      "phase": 5,
+      "status": "success",
+      "duration_seconds": 227,
+      "output_files": [
+        "scan-results/report_confirmed.md",
+        "scan-results/report_unconfirmed.md"
+      ]
+    }
+  ],
+  "summary": {
+    "total_candidates": 10,
+    "false_positives": 8,
+    "possible": 2,
+    "confirmed": 0,
+    "likely": 0,
+    "modules_with_findings": ["config", "parser", "cli"]
+  }
+}

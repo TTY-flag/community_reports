@@ -1,0 +1,237 @@
+{
+  "functions": {
+    "main@msprof_entrance.py": {
+      "defined_at": 107,
+      "calls": [
+        "construct_arg_parser@msprof_entrance.py",
+        "check_path_char_valid@msprof_common.py",
+        "check_path_valid@msprof_common.py",
+        "ExportCommand@msprof_export.py",
+        "QueryCommand@msprof_query.py",
+        "ImportCommand@msprof_import.py",
+        "AnalyzeCommand@msprof_analyze.py"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "主 CLI 入口，接收命令行参数并调度命令处理器"
+    },
+    "check_path_char_valid@msprof_common.py": {
+      "defined_at": 127,
+      "calls": [],
+      "called_by": [
+        "main@msprof_entrance.py",
+        "main@get_msprof_info.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "验证路径字符有效性，防止路径注入"
+    },
+    "check_path_valid@msprof_common.py": {
+      "defined_at": 104,
+      "calls": [
+        "os.path.realpath@python_stdlib",
+        "os.path.exists@python_stdlib"
+      ],
+      "called_by": [
+        "main@msprof_entrance.py",
+        "main@get_msprof_info.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "验证路径有效性，检查路径是否存在"
+    },
+    "ExportCommand.process@msprof_export.py": {
+      "defined_at": 100,
+      "calls": [
+        "check_path_valid@msprof_common.py",
+        "DBManager.create_table@db_manager.py",
+        "FileManager.remove_file@file_manager.py",
+        "PathManager.get_data_dir@path_manager.py"
+      ],
+      "called_by": [
+        "_handle_export_command@msprof_entrance.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "处理导出命令，执行数据导出操作"
+    },
+    "FileManager.remove_file@file_manager.py": {
+      "defined_at": 41,
+      "calls": [
+        "os.path.isfile@python_stdlib",
+        "os.remove@python_stdlib"
+      ],
+      "called_by": [
+        "ExportCommand.process@msprof_export.py",
+        "ImportCommand.process@msprof_import.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "删除文件，接收文件路径参数"
+    },
+    "DBManager.create_table@db_manager.py": {
+      "defined_at": 150,
+      "calls": [
+        "sqlite3.connect@python_stdlib",
+        "cursor.execute@python_stdlib"
+      ],
+      "called_by": [
+        "ExportCommand.process@msprof_export.py",
+        "ImportCommand.process@msprof_import.py",
+        "AnalyzeCommand.process@msprof_analyze.py"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "创建数据库表，使用 SQLite3 API"
+    },
+    "PathManager.get_data_dir@path_manager.py": {
+      "defined_at": 68,
+      "calls": [
+        "os.path.join@python_stdlib"
+      ],
+      "called_by": [
+        "ExportCommand.process@msprof_export.py",
+        "FileManager.is_analyzed_data@file_manager.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "获取数据目录路径，接收用户提供的根目录"
+    },
+    "InfoConfReader.read@info_conf_reader.py": {
+      "defined_at": 50,
+      "calls": [
+        "json.load@python_stdlib",
+        "FileManager.check_file_readable@file_manager.py"
+      ],
+      "called_by": [
+        "ExportCommand.process@msprof_export.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "读取 JSON 配置文件，解析用户提供的配置"
+    },
+    "main@get_msprof_info.py": {
+      "defined_at": 80,
+      "calls": [
+        "construct_argument_parser@get_msprof_info.py",
+        "check_path_char_valid@msprof_common.py",
+        "check_path_valid@msprof_common.py",
+        "load_basic_info_model@get_msprof_info.py"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "基本信息查询入口，接收路径参数"
+    },
+    "main@entrance.py": {
+      "defined_at": 14,
+      "calls": [
+        "argparse.ArgumentParser.parse_args@python_stdlib",
+        "cpu_binder.run@cpu_binder.py"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "主机分析工具入口，接收配置文件路径"
+    },
+    "MonitorLogger.get_log_path@function_monitor.py": {
+      "defined_at": 60,
+      "calls": [
+        "os.getenv@python_stdlib",
+        "FileManager.make_dir_safety@file_manager.py"
+      ],
+      "called_by": [
+        "create_log_file@function_monitor.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "从环境变量获取日志路径"
+    },
+    "cpu_parser.parse@cpu_parser.py": {
+      "defined_at": 50,
+      "calls": [
+        "open@python_stdlib",
+        "DBManager.insert_data@db_manager.py"
+      ],
+      "called_by": [
+        "parse_hardware_data@hardware_parser.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "解析 CPU 性能数据文件，读取二进制数据"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "sys.argv@msprof_entrance.py:114",
+      "path": [
+        "parser.parse_args()@msprof_entrance.py:114",
+        "args.collection_path@msprof_entrance.py:120",
+        "check_path_char_valid(args.collection_path)@msprof_entrance.py:119",
+        "check_path_valid(args.collection_path)@msprof_entrance.py:120",
+        "os.path.realpath(args.collection_path)@msprof_entrance.py:121"
+      ],
+      "sink": "os.path.realpath@msprof_entrance.py:121",
+      "sink_type": "path_operation",
+      "description": "命令行参数 → 路径验证函数 → os.path.realpath 调用"
+    },
+    {
+      "source": "args.collection_path@msprof_entrance.py:120",
+      "path": [
+        "ExportCommand(args)@msprof_entrance.py:64",
+        "ExportCommand.process()@msprof_export.py:100",
+        "PathManager.get_data_dir(args.collection_path)@msprof_export.py:200",
+        "os.path.join(result_dir, 'data')@path_manager.py:72"
+      ],
+      "sink": "os.path.join@path_manager.py:72",
+      "sink_type": "path_operation",
+      "description": "用户提供的路径 → 导出命令 → 路径管理器 → 路径拼接操作"
+    },
+    {
+      "source": "args.reports_path@msprof_entrance.py:56",
+      "path": [
+        "ExportCommand(args)@msprof_entrance.py:64",
+        "InfoConfReader.read(args.reports_path)@msprof_export.py:150",
+        "json.load(file)@info_conf_reader.py:60"
+      ],
+      "sink": "json.load@info_conf_reader.py:60",
+      "sink_type": "json_parser",
+      "description": "用户提供的 JSON 配置文件路径 → InfoConfReader → json.load 解析"
+    },
+    {
+      "source": "os.getenv('FUNCTION_MONITOR_LOG_PATH')@function_monitor.py:62",
+      "path": [
+        "MonitorLogger.get_log_path()@function_monitor.py:60",
+        "FileManager.make_dir_safety(log_path)@function_monitor.py:68",
+        "os.makedirs@file_manager.py:150"
+      ],
+      "sink": "os.makedirs@file_manager.py:150",
+      "sink_type": "file_operation",
+      "description": "环境变量 → 日志路径获取 → 文件管理器 → 创建目录"
+    },
+    {
+      "source": "binary_file@cpu_parser.py:50",
+      "path": [
+        "open(binary_file, 'rb')@cpu_parser.py:52",
+        "file.read()@cpu_parser.py:55",
+        "parse_binary_data(data)@cpu_parser.py:60",
+        "DBManager.insert_data(parsed_data)@cpu_parser.py:80",
+        "cursor.execute(sql)@db_manager.py:200"
+      ],
+      "sink": "cursor.execute@db_manager.py:200",
+      "sink_type": "database_operation",
+      "description": "二进制性能数据文件 → 读取解析 → 数据库插入"
+    },
+    {
+      "source": "args.config@entrance.py:19",
+      "path": [
+        "cpu_binder.run(args.config)@cpu_binder.py:30",
+        "json.load(config_file)@cpu_binder.py:50"
+      ],
+      "sink": "json.load@cpu_binder.py:50",
+      "sink_type": "json_parser",
+      "description": "配置文件路径 → CPU 绑核工具 → JSON 解析"
+    }
+  ]
+}

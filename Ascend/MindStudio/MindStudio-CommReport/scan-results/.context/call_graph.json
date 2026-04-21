@@ -1,0 +1,543 @@
+{
+  "functions": {
+    "main@log_analyzer/cli/main.py": {
+      "defined_at": 287,
+      "calls": [
+        "create_parser@log_analyzer/cli/main.py",
+        "LogAnalyzerCLI.run@log_analyzer/cli/main.py"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "create_parser@log_analyzer/cli/main.py": {
+      "defined_at": 253,
+      "calls": [],
+      "called_by": [
+        "main@log_analyzer/cli/main.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "LogAnalyzerCLI.run@log_analyzer/cli/main.py": {
+      "defined_at": 87,
+      "calls": [
+        "LogAnalyzerCLI._validate_args@log_analyzer/cli/main.py",
+        "get_default_config_path@log_analyzer/cli/main.py",
+        "LogAnalyzerCLI.load_config@log_analyzer/cli/main.py",
+        "LogAnalyzerCLI._analyze_logs@log_analyzer/cli/main.py"
+      ],
+      "called_by": [
+        "main@log_analyzer/cli/main.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "LogAnalyzerCLI.load_config@log_analyzer/cli/main.py": {
+      "defined_at": 52,
+      "calls": [
+        "ConfigManager@log_analyzer/config/loader.py",
+        "ConfigManager.load@log_analyzer/config/loader.py",
+        "VariableReplacer@log_analyzer/config/replacer.py",
+        "LogParser@log_analyzer/parser/log_parser.py",
+        "FaultAnalyzer@log_analyzer/detector/fault_analyzer.py"
+      ],
+      "called_by": [
+        "LogAnalyzerCLI.run@log_analyzer/cli/main.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "LogAnalyzerCLI._analyze_logs@log_analyzer/cli/main.py": {
+      "defined_at": 171,
+      "calls": [
+        "LogAnalyzerCLI._normalize_path@log_analyzer/cli/main.py",
+        "LogAnalyzerCLI._analyze_directory@log_analyzer/cli/main.py"
+      ],
+      "called_by": [
+        "LogAnalyzerCLI.run@log_analyzer/cli/main.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "LogAnalyzerCLI._analyze_directory@log_analyzer/cli/main.py": {
+      "defined_at": 188,
+      "calls": [
+        "LogParser.parse_with_context@log_analyzer/parser/log_parser.py",
+        "LogAnalyzerCLI._perform_analysis@log_analyzer/cli/main.py"
+      ],
+      "called_by": [
+        "LogAnalyzerCLI._analyze_logs@log_analyzer/cli/main.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "LogAnalyzerCLI._perform_analysis@log_analyzer/cli/main.py": {
+      "defined_at": 208,
+      "calls": [
+        "FaultAnalyzer.analyze_files@log_analyzer/detector/fault_analyzer.py"
+      ],
+      "called_by": [
+        "LogAnalyzerCLI._analyze_directory@log_analyzer/cli/main.py"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "ConfigManager@log_analyzer/config/loader.py": {
+      "defined_at": 67,
+      "calls": [
+        "ConfigLoader@log_analyzer/config/loader.py",
+        "ConfigParser@log_analyzer/config/parser.py"
+      ],
+      "called_by": [
+        "LogAnalyzerCLI.load_config@log_analyzer/cli/main.py"
+      ],
+      "receives_external_input": false,
+      "risk": "Low"
+    },
+    "ConfigManager.load@log_analyzer/config/loader.py": {
+      "defined_at": 91,
+      "calls": [
+        "ConfigLoader.load_yaml_file@log_analyzer/config/loader.py",
+        "ConfigManager._parse_config@log_analyzer/config/loader.py"
+      ],
+      "called_by": [
+        "LogAnalyzerCLI.load_config@log_analyzer/cli/main.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "ConfigLoader.load_yaml_file@log_analyzer/config/loader.py": {
+      "defined_at": 42,
+      "calls": [
+        "yaml.safe_load@stdlib"
+      ],
+      "called_by": [
+        "ConfigManager.load@log_analyzer/config/loader.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Low"
+    },
+    "ConfigManager._parse_config@log_analyzer/config/loader.py": {
+      "defined_at": 111,
+      "calls": [
+        "ConfigParser.parse_fault_categories@log_analyzer/config/parser.py"
+      ],
+      "called_by": [
+        "ConfigManager.load@log_analyzer/config/loader.py"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "ConfigParser.parse_fault_categories@log_analyzer/config/parser.py": {
+      "defined_at": 47,
+      "calls": [
+        "ConfigParser._parse_level2_categories@log_analyzer/config/parser.py",
+        "RegexValidator.validate_many@log_analyzer/config/validator.py"
+      ],
+      "called_by": [
+        "ConfigManager._parse_config@log_analyzer/config/loader.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "RegexValidator.validate@log_analyzer/config/validator.py": {
+      "defined_at": 178,
+      "calls": [
+        "re.compile@stdlib"
+      ],
+      "called_by": [
+        "ConfigParser._parse_solution_variables@log_analyzer/config/parser.py",
+        "RegexValidator.validate_many@log_analyzer/config/validator.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "LogParser@log_analyzer/parser/log_parser.py": {
+      "defined_at": 31,
+      "calls": [
+        "LogParser._compile_patterns@log_analyzer/parser/log_parser.py",
+        "LogEntryExtractor@log_analyzer/parser/extractors.py",
+        "FileParser@log_analyzer/parser/file_parser.py",
+        "WorkerParser@log_analyzer/parser/worker_parser.py"
+      ],
+      "called_by": [
+        "LogAnalyzerCLI.load_config@log_analyzer/cli/main.py"
+      ],
+      "receives_external_input": false,
+      "risk": "Low"
+    },
+    "LogParser._compile_patterns@log_analyzer/parser/log_parser.py": {
+      "defined_at": 55,
+      "calls": [
+        "re.compile@stdlib"
+      ],
+      "called_by": [
+        "LogParser@log_analyzer/parser/log_parser.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "LogParser.parse_with_context@log_analyzer/parser/log_parser.py": {
+      "defined_at": 70,
+      "calls": [
+        "WorkerParser.parse_with_context@log_analyzer/parser/worker_parser.py"
+      ],
+      "called_by": [
+        "LogAnalyzerCLI._analyze_directory@log_analyzer/cli/main.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "WorkerParser.parse_with_context@log_analyzer/parser/worker_parser.py": {
+      "defined_at": 47,
+      "calls": [
+        "WorkerParser._find_all_run_debug_pairs@log_analyzer/parser/worker_parser.py",
+        "WorkerParser._collect_file_info_in_pairs@log_analyzer/parser/worker_parser.py",
+        "WorkerParser._confirm_large_files@log_analyzer/parser/worker_parser.py",
+        "WorkerParser._parse_directory@log_analyzer/parser/worker_parser.py",
+        "CommDomainCreationParser.parse_from_parsed_log_files@log_analyzer/parser/comm_domain_creation_parser.py"
+      ],
+      "called_by": [
+        "LogParser.parse_with_context@log_analyzer/parser/log_parser.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "WorkerParser._confirm_large_files@log_analyzer/parser/worker_parser.py": {
+      "defined_at": 325,
+      "calls": [
+        "input@stdlib"
+      ],
+      "called_by": [
+        "WorkerParser.parse_with_context@log_analyzer/parser/worker_parser.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "WorkerParser._parse_directory@log_analyzer/parser/worker_parser.py": {
+      "defined_at": 170,
+      "calls": [
+        "WorkerParser._parse_log_files_in_dir@log_analyzer/parser/worker_parser.py"
+      ],
+      "called_by": [
+        "WorkerParser.parse_with_context@log_analyzer/parser/worker_parser.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "WorkerParser._parse_log_files_in_dir@log_analyzer/parser/worker_parser.py": {
+      "defined_at": 208,
+      "calls": [
+        "FileParser.parse_file@log_analyzer/parser/file_parser.py"
+      ],
+      "called_by": [
+        "WorkerParser._parse_directory@log_analyzer/parser/worker_parser.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "FileParser.parse_file@log_analyzer/parser/file_parser.py": {
+      "defined_at": 46,
+      "calls": [
+        "FileParser._parse_content@log_analyzer/parser/file_parser.py",
+        "ProcessIdExtractor.extract_from_filename@log_analyzer/parser/extractors.py"
+      ],
+      "called_by": [
+        "WorkerParser._parse_log_files_in_dir@log_analyzer/parser/worker_parser.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "FileParser._parse_content@log_analyzer/parser/file_parser.py": {
+      "defined_at": 81,
+      "calls": [
+        "open@stdlib",
+        "LogEntryExtractor.extract_entry@log_analyzer/parser/extractors.py"
+      ],
+      "called_by": [
+        "FileParser.parse_file@log_analyzer/parser/file_parser.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "LogEntryExtractor.extract_entry@log_analyzer/parser/extractors.py": {
+      "defined_at": 72,
+      "calls": [
+        "LogEntryExtractor._extract_timestamp@log_analyzer/parser/extractors.py",
+        "LogEntryExtractor._extract_level@log_analyzer/parser/extractors.py"
+      ],
+      "called_by": [
+        "FileParser._parse_content@log_analyzer/parser/file_parser.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "LogEntryExtractor._extract_timestamp@log_analyzer/parser/extractors.py": {
+      "defined_at": 101,
+      "calls": [
+        "re.Pattern.search@stdlib"
+      ],
+      "called_by": [
+        "LogEntryExtractor.extract_entry@log_analyzer/parser/extractors.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "FaultAnalyzer@log_analyzer/detector/fault_analyzer.py": {
+      "defined_at": 42,
+      "calls": [
+        "FaultDetector@log_analyzer/detector/fault_detector.py",
+        "StatisticsCalculator@log_analyzer/detector/statistics_calculator.py"
+      ],
+      "called_by": [
+        "LogAnalyzerCLI.load_config@log_analyzer/cli/main.py"
+      ],
+      "receives_external_input": false,
+      "risk": "Low"
+    },
+    "FaultAnalyzer.analyze_files@log_analyzer/detector/fault_analyzer.py": {
+      "defined_at": 78,
+      "calls": [
+        "FaultDetector.detect_in_files@log_analyzer/detector/fault_detector.py",
+        "StatisticsCalculator.calculate@log_analyzer/detector/statistics_calculator.py",
+        "FaultDeduplicator.deduplicate@log_analyzer/detector/fault_deduplicator.py",
+        "FaultAnalyzer._process_complex_faults@log_analyzer/detector/fault_analyzer.py"
+      ],
+      "called_by": [
+        "LogAnalyzerCLI._perform_analysis@log_analyzer/cli/main.py"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "FaultAnalyzer._process_complex_faults@log_analyzer/detector/fault_analyzer.py": {
+      "defined_at": 124,
+      "calls": [
+        "RankNotConnectedDecisionEngine.process@log_analyzer/detector/processors/rank_not_connected/decision_engine.py",
+        "ParamPlaneLinkEstablishDecisionEngine.process@log_analyzer/detector/processors/param_plane_link_establish/decision_engine.py",
+        "ExecTimeoutEngine.process@log_analyzer/detector/processors/exec_timeout/decision_engine.py",
+        "ExecDiffEngine.process@log_analyzer/detector/processors/exec_diff/decision_engine.py"
+      ],
+      "called_by": [
+        "FaultAnalyzer.analyze_files@log_analyzer/detector/fault_analyzer.py"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "FaultDetector@log_analyzer/detector/fault_detector.py": {
+      "defined_at": 33,
+      "calls": [
+        "PatternMatcher@log_analyzer/detector/pattern_matcher.py"
+      ],
+      "called_by": [
+        "FaultAnalyzer@log_analyzer/detector/fault_analyzer.py"
+      ],
+      "receives_external_input": false,
+      "risk": "Low"
+    },
+    "FaultDetector.detect_in_files@log_analyzer/detector/fault_detector.py": {
+      "defined_at": 315,
+      "calls": [
+        "FaultDetector.detect_in_file@log_analyzer/detector/fault_detector.py"
+      ],
+      "called_by": [
+        "FaultAnalyzer.analyze_files@log_analyzer/detector/fault_analyzer.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "FaultDetector.detect_in_file@log_analyzer/detector/fault_detector.py": {
+      "defined_at": 276,
+      "calls": [
+        "FaultDetector.detect_in_entry@log_analyzer/detector/fault_detector.py",
+        "FaultDetector._extract_comm_domain_identifier_from_text@log_analyzer/detector/fault_detector.py"
+      ],
+      "called_by": [
+        "FaultDetector.detect_in_files@log_analyzer/detector/fault_detector.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "FaultDetector.detect_in_entry@log_analyzer/detector/fault_detector.py": {
+      "defined_at": 153,
+      "calls": [
+        "PatternMatcher.match_line@log_analyzer/detector/pattern_matcher.py",
+        "FaultDetector._create_fault_instance@log_analyzer/detector/fault_detector.py"
+      ],
+      "called_by": [
+        "FaultDetector.detect_in_file@log_analyzer/detector/fault_detector.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "FaultDetector._extract_comm_domain_identifier_from_text@log_analyzer/detector/fault_detector.py": {
+      "defined_at": 86,
+      "calls": [
+        "re.Pattern.search@stdlib"
+      ],
+      "called_by": [
+        "FaultDetector.detect_in_file@log_analyzer/detector/fault_detector.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "PatternMatcher@log_analyzer/detector/pattern_matcher.py": {
+      "defined_at": 28,
+      "calls": [
+        "PatternMatcher._compile_patterns@log_analyzer/detector/pattern_matcher.py"
+      ],
+      "called_by": [
+        "FaultDetector@log_analyzer/detector/fault_detector.py"
+      ],
+      "receives_external_input": false,
+      "risk": "Low"
+    },
+    "PatternMatcher._compile_patterns@log_analyzer/detector/pattern_matcher.py": {
+      "defined_at": 46,
+      "calls": [
+        "re.compile@stdlib"
+      ],
+      "called_by": [
+        "PatternMatcher@log_analyzer/detector/pattern_matcher.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "PatternMatcher.match_line@log_analyzer/detector/pattern_matcher.py": {
+      "defined_at": 69,
+      "calls": [
+        "re.Pattern.search@stdlib"
+      ],
+      "called_by": [
+        "FaultDetector.detect_in_entry@log_analyzer/detector/fault_detector.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "VariableExtractorEngine._extract_all_matches@log_analyzer/config/extractor.py": {
+      "defined_at": 163,
+      "calls": [
+        "re.finditer@stdlib"
+      ],
+      "called_by": [
+        "VariableExtractorEngine._extract_single_variable@log_analyzer/config/extractor.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "VariableExtractorEngine._extract_first_match@log_analyzer/config/extractor.py": {
+      "defined_at": 199,
+      "calls": [
+        "re.search@stdlib"
+      ],
+      "called_by": [
+        "VariableExtractorEngine._extract_single_variable@log_analyzer/config/extractor.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "VariableReplacer.replace_in_solution@log_analyzer/config/replacer.py": {
+      "defined_at": 109,
+      "calls": [
+        "VariableExtractorEngine.extract_variables@log_analyzer/config/extractor.py"
+      ],
+      "called_by": [
+        "FaultDetector._prepare_solutions@log_analyzer/detector/fault_detector.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "argparse.parse_args@log_analyzer/cli/main.py:295",
+      "path": [
+        "main@log_analyzer/cli/main.py:287",
+        "LogAnalyzerCLI.run@log_analyzer/cli/main.py:87",
+        "LogAnalyzerCLI._analyze_logs@log_analyzer/cli/main.py:171",
+        "LogAnalyzerCLI._analyze_directory@log_analyzer/cli/main.py:188",
+        "LogParser.parse_with_context@log_analyzer/parser/log_parser.py:70",
+        "WorkerParser.parse_with_context@log_analyzer/parser/worker_parser.py:47"
+      ],
+      "sink": "Path.exists@log_analyzer/parser/worker_parser.py:72",
+      "sink_type": "file_operation"
+    },
+    {
+      "source": "yaml.safe_load@log_analyzer/config/loader.py:64",
+      "path": [
+        "ConfigLoader.load_yaml_file@log_analyzer/config/loader.py:42",
+        "ConfigManager._parse_config@log_analyzer/config/loader.py:111",
+        "ConfigParser.parse_fault_categories@log_analyzer/config/parser.py:47",
+        "ConfigParser._parse_level3_category@log_analyzer/config/parser.py:117",
+        "RegexValidator.validate_many@log_analyzer/config/validator.py:228"
+      ],
+      "sink": "re.compile@log_analyzer/config/validator.py:222",
+      "sink_type": "regex_operation"
+    },
+    {
+      "source": "open@log_analyzer/parser/file_parser.py:99",
+      "path": [
+        "FileParser._parse_content@log_analyzer/parser/file_parser.py:81",
+        "LogEntryExtractor.extract_entry@log_analyzer/parser/extractors.py:72",
+        "LogEntryExtractor._extract_timestamp@log_analyzer/parser/extractors.py:101"
+      ],
+      "sink": "re.Pattern.search@log_analyzer/parser/extractors.py:107",
+      "sink_type": "regex_operation"
+    },
+    {
+      "source": "open@log_analyzer/parser/file_parser.py:99",
+      "path": [
+        "FileParser._parse_content@log_analyzer/parser/file_parser.py:81",
+        "FaultDetector.detect_in_file@log_analyzer/detector/fault_detector.py:276",
+        "FaultDetector._extract_comm_domain_identifier_from_text@log_analyzer/detector/fault_detector.py:86"
+      ],
+      "sink": "re.Pattern.search@log_analyzer/detector/fault_detector.py:109",
+      "sink_type": "regex_operation"
+    },
+    {
+      "source": "open@log_analyzer/parser/file_parser.py:99",
+      "path": [
+        "FileParser._parse_content@log_analyzer/parser/file_parser.py:81",
+        "FaultDetector.detect_in_file@log_analyzer/detector/fault_detector.py:276",
+        "FaultDetector.detect_in_entry@log_analyzer/detector/fault_detector.py:153",
+        "PatternMatcher.match_line@log_analyzer/detector/pattern_matcher.py:69"
+      ],
+      "sink": "re.Pattern.search@log_analyzer/detector/pattern_matcher.py:87",
+      "sink_type": "regex_operation"
+    },
+    {
+      "source": "yaml.safe_load@log_analyzer/config/loader.py:64",
+      "path": [
+        "ConfigLoader.load_yaml_file@log_analyzer/config/loader.py:42",
+        "ConfigManager._parse_config@log_analyzer/config/loader.py:111",
+        "ConfigParser.parse_fault_categories@log_analyzer/config/parser.py:47",
+        "PatternMatcher._compile_patterns@log_analyzer/detector/pattern_matcher.py:46"
+      ],
+      "sink": "re.compile@log_analyzer/detector/pattern_matcher.py:55",
+      "sink_type": "regex_operation"
+    },
+    {
+      "source": "open@log_analyzer/parser/file_parser.py:99",
+      "path": [
+        "FileParser._parse_content@log_analyzer/parser/file_parser.py:81",
+        "FaultDetector.detect_in_file@log_analyzer/detector/fault_detector.py:276",
+        "FaultDetector.detect_in_entry@log_analyzer/detector/fault_detector.py:153",
+        "FaultDetector._prepare_solutions@log_analyzer/detector/fault_detector.py:239",
+        "VariableReplacer.replace_in_solution@log_analyzer/config/replacer.py:109",
+        "VariableExtractorEngine.extract_variables@log_analyzer/config/extractor.py:36",
+        "VariableExtractorEngine._extract_single_variable@log_analyzer/config/extractor.py:137",
+        "VariableExtractorEngine._extract_first_match@log_analyzer/config/extractor.py:199"
+      ],
+      "sink": "re.search@log_analyzer/config/extractor.py:211",
+      "sink_type": "regex_operation"
+    },
+    {
+      "source": "input@log_analyzer/parser/worker_parser.py:343",
+      "path": [
+        "WorkerParser._confirm_large_files@log_analyzer/parser/worker_parser.py:325"
+      ],
+      "sink": "input@log_analyzer/parser/worker_parser.py:343",
+      "sink_type": "stdin"
+    }
+  ]
+}

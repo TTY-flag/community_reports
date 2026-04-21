@@ -1,0 +1,129 @@
+{
+  "scan_id": "scan_20260420_210000",
+  "start_time": "2026-04-20T21:00:00.000Z",
+  "end_time": "2026-04-20T23:01:00.000Z",
+  "duration_seconds": 7260,
+  "status": "success",
+  "project_name": "MindStudio-Ops-Profiler",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/shenteng/MindStudio/MindStudio-Ops-Profiler",
+  "language_composition": {
+    "cpp_count": 247,
+    "python_count": 11,
+    "project_type": "C/C++ + Python 混合项目"
+  },
+  "summary": {
+    "total_candidates": 66,
+    "after_dedup": 64,
+    "verified": 60,
+    "confirmed": 0,
+    "likely": 13,
+    "possible": 30,
+    "false_positive": 17,
+    "high_severity": 9,
+    "medium_severity": 18,
+    "low_severity": 37
+  },
+  "agents": [
+    {
+      "name": "architecture",
+      "start_time": "2026-04-20T21:50:00.000Z",
+      "end_time": "2026-04-20T21:56:50.000Z",
+      "duration_seconds": 410,
+      "status": "success",
+      "output_files": [
+        "scan-results/.context/project_model.json",
+        "scan-results/.context/call_graph.json",
+        "scan-results/threat_analysis_report.md"
+      ],
+      "summary": {
+        "total_files": 247,
+        "modules_count": 12,
+        "entry_points_count": 11,
+        "critical_modules": 3,
+        "high_modules": 6,
+        "medium_modules": 4
+      }
+    },
+    {
+      "name": "dataflow-scanner",
+      "start_time": "2026-04-20T21:57:00.000Z",
+      "end_time": "2026-04-20T22:02:44.000Z",
+      "duration_seconds": 344,
+      "status": "success",
+      "output_files": [
+        "scan-results/.context/scan.db"
+      ],
+      "summary": {
+        "candidates_count": 32,
+        "critical_count": 4,
+        "high_count": 3,
+        "medium_count": 18,
+        "low_count": 7
+      }
+    },
+    {
+      "name": "security-auditor",
+      "start_time": "2026-04-20T21:57:00.000Z",
+      "end_time": "2026-04-20T22:40:01.000Z",
+      "duration_seconds": 2581,
+      "status": "success",
+      "output_files": [
+        "scan-results/.context/scan.db"
+      ],
+      "summary": {
+        "candidates_count": 34,
+        "critical_count": 3,
+        "high_count": 5,
+        "medium_count": 17,
+        "low_count": 9,
+        "cross_module_count": 4,
+        "modules_scanned": 10
+      }
+    },
+    {
+      "name": "verification",
+      "start_time": "2026-04-20T22:42:00.000Z",
+      "end_time": "2026-04-20T22:54:29.000Z",
+      "duration_seconds": 749,
+      "status": "success",
+      "output_files": [
+        "scan-results/.context/scan.db"
+      ],
+      "summary": {
+        "dedup_before": 66,
+        "dedup_after": 64,
+        "verified_count": 60,
+        "confirmed_count": 0,
+        "likely_count": 13,
+        "possible_count": 30,
+        "false_positive_count": 17,
+        "high_severity": 9,
+        "medium_severity": 14,
+        "low_severity": 37
+      }
+    },
+    {
+      "name": "details-analyzer",
+      "start_time": null,
+      "end_time": null,
+      "duration_seconds": 0,
+      "status": "skipped",
+      "reason": "No CONFIRMED vulnerabilities found (threshold: confidence >= 80)"
+    },
+    {
+      "name": "reporter",
+      "start_time": "2026-04-20T22:56:00.000Z",
+      "end_time": "2026-04-20T23:01:00.000Z",
+      "duration_seconds": 300,
+      "status": "success",
+      "output_files": [
+        "scan-results/report_confirmed.md",
+        "scan-results/report_unconfirmed.md"
+      ],
+      "summary": {
+        "confirmed_report_lines": 97,
+        "unconfirmed_report_lines": 1461
+      }
+    }
+  ]
+}

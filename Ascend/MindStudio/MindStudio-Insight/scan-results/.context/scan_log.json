@@ -1,0 +1,105 @@
+{
+  "scan_id": "89fbaa97-9a22-4e4c-bfa1-39d1b62a6d08",
+  "start_time": "2026-04-20T20:15:30.846975",
+  "end_time": "2026-04-20T21:33:53.441150",
+  "status": "success",
+  "project_name": "MindStudio-Insight",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/shenteng/MindStudio/MindStudio-Insight",
+  "language": "C/C++ + Python mixed",
+  "agents": [
+    {
+      "name": "architecture",
+      "status": "success",
+      "start_time": "2026-04-20T20:16:00",
+      "end_time": "2026-04-20T20:24:00",
+      "duration_seconds": 480,
+      "output_files": [
+        "project_model.json",
+        "call_graph.json",
+        "threat_analysis_report.md"
+      ],
+      "summary": "Identified 24 modules, 15 high-risk files, 15 entry points, 7 attack surfaces"
+    },
+    {
+      "name": "dataflow-scanner",
+      "status": "success",
+      "start_time": "2026-04-20T20:24:00",
+      "end_time": "2026-04-20T21:00:00",
+      "duration_seconds": 2160,
+      "vulnerabilities_found": 20,
+      "modules_scanned": [
+        "server",
+        "ProfilerServerProxy",
+        "utils",
+        "communication",
+        "timeline",
+        "cross_module"
+      ],
+      "summary": "Found 20 candidate vulnerabilities: 1 Critical, 4 High, 12 Medium, 3 Low"
+    },
+    {
+      "name": "security-auditor",
+      "status": "partial",
+      "start_time": "2026-04-20T20:24:00",
+      "end_time": "2026-04-20T20:28:00",
+      "duration_seconds": 240,
+      "vulnerabilities_found": 3,
+      "summary": "Manual\u8865\u51453\u4e2a\u5b89\u5168\u5ba1\u8ba1\u6f0f\u6d1e\uff08\u4efb\u52a1\u4e22\u5931\u540e\u624b\u52a8\u8865\u5145\uff09"
+    },
+    {
+      "name": "verification",
+      "status": "success",
+      "start_time": "2026-04-20T21:00:00",
+      "end_time": "2026-04-20T21:10:00",
+      "duration_seconds": 600,
+      "input_count": 30,
+      "output": {
+        "CONFIRMED": 9,
+        "LIKELY": 4,
+        "POSSIBLE": 5,
+        "FALSE_POSITIVE": 12
+      },
+      "summary": "Verified 30 candidates: 9 CONFIRMED, 4 LIKELY, 5 POSSIBLE, 12 FALSE_POSITIVE"
+    },
+    {
+      "name": "details-analyzer",
+      "status": "success",
+      "start_time": "2026-04-20T21:10:00",
+      "end_time": "2026-04-20T21:22:00",
+      "duration_seconds": 720,
+      "input_count": 9,
+      "reports_generated": 4,
+      "output_files": [
+        "VULN-SEC-PROX-001.md",
+        "VULN-SEC-PROX-002.md",
+        "VULN-SEC-PROX-003.md",
+        "cross-module-vuln-003.md"
+      ],
+      "summary": "Generated 4 detailed reports, 2 marked as false_positive, 3 marked as duplicate"
+    },
+    {
+      "name": "reporter",
+      "status": "success",
+      "start_time": "2026-04-20T21:26:00",
+      "end_time": "2026-04-20T21:32:00",
+      "duration_seconds": 360,
+      "output_files": [
+        "report_confirmed.md",
+        "report_unconfirmed.md"
+      ],
+      "summary": "Generated 2 vulnerability reports with executive summary and remediation guidance"
+    }
+  ],
+  "summary": {
+    "total_candidates": 30,
+    "confirmed": 9,
+    "likely": 4,
+    "possible": 5,
+    "false_positive": 12,
+    "critical_count": 3,
+    "high_count": 3,
+    "medium_count": 3,
+    "files_scanned": 938,
+    "modules_analyzed": 24
+  }
+}

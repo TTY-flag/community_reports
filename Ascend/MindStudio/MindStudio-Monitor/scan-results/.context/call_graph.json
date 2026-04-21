@@ -1,0 +1,503 @@
+{
+  "functions": {
+    "main@dynolog_npu/dynolog/src/Main.cpp": {
+      "defined_at": 11,
+      "calls": [
+        "ThreadManager::run@dynolog_npu/dynolog/src/ThreadManager.cpp"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "ThreadManager::run@dynolog_npu/dynolog/src/ThreadManager.cpp": {
+      "defined_at": 199,
+      "calls": [
+        "gflags::ParseCommandLineFlags",
+        "google::InitGoogleLogging",
+        "ThreadManager::start_threads@dynolog_npu/dynolog/src/ThreadManager.cpp"
+      ],
+      "called_by": [
+        "main@dynolog_npu/dynolog/src/Main.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "ThreadManager::start_threads@dynolog_npu/dynolog/src/ThreadManager.cpp": {
+      "defined_at": 166,
+      "calls": [
+        "IPCMonitor::IPCMonitor@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp",
+        "IPCMonitor::setLogger@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp",
+        "IPCMonitor::loop@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp",
+        "IPCMonitor::dataLoop@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp",
+        "SimpleJsonServer::run@dynolog_npu/dynolog/src/rpc/SimpleJsonServer.cpp"
+      ],
+      "called_by": [
+        "ThreadManager::run@dynolog_npu/dynolog/src/ThreadManager.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "High"
+    },
+    "SimpleJsonServer::initSocket@dynolog_npu/dynolog/src/rpc/SimpleJsonServer.cpp": {
+      "defined_at": 72,
+      "calls": [
+        "::socket",
+        "::setsockopt",
+        "::bind",
+        "::listen"
+      ],
+      "called_by": [
+        "SimpleJsonServerBase::SimpleJsonServerBase@dynolog_npu/dynolog/src/rpc/SimpleJsonServer.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "Critical"
+    },
+    "SimpleJsonServer::loop@dynolog_npu/dynolog/src/rpc/SimpleJsonServer.cpp": {
+      "defined_at": 303,
+      "calls": [
+        "SimpleJsonServer::processOne@dynolog_npu/dynolog/src/rpc/SimpleJsonServer.cpp"
+      ],
+      "called_by": [
+        "SimpleJsonServer::run@dynolog_npu/dynolog/src/rpc/SimpleJsonServer.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "SimpleJsonServer::processOne@dynolog_npu/dynolog/src/rpc/SimpleJsonServer.cpp": {
+      "defined_at": 314,
+      "calls": [
+        "ClientSocketWrapper::accept@dynolog_npu/dynolog/src/rpc/SimpleJsonServer.cpp",
+        "ClientSocketWrapper::get_message@dynolog_npu/dynolog/src/rpc/SimpleJsonServer.cpp",
+        "processOneImpl@dynolog_npu/dynolog/src/rpc/SimpleJsonServerInl.h",
+        "ClientSocketWrapper::send_response@dynolog_npu/dynolog/src/rpc/SimpleJsonServer.cpp"
+      ],
+      "called_by": [
+        "SimpleJsonServer::loop@dynolog_npu/dynolog/src/rpc/SimpleJsonServer.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "ClientSocketWrapper::accept@dynolog_npu/dynolog/src/rpc/SimpleJsonServer.cpp": {
+      "defined_at": 151,
+      "calls": [
+        "::accept",
+        "inet_ntop",
+        "::setsockopt",
+        "SSL_new",
+        "SSL_set_fd",
+        "SSL_accept"
+      ],
+      "called_by": [
+        "SimpleJsonServer::processOne@dynolog_npu/dynolog/src/rpc/SimpleJsonServer.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "ClientSocketWrapper::get_message@dynolog_npu/dynolog/src/rpc/SimpleJsonServer.cpp": {
+      "defined_at": 199,
+      "calls": [
+        "read_helper@dynolog_npu/dynolog/src/rpc/SimpleJsonServer.cpp"
+      ],
+      "called_by": [
+        "SimpleJsonServer::processOne@dynolog_npu/dynolog/src/rpc/SimpleJsonServer.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "read_helper@dynolog_npu/dynolog/src/rpc/SimpleJsonServer.cpp": {
+      "defined_at": 281,
+      "calls": [
+        "::recv",
+        "SSL_read"
+      ],
+      "called_by": [
+        "ClientSocketWrapper::get_message@dynolog_npu/dynolog/src/rpc/SimpleJsonServer.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "processOneImpl@dynolog_npu/dynolog/src/rpc/SimpleJsonServerInl.h": {
+      "defined_at": 179,
+      "calls": [
+        "toJson@dynolog_npu/dynolog/src/rpc/SimpleJsonServerInl.h",
+        "GetStatus@dynolog_npu/dynolog/src/rpc/SimpleJsonServerInl.h",
+        "getVersion",
+        "handleSetKinetOnDemandRequest@dynolog_npu/dynolog/src/rpc/SimpleJsonServerInl.h"
+      ],
+      "called_by": [
+        "SimpleJsonServer::processOne@dynolog_npu/dynolog/src/rpc/SimpleJsonServer.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "toJson@dynolog_npu/dynolog/src/rpc/SimpleJsonServerInl.h": {
+      "defined_at": 58,
+      "calls": [
+        "nlohmann::json::accept",
+        "CheckJsonDepth",
+        "nlohmann::json::parse"
+      ],
+      "called_by": [
+        "processOneImpl@dynolog_npu/dynolog/src/rpc/SimpleJsonServerInl.h"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "handleSetKinetOnDemandRequest@dynolog_npu/dynolog/src/rpc/SimpleJsonServerInl.h": {
+      "defined_at": 141,
+      "calls": [
+        "GetCommandStatus@dynolog_npu/dynolog/src/rpc/SimpleJsonServerInl.h",
+        "handler_->setKinetOnDemandRequest"
+      ],
+      "called_by": [
+        "processOneImpl@dynolog_npu/dynolog/src/rpc/SimpleJsonServerInl.h"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "IPCMonitor::loop@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp": {
+      "defined_at": 55,
+      "calls": [
+        "FabricManager::recv@dynolog_npu/dynolog/src/ipcfabric/FabricManager.h",
+        "FabricManager::retrieve_msg@dynolog_npu/dynolog/src/ipcfabric/FabricManager.h",
+        "IPCMonitor::processMsg@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp"
+      ],
+      "called_by": [
+        "ThreadManager::start_threads@dynolog_npu/dynolog/src/ThreadManager.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "IPCMonitor::dataLoop@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp": {
+      "defined_at": 67,
+      "calls": [
+        "FabricManager::recv@dynolog_npu/dynolog/src/ipcfabric/FabricManager.h",
+        "FabricManager::retrieve_msg@dynolog_npu/dynolog/src/ipcfabric/FabricManager.h",
+        "IPCMonitor::processDataMsg@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp"
+      ],
+      "called_by": [
+        "ThreadManager::start_threads@dynolog_npu/dynolog/src/ThreadManager.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "FabricManager::recv@dynolog_npu/dynolog/src/ipcfabric/FabricManager.h": {
+      "defined_at": 135,
+      "calls": [
+        "EndPoint::tryPeekMsg@dynolog_npu/dynolog/src/ipcfabric/Endpoint.h",
+        "EndPoint::getName@dynolog_npu/dynolog/src/ipcfabric/Endpoint.h",
+        "EndPoint::tryRcvMsg@dynolog_npu/dynolog/src/ipcfabric/Endpoint.h"
+      ],
+      "called_by": [
+        "IPCMonitor::loop@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp",
+        "IPCMonitor::dataLoop@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "EndPoint::tryPeekMsg@dynolog_npu/dynolog/src/ipcfabric/Endpoint.h": {
+      "defined_at": 149,
+      "calls": [
+        "recvmsg"
+      ],
+      "called_by": [
+        "FabricManager::recv@dynolog_npu/dynolog/src/ipcfabric/FabricManager.h"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "EndPoint::tryRcvMsg@dynolog_npu/dynolog/src/ipcfabric/Endpoint.h": {
+      "defined_at": 132,
+      "calls": [
+        "recvmsg"
+      ],
+      "called_by": [
+        "FabricManager::recv@dynolog_npu/dynolog/src/ipcfabric/FabricManager.h"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "IPCMonitor::processMsg@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp": {
+      "defined_at": 79,
+      "calls": [
+        "IPCMonitor::registerLibkinetoContext@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp",
+        "IPCMonitor::getLibkinetoOnDemandRequest@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp",
+        "IPCMonitor::updateLibkinetoStatus@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp"
+      ],
+      "called_by": [
+        "IPCMonitor::loop@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "IPCMonitor::processDataMsg@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp": {
+      "defined_at": 141,
+      "calls": [
+        "nlohmann::json::accept",
+        "CheckJsonDepth",
+        "nlohmann::json::parse",
+        "IPCMonitor::LogData@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp"
+      ],
+      "called_by": [
+        "IPCMonitor::dataLoop@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "IPCMonitor::getLibkinetoOnDemandRequest@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp": {
+      "defined_at": 173,
+      "calls": [
+        "LibkinetoConfigManager::getInstance",
+        "LibkinetoConfigManager::obtainOnDemandConfig",
+        "FabricManager::sync_send@dynolog_npu/dynolog/src/ipcfabric/FabricManager.h"
+      ],
+      "called_by": [
+        "IPCMonitor::processMsg@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "IPCMonitor::registerLibkinetoContext@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp": {
+      "defined_at": 219,
+      "calls": [
+        "LibkinetoConfigManager::getInstance",
+        "LibkinetoConfigManager::registerLibkinetoContext",
+        "FabricManager::sync_send@dynolog_npu/dynolog/src/ipcfabric/FabricManager.h"
+      ],
+      "called_by": [
+        "IPCMonitor::processMsg@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "FabricManager::sync_send@dynolog_npu/dynolog/src/ipcfabric/FabricManager.h": {
+      "defined_at": 104,
+      "calls": [
+        "EndPoint::buildSendCtxt@dynolog_npu/dynolog/src/ipcfabric/Endpoint.h",
+        "EndPoint::trySendMsg@dynolog_npu/dynolog/src/ipcfabric/Endpoint.h"
+      ],
+      "called_by": [
+        "IPCMonitor::getLibkinetoOnDemandRequest@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp",
+        "IPCMonitor::registerLibkinetoContext@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp",
+        "IpcClient::SyncSendMessage@plugin/ipc_monitor/NpuIpcClient.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "EndPoint::trySendMsg@dynolog_npu/dynolog/src/ipcfabric/Endpoint.h": {
+      "defined_at": 111,
+      "calls": [
+        "sendmsg"
+      ],
+      "called_by": [
+        "FabricManager::sync_send@dynolog_npu/dynolog/src/ipcfabric/FabricManager.h"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "IpcClient::Init@plugin/ipc_monitor/NpuIpcClient.cpp": {
+      "defined_at": 21,
+      "calls": [
+        "GetPids"
+      ],
+      "called_by": [],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "IpcClient::RegisterInstance@plugin/ipc_monitor/NpuIpcClient.cpp": {
+      "defined_at": 27,
+      "calls": [
+        "Message::ConstructMessage@plugin/ipc_monitor/NpuIpcClient.h",
+        "IpcClient::SyncSendMessage@plugin/ipc_monitor/NpuIpcClient.cpp"
+      ],
+      "called_by": [],
+      "receives_external_input": false,
+      "risk": "High"
+    },
+    "IpcClient::SyncSendMessage@plugin/ipc_monitor/NpuIpcClient.cpp": {
+      "defined_at": 114,
+      "calls": [
+        "NpuIpcEndPoint::BuildSendNpuCtxt",
+        "NpuIpcEndPoint::TrySendMessage"
+      ],
+      "called_by": [
+        "IpcClient::RegisterInstance@plugin/ipc_monitor/NpuIpcClient.cpp",
+        "IpcClient::SendNpuStatus@plugin/ipc_monitor/NpuIpcClient.cpp",
+        "IpcClient::IpcClientNpuConfig@plugin/ipc_monitor/NpuIpcClient.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "IpcClient::IpcClientNpuConfig@plugin/ipc_monitor/NpuIpcClient.cpp": {
+      "defined_at": 63,
+      "calls": [
+        "GetPids",
+        "malloc",
+        "Message::ConstructMessage@plugin/ipc_monitor/NpuIpcClient.h",
+        "IpcClient::SyncSendMessage@plugin/ipc_monitor/NpuIpcClient.cpp",
+        "IpcClient::PollRecvMessage@plugin/ipc_monitor/NpuIpcClient.cpp"
+      ],
+      "called_by": [],
+      "receives_external_input": false,
+      "risk": "High"
+    },
+    "IpcClient::Recv@plugin/ipc_monitor/NpuIpcClient.cpp": {
+      "defined_at": 137,
+      "calls": [
+        "NpuIpcEndPoint::BuildNpuRcvCtxt",
+        "NpuIpcEndPoint::TryPeekMessage",
+        "NpuIpcEndPoint::GetName",
+        "NpuIpcEndPoint::TryRcvMessage"
+      ],
+      "called_by": [
+        "IpcClient::PollRecvMessage@plugin/ipc_monitor/NpuIpcClient.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "IpcClient::PollRecvMessage@plugin/ipc_monitor/NpuIpcClient.cpp": {
+      "defined_at": 182,
+      "calls": [
+        "IpcClient::Recv@plugin/ipc_monitor/NpuIpcClient.cpp",
+        "IpcClient::ReceiveMessage@plugin/ipc_monitor/NpuIpcClient.cpp"
+      ],
+      "called_by": [
+        "IpcClient::IpcClientNpuConfig@plugin/ipc_monitor/NpuIpcClient.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "DynoLogNpuMonitor::Init@plugin/ipc_monitor/DynoLogNpuMonitor.cpp": {
+      "defined_at": 30,
+      "calls": [
+        "IpcClient::Init@plugin/ipc_monitor/NpuIpcClient.cpp",
+        "IpcClient::RegisterInstance@plugin/ipc_monitor/NpuIpcClient.cpp"
+      ],
+      "called_by": [],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "DynoLogNpuMonitor::Poll@plugin/ipc_monitor/DynoLogNpuMonitor.cpp": {
+      "defined_at": 50,
+      "calls": [
+        "IpcClient::IpcClientNpuConfig@plugin/ipc_monitor/NpuIpcClient.cpp"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "MsptiMonitor::GetInstance@plugin/ipc_monitor/mspti_monitor/MsptiMonitor.cpp": {
+      "defined_at": 25,
+      "calls": [],
+      "called_by": [
+        "bindings.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "Low"
+    },
+    "Monitor::Start@plugin/ipc_monitor/monitor/Monitor.cpp": {
+      "defined_at": 45,
+      "calls": [
+        "msptiSubscribeActivities",
+        "msptiEnableActivities"
+      ],
+      "called_by": [],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "Monitor::GetAPIData@plugin/ipc_monitor/monitor/Monitor.cpp": {
+      "defined_at": 80,
+      "calls": [
+        "msptiActivityBufferGetNextRecord"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "::recv@dynolog_npu/dynolog/src/rpc/SimpleJsonServer.cpp:284",
+      "path": [
+        "read_helper@dynolog_npu/dynolog/src/rpc/SimpleJsonServer.cpp:281",
+        "ClientSocketWrapper::get_message@dynolog_npu/dynolog/src/rpc/SimpleJsonServer.cpp:199",
+        "SimpleJsonServer::processOne@dynolog_npu/dynolog/src/rpc/SimpleJsonServer.cpp:314",
+        "processOneImpl@dynolog_npu/dynolog/src/rpc/SimpleJsonServerInl.h:179",
+        "toJson@dynolog_npu/dynolog/src/rpc/SimpleJsonServerInl.h:58",
+        "nlohmann::json::parse@dynolog_npu/dynolog/src/rpc/SimpleJsonServerInl.h:70"
+      ],
+      "sink": "nlohmann::json::parse@dynolog_npu/dynolog/src/rpc/SimpleJsonServerInl.h:70",
+      "sink_type": "json_parser"
+    },
+    {
+      "source": "SSL_read@dynolog_npu/dynolog/src/rpc/SimpleJsonServer.cpp:290",
+      "path": [
+        "read_helper@dynolog_npu/dynolog/src/rpc/SimpleJsonServer.cpp:281",
+        "ClientSocketWrapper::get_message@dynolog_npu/dynolog/src/rpc/SimpleJsonServer.cpp:199",
+        "SimpleJsonServer::processOne@dynolog_npu/dynolog/src/rpc/SimpleJsonServer.cpp:314",
+        "processOneImpl@dynolog_npu/dynolog/src/rpc/SimpleJsonServerInl.h:179",
+        "handleSetKinetOnDemandRequest@dynolog_npu/dynolog/src/rpc/SimpleJsonServerInl.h:141",
+        "handler_->setKinetOnDemandRequest"
+      ],
+      "sink": "handler_->setKinetOnDemandRequest",
+      "sink_type": "config_handler"
+    },
+    {
+      "source": "recvmsg@dynolog_npu/dynolog/src/ipcfabric/Endpoint.h:151",
+      "path": [
+        "EndPoint::tryPeekMsg@dynolog_npu/dynolog/src/ipcfabric/Endpoint.h:149",
+        "FabricManager::recv@dynolog_npu/dynolog/src/ipcfabric/FabricManager.h:135",
+        "IPCMonitor::loop@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp:55",
+        "IPCMonitor::processMsg@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp:79",
+        "IPCMonitor::getLibkinetoOnDemandRequest@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp:173",
+        "LibkinetoConfigManager::obtainOnDemandConfig"
+      ],
+      "sink": "LibkinetoConfigManager::obtainOnDemandConfig",
+      "sink_type": "config_manager"
+    },
+    {
+      "source": "recvmsg@dynolog_npu/dynolog/src/ipcfabric/Endpoint.h:134",
+      "path": [
+        "EndPoint::tryRcvMsg@dynolog_npu/dynolog/src/ipcfabric/Endpoint.h:132",
+        "FabricManager::recv@dynolog_npu/dynolog/src/ipcfabric/FabricManager.h:135",
+        "IPCMonitor::dataLoop@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp:67",
+        "IPCMonitor::processDataMsg@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp:141",
+        "nlohmann::json::parse@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp:161"
+      ],
+      "sink": "nlohmann::json::parse@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp:161",
+      "sink_type": "json_parser"
+    },
+    {
+      "source": "recvmsg@dynolog_npu/dynolog/src/ipcfabric/Endpoint.h:134",
+      "path": [
+        "EndPoint::tryRcvMsg@dynolog_npu/dynolog/src/ipcfabric/Endpoint.h:132",
+        "FabricManager::recv@dynolog_npu/dynolog/src/ipcfabric/FabricManager.h:135",
+        "IPCMonitor::dataLoop@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp:67",
+        "IPCMonitor::processDataMsg@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp:141",
+        "IPCMonitor::LogData@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp:120",
+        "logger_->logUint@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp:123"
+      ],
+      "sink": "logger_->logUint@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp:123",
+      "sink_type": "logging"
+    },
+    {
+      "source": "argv@dynolog_npu/dynolog/src/Main.cpp:11",
+      "path": [
+        "main@dynolog_npu/dynolog/src/Main.cpp:11",
+        "ThreadManager::run@dynolog_npu/dynolog/src/ThreadManager.cpp:199",
+        "gflags::ParseCommandLineFlags@dynolog_npu/dynolog/src/ThreadManager.cpp:201"
+      ],
+      "sink": "gflags::ParseCommandLineFlags@dynolog_npu/dynolog/src/ThreadManager.cpp:201",
+      "sink_type": "config_parser"
+    },
+    {
+      "source": "NpuIpcEndPoint::TryRcvMessage@plugin/ipc_monitor/NpuIpcClient.cpp",
+      "path": [
+        "IpcClient::Recv@plugin/ipc_monitor/NpuIpcClient.cpp:137",
+        "IpcClient::PollRecvMessage@plugin/ipc_monitor/NpuIpcClient.cpp:182",
+        "IpcClient::IpcClientNpuConfig@plugin/ipc_monitor/NpuIpcClient.cpp:63"
+      ],
+      "sink": "config_response@plugin/ipc_monitor/NpuIpcClient.cpp:99",
+      "sink_type": "ipc_response"
+    }
+  ]
+}

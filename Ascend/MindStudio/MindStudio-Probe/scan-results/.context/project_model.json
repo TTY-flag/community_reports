@@ -1,0 +1,438 @@
+{
+  "project_name": "MindStudio-Probe",
+  "scan_time": "2026-04-20T22:00:00Z",
+  "lsp_available": false,
+  "total_files": 502,
+  "total_lines": 91528,
+  "project_profile": {
+    "project_type": "cli_tool",
+    "deployment_model": "AI开发人员本地执行的CLI工具，用于模型精度调试和数据比对。工具处理用户提供的模型文件、dump数据文件和配置文件。",
+    "trust_boundaries": [
+      {
+        "boundary": "File System Interface",
+        "trusted_side": "Application logic",
+        "untrusted_side": "User-provided files (models, dump data, configs)",
+        "risk": "High"
+      },
+      {
+        "boundary": "Command Line Interface",
+        "trusted_side": "Application logic",
+        "untrusted_side": "User command arguments",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Python/C++ Bridge",
+        "trusted_side": "Python application",
+        "untrusted_side": "C++ extension modules",
+        "risk": "Low"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "core",
+      "path": "python/msprobe/core",
+      "language": "python",
+      "components": [
+        "compare",
+        "parse",
+        "config_check",
+        "monitor",
+        "acc_check",
+        "common"
+      ]
+    },
+    {
+      "name": "infer",
+      "path": "python/msprobe/infer",
+      "language": "python",
+      "components": [
+        "offline",
+        "utils"
+      ]
+    },
+    {
+      "name": "msaccucmp",
+      "path": "python/msprobe/msaccucmp",
+      "language": "python",
+      "components": [
+        "vector_cmp",
+        "conversion",
+        "dump_parse",
+        "advisor",
+        "overflow"
+      ]
+    },
+    {
+      "name": "pytorch",
+      "path": "python/msprobe/pytorch",
+      "language": "python",
+      "components": [
+        "dump",
+        "compare",
+        "api_accuracy_checker",
+        "common"
+      ]
+    },
+    {
+      "name": "mindspore",
+      "path": "python/msprobe/mindspore",
+      "language": "python",
+      "components": [
+        "dump",
+        "compare",
+        "monitor",
+        "api_accuracy_checker",
+        "common"
+      ]
+    },
+    {
+      "name": "visualization",
+      "path": "python/msprobe/visualization",
+      "language": "python",
+      "components": [
+        "graph",
+        "compare",
+        "builder"
+      ]
+    },
+    {
+      "name": "overflow_check",
+      "path": "python/msprobe/overflow_check",
+      "language": "python",
+      "components": [
+        "analyzer",
+        "graph",
+        "utils"
+      ]
+    },
+    {
+      "name": "adump",
+      "path": "ccsrc/adump",
+      "language": "c_cpp",
+      "components": [
+        "core",
+        "base",
+        "utils",
+        "if"
+      ]
+    },
+    {
+      "name": "atb_probe",
+      "path": "ccsrc/atb_probe",
+      "language": "c_cpp",
+      "components": [
+        "utils",
+        "ait_logger"
+      ]
+    },
+    {
+      "name": "aclgraph_dump",
+      "path": "ccsrc/aclgraph_dump",
+      "language": "c_cpp",
+      "components": [
+        "aclgraph_dump.cpp"
+      ]
+    }
+  ],
+  "files": [
+    {
+      "path": "python/msprobe/msprobe.py",
+      "language": "python",
+      "risk": "Critical",
+      "module": "core",
+      "lines": 145,
+      "priority": 1
+    },
+    {
+      "path": "python/msprobe/core/parse/tensor_bin_parser.py",
+      "language": "python",
+      "risk": "High",
+      "module": "core",
+      "lines": 113,
+      "priority": 2
+    },
+    {
+      "path": "python/msprobe/core/parse/msaccucmp_parser.py",
+      "language": "python",
+      "risk": "High",
+      "module": "core",
+      "lines": 90,
+      "priority": 3
+    },
+    {
+      "path": "python/msprobe/core/common/file_utils.py",
+      "language": "python",
+      "risk": "High",
+      "module": "core",
+      "lines": 1059,
+      "priority": 4
+    },
+    {
+      "path": "python/msprobe/infer/utils/util.py",
+      "language": "python",
+      "risk": "Critical",
+      "module": "infer",
+      "lines": 177,
+      "priority": 5
+    },
+    {
+      "path": "python/msprobe/infer/offline/compare/msquickcmp/main.py",
+      "language": "python",
+      "risk": "High",
+      "module": "infer",
+      "lines": 199,
+      "priority": 6
+    },
+    {
+      "path": "python/msprobe/infer/offline/compare/msquickcmp/onnx_model/onnx_dump_data.py",
+      "language": "python",
+      "risk": "High",
+      "module": "infer",
+      "lines": 374,
+      "priority": 7
+    },
+    {
+      "path": "python/msprobe/infer/offline/compare/msquickcmp/npu/om_parser.py",
+      "language": "python",
+      "risk": "High",
+      "module": "infer",
+      "lines": 416,
+      "priority": 8
+    },
+    {
+      "path": "python/msprobe/infer/utils/file_open_check.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "infer",
+      "lines": 337,
+      "priority": 9
+    },
+    {
+      "path": "python/msprobe/msaccucmp/msaccucmp.py",
+      "language": "python",
+      "risk": "High",
+      "module": "msaccucmp",
+      "lines": 532,
+      "priority": 10
+    },
+    {
+      "path": "python/msprobe/core/acc_check/acc_check_cli.py",
+      "language": "python",
+      "risk": "High",
+      "module": "core",
+      "lines": 171,
+      "priority": 11
+    },
+    {
+      "path": "python/msprobe/core/config_check/config_check_cli.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "core",
+      "lines": 54,
+      "priority": 12
+    },
+    {
+      "path": "python/msprobe/core/compare/compare_cli.py",
+      "language": "python",
+      "risk": "High",
+      "module": "core",
+      "lines": 80,
+      "priority": 13
+    },
+    {
+      "path": "python/msprobe/pytorch/common/utils.py",
+      "language": "python",
+      "risk": "Critical",
+      "module": "pytorch",
+      "lines": 400,
+      "priority": 14
+    },
+    {
+      "path": "ccsrc/adump/base/DebuggerConfig.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "adump",
+      "lines": 517,
+      "priority": 15
+    },
+    {
+      "path": "ccsrc/adump/utils/FileUtils.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "adump",
+      "lines": 616,
+      "priority": 16
+    },
+    {
+      "path": "ccsrc/adump/utils/FileOperation.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "adump",
+      "lines": 184,
+      "priority": 17
+    },
+    {
+      "path": "ccsrc/atb_probe/utils/file.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "atb_probe",
+      "lines": 544,
+      "priority": 18
+    },
+    {
+      "path": "python/msprobe/core/compare/atb_data_compare.py",
+      "language": "python",
+      "risk": "High",
+      "module": "core",
+      "lines": 200,
+      "priority": 19
+    },
+    {
+      "path": "python/msprobe/core/compare/offline_data_compare.py",
+      "language": "python",
+      "risk": "High",
+      "module": "core",
+      "lines": 150,
+      "priority": 20
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "python/msprobe/msprobe.py",
+      "line": 36,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "CLI入口，接收用户命令行参数，参数可包含文件路径和配置选项",
+      "description": "CLI主入口，解析命令行参数并分发到各子命令处理函数"
+    },
+    {
+      "file": "python/msprobe/core/parse/parse_cli.py",
+      "line": 35,
+      "function": "parse_cli",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "解析用户指定的dump_path路径，该路径指向用户控制的文件或目录",
+      "description": "解析dump文件（bin/npy/pt格式）的CLI入口"
+    },
+    {
+      "file": "python/msprobe/core/parse/tensor_bin_parser.py",
+      "line": 39,
+      "function": "parse",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "解析用户提供的.bin文件，文件内容完全由用户控制",
+      "description": "解析Tensor二进制文件"
+    },
+    {
+      "file": "python/msprobe/infer/utils/util.py",
+      "line": 80,
+      "function": "safe_torch_load",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "使用torch.load加载.pt文件，存在pickle反序列化风险，虽然尝试使用weights_only但可能被用户绕过",
+      "description": "加载PyTorch tensor文件，包含pickle反序列化"
+    },
+    {
+      "file": "python/msprobe/infer/offline/compare/msquickcmp/main.py",
+      "line": 106,
+      "function": "offline_dump_cli",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "处理用户提供的onnx/om模型文件路径和数据文件路径",
+      "description": "离线模型dump CLI入口"
+    },
+    {
+      "file": "python/msprobe/infer/offline/compare/msquickcmp/onnx_model/onnx_dump_data.py",
+      "line": 166,
+      "function": "_load_onnx",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "加载并解析用户提供的ONNX模型文件，模型结构可能被篡改",
+      "description": "加载ONNX模型文件"
+    },
+    {
+      "file": "python/msprobe/infer/offline/compare/msquickcmp/npu/om_parser.py",
+      "line": 95,
+      "function": "_load_json_file",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "加载并解析JSON配置文件，文件内容完全由用户控制",
+      "description": "解析OM模型JSON配置"
+    },
+    {
+      "file": "python/msprobe/msaccucmp/msaccucmp.py",
+      "line": 314,
+      "function": "start_compare",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "比较用户提供的两个dump文件路径，文件内容完全由用户控制",
+      "description": "数据比较主函数"
+    },
+    {
+      "file": "python/msprobe/core/acc_check/acc_check_cli.py",
+      "line": 34,
+      "function": "_detect_framework_from_api_info",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "加载并解析用户提供的JSON API info文件",
+      "description": "从API info JSON检测框架类型"
+    },
+    {
+      "file": "ccsrc/adump/base/DebuggerConfig.cpp",
+      "line": 464,
+      "function": "LoadConfig",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "C++配置文件加载，解析用户提供的JSON配置文件",
+      "description": "C++端加载调试器配置文件"
+    },
+    {
+      "file": "python/msprobe/core/common/file_utils.py",
+      "line": 464,
+      "function": "load_yaml",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "加载YAML配置文件，使用yaml.safe_load",
+      "description": "加载YAML配置文件"
+    },
+    {
+      "file": "python/msprobe/core/common/file_utils.py",
+      "line": 476,
+      "function": "load_npy",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "加载numpy文件，使用allow_pickle=False限制",
+      "description": "加载numpy文件"
+    },
+    {
+      "file": "python/msprobe/core/common/file_utils.py",
+      "line": 486,
+      "function": "load_json",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "加载JSON文件",
+      "description": "加载JSON文件"
+    },
+    {
+      "file": "python/msprobe/pytorch/common/utils.py",
+      "line": 340,
+      "function": "torch.load",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "直接调用torch.load加载pt文件，存在pickle反序列化风险",
+      "description": "加载PyTorch checkpoint文件"
+    }
+  ],
+  "attack_surfaces": [
+    "CLI Arguments: 用户通过命令行参数指定文件路径、模型路径、输出路径等，路径可能被恶意构造",
+    "File Parsing: 工具解析多种文件格式(.bin/.npy/.pt/.onnx/.om/.json/.yaml)，文件内容完全由用户控制",
+    "Model Loading: ONNX和OM模型文件的加载和修改，模型结构可能被篡改",
+    "Pickle Deserialization: torch.load使用的pickle反序列化可能导致任意代码执行",
+    "Path Traversal: 文件路径参数可能包含路径遍历字符",
+    "Configuration Files: JSON/YAML配置文件的解析，配置内容由用户控制",
+    "NPY File Parsing: numpy.load虽然设置allow_pickle=False，但仍需验证",
+    "Binary Data Parsing: TensorBinFile解析二进制数据，数据结构可能异常"
+  ]
+}

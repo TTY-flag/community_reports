@@ -1,0 +1,278 @@
+{
+  "project_name": "MindStudio-Tools-Extension-Library",
+  "scan_time": "2026-04-20T23:50:00Z",
+  "lsp_available": true,
+  "total_files": 15,
+  "total_lines": 1880,
+  "project_profile": {
+    "project_type": "library",
+    "deployment_model": "作为动态库(.so)被其他应用程序加载，或作为Python扩展模块被Python应用导入。通常部署在Linux服务器上的Ascend AI环境中。",
+    "trust_boundaries": [
+      {
+        "boundary": "Python Application Layer",
+        "trusted_side": "User Python code",
+        "untrusted_side": "Python extension module (mstx.so)",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "C/C++ Library API",
+        "trusted_side": "mstx library functions",
+        "untrusted_side": "Caller application code",
+        "risk": "Low"
+      },
+      {
+        "boundary": "Dynamic Library Loading",
+        "trusted_side": "mstx library",
+        "untrusted_side": "External injection library (MSTX_INJECTION_PATH)",
+        "risk": "High"
+      },
+      {
+        "boundary": "Environment Variables",
+        "trusted_side": "Application runtime",
+        "untrusted_side": "System environment (MSTX_INJECTION_PATH)",
+        "risk": "High"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "c_core",
+      "path": "c",
+      "language": "c_cpp",
+      "components": [
+        "c/ms_tools_ext.cpp",
+        "c/include/mstx/ms_tools_ext.h",
+        "c/include/mstx/ms_tools_ext_mem.h",
+        "c/include/mstx/mstx_detail/mstx_impl.h",
+        "c/include/mstx/mstx_detail/mstx_impl_core.h",
+        "c/include/mstx/mstx_detail/mstx_init_defs.h",
+        "c/include/mstx/mstx_detail/mstx_types.h"
+      ]
+    },
+    {
+      "name": "python_binding",
+      "path": "python",
+      "language": "c_cpp",
+      "components": [
+        "python/mstx_api.cpp",
+        "python/mstx_api.h",
+        "python/mstx_methods.cpp",
+        "python/mstx_methods.h",
+        "python/py_init_mstx.cpp"
+      ]
+    },
+    {
+      "name": "build_scripts",
+      "path": ".",
+      "language": "python",
+      "components": [
+        "build.py",
+        "download_dependencies.py",
+        "setup.py"
+      ]
+    }
+  ],
+  "files": [
+    {
+      "path": "c/ms_tools_ext.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "c_core",
+      "lines": 254,
+      "priority": 1
+    },
+    {
+      "path": "c/include/mstx/mstx_detail/mstx_impl.h",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "c_core",
+      "lines": 275,
+      "priority": 1
+    },
+    {
+      "path": "c/include/mstx/mstx_detail/mstx_impl_core.h",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "c_core",
+      "lines": 184,
+      "priority": 2
+    },
+    {
+      "path": "c/include/mstx/mstx_detail/mstx_init_defs.h",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "c_core",
+      "lines": 110,
+      "priority": 2
+    },
+    {
+      "path": "c/include/mstx/ms_tools_ext.h",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "c_core",
+      "lines": 147,
+      "priority": 3
+    },
+    {
+      "path": "c/include/mstx/ms_tools_ext_mem.h",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "c_core",
+      "lines": 210,
+      "priority": 3
+    },
+    {
+      "path": "c/include/mstx/mstx_detail/mstx_types.h",
+      "language": "c_cpp",
+      "risk": "Low",
+      "module": "c_core",
+      "lines": 85,
+      "priority": 4
+    },
+    {
+      "path": "python/mstx_api.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "python_binding",
+      "lines": 95,
+      "priority": 2
+    },
+    {
+      "path": "python/mstx_api.h",
+      "language": "c_cpp",
+      "risk": "Low",
+      "module": "python_binding",
+      "lines": 27,
+      "priority": 4
+    },
+    {
+      "path": "python/mstx_methods.cpp",
+      "language": "c_cpp",
+      "risk": "Low",
+      "module": "python_binding",
+      "lines": 31,
+      "priority": 4
+    },
+    {
+      "path": "python/mstx_methods.h",
+      "language": "c_cpp",
+      "risk": "Low",
+      "module": "python_binding",
+      "lines": 23,
+      "priority": 4
+    },
+    {
+      "path": "python/py_init_mstx.cpp",
+      "language": "c_cpp",
+      "risk": "Low",
+      "module": "python_binding",
+      "lines": 36,
+      "priority": 4
+    },
+    {
+      "path": "build.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "build_scripts",
+      "lines": 196,
+      "priority": 3
+    },
+    {
+      "path": "download_dependencies.py",
+      "language": "python",
+      "risk": "High",
+      "module": "build_scripts",
+      "lines": 163,
+      "priority": 2
+    },
+    {
+      "path": "setup.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "build_scripts",
+      "lines": 44,
+      "priority": 3
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "c/include/mstx/mstx_detail/mstx_impl.h",
+      "line": 174,
+      "function": "mstxInitWithInjectionLib",
+      "type": "env",
+      "trust_level": "untrusted_local",
+      "justification": "读取环境变量 MSTX_INJECTION_PATH，通过 getenv() 获取路径后使用 dlopen() 加载外部动态库，攻击者可通过控制环境变量加载恶意库",
+      "description": "从环境变量加载注入库"
+    },
+    {
+      "file": "python/mstx_api.cpp",
+      "line": 41,
+      "function": "WrapMstxMarkA",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "Python API 入口点，接收来自 Python 解释器的参数，message 字符串通过 PyArg_ParseTupleAndKeywords 解析后传递给底层 C API",
+      "description": "Python mark API 入口"
+    },
+    {
+      "file": "python/mstx_api.cpp",
+      "line": 58,
+      "function": "WrapMstxRangeStartA",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "Python API 入口点，接收来自 Python 解释器的参数，message 字符串通过 PyArg_ParseTupleAndKeywords 解析后传递给底层 C API",
+      "description": "Python range_start API 入口"
+    },
+    {
+      "file": "c/include/mstx/mstx_detail/mstx_impl_core.h",
+      "line": 22,
+      "function": "mstxMarkA",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "公共 C API 入口点，message 参数声明为 'cannot be null' 但代码层面无 NULL 检查，直接传递给函数指针调用",
+      "description": "C mark API 入口"
+    },
+    {
+      "file": "c/include/mstx/mstx_detail/mstx_impl_core.h",
+      "line": 32,
+      "function": "mstxRangeStartA",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "公共 C API 入口点，message 参数声明为 'cannot be null' 但代码层面无 NULL 检查，直接传递给函数指针调用",
+      "description": "C range_start API 入口"
+    },
+    {
+      "file": "download_dependencies.py",
+      "line": 104,
+      "function": "proc_artifact",
+      "type": "file",
+      "trust_level": "untrusted_network",
+      "justification": "从远程 URL 下载文件并解压，使用 curl -Lfk 下载，存在 URL 重定向风险和恶意文件注入风险",
+      "description": "依赖下载入口"
+    },
+    {
+      "file": "c/include/mstx/mstx_detail/mstx_impl_core.h",
+      "line": 56,
+      "function": "mstxMemHeapRegister",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "内存管理 API，接收复杂结构体指针 mstxMemHeapDesc_t，包含 void const *typeSpecificDesc 泛型指针，存在类型混淆风险",
+      "description": "内存池注册 API"
+    },
+    {
+      "file": "c/include/mstx/mstx_detail/mstx_impl_core.h",
+      "line": 80,
+      "function": "mstxMemRegionsRegister",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "内存区域注册 API，接收批量结构体指针，regionDescArray 和 regionHandleArrayOut 指针未经边界检查验证",
+      "description": "内存区域批量注册 API"
+    }
+  ],
+  "attack_surfaces": [
+    "环境变量注入: MSTX_INJECTION_PATH → dlopen()",
+    "Python API: mstx.mark()/mstx.range_start() message 参数",
+    "C API: mstxMarkA/mstxRangeStartA message 参数 (NULL 安全)",
+    "依赖下载: download_dependencies.py 远程文件下载",
+    "内存管理 API: mstxMemHeapRegister/mstxMemRegionsRegister 结构体指针"
+  ]
+}

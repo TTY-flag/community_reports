@@ -1,0 +1,429 @@
+{
+  "project_name": "MindStudio Profiler Analyze (msprof-analyze)",
+  "scan_time": "2026-04-20T21:51:00Z",
+  "lsp_available": false,
+  "total_files": 440,
+  "total_lines": 43019,
+  "project_profile": {
+    "project_type": "cli_tool_python",
+    "deployment_model": "用户本地执行的命令行工具，用于分析昇腾 AI 训练与推理场景的性能数据（profiling data）。通过 pip 安装后，用户使用 msprof-analyze 命令进行集群分析、专家建议和性能比对。",
+    "trust_boundaries": [
+      {
+        "boundary": "Command Line Interface",
+        "trusted_side": "Application logic",
+        "untrusted_side": "Local user (command arguments)",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "File Input",
+        "trusted_side": "Application logic",
+        "untrusted_side": "User-provided profiling data files (JSON/CSV/YAML/DB)",
+        "risk": "High"
+      },
+      {
+        "boundary": "Environment Variables",
+        "trusted_side": "Application logic",
+        "untrusted_side": "Local user (environment configuration)",
+        "risk": "Low"
+      },
+      {
+        "boundary": "Database Connection",
+        "trusted_side": "Application logic",
+        "untrusted_side": "SQLite DB files (user-provided)",
+        "risk": "High"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "cli",
+      "path": "msprof_analyze/cli",
+      "language": "python",
+      "components": [
+        "entrance.py",
+        "analyze_cli.py",
+        "cluster_cli.py",
+        "compare_cli.py",
+        "complete_cli.py",
+        "__init__.py"
+      ]
+    },
+    {
+      "name": "prof_common",
+      "path": "msprof_analyze/prof_common",
+      "language": "python",
+      "components": [
+        "file_manager.py",
+        "path_manager.py",
+        "db_manager.py",
+        "utils.py",
+        "constant.py",
+        "logger.py",
+        "singleton.py",
+        "analyze_dict.py",
+        "interval_manager.py",
+        "additional_args_manager.py",
+        "database_service.py",
+        "sql_extention_func.py",
+        "__init__.py"
+      ]
+    },
+    {
+      "name": "advisor",
+      "path": "msprof_analyze/advisor",
+      "language": "python",
+      "components": [
+        "interface/interface.py",
+        "result/result.py",
+        "result/item.py",
+        "config/config.py",
+        "analyzer/analyzer_controller.py",
+        "dataset/profiling/profiling_parser.py",
+        "dataset/profiling/profiling_dataset.py",
+        "dataset/profiling/db_manager.py",
+        "dataset/communication/communication_dataset.py",
+        "dataset/cluster/cluster_dataset.py",
+        "display/html/html_display.py"
+      ]
+    },
+    {
+      "name": "cluster_analyse",
+      "path": "msprof_analyze/cluster_analyse",
+      "language": "python",
+      "components": [
+        "cluster_analysis.py",
+        "common_func/tables_config.py",
+        "prof_bean/prof_bean.py",
+        "analysis/analysis.py",
+        "recipes/base_recipe_analysis.py",
+        "recipes/communication_group_map/communication_group_map.py"
+      ]
+    },
+    {
+      "name": "compare_tools",
+      "path": "msprof_analyze/compare_tools",
+      "language": "python",
+      "components": [
+        "performance_compare.py",
+        "compare_interface/compare_interface.py",
+        "compare_backend/profiling_parser/base_profiling_parser.py",
+        "compare_backend/comparator/comparator.py"
+      ]
+    },
+    {
+      "name": "prof_exports",
+      "path": "msprof_analyze/prof_exports",
+      "language": "python",
+      "components": [
+        "__init__.py"
+      ]
+    },
+    {
+      "name": "misc_autofuse",
+      "path": "misc/autofuse_performance_comparison",
+      "language": "mixed",
+      "components": [
+        "autofuse_core/execute_graph.py",
+        "autofuse_core/autofuse_performance_comparison.py",
+        "csrc/execute_graph.cpp"
+      ]
+    }
+  ],
+  "files": [
+    {
+      "path": "msprof_analyze/cli/entrance.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "cli",
+      "lines": 92,
+      "priority": 1
+    },
+    {
+      "path": "msprof_analyze/cli/analyze_cli.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "cli",
+      "lines": 154,
+      "priority": 2
+    },
+    {
+      "path": "msprof_analyze/cli/cluster_cli.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "cli",
+      "lines": 52,
+      "priority": 3
+    },
+    {
+      "path": "msprof_analyze/cli/compare_cli.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "cli",
+      "lines": 59,
+      "priority": 4
+    },
+    {
+      "path": "msprof_analyze/prof_common/file_manager.py",
+      "language": "python",
+      "risk": "High",
+      "module": "prof_common",
+      "lines": 209,
+      "priority": 1
+    },
+    {
+      "path": "msprof_analyze/prof_common/path_manager.py",
+      "language": "python",
+      "risk": "High",
+      "module": "prof_common",
+      "lines": 280,
+      "priority": 2
+    },
+    {
+      "path": "msprof_analyze/prof_common/db_manager.py",
+      "language": "python",
+      "risk": "High",
+      "module": "prof_common",
+      "lines": 293,
+      "priority": 3
+    },
+    {
+      "path": "msprof_analyze/prof_common/utils.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "prof_common",
+      "lines": 100,
+      "priority": 4
+    },
+    {
+      "path": "msprof_analyze/prof_common/constant.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "prof_common",
+      "lines": 150,
+      "priority": 5
+    },
+    {
+      "path": "msprof_analyze/advisor/dataset/profiling/profiling_parser.py",
+      "language": "python",
+      "risk": "High",
+      "module": "advisor",
+      "lines": 201,
+      "priority": 1
+    },
+    {
+      "path": "msprof_analyze/advisor/dataset/profiling/profiling_dataset.py",
+      "language": "python",
+      "risk": "High",
+      "module": "advisor",
+      "lines": 300,
+      "priority": 2
+    },
+    {
+      "path": "msprof_analyze/advisor/dataset/profiling/db_manager.py",
+      "language": "python",
+      "risk": "High",
+      "module": "advisor",
+      "lines": 200,
+      "priority": 3
+    },
+    {
+      "path": "msprof_analyze/advisor/analyzer/analyzer_controller.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "advisor",
+      "lines": 250,
+      "priority": 4
+    },
+    {
+      "path": "msprof_analyze/advisor/utils/utils.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "advisor",
+      "lines": 450,
+      "priority": 5
+    },
+    {
+      "path": "msprof_analyze/advisor/dataset/timeline_event_dataset.py",
+      "language": "python",
+      "risk": "High",
+      "module": "advisor",
+      "lines": 300,
+      "priority": 6
+    },
+    {
+      "path": "msprof_analyze/cluster_analyse/cluster_analysis.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "cluster_analyse",
+      "lines": 200,
+      "priority": 1
+    },
+    {
+      "path": "msprof_analyze/cluster_analyse/recipes/base_recipe_analysis.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "cluster_analyse",
+      "lines": 150,
+      "priority": 2
+    },
+    {
+      "path": "msprof_analyze/compare_tools/compare_backend/profiling_parser/base_profiling_parser.py",
+      "language": "python",
+      "risk": "High",
+      "module": "compare_tools",
+      "lines": 500,
+      "priority": 1
+    },
+    {
+      "path": "msprof_analyze/compare_tools/performance_compare.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "compare_tools",
+      "lines": 100,
+      "priority": 2
+    },
+    {
+      "path": "misc/autofuse_performance_comparison/csrc/execute_graph.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "misc_autofuse",
+      "lines": 100,
+      "priority": 1
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "msprof_analyze/cli/entrance.py",
+      "line": 77,
+      "function": "msprof_analyze_cli",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "CLI 入口函数，用户通过命令行调用 msprof-analyze 命令，参数由本地用户控制",
+      "description": "主 CLI 入口点，处理 msprof-analyze 命令及其子命令 (advisor, compare, cluster)"
+    },
+    {
+      "file": "msprof_analyze/cli/analyze_cli.py",
+      "line": 40,
+      "function": "analyze_all",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "advisor 子命令入口，用户通过 -d 参数指定 profiling 数据路径，路径由用户控制",
+      "description": "advisor all 子命令，分析 timeline fusion operators、operators、dispatching 和 cluster"
+    },
+    {
+      "file": "msprof_analyze/cli/cluster_cli.py",
+      "line": 28,
+      "function": "cluster_cli",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "cluster 子命令入口，用户通过 -d 参数指定 profiling 数据路径，路径由用户控制",
+      "description": "cluster 子命令，分析集群数据定位性能瓶颈"
+    },
+    {
+      "file": "msprof_analyze/cli/compare_cli.py",
+      "line": 20,
+      "function": "compare_cli",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "compare 子命令入口，用户指定 GPU/NPU profiling 数据路径进行比对",
+      "description": "compare 子命令，对比 GPU/NPU 性能差异"
+    },
+    {
+      "file": "msprof_analyze/prof_common/file_manager.py",
+      "line": 31,
+      "function": "read_json_file",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "读取用户指定的 JSON 文件，文件内容由用户控制",
+      "description": "读取 JSON profiling 数据文件"
+    },
+    {
+      "file": "msprof_analyze/prof_common/file_manager.py",
+      "line": 50,
+      "function": "read_csv_file",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "读取用户指定的 CSV 文件，文件内容由用户控制",
+      "description": "读取 CSV profiling 数据文件"
+    },
+    {
+      "file": "msprof_analyze/prof_common/file_manager.py",
+      "line": 79,
+      "function": "read_yaml_file",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "读取用户指定的 YAML 文件，使用 yaml.safe_load 解析",
+      "description": "读取 YAML 配置文件"
+    },
+    {
+      "file": "msprof_analyze/prof_common/db_manager.py",
+      "line": 39,
+      "function": "create_connect_db",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "连接用户指定的 SQLite 数据库文件，数据库内容由用户控制",
+      "description": "创建并连接 SQLite 数据库"
+    },
+    {
+      "file": "msprof_analyze/advisor/dataset/profiling/profiling_parser.py",
+      "line": 166,
+      "function": "_parse_csv",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "解析用户提供的 CSV profiling 数据文件",
+      "description": "解析 CSV 格式的 profiling 数据"
+    },
+    {
+      "file": "msprof_analyze/advisor/dataset/profiling/profiling_parser.py",
+      "line": 193,
+      "function": "_parse_json",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "解析用户提供的 JSON profiling 数据文件",
+      "description": "解析 JSON 格式的 profiling 数据"
+    },
+    {
+      "file": "msprof_analyze/advisor/utils/utils.py",
+      "line": 129,
+      "function": "get_analyze_processes",
+      "type": "env",
+      "trust_level": "untrusted_local",
+      "justification": "读取环境变量 ADVISOR_ANALYZE_PROCESSES，本地用户可设置",
+      "description": "从环境变量获取分析进程数"
+    },
+    {
+      "file": "msprof_analyze/prof_common/logger.py",
+      "line": 20,
+      "function": "get_logger",
+      "type": "env",
+      "trust_level": "untrusted_local",
+      "justification": "读取环境变量 MSPROF_ANALYZE_LOG_LEVEL 设置日志级别，本地用户可设置",
+      "description": "从环境变量获取日志级别配置"
+    },
+    {
+      "file": "msprof_analyze/advisor/dataset/timeline_event_dataset.py",
+      "line": 176,
+      "function": "_load_timeline_data",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "读取用户提供的 timeline 数据文件",
+      "description": "加载 timeline event 数据"
+    },
+    {
+      "file": "msprof_analyze/compare_tools/compare_backend/profiling_parser/base_profiling_parser.py",
+      "line": 407,
+      "function": "_parse_json_file",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "解析用户提供的 JSON profiling 数据文件",
+      "description": "解析 profiling JSON 文件"
+    }
+  ],
+  "attack_surfaces": [
+    "命令行参数输入: profiling_path (-d), output_path (-o), benchmark_profiling_path (-bp)",
+    "文件输入: JSON, CSV, YAML, SQLite DB profiling 数据文件",
+    "环境变量: MSPROF_ANALYZE_LOG_LEVEL, ADVISOR_ANALYZE_PROCESSES, ADVISOR_LOG_LEVEL",
+    "SQLite 数据库查询: 用户提供的 DB 文件中的 SQL 查询",
+    "YAML 配置解析: environment_variable_info.yaml 等配置文件"
+  ]
+}

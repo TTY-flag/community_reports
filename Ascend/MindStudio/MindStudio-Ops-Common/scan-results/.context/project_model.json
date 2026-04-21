@@ -1,0 +1,503 @@
+{
+  "project_name": "MindStudio-Ops-Common",
+  "scan_time": "2026-04-21T04:55:18Z",
+  "lsp_available": true,
+  "total_files": 257,
+  "total_lines": 24179,
+  "project_profile": {
+    "project_type": "library",
+    "deployment_model": "作为动态库(.so)被其他工具(msOpProf、msSanitizer等)通过LD_PRELOAD方式注入到目标应用程序中，运行在开发维测环境下",
+    "trust_boundaries": [
+      {
+        "boundary": "LD_PRELOAD Injection Interface",
+        "trusted_side": "Host Application (算子工具使用者)",
+        "untrusted_side": "Application Runtime Data (用户算子代码、kernel二进制、输入文件)",
+        "risk": "Critical"
+      },
+      {
+        "boundary": "IPC Communication Interface",
+        "trusted_side": "Injection Library (msOpCom)",
+        "untrusted_side": "IPC Clients (msOpProf/msSanitizer控制进程)",
+        "risk": "High"
+      },
+      {
+        "boundary": "Dynamic Library Loading Interface",
+        "trusted_side": "Injection Library (msOpCom)",
+        "untrusted_side": "User Plugins (.so files specified by pluginPath)",
+        "risk": "Critical"
+      },
+      {
+        "boundary": "File System Interface",
+        "trusted_side": "Injection Library (msOpCom)",
+        "untrusted_side": "User-provided Files (kernel binaries, config files, input files)",
+        "risk": "High"
+      },
+      {
+        "boundary": "Environment Variable Interface",
+        "trusted_side": "Injection Library (msOpCom)",
+        "untrusted_side": "User Environment (ASCEND_HOME_PATH, SOC_VERSION, etc.)",
+        "risk": "Medium"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "core",
+      "path": "csrc/core",
+      "language": "c_cpp",
+      "components": [
+        "BinaryInstrumentation.cpp",
+        "BinaryInstrumentation.h",
+        "Communication.cpp",
+        "Communication.h",
+        "DomainSocket.cpp",
+        "DomainSocket.h",
+        "FunctionLoader.cpp",
+        "FunctionLoader.h",
+        "HijackedFuncTemplate.h",
+        "HijackedLayerManager.cpp",
+        "HijackedLayerManager.h",
+        "LocalProcess.cpp",
+        "LocalProcess.h",
+        "RemoteProcess.cpp",
+        "RemoteProcess.h",
+        "PlatformConfig.h",
+        "Revision.cpp",
+        "Revision.h",
+        "FuncSelector.cpp",
+        "FuncSelector.h"
+      ]
+    },
+    {
+      "name": "runtime",
+      "path": "csrc/runtime",
+      "language": "c_cpp",
+      "components": [
+        "HijackedFunc.h",
+        "RuntimeOrigin.cpp",
+        "RuntimeOrigin.h",
+        "RuntimeConfig.h",
+        "HijackedFuncOfKernelLaunch.cpp",
+        "HijackedFuncOfKernelLaunchWithHandleV2.cpp",
+        "HijackedFuncOfKernelLaunchWithFlagV2.cpp",
+        "inject_helpers/ProfDataCollect.cpp",
+        "inject_helpers/KernelContext.cpp",
+        "inject_helpers/ProfTask.cpp",
+        "inject_helpers/InstrReport.cpp",
+        "inject_helpers/MemoryDataCollect.cpp",
+        "inject_helpers/RegisterContext.cpp",
+        "inject_helpers/DBITask.cpp",
+        "inject_helpers/MsTx.cpp",
+        "inject_helpers/ProfConfig.h"
+      ]
+    },
+    {
+      "name": "acl_rt_impl",
+      "path": "csrc/acl_rt_impl",
+      "language": "c_cpp",
+      "components": [
+        "HijackedFunc.h",
+        "HijackedFuncOfAclrtLaunchKernelImpl.cpp",
+        "HijackedFuncOfAclrtLaunchKernelV2Impl.cpp",
+        "HijackedFuncOfAclrtLaunchKernelWithConfigImpl.cpp",
+        "HijackedFuncOfAclrtLaunchKernelWithHostArgsImpl.cpp",
+        "HijackedFuncOfAclrtKernelArgsParaUpdateImpl.cpp",
+        "HijackedFuncOfAclrtMallocHostWithCfgImpl.cpp",
+        "HijackedFuncOfAclrtMemsetImpl.cpp",
+        "HijackedFuncOfAclrtMemcpy2dImpl.cpp",
+        "HijackedFuncOfAclrtMapMemImpl.cpp",
+        "HijackedFuncOfAclrtFreeImpl.cpp",
+        "HijackedFuncOfAclrtCreateBinaryImpl.cpp",
+        "HijackedFuncOfAclrtGetDeviceCountImpl.cpp",
+        "HijackedFuncOfAclrtIpcMemGetExportKeyImpl.cpp",
+        "AclRuntimeConfig.h"
+      ]
+    },
+    {
+      "name": "utils",
+      "path": "csrc/utils",
+      "language": "c_cpp",
+      "components": [
+        "FileSystem.cpp",
+        "FileSystem.h",
+        "Environment.cpp",
+        "Environment.h",
+        "PipeCall.cpp",
+        "PipeCall.h",
+        "ElfLoader.cpp",
+        "ElfLoader.h",
+        "Path.cpp",
+        "Path.h",
+        "Ustring.cpp",
+        "Ustring.h",
+        "InjectLogger.h",
+        "Singleton.h",
+        "Future.h",
+        "Protocol.h",
+        "Serialize.h",
+        "UmaskGuard.h"
+      ]
+    },
+    {
+      "name": "kernel_injection",
+      "path": "csrc/kernel_injection",
+      "language": "c_cpp",
+      "components": [
+        "MSBit.cpp",
+        "include/*.h"
+      ]
+    },
+    {
+      "name": "bind",
+      "path": "csrc/bind",
+      "language": "c_cpp",
+      "components": [
+        "BindSanitizer.cpp",
+        "BindOpprof.cpp"
+      ]
+    },
+    {
+      "name": "ascendcl",
+      "path": "csrc/ascendcl",
+      "language": "c_cpp",
+      "components": []
+    },
+    {
+      "name": "ascend_hal",
+      "path": "csrc/ascend_hal",
+      "language": "c_cpp",
+      "components": []
+    },
+    {
+      "name": "ascend_dump",
+      "path": "csrc/ascend_dump",
+      "language": "c_cpp",
+      "components": []
+    },
+    {
+      "name": "hccl",
+      "path": "csrc/hccl",
+      "language": "c_cpp",
+      "components": []
+    },
+    {
+      "name": "camodel",
+      "path": "csrc/camodel",
+      "language": "c_cpp",
+      "components": []
+    },
+    {
+      "name": "profapi",
+      "path": "csrc/profapi",
+      "language": "c_cpp",
+      "components": []
+    },
+    {
+      "name": "tools",
+      "path": "csrc/tools",
+      "language": "c_cpp",
+      "components": [
+        "kernel_launcher/KernelConfigParser.cpp",
+        "dfx_kernel/*.cpp"
+      ]
+    },
+    {
+      "name": "build_scripts",
+      "path": ".",
+      "language": "python",
+      "components": [
+        "build.py",
+        "download_dependencies.py"
+      ]
+    }
+  ],
+  "files": [
+    {
+      "path": "csrc/core/BinaryInstrumentation.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "core",
+      "lines": 298,
+      "priority": 1
+    },
+    {
+      "path": "csrc/core/BinaryInstrumentation.h",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "core",
+      "lines": 135,
+      "priority": 2
+    },
+    {
+      "path": "csrc/utils/PipeCall.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "utils",
+      "lines": 211,
+      "priority": 3
+    },
+    {
+      "path": "csrc/core/DomainSocket.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "core",
+      "lines": 8887,
+      "priority": 4
+    },
+    {
+      "path": "csrc/core/DomainSocket.h",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "core",
+      "lines": 125,
+      "priority": 5
+    },
+    {
+      "path": "csrc/utils/FileSystem.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "utils",
+      "lines": 462,
+      "priority": 6
+    },
+    {
+      "path": "csrc/utils/FileSystem.h",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "utils",
+      "lines": 142,
+      "priority": 7
+    },
+    {
+      "path": "csrc/utils/ElfLoader.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "utils",
+      "lines": 8179,
+      "priority": 8
+    },
+    {
+      "path": "csrc/utils/ElfLoader.h",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "utils",
+      "lines": 2983,
+      "priority": 9
+    },
+    {
+      "path": "csrc/utils/Environment.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "utils",
+      "lines": 4537,
+      "priority": 10
+    },
+    {
+      "path": "csrc/utils/Environment.h",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "utils",
+      "lines": 26,
+      "priority": 11
+    },
+    {
+      "path": "csrc/runtime/inject_helpers/ProfDataCollect.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "runtime",
+      "lines": 1785,
+      "priority": 12
+    },
+    {
+      "path": "csrc/runtime/HijackedFunc.h",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "runtime",
+      "lines": 487,
+      "priority": 13
+    },
+    {
+      "path": "csrc/runtime/HijackedFuncOfKernelLaunch.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "runtime",
+      "lines": 13713,
+      "priority": 14
+    },
+    {
+      "path": "csrc/runtime/HijackedFuncOfKernelLaunchWithHandleV2.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "runtime",
+      "lines": 344,
+      "priority": 15
+    },
+    {
+      "path": "csrc/runtime/HijackedFuncOfKernelLaunchWithFlagV2.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "runtime",
+      "lines": 329,
+      "priority": 16
+    },
+    {
+      "path": "csrc/core/Communication.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "core",
+      "lines": 374,
+      "priority": 17
+    },
+    {
+      "path": "csrc/core/FunctionLoader.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "core",
+      "lines": 3636,
+      "priority": 18
+    },
+    {
+      "path": "csrc/bind/BindSanitizer.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "bind",
+      "lines": 843,
+      "priority": 19
+    },
+    {
+      "path": "csrc/bind/BindOpprof.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "bind",
+      "lines": 822,
+      "priority": 20
+    },
+    {
+      "path": "download_dependencies.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "build_scripts",
+      "lines": 7972,
+      "priority": 21
+    },
+    {
+      "path": "build.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "build_scripts",
+      "lines": 4882,
+      "priority": 22
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "csrc/core/BinaryInstrumentation.cpp",
+      "line": 260,
+      "function": "CustomDBI::SetConfig",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "dlopen() 加载用户指定的 pluginPath SO 文件，pluginPath 来自调用方配置，调用方(msOpProf/msSanitizer)需要确保路径安全，但用户可通过环境变量或配置文件间接影响",
+      "description": "动态加载用户插件 SO 文件"
+    },
+    {
+      "file": "csrc/utils/PipeCall.cpp",
+      "line": 190,
+      "function": "PipeCall",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "fork() + execvp() 执行外部命令(bisheng-tune、llvm-objdump等)，命令参数来自调用方，调用方需要确保参数安全，但用户提供的 kernel 文件路径可能被传递到命令中",
+      "description": "执行外部工具命令进行二进制处理"
+    },
+    {
+      "file": "csrc/core/DomainSocket.cpp",
+      "line": 54,
+      "function": "DomainSocketServer::ListenAndBind",
+      "type": "network",
+      "trust_level": "semi_trusted",
+      "justification": "Unix Domain Socket 服务端绑定路径并监听连接，socket 路径由调用方配置，需要在本地有权限才能连接，仅限开发维测环境使用",
+      "description": "IPC 服务端监听客户端连接"
+    },
+    {
+      "file": "csrc/core/DomainSocket.cpp",
+      "line": 77,
+      "function": "DomainSocketServer::Read",
+      "type": "network",
+      "trust_level": "semi_trusted",
+      "justification": "从 IPC 客户端读取数据，数据来自 msOpProf/msSanitizer 控制进程，需要在本地有 socket 连接权限",
+      "description": "从 IPC 客户端读取控制数据"
+    },
+    {
+      "file": "csrc/utils/FileSystem.cpp",
+      "line": 114,
+      "function": "ReadBinary",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "读取用户提供的 kernel 二进制文件，文件路径来自调用方配置或用户输入，调用方需要确保路径安全并转换为真实绝对路径",
+      "description": "读取 kernel 二进制文件"
+    },
+    {
+      "file": "csrc/utils/FileSystem.cpp",
+      "line": 118,
+      "function": "GetEnv",
+      "type": "env",
+      "trust_level": "semi_trusted",
+      "justification": "读取环境变量(ASCEND_HOME_PATH、SOC_VERSION等)，环境变量由用户或系统设置，调用方文档要求用户确保内容安全可信",
+      "description": "读取环境变量获取系统配置"
+    },
+    {
+      "file": "csrc/utils/Environment.cpp",
+      "line": 24,
+      "function": "GetAscendHomePath",
+      "type": "env",
+      "trust_level": "semi_trusted",
+      "justification": "从环境变量获取 ASCEND_HOME_PATH 路径，路径由用户环境设置，用于定位依赖库和工具",
+      "description": "获取 Ascend 安装路径"
+    },
+    {
+      "file": "csrc/runtime/HijackedFuncOfKernelLaunch.cpp",
+      "line": 87,
+      "function": "HijackedFuncOfKernelLaunch::Pre",
+      "type": "decorator",
+      "trust_level": "semi_trusted",
+      "justification": "劫持 rtKernelLaunch API，处理用户提供的 kernel 参数(args、argsSize等)，参数来自应用程序调用，应用程序需要确保参数有效",
+      "description": "劫持 kernel launch API 处理用户参数"
+    },
+    {
+      "file": "csrc/runtime/HijackedFuncOfMalloc.cpp",
+      "line": 365,
+      "function": "HijackedFuncOfMalloc::Pre",
+      "type": "decorator",
+      "trust_level": "semi_trusted",
+      "justification": "劫持 rtMalloc API，处理用户提供的内存分配请求(size、type等)，参数来自应用程序调用",
+      "description": "劫持内存分配 API"
+    },
+    {
+      "file": "csrc/runtime/HijackedFuncOfMemcpy.cpp",
+      "line": 409,
+      "function": "HijackedFuncOfMemcpy::Pre",
+      "type": "decorator",
+      "trust_level": "semi_trusted",
+      "justification": "劫持 rtMemcpy API，处理用户提供的内存拷贝请求(src、dst、cnt等)，指针来自应用程序，需确保指针有效",
+      "description": "劫持内存拷贝 API"
+    },
+    {
+      "file": "csrc/acl_rt_impl/HijackedFuncOfAclrtLaunchKernelImpl.cpp",
+      "line": 348,
+      "function": "HijackedFuncOfAclrtLaunchKernelImpl::Pre",
+      "type": "decorator",
+      "trust_level": "semi_trusted",
+      "justification": "劫持 aclrtLaunchKernel API，处理用户提供的 kernel 启动参数，参数来自应用程序",
+      "description": "劫持 ACL kernel launch API"
+    }
+  ],
+  "attack_surfaces": [
+    "动态库加载: dlopen() 加载用户指定的 plugin SO 文件",
+    "进程执行: PipeCall() 执行外部命令(bisheng-tune, llvm-objdump, llvm-objcopy, ld.lld)",
+    "IPC 通信: DomainSocket 服务端接受客户端连接并读写数据",
+    "文件读取: ReadBinary()、ReadFile() 读取用户提供的 kernel 二进制文件",
+    "环境变量: GetEnv()、GetAscendHomePath()、GetSocVersionFromEnvVar() 读取环境变量",
+    "劫持 API: 所有 HijackedFunc 类处理来自应用程序的参数和指针",
+    "内存操作: HijackedFuncOfMalloc、HijackedFuncOfMemcpy、HijackedFuncOfMemset 处理用户内存请求",
+    "IPC 内存: rtIpcSetMemoryName、rtIpcOpenMemory 处理跨进程内存共享"
+  ]
+}

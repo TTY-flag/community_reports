@@ -1,0 +1,110 @@
+{
+  "scan_id": "scan-20260420-mindstudio-profiler",
+  "start_time": "2026-04-20T20:30:00Z",
+  "end_time": "2026-04-20T22:50:00Z",
+  "duration_seconds": 8400,
+  "project_name": "MindStudio-Profiler",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/shenteng/MindStudio/MindStudio-Profiler",
+  "status": "success",
+  "language_detection": {
+    "python_files": 1331,
+    "python_lines": 39697,
+    "cpp_files": "test/samples only",
+    "project_type": "python_cpp_mixed"
+  },
+  "agents": [
+    {
+      "name": "architecture",
+      "start_time": "2026-04-20T20:35:00Z",
+      "end_time": "2026-04-20T21:56:00Z",
+      "duration_seconds": 4860,
+      "status": "success",
+      "output_files": [
+        "scan-results/.context/project_model.json",
+        "scan-results/.context/call_graph.json",
+        "scan-results/threat_analysis_report.md"
+      ],
+      "modules_analyzed": 15,
+      "entry_points_found": 8
+    },
+    {
+      "name": "dataflow-scanner",
+      "start_time": "2026-04-20T21:56:00Z",
+      "end_time": "2026-04-20T22:01:00Z",
+      "duration_seconds": 300,
+      "status": "success",
+      "sub_agents": [
+        "python-dataflow-module-scanner (13 modules)",
+        "dataflow-module-scanner (1 module)"
+      ],
+      "candidates_found": 50
+    },
+    {
+      "name": "security-auditor",
+      "start_time": "2026-04-20T21:56:00Z",
+      "end_time": "2026-04-20T22:32:00Z",
+      "duration_seconds": 2160,
+      "status": "success",
+      "sub_agents": [
+        "python-security-module-scanner (13 modules)",
+        "security-module-scanner (1 module)"
+      ],
+      "candidates_found": 57
+    },
+    {
+      "name": "verification",
+      "start_time": "2026-04-20T22:32:00Z",
+      "end_time": "2026-04-20T22:42:00Z",
+      "duration_seconds": 600,
+      "status": "success",
+      "candidates_verified": 98,
+      "results": {
+        "FALSE_POSITIVE": 68,
+        "POSSIBLE": 29,
+        "LIKELY": 1,
+        "CONFIRMED": 0
+      }
+    },
+    {
+      "name": "details-analyzer",
+      "start_time": null,
+      "end_time": null,
+      "duration_seconds": 0,
+      "status": "skipped",
+      "reason": "No CONFIRMED vulnerabilities found"
+    },
+    {
+      "name": "reporter",
+      "start_time": "2026-04-20T22:42:00Z",
+      "end_time": "2026-04-20T22:50:00Z",
+      "duration_seconds": 480,
+      "status": "success",
+      "output_files": [
+        "scan-results/report_confirmed.md",
+        "scan-results/report_unconfirmed.md"
+      ]
+    }
+  ],
+  "summary": {
+    "total_candidates": 107,
+    "after_dedup": 98,
+    "confirmed": 0,
+    "likely": 1,
+    "possible": 29,
+    "false_positive": 68,
+    "critical_severity": 0,
+    "high_severity": 1,
+    "medium_severity": 17,
+    "low_severity": 80,
+    "top_vulnerability_types": [
+      "PATH劫持 (CWE-426)",
+      "资源消耗失控 (CWE-400)",
+      "路径遍历 (CWE-22)"
+    ],
+    "high_risk_modules": [
+      "misc_tools/function_monitor.py",
+      "msparser (struct.unpack)",
+      "common_func (路径操作)"
+    ]
+  }
+}

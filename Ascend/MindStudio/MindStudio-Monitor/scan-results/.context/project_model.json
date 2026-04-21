@@ -1,0 +1,430 @@
+{
+  "project_name": "MindStudio-Monitor",
+  "scan_time": "2026-04-20T00:00:00Z",
+  "lsp_available": false,
+  "total_files": 79,
+  "total_lines": 11477,
+  "project_profile": {
+    "project_type": "network_service",
+    "deployment_model": "Linux服务器上的守护进程，通过TCP端口监听RPC请求，并支持IPC本地通信。典型部署：用户启动dynolog daemon进程，配置SSL证书目录，然后通过dyno CLI工具发送监控命令。",
+    "trust_boundaries": [
+      {
+        "boundary": "Network Interface (TCP RPC)",
+        "trusted_side": "dynolog daemon (Application logic)",
+        "untrusted_side": "Remote clients via dyno CLI",
+        "risk": "Critical"
+      },
+      {
+        "boundary": "IPC Unix Domain Socket",
+        "trusted_side": "dynolog daemon",
+        "untrusted_side": "Local monitored processes (AI training jobs)",
+        "risk": "High"
+      },
+      {
+        "boundary": "Local User Interface",
+        "trusted_side": "dynolog daemon startup logic",
+        "untrusted_side": "Local user (via CLI args, env vars)",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Configuration Files",
+        "trusted_side": "dynolog daemon config loading",
+        "untrusted_side": "Admin-controlled config files (SSL certs dir)",
+        "risk": "Low"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "dynolog_daemon",
+      "path": "dynolog_npu/dynolog/src",
+      "language": "c_cpp",
+      "components": [
+        "Main.cpp",
+        "ThreadManager.cpp",
+        "ThreadManager.h",
+        "rpc/SimpleJsonServer.cpp",
+        "rpc/SimpleJsonServer.h",
+        "rpc/SimpleJsonServerInl.h",
+        "tracing/IPCMonitor.cpp",
+        "tracing/IPCMonitor.h",
+        "LibkinetoConfigManager.cpp",
+        "LibkinetoConfigManager.h",
+        "ipcfabric/Endpoint.h",
+        "ipcfabric/FabricManager.h",
+        "utils.cpp",
+        "utils.h"
+      ]
+    },
+    {
+      "name": "ipc_monitor",
+      "path": "plugin/ipc_monitor",
+      "language": "c_cpp",
+      "components": [
+        "DynoLogNpuMonitor.cpp",
+        "DynoLogNpuMonitor.h",
+        "NpuIpcClient.cpp",
+        "NpuIpcClient.h",
+        "mspti_monitor/MsptiMonitor.cpp",
+        "mspti_monitor/MsptiMonitor.h",
+        "monitor/Monitor.cpp",
+        "monitor/Monitor.h",
+        "monitor/MonitorProcessManager.cpp",
+        "monitor/MonitorProcessManager.h",
+        "db/DataBase.cpp",
+        "db/DataBase.h",
+        "db/Connection.cpp",
+        "db/Connection.h",
+        "InputParser.cpp",
+        "InputParser.h",
+        "utils/utils.cpp",
+        "utils/utils.h"
+      ]
+    },
+    {
+      "name": "IPCMonitor_python",
+      "path": "plugin/IPCMonitor",
+      "language": "python",
+      "components": [
+        "__init__.py",
+        "monitor.py",
+        "dynamic_monitor_proxy.py",
+        "file_manager.py",
+        "utils.py",
+        "singleton.py"
+      ]
+    },
+    {
+      "name": "bindings",
+      "path": "plugin",
+      "language": "c_cpp",
+      "components": [
+        "bindings.cpp"
+      ]
+    },
+    {
+      "name": "securec",
+      "path": "plugin/third_party/securec",
+      "language": "c_cpp",
+      "components": [
+        "src/securecutil.c",
+        "src/memcpy_s.c",
+        "src/memset_s.c",
+        "include/securec.h",
+        "include/securectype.h"
+      ]
+    }
+  ],
+  "files": [
+    {
+      "path": "dynolog_npu/dynolog/src/Main.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "dynolog_daemon",
+      "lines": 17,
+      "priority": 3
+    },
+    {
+      "path": "dynolog_npu/dynolog/src/rpc/SimpleJsonServer.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "dynolog_daemon",
+      "lines": 818,
+      "priority": 1
+    },
+    {
+      "path": "dynolog_npu/dynolog/src/rpc/SimpleJsonServer.h",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "dynolog_daemon",
+      "lines": 80,
+      "priority": 1
+    },
+    {
+      "path": "dynolog_npu/dynolog/src/rpc/SimpleJsonServerInl.h",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "dynolog_daemon",
+      "lines": 203,
+      "priority": 1
+    },
+    {
+      "path": "dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "dynolog_daemon",
+      "lines": 274,
+      "priority": 2
+    },
+    {
+      "path": "dynolog_npu/dynolog/src/tracing/IPCMonitor.h",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "dynolog_daemon",
+      "lines": 48,
+      "priority": 2
+    },
+    {
+      "path": "dynolog_npu/dynolog/src/ThreadManager.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "dynolog_daemon",
+      "lines": 255,
+      "priority": 2
+    },
+    {
+      "path": "dynolog_npu/dynolog/src/ThreadManager.h",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "dynolog_daemon",
+      "lines": 71,
+      "priority": 2
+    },
+    {
+      "path": "dynolog_npu/dynolog/src/ipcfabric/Endpoint.h",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "dynolog_daemon",
+      "lines": 253,
+      "priority": 2
+    },
+    {
+      "path": "dynolog_npu/dynolog/src/ipcfabric/FabricManager.h",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "dynolog_daemon",
+      "lines": 225,
+      "priority": 2
+    },
+    {
+      "path": "dynolog_npu/dynolog/src/LibkinetoConfigManager.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "dynolog_daemon",
+      "lines": 100,
+      "priority": 2
+    },
+    {
+      "path": "dynolog_npu/dynolog/src/LibkinetoConfigManager.h",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "dynolog_daemon",
+      "lines": 50,
+      "priority": 2
+    },
+    {
+      "path": "plugin/ipc_monitor/NpuIpcClient.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "ipc_monitor",
+      "lines": 193,
+      "priority": 2
+    },
+    {
+      "path": "plugin/ipc_monitor/NpuIpcClient.h",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "ipc_monitor",
+      "lines": 173,
+      "priority": 2
+    },
+    {
+      "path": "plugin/ipc_monitor/DynoLogNpuMonitor.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "ipc_monitor",
+      "lines": 100,
+      "priority": 2
+    },
+    {
+      "path": "plugin/ipc_monitor/DynoLogNpuMonitor.h",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "ipc_monitor",
+      "lines": 57,
+      "priority": 2
+    },
+    {
+      "path": "plugin/ipc_monitor/mspti_monitor/MsptiMonitor.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "ipc_monitor",
+      "lines": 150,
+      "priority": 2
+    },
+    {
+      "path": "plugin/ipc_monitor/mspti_monitor/MsptiMonitor.h",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "ipc_monitor",
+      "lines": 80,
+      "priority": 2
+    },
+    {
+      "path": "plugin/ipc_monitor/db/DataBase.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "ipc_monitor",
+      "lines": 50,
+      "priority": 3
+    },
+    {
+      "path": "plugin/ipc_monitor/db/DataBase.h",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "ipc_monitor",
+      "lines": 48,
+      "priority": 3
+    },
+    {
+      "path": "plugin/bindings.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "bindings",
+      "lines": 136,
+      "priority": 3
+    },
+    {
+      "path": "plugin/IPCMonitor/__init__.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "IPCMonitor_python",
+      "lines": 17,
+      "priority": 4
+    },
+    {
+      "path": "plugin/IPCMonitor/monitor.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "IPCMonitor_python",
+      "lines": 113,
+      "priority": 4
+    },
+    {
+      "path": "plugin/IPCMonitor/dynamic_monitor_proxy.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "IPCMonitor_python",
+      "lines": 44,
+      "priority": 4
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "dynolog_npu/dynolog/src/rpc/SimpleJsonServer.cpp",
+      "line": 77,
+      "function": "initSocket",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "TCP socket绑定到IPv6任意地址(in6addr_any)，监听指定端口(默认1778)，远程客户端可通过dyno CLI连接发送RPC请求，攻击者可触达",
+      "description": "TCP RPC服务入口，接收JSON格式的RPC请求"
+    },
+    {
+      "file": "dynolog_npu/dynolog/src/rpc/SimpleJsonServer.cpp",
+      "line": 157,
+      "function": "accept",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "接受TCP连接，客户端可来自任何网络位置",
+      "description": "接受TCP连接"
+    },
+    {
+      "file": "dynolog_npu/dynolog/src/rpc/SimpleJsonServer.cpp",
+      "line": 199,
+      "function": "get_message",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "通过recv()或SSL_read()读取客户端发送的消息，消息内容完全由客户端控制",
+      "description": "读取RPC请求消息"
+    },
+    {
+      "file": "dynolog_npu/dynolog/src/rpc/SimpleJsonServerInl.h",
+      "line": 179,
+      "function": "processOneImpl",
+      "type": "rpc",
+      "trust_level": "untrusted_network",
+      "justification": "处理RPC请求，解析JSON并执行getStatus、setKinetOnDemandRequest等操作，输入来自网络",
+      "description": "处理RPC请求，解析并执行命令"
+    },
+    {
+      "file": "dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp",
+      "line": 58,
+      "function": "ipc_manager_->recv",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "通过Unix Domain Socket接收IPC消息，本地进程需有权限连接到socket文件",
+      "description": "IPC消息接收入口"
+    },
+    {
+      "file": "dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp",
+      "line": 70,
+      "function": "data_ipc_manager_->recv",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "通过Unix Domain Socket接收数据消息，本地进程需有权限连接",
+      "description": "IPC数据消息接收入口"
+    },
+    {
+      "file": "dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp",
+      "line": 79,
+      "function": "processMsg",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "处理IPC消息，解析消息类型并执行对应操作，输入来自本地进程",
+      "description": "处理IPC消息"
+    },
+    {
+      "file": "dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp",
+      "line": 141,
+      "function": "processDataMsg",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "处理IPC数据消息，解析JSON格式数据并记录，输入来自本地进程",
+      "description": "处理IPC数据消息，包含性能数据"
+    },
+    {
+      "file": "dynolog_npu/dynolog/src/Main.cpp",
+      "line": 11,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "命令行参数由本地用户传入，启动daemon时可通过gflags配置端口、证书目录等",
+      "description": "程序入口，解析命令行参数"
+    },
+    {
+      "file": "dynolog_npu/dynolog/src/ThreadManager.cpp",
+      "line": 201,
+      "function": "run",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "解析命令行参数(gflags)，设置端口、启用IPC监控等配置",
+      "description": "线程管理器运行，解析命令行参数"
+    },
+    {
+      "file": "plugin/ipc_monitor/NpuIpcClient.cpp",
+      "line": 21,
+      "function": "Init",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "IPC客户端初始化，通过Unix Domain Socket与dynolog daemon通信",
+      "description": "IPC客户端初始化"
+    },
+    {
+      "file": "plugin/ipc_monitor/NpuIpcClient.cpp",
+      "line": 63,
+      "function": "IpcClientNpuConfig",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "向dynolog发送配置请求并接收响应，通过IPC",
+      "description": "IPC配置请求"
+    }
+  ],
+  "attack_surfaces": [
+    "TCP RPC服务: 端口1778（可配置），接收JSON格式RPC请求",
+    "SSL/TLS加密通道: 支持证书验证，可选NO_CERTS模式",
+    "Unix Domain Socket IPC: 抽象socket路径'dynolog'和'dynolog_data'",
+    "JSON解析: RPC和IPC消息均使用JSON格式",
+    "配置参数: 命令行参数控制端口、证书目录、监控功能启用等",
+    "Python C扩展: bindings.cpp暴露的Python接口"
+  ]
+}

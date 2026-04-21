@@ -1,0 +1,329 @@
+{
+  "functions": {
+    "main@csrc/main.cpp:22": {
+      "defined_at": 22,
+      "calls": ["ClientParser::Interpretor@csrc/framework/client_parser.cpp:210"],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "ClientParser::Interpretor@csrc/framework/client_parser.cpp:210": {
+      "defined_at": 210,
+      "calls": ["ClientParser::Parse@csrc/framework/client_parser.cpp:847", "DoUserCommand@csrc/framework/client_parser.cpp:187"],
+      "called_by": ["main@csrc/main.cpp:22"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "ClientParser::Parse@csrc/framework/client_parser.cpp:847": {
+      "defined_at": 847,
+      "calls": ["ParseSelectSteps@csrc/framework/client_parser.cpp:254", "ParseAnalysis@csrc/framework/client_parser.cpp:293", "ParseCallstack@csrc/framework/client_parser.cpp:356", "ParseInputPaths@csrc/framework/client_parser.cpp:386", "ParseOutputPath@csrc/framework/client_parser.cpp:415", "ParseWatchConfig@csrc/framework/client_parser.cpp:607", "ParseDataLevel@csrc/framework/client_parser.cpp:453", "ParseEventTraceType@csrc/framework/client_parser.cpp:488", "ParseDevice@csrc/framework/client_parser.cpp:678"],
+      "called_by": ["ClientParser::Interpretor@csrc/framework/client_parser.cpp:210"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "ParseOutputPath@csrc/framework/client_parser.cpp:415": {
+      "defined_at": 415,
+      "calls": ["Utility::Path::Resolved@csrc/utility/path.cpp:141", "Utility::CheckIsValidOutputPath@csrc/utility/path.cpp:292", "Utility::IsValidOutputPath@csrc/utility/string_validator.cpp:71", "strncpy_s"],
+      "called_by": ["ClientParser::Parse@csrc/framework/client_parser.cpp:847"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "ParseInputPaths@csrc/framework/client_parser.cpp:386": {
+      "defined_at": 386,
+      "calls": ["Utility::SplitString@csrc/utility/string_validator.cpp:24", "Utility::CheckIsValidInputPath@csrc/utility/path.cpp:248", "Utility::IsFileSizeSafe"],
+      "called_by": ["ClientParser::Parse@csrc/framework/client_parser.cpp:847"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "ParseWatchConfig@csrc/framework/client_parser.cpp:607": {
+      "defined_at": 607,
+      "calls": ["ParseWatchStartConfig@csrc/framework/client_parser.cpp:539", "ParseWatchEndConfig@csrc/framework/client_parser.cpp:583", "strncpy_s"],
+      "called_by": ["ClientParser::Parse@csrc/framework/client_parser.cpp:847"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "DoUserCommand@csrc/framework/client_parser.cpp:187": {
+      "defined_at": 187,
+      "calls": ["ShowHelpInfo@csrc/framework/client_parser.cpp:63", "ShowVersion@csrc/framework/client_parser.cpp:116", "UserCommandPrecheck@csrc/framework/client_parser.cpp:123", "ConfigManager::Instance().SetConfig@csrc/event_trace/trace_manager/event_trace_manager.cpp:107", "Command::Exec@csrc/framework/command.cpp:32"],
+      "called_by": ["ClientParser::Interpretor@csrc/framework/client_parser.cpp:210"],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "Command::Exec@csrc/framework/command.cpp:32": {
+      "defined_at": 32,
+      "calls": ["MemoryCompare::GetInstance().RunComparison@csrc/analysis/memory_compare.cpp", "Process::GetInstance().Launch@csrc/framework/process.cpp:165"],
+      "called_by": ["DoUserCommand@csrc/framework/client_parser.cpp:187"],
+      "receives_external_input": false,
+      "risk": "High"
+    },
+    "Process::Launch@csrc/framework/process.cpp:165": {
+      "defined_at": 165,
+      "calls": ["ExecCmd::ExecCmd@csrc/framework/process.cpp:42", "Process::SetPreloadEnv@csrc/framework/process.cpp:174", "Process::DoLaunch@csrc/framework/process.cpp:226"],
+      "called_by": ["Command::Exec@csrc/framework/command.cpp:32"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "Process::SetPreloadEnv@csrc/framework/process.cpp:174": {
+      "defined_at": 174,
+      "calls": ["getenv", "Utility::Path::Resolved@csrc/utility/path.cpp:141", "Utility::Path::Exists@csrc/utility/path.cpp:179", "setenv"],
+      "called_by": ["Process::Launch@csrc/framework/process.cpp:165"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "Process::DoLaunch@csrc/framework/process.cpp:226": {
+      "defined_at": 226,
+      "calls": ["execvpe", "_exit"],
+      "called_by": ["Process::Launch@csrc/framework/process.cpp:165"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "LibLoad@csrc/event_trace/vallina_symbol.cpp:26": {
+      "defined_at": 26,
+      "calls": ["getenv", "dlopen"],
+      "called_by": ["RuntimeLibLoader::Instance().Get", "ACLImplLibLoader::Instance().Get", "AclLibLoader::Instance().Get"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "GetSymbol@csrc/event_trace/vallina_symbol.cpp:46": {
+      "defined_at": 46,
+      "calls": ["dlsym"],
+      "called_by": ["VallinaSymbol<T>::Get"],
+      "receives_external_input": false,
+      "risk": "High"
+    },
+    "PyInit__msmemscope@csrc/python_itf/msleaksmodule.cpp:203": {
+      "defined_at": 203,
+      "calls": ["PyModule_Create", "PyMemScope_GetWatcher@csrc/python_itf/watcherobject.cpp:265", "PyMemScope_GetTracer@csrc/python_itf/tracerobject.cpp:106", "PyMemScope_GetDescriber@csrc/python_itf/describerobject.cpp", "PyMemScope_GetReportTensor@csrc/python_itf/report_tensor.cpp", "PyMemScope_GetRecordFunction@csrc/python_itf/recordfuncobject.cpp", "PyModule_AddObject"],
+      "called_by": [],
+      "receives_external_input": false,
+      "risk": "High"
+    },
+    "MsmemscopeConfig@csrc/python_itf/msleaksmodule.cpp:77": {
+      "defined_at": 77,
+      "calls": ["PyDict_Next", "PyUnicode_AsUTF8", "ConfigManager::Instance().SetConfig@csrc/event_trace/trace_manager/event_trace_manager.cpp:120"],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "MsmemscopeTakeSnapshot@csrc/python_itf/msleaksmodule.cpp:135": {
+      "defined_at": 135,
+      "calls": ["PyArg_ParseTuple", "PyDict_Check", "PyDict_GetItemString", "PyLong_AsLong", "PyUnicode_AsUTF8", "strncpy_s", "OOMHandler::Instance().GetOOMStack@csrc/event_trace/oom_handler.cpp:30", "EventReport::Instance().ReportMemorySnapshot@csrc/event_trace/event_report.cpp"],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "PyMemScopeWatcherWatch@csrc/python_itf/watcherobject.cpp:148": {
+      "defined_at": 148,
+      "calls": ["PyDict_GetItemString", "PyUnicode_AsUTF8", "PyLong_AsLong", "ParseInputArgs@csrc/python_itf/watcherobject.cpp:106", "TensorDumper::GetInstance().SetDumpNums@csrc/event_trace/memory_watch/tensor_dumper.cpp:204", "TensorDumper::GetInstance().SetDumpName@csrc/event_trace/memory_watch/tensor_dumper.cpp:233", "TensorMonitor::GetInstance().AddWatchTensor@csrc/event_trace/memory_watch/tensor_monitor.cpp"],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "ParseInputArgs@csrc/python_itf/watcherobject.cpp:106": {
+      "defined_at": 106,
+      "calls": ["PyTuple_Size", "PyTuple_GetItem", "IsTorchTensor@csrc/python_itf/watcherobject.cpp:43", "ParseTensorPtrAndSize@csrc/python_itf/watcherobject.cpp:79", "PyLong_Check", "PyLong_AsUnsignedLongLong"],
+      "called_by": ["PyMemScopeWatcherWatch@csrc/python_itf/watcherobject.cpp:148", "PyMemScopeWatcherRemove@csrc/python_itf/watcherobject.cpp:196"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "TensorDumper::Dump@csrc/event_trace/memory_watch/tensor_dumper.cpp:168": {
+      "defined_at": 168,
+      "calls": ["TensorDumper::SynchronizeStream@csrc/event_trace/memory_watch/tensor_dumper.cpp:151", "TensorMonitor::GetInstance().GetCmdWatchedTensorsMap", "MemoryWatch::GetInstance().GetWatchedTargetName@csrc/event_trace/memory_watch/memory_watch.cpp:197", "TensorDumper::GetFileName@csrc/event_trace/memory_watch/tensor_dumper.cpp:143", "TensorDumper::DumpOneTensor@csrc/event_trace/memory_watch/tensor_dumper.cpp:117"],
+      "called_by": ["MemoryWatch::BeginExcute@csrc/event_trace/memory_watch/memory_watch.cpp:32", "MemoryWatch::EndExcute@csrc/event_trace/memory_watch/memory_watch.cpp:42"],
+      "receives_external_input": false,
+      "risk": "High"
+    },
+    "TensorDumper::DumpOneTensor@csrc/event_trace/memory_watch/tensor_dumper.cpp:117": {
+      "defined_at": 117,
+      "calls": ["Utility::MakeDir", "VallinaSymbol<AclLibLoader>::Instance().Get", "aclrtMemcpy", "TensorDumper::DumpTensorBinary@csrc/event_trace/memory_watch/tensor_dumper.cpp:58", "TensorDumper::DumpTensorHashValue@csrc/event_trace/memory_watch/tensor_dumper.cpp:95"],
+      "called_by": ["TensorDumper::Dump@csrc/event_trace/memory_watch/tensor_dumper.cpp:168"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "TensorDumper::DumpTensorBinary@csrc/event_trace/memory_watch/tensor_dumper.cpp:58": {
+      "defined_at": 58,
+      "calls": ["CleanFileName@csrc/event_trace/memory_watch/tensor_dumper.cpp:30", "GetDeviceInfo::Instance().GetDeviceId", "access", "Utility::MakeDir", "Utility::UmaskGuard", "std::ofstream::write"],
+      "called_by": ["TensorDumper::DumpOneTensor@csrc/event_trace/memory_watch/tensor_dumper.cpp:117"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "InitInjectionMstx@csrc/event_trace/mstx_hooks/mstx_inject.cpp:179": {
+      "defined_at": 179,
+      "calls": ["MstxTableCoreInject@csrc/event_trace/mstx_hooks/mstx_inject.cpp:69", "MstxTableDomainCoreInject@csrc/event_trace/mstx_hooks/mstx_inject.cpp:97", "MstxTableMemCoreInject@csrc/event_trace/mstx_hooks/mstx_inject.cpp:115"],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "MstxTableCoreInject@csrc/event_trace/mstx_hooks/mstx_inject.cpp:69": {
+      "defined_at": 69,
+      "calls": ["MstxMarkAFunc@csrc/event_trace/mstx_hooks/mstx_inject.cpp:41", "MstxRangeStartAFunc@csrc/event_trace/mstx_hooks/mstx_inject.cpp:51", "MstxRangeEndFunc@csrc/event_trace/mstx_hooks/mstx_inject.cpp:61"],
+      "called_by": ["InitInjectionMstx@csrc/event_trace/mstx_hooks/mstx_inject.cpp:179"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "MstxMarkAFunc@csrc/event_trace/mstx_hooks/mstx_inject.cpp:41": {
+      "defined_at": 41,
+      "calls": ["EventTraceManager::Instance().IsTracingEnabled@csrc/event_trace/trace_manager/event_trace_manager.cpp:239", "GetStreamID@csrc/event_trace/mstx_hooks/mstx_inject.cpp:25", "MstxManager::GetInstance().ReportMarkA"],
+      "called_by": ["MstxTableCoreInject@csrc/event_trace/mstx_hooks/mstx_inject.cpp:69"],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "rtKernelLaunch@csrc/event_trace/kernel_hooks/runtime_hooks.cpp:61": {
+      "defined_at": 61,
+      "calls": ["VallinaSymbol<RuntimeLibLoader>::Instance().Get", "StartKernelEventTrace@csrc/event_trace/kernel_hooks/runtime_hooks.cpp:45", "RuntimeKernelLinker::GetInstance().KernelLaunch", "KernelWatchEnd@csrc/event_trace/kernel_hooks/runtime_hooks.cpp:51"],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "aclInit@csrc/event_trace/kernel_hooks/acl_hooks.cpp:38": {
+      "defined_at": 38,
+      "calls": ["VallinaSymbol<AclLibLoader>::Instance().Get", "EventTraceManager::Instance().SetAclInitStatus@csrc/event_trace/trace_manager/event_trace_manager.cpp:319", "EventTraceManager::Instance().IsTracingEnabled@csrc/event_trace/trace_manager/event_trace_manager.cpp:239", "EventReport::Instance().ReportAclItf@csrc/event_trace/event_report.cpp"],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "hijacker@python/msmemscope/hijacker/hijack_utility.py:46": {
+      "defined_at": 46,
+      "calls": ["HiJackerManager.initialize@csrc/utility/cpython.py:346", "HijackerUnit.__init__@python/msmemscope/hijacker/hijack_utility.py:115", "HiJackerManager.add_unit@python/msmemscope/hijacker/hijack_utility.py:352"],
+      "called_by": ["MemScopeHijackManager.init_framework_hooks@python/msmemscope/hijacker/hijack_manager.py:30", "HiJackerWrapperFunction.activate@python/msmemscope/hijacker/hijack_utility.py:223"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "HiJackerManager.initialize@python/msmemscope/hijacker/hijack_utility.py:346": {
+      "defined_at": 346,
+      "calls": ["sys.meta_path.insert@csrc/utility/cpython.py"],
+      "called_by": ["hijacker@python/msmemscope/hijacker/hijack_utility.py:46"],
+      "receives_external_input": false,
+      "risk": "High"
+    },
+    "HiJackerWrapperFunction.activate@python/msmemscope/hijacker/hijack_utility.py:223": {
+      "defined_at": 223,
+      "calls": ["hijacker@python/msmemscope/hijacker/hijack_utility.py:46", "setattr"],
+      "called_by": ["HiJackerManager.add_unit@python/msmemscope/hijacker/hijack_utility.py:352"],
+      "receives_external_input": false,
+      "risk": "Critical"
+    },
+    "_get_wrapper@python/msmemscope/hijacker/hijack_utility.py:275": {
+      "defined_at": 275,
+      "calls": ["unit.stub"],
+      "called_by": ["HiJackerWrapperFunction.activate@python/msmemscope/hijacker/hijack_utility.py:223"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "JsonManager::LoadFromFile@csrc/utility/json_manager.cpp:54": {
+      "defined_at": 54,
+      "calls": ["std::ifstream::open", "nlohmann::json::operator>>"],
+      "called_by": ["JsonConfig::ReadJsonConfig@csrc/utility/json_manager.cpp:267"],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "JsonConfig::ReadJsonConfig@csrc/utility/json_manager.cpp:267": {
+      "defined_at": 267,
+      "calls": ["getenv", "JsonManager::LoadFromFile@csrc/utility/json_manager.cpp:54", "JsonManager::GetStringValue@csrc/utility/json_manager.cpp:88", "JsonManager::GetCharListValue@csrc/utility/json_manager.cpp:103", "JsonManager::GetUint8Value@csrc/utility/json_manager.cpp:122", "JsonManager::GetUint32Value@csrc/utility/json_manager.cpp:137", "JsonManager::GetBoolValue@csrc/utility/json_manager.cpp:152"],
+      "called_by": ["ConfigManager::InitConfig@csrc/event_trace/trace_manager/event_trace_manager.cpp:51"],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "ConfigManager::SetConfig@csrc/event_trace/trace_manager/event_trace_manager.cpp:120": {
+      "defined_at": 120,
+      "calls": ["ConfigManager::GetConfigAfterInit@csrc/event_trace/trace_manager/event_trace_manager.cpp:67", "ParseCallstack@csrc/framework/client_parser.cpp:356", "ParseDataLevel@csrc/framework/client_parser.cpp:453", "ParseOutputPath@csrc/framework/client_parser.cpp:415", "ConfigManager::SetConfigImpl@csrc/event_trace/trace_manager/event_trace_manager.cpp:96", "JsonConfig::SaveConfigToJson@csrc/utility/json_manager.cpp:228", "EventTraceManager::Instance().HandleWithATenCollect@csrc/event_trace/trace_manager/event_trace_manager.cpp:294", "EventTraceManager::Instance().HandleWithDecompose@csrc/event_trace/trace_manager/event_trace_manager.cpp:306"],
+      "called_by": ["MsmemscopeConfig@csrc/python_itf/msleaksmodule.cpp:77"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "RegisterTraceCb@csrc/utility/cpython.cpp:483": {
+      "defined_at": 483,
+      "calls": ["PythonObject::Import@csrc/utility/cpython.cpp:517", "PythonObject::Get@csrc/utility/cpython.cpp:554", "PythonObject::Call@csrc/utility/cpython.cpp:609", "PyThreadState_Get", "PyInterpreterState_Get", "PyThreadState_Swap", "GetTraceCallStack@csrc/utility/cpython.cpp:458", "PyEval_SetProfile"],
+      "called_by": ["PythonTrace::Start@csrc/event_trace/python_trace.cpp"],
+      "receives_external_input": false,
+      "risk": "High"
+    },
+    "PythonCallstack@csrc/utility/cpython.cpp:111": {
+      "defined_at": 111,
+      "calls": ["IsPythonThread@csrc/utility/cpython.cpp:99", "IsPyInterpRepeInited@csrc/utility/cpython.cpp:82", "PyGILState_Ensure", "PyEval_GetFrame", "PyFrame_GetCode", "PyUnicode_AsUTF8", "PyFrame_GetLineNumber", "PyFrame_GetBack", "Py_IncRef", "Py_DecRef"],
+      "called_by": ["call_stack.cpp"],
+      "receives_external_input": false,
+      "risk": "Medium"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "argv@csrc/main.cpp:22",
+      "path": ["ClientParser::Parse@csrc/framework/client_parser.cpp:847", "ParseOutputPath@csrc/framework/client_parser.cpp:415", "strncpy_s(config.outputDir)"],
+      "sink": "config.outputDir@csrc/framework/config_info.h",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "argv@csrc/main.cpp:22",
+      "path": ["ClientParser::Parse@csrc/framework/client_parser.cpp:847", "ParseInputPaths@csrc/framework/client_parser.cpp:386", "userCommand.inputPaths"],
+      "sink": "MemoryCompare::RunComparison@csrc/analysis/memory_compare.cpp",
+      "sink_type": "file_operation"
+    },
+    {
+      "source": "argv@csrc/main.cpp:22",
+      "path": ["ClientParser::Parse@csrc/framework/client_parser.cpp:847", "Process::Launch@csrc/framework/process.cpp:165", "ExecCmd@csrc/framework/process.cpp:42", "execvpe@csrc/framework/process.cpp:229"],
+      "sink": "execvpe@csrc/framework/process.cpp:229",
+      "sink_type": "process_execution"
+    },
+    {
+      "source": "kwargs@csrc/python_itf/msleaksmodule.cpp:77",
+      "path": ["MsmemscopeConfig@csrc/python_itf/msleaksmodule.cpp:77", "ConfigManager::SetConfig@csrc/event_trace/trace_manager/event_trace_manager.cpp:120", "ParseOutputPath@csrc/framework/client_parser.cpp:415"],
+      "sink": "strncpy_s@csrc/framework/client_parser.cpp:443",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "memory_info@csrc/python_itf/msleaksmodule.cpp:135",
+      "path": ["MsmemscopeTakeSnapshot@csrc/python_itf/msleaksmodule.cpp:135", "PyDict_GetItemString", "strncpy_s(snapshot_info.name)"],
+      "sink": "snapshot_info.name@csrc/python_itf/msleaksmodule.cpp:167",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "tensor/addr@csrc/python_itf/watcherobject.cpp:148",
+      "path": ["PyMemScopeWatcherWatch@csrc/python_itf/watcherobject.cpp:148", "ParseInputArgs@csrc/python_itf/watcherobject.cpp:106", "tensorInfo.data"],
+      "sink": "TensorMonitor::AddWatchTensor@csrc/event_trace/memory_watch/tensor_monitor.cpp",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "name@csrc/python_itf/watcherobject.cpp:148",
+      "path": ["PyMemScopeWatcherWatch@csrc/python_itf/watcherobject.cpp:148", "TensorDumper::SetDumpName@csrc/event_trace/memory_watch/tensor_dumper.cpp:233"],
+      "sink": "TensorDumper::DumpTensorBinary@csrc/event_trace/memory_watch/tensor_dumper.cpp:58",
+      "sink_type": "file_operation"
+    },
+    {
+      "source": "getenv(ASCEND_HOME_PATH)@csrc/event_trace/vallina_symbol.cpp:33",
+      "path": ["LibLoad@csrc/event_trace/vallina_symbol.cpp:26", "dlopen@csrc/event_trace/vallina_symbol.cpp:37"],
+      "sink": "dlopen@csrc/event_trace/vallina_symbol.cpp:37",
+      "sink_type": "dynamic_loading"
+    },
+    {
+      "source": "getenv(LD_PRELOAD_PATH)@csrc/framework/process.cpp:177",
+      "path": ["Process::SetPreloadEnv@csrc/framework/process.cpp:174", "setenv(LD_PRELOAD)@csrc/framework/process.cpp:223"],
+      "sink": "setenv@csrc/framework/process.cpp:223",
+      "sink_type": "env_operation"
+    },
+    {
+      "source": "getenv(MSMEMSCOPE_CONFIG_ENV)@csrc/utility/json_manager.cpp:269",
+      "path": ["JsonConfig::ReadJsonConfig@csrc/utility/json_manager.cpp:267", "JsonManager::LoadFromFile@csrc/utility/json_manager.cpp:54"],
+      "sink": "std::ifstream@csrc/utility/json_manager.cpp:56",
+      "sink_type": "file_operation"
+    },
+    {
+      "source": "getFuncTable@csrc/event_trace/mstx_hooks/mstx_inject.cpp:179",
+      "path": ["InitInjectionMstx@csrc/event_trace/mstx_hooks/mstx_inject.cpp:179", "MstxTableCoreInject@csrc/event_trace/mstx_hooks/mstx_inject.cpp:69", "*outTable[index]"],
+      "sink": "outTable@csrc/event_trace/mstx_hooks/mstx_inject.cpp:72",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "module@class_name@method_name@python/msmemscope/hijacker/hijack_utility.py:46",
+      "path": ["hijacker@python/msmemscope/hijacker/hijack_utility.py:46", "HiJackerManager.add_unit@csrc/utility/cpython.py:352", "HiJackerWrapperFunction.activate@csrc/utility/cpython.py:223", "setattr(parent_obj, func_name, wrapper)"],
+      "sink": "setattr@csrc/utility/cpython.py:240",
+      "sink_type": "dynamic_execution"
+    },
+    {
+      "source": "stub@python/msmemscope/hijacker/hijack_utility.py:46",
+      "path": ["hijacker@python/msmemscope/hijacker/hijack_utility.py:46", "_get_wrapper@csrc/utility/cpython.py:275", "unit.stub(*args, **kws)"],
+      "sink": "unit.stub@csrc/utility/cpython.py:289",
+      "sink_type": "dynamic_execution"
+    }
+  ]
+}
