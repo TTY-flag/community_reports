@@ -1,0 +1,68 @@
+{
+  "scan_id": "89fbaa97-9a22-4e4c-bfa1-39d1b62a6d08",
+  "start_time": "2026-04-20T23:47:00",
+  "end_time": "2026-04-21T00:28:28.882973",
+  "status": "success",
+  "project_name": "MindStudio-Service-Profiler",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/shenteng/MindStudio/MindStudio-Service-Profiler",
+  "language": "C++ + Python mixed",
+  "agents": [
+    {
+      "name": "architecture",
+      "status": "success",
+      "output_files": [
+        "project_model.json",
+        "call_graph.json",
+        "threat_analysis_report.md"
+      ],
+      "modules": 9,
+      "high_risk_files": 13
+    },
+    {
+      "name": "dataflow-scanner",
+      "status": "success",
+      "vulnerabilities_found": 77
+    },
+    {
+      "name": "security-auditor",
+      "status": "success",
+      "vulnerabilities_found": 8,
+      "cross_module": 4
+    },
+    {
+      "name": "verification",
+      "status": "success",
+      "input_count": 77,
+      "output": {
+        "CONFIRMED": 12,
+        "LIKELY": 24,
+        "POSSIBLE": 33,
+        "FALSE_POSITIVE": 8
+      }
+    },
+    {
+      "name": "details-analyzer",
+      "status": "success",
+      "reports_generated": 3
+    },
+    {
+      "name": "reporter",
+      "status": "success",
+      "output_files": [
+        "report_confirmed.md",
+        "report_unconfirmed.md"
+      ]
+    }
+  ],
+  "summary": {
+    "total_candidates": 77,
+    "confirmed": 12,
+    "likely": 24,
+    "possible": 33,
+    "false_positive": 8,
+    "critical_count": 8,
+    "high_count": 17,
+    "medium_count": 33,
+    "low_count": 19
+  }
+}

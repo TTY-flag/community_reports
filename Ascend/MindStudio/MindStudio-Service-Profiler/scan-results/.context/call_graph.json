@@ -1,0 +1,432 @@
+{
+  "functions": {
+    "main@__main__.py": {
+      "defined_at": 24,
+      "calls": [
+        "source_to_train.arg_parse@msservice_advisor",
+        "optimizer.arg_parse@ms_serviceparam_optimizer",
+        "advisor.arg_parse@msservice_advisor",
+        "analyze.arg_parse@ms_service_profiler",
+        "split.arg_parse@ms_service_profiler",
+        "compare.arg_parse@ms_service_profiler"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "ReadConfigPath@Config.cpp": {
+      "defined_at": 66,
+      "calls": [
+        "MsUtils::GetEnvAsString@Utils.cpp"
+      ],
+      "called_by": [
+        "Config::ReadAndSaveConfig@Config.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "ReadConfigFile@Config.cpp": {
+      "defined_at": 76,
+      "calls": [
+        "realpath@stdlib",
+        "stat@stdlib",
+        "std::ifstream::open@stdlib",
+        "nlohmann::json::parse@3rdparty"
+      ],
+      "called_by": [
+        "Config::ReadAndSaveConfig@Config.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "ParseConfig@Config.cpp": {
+      "defined_at": 129,
+      "calls": [
+        "ParseTimeLimit@Config.cpp",
+        "ParseAclTaskTime@Config.cpp",
+        "ParseProfPath@Config.cpp",
+        "ParseLevel@Config.cpp",
+        "ParseDomain@Config.cpp",
+        "ParseCollectConfig@Config.cpp",
+        "ParseMspti@Config.cpp",
+        "ParseAicoreMetrics@Config.cpp",
+        "ParseDataTypeConfig@Config.cpp",
+        "ParseEnable@Config.cpp"
+      ],
+      "called_by": [
+        "Config::ReadAndSaveConfig@Config.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "High"
+    },
+    "CheckFileBeforeRead@SecurityUtils.cpp": {
+      "defined_at": 268,
+      "calls": [
+        "IsSoftLink@SecurityUtils.cpp",
+        "GetRealPath@SecurityUtils.cpp",
+        "IsPathLenLegal@SecurityUtils.cpp",
+        "IsPathCharactersValid@SecurityUtils.cpp",
+        "IsFile@SecurityUtils.cpp",
+        "IsFileSizeLegal@SecurityUtils.cpp",
+        "IsReadable@SecurityUtils.cpp",
+        "stat@stdlib",
+        "getuid@stdlib"
+      ],
+      "called_by": [
+        "multiple callers"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "CheckFileBeforeWrite@SecurityUtils.cpp": {
+      "defined_at": 248,
+      "calls": [
+        "IsSoftLink@SecurityUtils.cpp",
+        "GetRealPath@SecurityUtils.cpp",
+        "GetParentDir@SecurityUtils.cpp",
+        "IsPathLenLegal@SecurityUtils.cpp",
+        "IsPathCharactersValid@SecurityUtils.cpp",
+        "IsFile@SecurityUtils.cpp",
+        "IsOwner@SecurityUtils.cpp",
+        "IsWritable@SecurityUtils.cpp",
+        "GetFilePermissions@SecurityUtils.cpp"
+      ],
+      "called_by": [
+        "multiple callers"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "load_yaml_config@patcher/core/utils.py": {
+      "defined_at": 45,
+      "calls": [
+        "yaml.safe_load@stdlib",
+        "open@stdlib"
+      ],
+      "called_by": [
+        "ConfigLoader.load_profiling@config_loader.py",
+        "ConfigLoader.load_metrics@config_loader.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "_resolve_handler_func@patcher/core/config_loader.py": {
+      "defined_at": 82,
+      "calls": [
+        "importlib.import_module@stdlib",
+        "getattr@stdlib",
+        "make_default_time_hook@dynamic_hook.py"
+      ],
+      "called_by": [
+        "ConfigLoader.load_profiling@config_loader.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "_resolve_metrics_handler_func@patcher/core/config_loader.py": {
+      "defined_at": 118,
+      "calls": [
+        "importlib.import_module@stdlib",
+        "getattr@stdlib",
+        "wrap_handler_with_metrics@metric_hook.py"
+      ],
+      "called_by": [
+        "ConfigLoader.load_metrics@config_loader.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "AbstractSocketServer._handle_client@tracer/socket_server.py": {
+      "defined_at": 124,
+      "calls": [
+        "_validate_peer_cred@socket_server.py",
+        "_handle_recv@socket_server.py",
+        "_process_data_frame@socket_server.py",
+        "_handle_data@socket_server.py"
+      ],
+      "called_by": [
+        "_server_loop@socket_server.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "_validate_peer_cred@tracer/socket_server.py": {
+      "defined_at": 89,
+      "calls": [
+        "socket.getsockopt@stdlib",
+        "_get_namespace_inode@socket_server.py",
+        "os.getuid@stdlib",
+        "os.getgid@stdlib",
+        "os.getpid@stdlib",
+        "os.stat@stdlib"
+      ],
+      "called_by": [
+        "_handle_client@socket_server.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "send_control_command@ms_service_metric/control/cli.py": {
+      "defined_at": 56,
+      "calls": [
+        "SharedMemoryManager.connect@shm_manager.py",
+        "SharedMemoryManager.send_control_command@shm_manager.py",
+        "SharedMemoryManager.destroy@shm_manager.py"
+      ],
+      "called_by": [
+        "main@cli.py"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "SymbolConfig.load@ms_service_metric/core/config/symbol_config.py": {
+      "defined_at": 87,
+      "calls": [
+        "_load_default_config@symbol_config.py",
+        "_load_user_config@symbol_config.py",
+        "_merge_configs@symbol_config.py",
+        "_fill_defaults@symbol_config.py",
+        "_load_yaml@symbol_config.py"
+      ],
+      "called_by": [
+        "SymbolHandlerManager.initialize@symbol_handler_manager.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "_load_yaml@ms_service_metric/core/config/symbol_config.py": {
+      "defined_at": 280,
+      "calls": [
+        "yaml.safe_load@stdlib",
+        "open@stdlib",
+        "_convert_array_config@symbol_config.py"
+      ],
+      "called_by": [
+        "_load_user_config@symbol_config.py",
+        "_load_default_config@symbol_config.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "parse@ms_service_profiler/parse.py": {
+      "defined_at": 43,
+      "calls": [
+        "is_root@exporters/utils.py",
+        "parse_run@parse.py",
+        "get_path_total_size@exporters/utils.py"
+      ],
+      "called_by": [
+        "main@parse.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "parse_run@ms_service_profiler/parse.py": {
+      "defined_at": 54,
+      "calls": [
+        "ExporterFactory.create_exporters@exporters/factory.py",
+        "create_sqlite_db@exporters/utils.py",
+        "get_dag@task_register.py",
+        "tasks_run@task_manager.py"
+      ],
+      "called_by": [
+        "parse@parse.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "ms_open@ms_service_profiler/utils/file_open_check.py": {
+      "defined_at": 320,
+      "calls": [
+        "FileStat@file_open_check.py",
+        "check_file_exists_and_type@file_open_check.py",
+        "check_file_size@file_open_check.py",
+        "check_file_owner@file_open_check.py",
+        "Rule.path().is_safe_parent_dir().check@check/rule.py",
+        "os.open@stdlib",
+        "os.fdopen@stdlib",
+        "os.chmod@stdlib",
+        "os.remove@stdlib"
+      ],
+      "called_by": [
+        "multiple callers"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "FileStat.check_linux_permission@ms_service_profiler/utils/file_open_check.py": {
+      "defined_at": 244,
+      "calls": [
+        "check_basic_permission@file_open_check.py",
+        "os.access@stdlib",
+        "os.geteuid@stdlib",
+        "os.getgroups@stdlib"
+      ],
+      "called_by": [
+        "is_basically_legal@file_open_check.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "LibServiceProfiler.__init__@ms_service_profiler/mstx.py": {
+      "defined_at": 61,
+      "calls": [
+        "get_valid_lib_path@file_open_check.py",
+        "ctypes.CDLL@stdlib",
+        "ctypes.CFUNCTYPE@stdlib"
+      ],
+      "called_by": [
+        "service_profiler singleton@mstx.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "get_valid_lib_path@ms_service_profiler/utils/file_open_check.py": {
+      "defined_at": 377,
+      "calls": [
+        "os.getenv@stdlib",
+        "os.path.join@stdlib",
+        "os.path.realpath@stdlib",
+        "os.path.exists@stdlib",
+        "os.access@stdlib"
+      ],
+      "called_by": [
+        "LibServiceProfiler.__init__@mstx.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "SharedMemoryManager.connect@ms_service_metric/utils/shm_manager.py": {
+      "defined_at": 100,
+      "calls": [
+        "posix_ipc.SharedMemory@3rdparty",
+        "posix_ipc.Semaphore@3rdparty",
+        "mmap.mmap@stdlib"
+      ],
+      "called_by": [
+        "send_control_command@cli.py",
+        "show_status@cli.py"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "inject_function@ms_service_metric/core/hook/inject.py": {
+      "defined_at": 50,
+      "calls": [
+        "types.FunctionType@stdlib",
+        "types.CodeType@stdlib",
+        "dis@stdlib"
+      ],
+      "called_by": [
+        "Symbol._apply_hook@symbol.py"
+      ],
+      "receives_external_input": false,
+      "risk": "High"
+    },
+    "StartSpanWithName@ServiceProfilerManager.cpp": {
+      "defined_at": 199,
+      "calls": [
+        "MsUtils::GetCurrentTimeInNanoseconds@Utils.cpp"
+      ],
+      "called_by": [
+        "Python mstx.py via ctypes"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "SpanEndEx@ServiceProfilerManager.cpp": {
+      "defined_at": 276,
+      "calls": [
+        "GetCurrentTidPid@ServiceProfilerManager.cpp",
+        "EnsureProcessRegistered@ServiceProfilerManager.cpp",
+        "EnsureThreadRegistered@ServiceProfilerManager.cpp",
+        "MsUtils::GetCurrentTimeInNanoseconds@Utils.cpp",
+        "WriteSliceEvent@ServiceProfilerManager.cpp"
+      ],
+      "called_by": [
+        "Python mstx.py via ctypes"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "getenv(SERVICE_PROF_CONFIG_PATH)@Config.cpp:68",
+      "path": [
+        "ReadConfigPath@Config.cpp:66",
+        "ReadConfigFile@Config.cpp:76",
+        "ParseConfig@Config.cpp:129"
+      ],
+      "sink": "ParseProfPath@Config.cpp:250",
+      "sink_type": "config_parser"
+    },
+    {
+      "source": "std::ifstream@Config.cpp:100",
+      "path": [
+        "ReadConfigFile@Config.cpp:76",
+        "nlohmann::json::parse@Config.cpp:112"
+      ],
+      "sink": "ParseConfig@Config.cpp:129",
+      "sink_type": "json_parser"
+    },
+    {
+      "source": "open(yaml_file)@utils.py:65",
+      "path": [
+        "load_yaml_config@utils.py:45",
+        "ConfigLoader.load_profiling@config_loader.py:223"
+      ],
+      "sink": "_resolve_handler_func@config_loader.py:82",
+      "sink_type": "dynamic_import"
+    },
+    {
+      "source": "handler_path(config)@config_loader.py:87",
+      "path": [
+        "_resolve_handler_func@config_loader.py:82",
+        "importlib.import_module@config_loader.py:99",
+        "getattr@config_loader.py:100"
+      ],
+      "sink": "handler_func execution@dynamic_hook.py",
+      "sink_type": "code_execution"
+    },
+    {
+      "source": "socket.recv@socket_server.py:142",
+      "path": [
+        "_handle_recv@socket_server.py:139",
+        "_process_data_frame@socket_server.py:157",
+        "_handle_data@socket_server.py:167"
+      ],
+      "sink": "data_queue.put@socket_server.py:171",
+      "sink_type": "data_storage"
+    },
+    {
+      "source": "cli_args(input_path)@parse.py:79",
+      "path": [
+        "check_input_dir_valid@parse.py:79",
+        "parse@parse.py:43",
+        "parse_run@parse.py:54"
+      ],
+      "sink": "tasks_run@task_manager.py",
+      "sink_type": "file_parser"
+    },
+    {
+      "source": "ms_open(file)@file_open_check.py:320",
+      "path": [
+        "FileStat@file_open_check.py:322",
+        "check_linux_permission@file_open_check.py:244",
+        "Rule.path().is_safe_parent_dir@check/rule.py"
+      ],
+      "sink": "os.open@file_open_check.py:358",
+      "sink_type": "file_operation"
+    },
+    {
+      "source": "getenv(ASCEND_HOME_PATH)@file_open_check.py:386",
+      "path": [
+        "get_valid_lib_path@file_open_check.py:377",
+        "LibServiceProfiler.__init__@mstx.py:61"
+      ],
+      "sink": "ctypes.CDLL@mstx.py",
+      "sink_type": "library_load"
+    }
+  ]
+}

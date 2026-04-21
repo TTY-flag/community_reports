@@ -1,0 +1,386 @@
+{
+  "project_name": "MindStudio-Service-Profiler",
+  "scan_time": "2026-04-20T23:50:00Z",
+  "lsp_available": true,
+  "total_files": 285,
+  "total_lines": 52643,
+  "project_profile": {
+    "project_type": "cli_tool_python",
+    "deployment_model": "作为性能分析工具，由用户在本地服务器上通过命令行调用，用于分析 MindIE/vLLM/SGLang 等推理框架在昇腾硬件上的性能表现。工具本身是 CLI 应用，内部包含 C++ 数据采集库和 Python 分析脚本。C++ 库作为 .so 文件被 Python 通过 ctypes 加载。",
+    "trust_boundaries": [
+      {
+        "boundary": "Command Line Interface",
+        "trusted_side": "User invoking CLI commands",
+        "untrusted_side": "CLI argument parsing, file path inputs, config file paths",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Configuration File Interface",
+        "trusted_side": "Administrator-controlled config files (JSON/YAML)",
+        "untrusted_side": "Config file content parsed by tool",
+        "risk": "High"
+      },
+      {
+        "boundary": "Unix Domain Socket",
+        "trusted_side": "Same user processes (peer cred validation: uid/gid/pid)",
+        "untrusted_side": "External data from traced processes",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Environment Variables",
+        "trusted_side": "Process owner (same user)",
+        "untrusted_side": "SERVICE_PROF_CONFIG_PATH, ASCEND_HOME_PATH, MS_SERVICE_METRIC_CONFIG_PATH",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Shared Memory IPC",
+        "trusted_side": "Same user processes (posix_ipc with SIGUSR1)",
+        "untrusted_side": "Control commands from ms-service-metric CLI",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Python-C++ Interface",
+        "trusted_side": "Python application logic",
+        "untrusted_side": "C++ library (libms_service_profiler.so) loaded via ctypes",
+        "risk": "Low"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "cpp_profiler",
+      "path": "cpp/src",
+      "language": "c_cpp",
+      "components": [
+        "Config.cpp",
+        "SecurityUtils.cpp",
+        "ServiceProfilerManager.cpp",
+        "ServiceProfilerMspti.cpp",
+        "ServiceProfilerDbWriter.cpp",
+        "Tracer.cpp",
+        "ServiceTracer.cpp",
+        "Log.cpp",
+        "Utils.cpp",
+        "NpuMemoryUsage.cpp",
+        "SecurityUtilsLog.cpp"
+      ]
+    },
+    {
+      "name": "cpp_headers",
+      "path": "cpp/include/msServiceProfiler",
+      "language": "c_cpp",
+      "components": [
+        "msServiceProfiler.h",
+        "ServiceProfilerManager.h",
+        "SecurityUtils.h",
+        "Config.h",
+        "Tracer.h",
+        "Log.h",
+        "Utils.h",
+        "SecurityConstants.h"
+      ]
+    },
+    {
+      "name": "ms_service_profiler",
+      "path": "ms_service_profiler",
+      "language": "python",
+      "components": [
+        "profiler.py",
+        "mstx.py",
+        "parse.py",
+        "compare.py",
+        "split.py",
+        "analyze.py",
+        "trace.py"
+      ]
+    },
+    {
+      "name": "ms_service_profiler_patcher",
+      "path": "ms_service_profiler/patcher",
+      "language": "python",
+      "components": [
+        "core/config_loader.py",
+        "core/dynamic_hook.py",
+        "core/module_hook.py",
+        "core/symbol_watcher.py",
+        "core/hook_controller.py",
+        "core/metric_hook.py",
+        "vllm/adapter.py",
+        "sglang/adapter.py"
+      ]
+    },
+    {
+      "name": "ms_service_profiler_tracer",
+      "path": "ms_service_profiler/tracer",
+      "language": "python",
+      "components": [
+        "socket_server.py",
+        "binary_otlp_exporter.py",
+        "otlp_forward_service.py",
+        "scheduler.py"
+      ]
+    },
+    {
+      "name": "ms_service_metric",
+      "path": "ms_service_metric/ms_service_metric",
+      "language": "python",
+      "components": [
+        "core/symbol_handler_manager.py",
+        "core/config/symbol_config.py",
+        "core/config/metric_control_watch.py",
+        "core/hook/hook_chain.py",
+        "core/hook/inject.py",
+        "core/module/symbol_watcher.py",
+        "utils/shm_manager.py",
+        "control/cli.py"
+      ]
+    },
+    {
+      "name": "ms_serviceparam_optimizer",
+      "path": "ms_serviceparam_optimizer/ms_serviceparam_optimizer",
+      "language": "python",
+      "components": [
+        "optimizer/optimizer.py",
+        "optimizer/plugins/plugin.py",
+        "train/source_to_train.py"
+      ]
+    },
+    {
+      "name": "msservice_advisor",
+      "path": "msservice_advisor/msservice_advisor",
+      "language": "python",
+      "components": [
+        "advisor.py"
+      ]
+    },
+    {
+      "name": "utils_security",
+      "path": "ms_service_profiler/utils",
+      "language": "python",
+      "components": [
+        "file_open_check.py",
+        "check/rule.py",
+        "constants.py"
+      ]
+    }
+  ],
+  "files": [
+    {
+      "path": "cpp/src/Config.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "cpp_profiler",
+      "lines": 877,
+      "priority": 1
+    },
+    {
+      "path": "cpp/src/SecurityUtils.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "cpp_profiler",
+      "lines": 302,
+      "priority": 2
+    },
+    {
+      "path": "cpp/src/ServiceProfilerManager.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "cpp_profiler",
+      "lines": 1146,
+      "priority": 3
+    },
+    {
+      "path": "ms_service_profiler/utils/file_open_check.py",
+      "language": "python",
+      "risk": "High",
+      "module": "utils_security",
+      "lines": 404,
+      "priority": 4
+    },
+    {
+      "path": "ms_service_profiler/patcher/core/config_loader.py",
+      "language": "python",
+      "risk": "High",
+      "module": "ms_service_profiler_patcher",
+      "lines": 363,
+      "priority": 5
+    },
+    {
+      "path": "ms_service_metric/ms_service_metric/core/config/symbol_config.py",
+      "language": "python",
+      "risk": "High",
+      "module": "ms_service_metric",
+      "lines": 410,
+      "priority": 6
+    },
+    {
+      "path": "ms_service_profiler/tracer/socket_server.py",
+      "language": "python",
+      "risk": "High",
+      "module": "ms_service_profiler_tracer",
+      "lines": 243,
+      "priority": 7
+    },
+    {
+      "path": "ms_service_profiler/patcher/core/dynamic_hook.py",
+      "language": "python",
+      "risk": "High",
+      "module": "ms_service_profiler_patcher",
+      "lines": 680,
+      "priority": 8
+    },
+    {
+      "path": "ms_service_profiler/mstx.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "ms_service_profiler",
+      "lines": 561,
+      "priority": 9
+    },
+    {
+      "path": "ms_service_metric/ms_service_metric/utils/shm_manager.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "ms_service_metric",
+      "lines": 500,
+      "priority": 10
+    },
+    {
+      "path": "ms_service_metric/ms_service_metric/control/cli.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "ms_service_metric",
+      "lines": 250,
+      "priority": 11
+    },
+    {
+      "path": "ms_service_profiler/parse.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "ms_service_profiler",
+      "lines": 145,
+      "priority": 12
+    },
+    {
+      "path": "__main__.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "root",
+      "lines": 48,
+      "priority": 13
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "__main__.py",
+      "line": 24,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "CLI 入口点，用户通过命令行参数传入输入路径、输出路径、配置等。argparse 解析的参数可能包含恶意路径或异常值。",
+      "description": "主 CLI 入口函数，解析命令行参数并执行子命令"
+    },
+    {
+      "file": "cpp/src/Config.cpp",
+      "line": 68,
+      "function": "ReadConfigPath",
+      "type": "env",
+      "trust_level": "semi_trusted",
+      "justification": "从环境变量 SERVICE_PROF_CONFIG_PATH 读取配置文件路径，环境变量由进程 owner 设置，但可被攻击者通过修改环境变量指向恶意配置文件。",
+      "description": "读取配置路径环境变量"
+    },
+    {
+      "file": "cpp/src/Config.cpp",
+      "line": 76,
+      "function": "ReadConfigFile",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "从环境变量指定的路径读取 JSON 配置文件。文件内容由管理员控制，但 realpath 和 stat 检查存在路径遍历风险。",
+      "description": "读取并解析 JSON 配置文件"
+    },
+    {
+      "file": "ms_service_profiler/patcher/core/utils.py",
+      "line": 45,
+      "function": "load_yaml_config",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "加载 YAML 配置文件，文件路径来自用户传入或环境变量。YAML 解析可能存在 YAML 反序列化风险。",
+      "description": "加载 YAML 配置文件"
+    },
+    {
+      "file": "ms_service_profiler/tracer/socket_server.py",
+      "line": 43,
+      "function": "AbstractSocketServer",
+      "type": "network",
+      "trust_level": "semi_trusted",
+      "justification": "Unix Domain Socket 服务器，监听 abstract namespace socket。虽然有 peer cred 验证（uid/gid/pid 检查和 namespace 检查），但接收的外部数据可能包含恶意内容。",
+      "description": "Unix Domain Socket 服务器，接收 traced 进程数据"
+    },
+    {
+      "file": "ms_service_metric/ms_service_metric/control/cli.py",
+      "line": 56,
+      "function": "send_control_command",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "通过共享内存和 SIGUSR1 信号控制目标进程。进程间通信需要相同用户权限，但控制命令可影响目标进程行为。",
+      "description": "通过共享内存发送控制命令"
+    },
+    {
+      "file": "ms_service_metric/ms_service_metric/core/config/symbol_config.py",
+      "line": 87,
+      "function": "load",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "从 MS_SERVICE_METRIC_CONFIG_PATH 环境变量或传入路径加载 YAML 配置。配置中可指定 handler 函数路径，可能导致恶意代码执行。",
+      "description": "加载 YAML 配置并解析 handler 函数路径"
+    },
+    {
+      "file": "ms_service_profiler/patcher/core/config_loader.py",
+      "line": 82,
+      "function": "_resolve_handler_func",
+      "type": "decorator",
+      "trust_level": "semi_trusted",
+      "justification": "从配置中导入自定义 handler 函数（importlib.import_module + getattr），配置文件可指定任意模块路径，存在代码注入风险。",
+      "description": "根据配置导入自定义 handler 函数"
+    },
+    {
+      "file": "ms_service_profiler/parse.py",
+      "line": 43,
+      "function": "parse",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "解析用户指定的输入路径，可能包含恶意路径或超大文件。check_input_dir_valid 有路径检查，但解析过程涉及 SQLite 和文件读写。",
+      "description": "解析性能分析数据"
+    },
+    {
+      "file": "ms_service_profiler/utils/file_open_check.py",
+      "line": 320,
+      "function": "ms_open",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "安全文件打开函数，有路径检查、软链接检查、权限检查、大小限制。但依赖 FileStat 和 Rule.path() 检查，需要验证检查逻辑完整性。",
+      "description": "安全文件打开函数，用于读取配置和数据文件"
+    },
+    {
+      "file": "ms_service_profiler/mstx.py",
+      "line": 56,
+      "function": "LibServiceProfiler",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "通过 ctypes 加载 C++ 动态库 libms_service_profiler.so。库路径来自 ASCEND_HOME_PATH 环境变量或系统默认路径，有白名单检查。",
+      "description": "Python ctypes 绑定，加载 C++ 性能分析库"
+    }
+  ],
+  "attack_surfaces": [
+    "CLI 参数解析: argparse 解析用户传入的路径、配置文件路径",
+    "JSON 配置文件解析: Config.cpp 读取 JSON 配置（环境变量 SERVICE_PROF_CONFIG_PATH）",
+    "YAML 配置文件解析: config_loader.py、symbol_config.py 加载 YAML 配置",
+    "动态 Handler 导入: _resolve_handler_func 通过 importlib.import_module 加载配置指定的 handler 函数",
+    "Unix Domain Socket: socket_server.py 接收 traced 进程数据（有 peer cred 验证）",
+    "共享内存 IPC: shm_manager.py 通过 posix_ipc 和 SIGUSR1 进行进程间控制",
+    "动态库加载: mstx.py 通过 ctypes 加载 libms_service_profiler.so",
+    "文件路径检查: SecurityUtils.cpp、file_open_check.py 的路径验证函数",
+    "模块导入监听: symbol_watcher.py 监听 Python 模块导入并执行 hook",
+    "字节码注入: inject.py 在函数入口和返回点注入 hook 代码"
+  ]
+}
