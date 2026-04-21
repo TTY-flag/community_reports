@@ -1,0 +1,248 @@
+{
+  "functions": {
+    "add@feature_retrieval/src/ascendfaiss/ascend/AscendIndex.cpp": {
+      "defined_at": 70,
+      "calls": [
+        "addImpl@feature_retrieval/src/ascendfaiss/ascend/impl/AscendIndexImpl.cpp",
+        "getDeviceList@feature_retrieval/src/ascendfaiss/ascend/AscendIndex.cpp"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "search@feature_retrieval/src/ascendfaiss/ascend/AscendIndex.cpp": {
+      "defined_at": 81,
+      "calls": [
+        "searchImpl@feature_retrieval/src/ascendfaiss/ascend/impl/AscendIndexImpl.cpp",
+        "getDeviceList@feature_retrieval/src/ascendfaiss/ascend/AscendIndex.cpp"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "addCodeBook@feature_retrieval/src/ascendfaiss/ascend/ivfsp/AscendIndexIVFSP.cpp": {
+      "defined_at": 109,
+      "calls": [
+        "FSPIOReader@ivfsp_utils/src/ascenddaemon/utils/IoUtil.cpp",
+        "ReadAndCheck@ivfsp_utils/src/ascenddaemon/utils/IoUtil.cpp"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "initializeFileDescription@ivfsp_utils/src/ascenddaemon/utils/IoUtil.cpp": {
+      "defined_at": 28,
+      "calls": [
+        "open@system",
+        "lstat@system",
+        "fstat@system",
+        "getcwd@system",
+        "checkLinkRec@ivfsp_utils/src/ascenddaemon/utils/IoUtil.cpp",
+        "parentDirCheckAndRemove@ivfsp_utils/src/ascenddaemon/utils/IoUtil.cpp"
+      ],
+      "called_by": [
+        "FSPIOWriter@ivfsp_utils/src/ascenddaemon/utils/IoUtil.cpp",
+        "FSPIOReader@ivfsp_utils/src/ascenddaemon/utils/IoUtil.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "FSPIOWriter@ivfsp_utils/src/ascenddaemon/utils/IoUtil.cpp": {
+      "defined_at": 121,
+      "calls": [
+        "initializeFileDescription@ivfsp_utils/src/ascenddaemon/utils/IoUtil.cpp",
+        "WriteBatchImpl@ivfsp_utils/src/ascenddaemon/utils/IoUtil.h",
+        "closeFileDescription@ivfsp_utils/src/ascenddaemon/utils/IoUtil.cpp"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "FSPIOReader@ivfsp_utils/src/ascenddaemon/utils/IoUtil.cpp": {
+      "defined_at": 131,
+      "calls": [
+        "open@system",
+        "ReadBatchImpl@ivfsp_utils/src/ascenddaemon/utils/IoUtil.h",
+        "closeFileDescription@ivfsp_utils/src/ascenddaemon/utils/IoUtil.cpp",
+        "GetFileSize@ivfsp_utils/src/ascenddaemon/utils/IoUtil.cpp"
+      ],
+      "called_by": [
+        "addCodeBook@feature_retrieval/src/ascendfaiss/ascend/ivfsp/AscendIndexIVFSP.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "checkLinkRec@ivfsp_utils/src/ascenddaemon/utils/IoUtil.cpp": {
+      "defined_at": 83,
+      "calls": [
+        "lstat@system"
+      ],
+      "called_by": [
+        "parentDirCheckAndRemove@ivfsp_utils/src/ascenddaemon/utils/IoUtil.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "Low"
+    },
+    "parentDirCheckAndRemove@ivfsp_utils/src/ascenddaemon/utils/IoUtil.cpp": {
+      "defined_at": 99,
+      "calls": [
+        "lstat@system",
+        "checkLinkRec@ivfsp_utils/src/ascenddaemon/utils/IoUtil.cpp",
+        "closeFileDescription@ivfsp_utils/src/ascenddaemon/utils/IoUtil.cpp",
+        "remove@system"
+      ],
+      "called_by": [
+        "initializeFileDescription@ivfsp_utils/src/ascenddaemon/utils/IoUtil.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "initializeFileDescription@vstar_great_impl/mix-index/src/utils/VstarIoUtil.cpp": {
+      "defined_at": 1,
+      "calls": [
+        "open@system",
+        "lstat@system",
+        "fstat@system",
+        "getcwd@system",
+        "checkLinkRec@vstar_great_impl/mix-index/src/utils/VstarIoUtil.cpp",
+        "parentDirCheckAndRemove@vstar_great_impl/mix-index/src/utils/VstarIoUtil.cpp"
+      ],
+      "called_by": [
+        "VstarIOWriter@vstar_great_impl/mix-index/src/utils/VstarIoUtil.cpp",
+        "VstarIOReader@vstar_great_impl/mix-index/src/utils/VstarIoUtil.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "VstarIOWriter@vstar_great_impl/mix-index/src/utils/VstarIoUtil.cpp": {
+      "defined_at": 209,
+      "calls": [
+        "initializeFileDescription@vstar_great_impl/mix-index/src/utils/VstarIoUtil.cpp",
+        "WriteBatchImpl@vstar_great_impl/mix-index/include/utils/VstarIoUtil.h",
+        "closeFileDescription@vstar_great_impl/mix-index/src/utils/VstarIoUtil.cpp"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "VstarIOReader@vstar_great_impl/mix-index/src/utils/VstarIoUtil.cpp": {
+      "defined_at": 228,
+      "calls": [
+        "open@system",
+        "ReadBatchImpl@vstar_great_impl/mix-index/include/utils/VstarIoUtil.h",
+        "closeFileDescription@vstar_great_impl/mix-index/src/utils/VstarIoUtil.cpp"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "AscendIndex@feature_retrieval/src/ascendfaiss/ascend/AscendIndex.cpp": {
+      "defined_at": 64,
+      "calls": [
+        "AscendIndexImpl@feature_retrieval/src/ascendfaiss/ascend/impl/AscendIndexImpl.cpp"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "AscendIndexIVFSP@feature_retrieval/src/ascendfaiss/ascend/ivfsp/AscendIndexIVFSP.cpp": {
+      "defined_at": 1,
+      "calls": [
+        "AscendIndexIVFSPImpl@feature_retrieval/src/ascendfaiss/ascend/ivfsp/AscendIndexIVFSPImpl.cpp",
+        "addCodeBook@feature_retrieval/src/ascendfaiss/ascend/ivfsp/AscendIndexIVFSP.cpp"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "addImpl@feature_retrieval/src/ascendfaiss/ascend/impl/AscendIndexImpl.cpp": {
+      "defined_at": 1,
+      "calls": [
+        "memcpy@system",
+        "malloc@system"
+      ],
+      "called_by": [
+        "add@feature_retrieval/src/ascendfaiss/ascend/AscendIndex.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "searchImpl@feature_retrieval/src/ascendfaiss/ascend/impl/AscendIndexImpl.cpp": {
+      "defined_at": 1,
+      "calls": [
+        "memcpy@system",
+        "malloc@system"
+      ],
+      "called_by": [
+        "search@feature_retrieval/src/ascendfaiss/ascend/AscendIndex.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "add@feature_retrieval/src/ascendfaiss/ascend/AscendIndex.cpp:70",
+      "path": [
+        "addImpl@feature_retrieval/src/ascendfaiss/ascend/impl/AscendIndexImpl.cpp:1",
+        "memcpy@system"
+      ],
+      "sink": "memcpy@system",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "search@feature_retrieval/src/ascendfaiss/ascend/AscendIndex.cpp:81",
+      "path": [
+        "searchImpl@feature_retrieval/src/ascendfaiss/ascend/impl/AscendIndexImpl.cpp:1",
+        "memcpy@system"
+      ],
+      "sink": "memcpy@system",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "addCodeBook@feature_retrieval/src/ascendfaiss/ascend/ivfsp/AscendIndexIVFSP.cpp:109",
+      "path": [
+        "FSPIOReader@ivfsp_utils/src/ascenddaemon/utils/IoUtil.cpp:131",
+        "open@system"
+      ],
+      "sink": "open@system",
+      "sink_type": "file_operation"
+    },
+    {
+      "source": "addCodeBook@feature_retrieval/src/ascendfaiss/ascend/ivfsp/AscendIndexIVFSP.cpp:109",
+      "path": [
+        "FSPIOReader@ivfsp_utils/src/ascenddaemon/utils/IoUtil.cpp:131",
+        "initializeFileDescription@ivfsp_utils/src/ascenddaemon/utils/IoUtil.cpp:28"
+      ],
+      "sink": "lstat@ivfsp_utils/src/ascenddaemon/utils/IoUtil.cpp:54",
+      "sink_type": "file_operation"
+    },
+    {
+      "source": "initializeFileDescription@ivfsp_utils/src/ascenddaemon/utils/IoUtil.cpp:28",
+      "path": [
+        "checkSoftLink@ivfsp_utils/src/ascenddaemon/utils/IoUtil.h:51",
+        "lstat@system"
+      ],
+      "sink": "lstat@system",
+      "sink_type": "file_operation"
+    },
+    {
+      "source": "initializeFileDescription@ivfsp_utils/src/ascenddaemon/utils/IoUtil.cpp:28",
+      "path": [
+        "checkLinkRec@ivfsp_utils/src/ascenddaemon/utils/IoUtil.cpp:83",
+        "lstat@system"
+      ],
+      "sink": "lstat@system",
+      "sink_type": "file_operation"
+    },
+    {
+      "source": "initializeFileDescription@vstar_great_impl/mix-index/src/utils/VstarIoUtil.cpp:1",
+      "path": [
+        "checkSoftLink@vstar_great_impl/mix-index/include/utils/VstarIoUtil.h:47",
+        "lstat@system"
+      ],
+      "sink": "lstat@system",
+      "sink_type": "file_operation"
+    }
+  ]
+}

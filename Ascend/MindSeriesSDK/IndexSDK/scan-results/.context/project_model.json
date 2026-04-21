@@ -1,0 +1,230 @@
+{
+  "project_name": "IndexSDK",
+  "scan_time": "2026-04-20T00:20:00Z",
+  "lsp_available": true,
+  "total_files": 434,
+  "total_lines": 179780,
+  "project_profile": {
+    "project_type": "library",
+    "deployment_model": "SDK库，供应用程序调用，支持ARM和x86_64平台，部署在昇腾NPU服务器环境中",
+    "trust_boundaries": [
+      {
+        "boundary": "API Interface",
+        "trusted_side": "SDK内部实现",
+        "untrusted_side": "调用方应用程序",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "File I/O",
+        "trusted_side": "SDK内部文件操作",
+        "untrusted_side": "用户指定的索引文件路径",
+        "risk": "High"
+      },
+      {
+        "boundary": "Device Configuration",
+        "trusted_side": "SDK初始化逻辑",
+        "untrusted_side": "用户传入的设备列表和资源配置",
+        "risk": "Medium"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "feature_retrieval",
+      "path": "feature_retrieval",
+      "language": "mixed",
+      "components": [
+        "src/ascendfaiss/ascend",
+        "src/ascendfaiss/ascenddaemon",
+        "src/ascendfaiss/ascendhost",
+        "src/ascendfaiss/common",
+        "src/ascendfaiss/ops"
+      ]
+    },
+    {
+      "name": "ivfsp_impl",
+      "path": "ivfsp_impl",
+      "language": "c_cpp",
+      "components": [
+        "ascendfaiss/ascend",
+        "ascendfaiss/ascenddaemon",
+        "ascendfaiss/ascendhost"
+      ]
+    },
+    {
+      "name": "ivfsp_utils",
+      "path": "ivfsp_utils",
+      "language": "mixed",
+      "components": [
+        "src/ascend",
+        "src/ascenddaemon",
+        "src/common",
+        "src/ops_IVFSP",
+        "src/ops_vstar",
+        "src/tools"
+      ]
+    },
+    {
+      "name": "vsa_hpp",
+      "path": "vsa_hpp",
+      "language": "c_cpp",
+      "components": [
+        "src/ock/vsa/neighbor/hpp",
+        "interface/ock/vsa",
+        "intraface/ock"
+      ]
+    },
+    {
+      "name": "vstar_great_impl",
+      "path": "vstar_great_impl",
+      "language": "c_cpp",
+      "components": [
+        "DiskIndex",
+        "mix-index"
+      ]
+    }
+  ],
+  "files": [
+    {
+      "path": "ivfsp_utils/src/ascenddaemon/utils/IoUtil.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "ivfsp_utils",
+      "lines": 150,
+      "priority": 1
+    },
+    {
+      "path": "vstar_great_impl/mix-index/src/utils/VstarIoUtil.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "vstar_great_impl",
+      "lines": 200,
+      "priority": 2
+    },
+    {
+      "path": "feature_retrieval/src/ascendfaiss/ascend/AscendIndex.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "feature_retrieval",
+      "lines": 350,
+      "priority": 3
+    },
+    {
+      "path": "feature_retrieval/src/ascendfaiss/ascend/ivfsp/AscendIndexIVFSP.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "feature_retrieval",
+      "lines": 400,
+      "priority": 4
+    },
+    {
+      "path": "feature_retrieval/src/ascendfaiss/ascenddaemon/utils/AscendMemory.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "feature_retrieval",
+      "lines": 280,
+      "priority": 5
+    },
+    {
+      "path": "ivfsp_impl/ascendfaiss/ascenddaemon/IVFSPCodeBookTrainer.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "ivfsp_impl",
+      "lines": 320,
+      "priority": 6
+    },
+    {
+      "path": "vstar_great_impl/mix-index/src/npu/common/utils/AscendMemory.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "vstar_great_impl",
+      "lines": 250,
+      "priority": 7
+    },
+    {
+      "path": "feature_retrieval/src/ascendfaiss/common/utils/CommonUtils.h",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "feature_retrieval",
+      "lines": 180,
+      "priority": 8
+    },
+    {
+      "path": "vstar_great_impl/DiskIndex/src/Adapter/OpenGaussAdapter.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "vstar_great_impl",
+      "lines": 150,
+      "priority": 9
+    },
+    {
+      "path": "ivfsp_utils/src/ops/cpukernel/impl/topk_ivf_sp_cpu_kernel.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "ivfsp_utils",
+      "lines": 220,
+      "priority": 10
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "feature_retrieval/src/ascendfaiss/ascend/AscendIndex.h",
+      "line": 70,
+      "function": "add",
+      "type": "api",
+      "trust_level": "untrusted_local",
+      "justification": "用户应用程序调用此API传入向量数据，数据内容完全由调用方控制",
+      "description": "向索引中添加向量数据"
+    },
+    {
+      "file": "feature_retrieval/src/ascendfaiss/ascend/AscendIndex.h",
+      "line": 81,
+      "function": "search",
+      "type": "api",
+      "trust_level": "untrusted_local",
+      "justification": "用户应用程序调用此API传入查询向量，数据内容完全由调用方控制",
+      "description": "执行向量检索搜索"
+    },
+    {
+      "file": "feature_retrieval/src/ascendfaiss/ascend/ivfsp/AscendIndexIVFSP.h",
+      "line": 109,
+      "function": "addCodeBook",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "用户指定码本文件路径，文件路径完全由调用方控制，可能被用于路径遍历攻击",
+      "description": "从指定路径加载码本文件"
+    },
+    {
+      "file": "ivfsp_utils/src/ascenddaemon/utils/IoUtil.cpp",
+      "line": 28,
+      "function": "initializeFileDescription",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "用户指定文件路径进行读写操作，虽有安全检查但路径仍由用户控制",
+      "description": "初始化文件描述符并校验路径安全性"
+    },
+    {
+      "file": "vstar_great_impl/mix-index/src/utils/VstarIoUtil.cpp",
+      "line": 1,
+      "function": "initializeFileDescription",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "用户指定文件路径进行读写操作，路径由用户控制",
+      "description": "初始化文件描述符并校验路径安全性"
+    },
+    {
+      "file": "feature_retrieval/src/ascendfaiss/ascend/AscendIndex.h",
+      "line": 64,
+      "function": "AscendIndex",
+      "type": "api",
+      "trust_level": "semi_trusted",
+      "justification": "构造函数接收设备列表和资源配置，需要一定权限才能正确配置",
+      "description": "SDK索引对象构造函数"
+    }
+  ],
+  "attack_surfaces": [
+    "API接口: add(), search(), add_with_ids() 等向量数据输入",
+    "文件I/O: 码本加载、索引保存/加载等用户可控文件路径",
+    "配置参数: 设备列表、资源大小等初始化配置"
+  ]
+}

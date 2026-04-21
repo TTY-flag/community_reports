@@ -1,0 +1,116 @@
+{
+  "scan_id": "scan_20250420_001",
+  "start_time": "2025-04-20T00:00:00Z",
+  "end_time": "2025-04-20T02:30:00Z",
+  "duration_seconds": 9000,
+  "status": "success",
+  "project_name": "IndexSDK",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/shenteng/MindSeriesSDK/IndexSDK",
+  "language_composition": {
+    "cpp_total": 1344,
+    "cpp_scan_target": 843,
+    "python_total": 138,
+    "python_scan_target": 138
+  },
+  "agents": [
+    {
+      "name": "architecture",
+      "status": "success",
+      "start_time": "2025-04-20T00:18:00Z",
+      "end_time": "2025-04-20T00:24:00Z",
+      "duration_seconds": 360,
+      "output_files": [
+        "scan-results/.context/project_model.json",
+        "scan-results/.context/call_graph.json",
+        "scan-results/threat_analysis_report.md"
+      ],
+      "summary": {
+        "modules_identified": 5,
+        "files_analyzed": 434,
+        "entry_points": 6,
+        "high_risk_modules": ["ivfsp_utils", "feature_retrieval", "vstar_great_impl", "ivfsp_impl"]
+      }
+    },
+    {
+      "name": "dataflow-scanner",
+      "status": "success",
+      "start_time": "2025-04-20T00:25:00Z",
+      "end_time": "2025-04-20T00:38:00Z",
+      "duration_seconds": 780,
+      "modules_scanned": ["feature_retrieval", "ivfsp_impl", "ivfsp_utils", "vstar_great_impl", "vsa_hpp"],
+      "summary": {
+        "candidates_found": 50
+      }
+    },
+    {
+      "name": "security-auditor",
+      "status": "success",
+      "start_time": "2025-04-20T00:25:00Z",
+      "end_time": "2025-04-20T00:35:00Z",
+      "duration_seconds": 600,
+      "modules_scanned": ["feature_retrieval", "ivfsp_impl", "ivfsp_utils", "vstar_great_impl", "vsa_hpp"],
+      "summary": {
+        "candidates_found": 50,
+        "credential_issues": 3,
+        "path_validation_issues": 5
+      }
+    },
+    {
+      "name": "verification",
+      "status": "success",
+      "start_time": "2025-04-20T00:39:00Z",
+      "end_time": "2025-04-20T00:50:00Z",
+      "duration_seconds": 660,
+      "summary": {
+        "verified_total": 50,
+        "confirmed": 1,
+        "likely": 11,
+        "possible": 25,
+        "false_positive": 13
+      }
+    },
+    {
+      "name": "details-analyzer",
+      "status": "success",
+      "start_time": "2025-04-20T00:51:00Z",
+      "end_time": "2025-04-20T02:22:00Z",
+      "duration_seconds": 5460,
+      "output_files": [
+        "scan-results/details/VULN-CROSS-002.md",
+        "scan-results/details/VULN-IVFSP-CBT-003.md"
+      ],
+      "summary": {
+        "confirmed_analyzed": 2,
+        "reports_generated": 2
+      }
+    },
+    {
+      "name": "reporter",
+      "status": "success",
+      "start_time": "2025-04-20T02:23:00Z",
+      "end_time": "2025-04-20T02:30:00Z",
+      "duration_seconds": 420,
+      "output_files": [
+        "scan-results/report_confirmed.md",
+        "scan-results/report_unconfirmed.md"
+      ],
+      "summary": {
+        "confirmed_report_lines": 352,
+        "unconfirmed_report_lines": 944
+      }
+    }
+  ],
+  "summary": {
+    "total_vulnerabilities": 50,
+    "confirmed": 1,
+    "likely": 11,
+    "possible": 25,
+    "false_positive": 13,
+    "high_severity": 5,
+    "medium_severity": 18,
+    "low_severity": 26,
+    "modules_scanned": 5,
+    "files_analyzed": 434,
+    "scan_mode": "自主分析模式"
+  }
+}
