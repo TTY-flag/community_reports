@@ -1,0 +1,332 @@
+{
+  "project_name": "MindStudio-Kernel-Launcher",
+  "scan_time": "2026-04-21T02:33:00Z",
+  "lsp_available": false,
+  "total_files": 22,
+  "total_lines": 4500,
+  "project_profile": {
+    "project_type": "cli_tool_python",
+    "deployment_model": "Python package installed via pip/setuptools, invoked as library API from user scripts or via build.py for building/testing",
+    "trust_boundaries": [
+      {
+        "boundary": "User Script Invocation",
+        "trusted_side": "mskl library code",
+        "untrusted_side": "User-provided file paths, build scripts, kernel binaries",
+        "risk": "Critical"
+      },
+      {
+        "boundary": "Environment Variables",
+        "trusted_side": "Deployment/Admin controlled",
+        "untrusted_side": "ASCEND_HOME_PATH, MSKL_LOG_LEVEL",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Generated Code Execution",
+        "trusted_side": "Tool-generated C++ glue code",
+        "untrusted_side": "Embedded kernel names, paths, parameters",
+        "risk": "High"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "launcher",
+      "path": "mskl/launcher",
+      "language": "python",
+      "components": [
+        "__init__.py",
+        "config.py",
+        "code_generator.py",
+        "compiler.py",
+        "driver.py",
+        "context.py",
+        "opgen_workflow.py",
+        "dump_parser.py",
+        "dtype_convert.py"
+      ],
+      "risk": "Critical"
+    },
+    {
+      "name": "optune",
+      "path": "mskl/optune",
+      "language": "python",
+      "components": [
+        "__init__.py",
+        "tuner.py",
+        "kernel_modifier.py",
+        "kernel_prof.py"
+      ],
+      "risk": "High"
+    },
+    {
+      "name": "utils",
+      "path": "mskl/utils",
+      "language": "python",
+      "components": [
+        "__init__.py",
+        "safe_check.py",
+        "launcher_utils.py",
+        "autotune_utils.py",
+        "logger.py",
+        "const_variables.py"
+      ],
+      "risk": "Medium"
+    }
+  ],
+  "files": [
+    {
+      "path": "mskl/launcher/compiler.py",
+      "language": "python",
+      "risk": "Critical",
+      "module": "launcher",
+      "lines": 377,
+      "priority": 1,
+      "reason": "Executes arbitrary bash scripts via subprocess.run, compiles user-provided source files, loads dynamic libraries"
+    },
+    {
+      "path": "mskl/launcher/code_generator.py",
+      "language": "python",
+      "risk": "Critical",
+      "module": "launcher",
+      "lines": 1150,
+      "priority": 2,
+      "reason": "Generates C++ code that embeds kernel names, file paths, and parameters - code injection risk"
+    },
+    {
+      "path": "mskl/launcher/driver.py",
+      "language": "python",
+      "risk": "Critical",
+      "module": "launcher",
+      "lines": 431,
+      "priority": 3,
+      "reason": "Dynamically loads user-provided .so modules via importlib, uses ctypes for library loading"
+    },
+    {
+      "path": "mskl/optune/tuner.py",
+      "language": "python",
+      "risk": "High",
+      "module": "optune",
+      "lines": 578,
+      "priority": 4,
+      "reason": "Executes msprof profiling command, reads profiling output files, manages multiprocessing"
+    },
+    {
+      "path": "mskl/launcher/opgen_workflow.py",
+      "language": "python",
+      "risk": "High",
+      "module": "launcher",
+      "lines": 92,
+      "priority": 5,
+      "reason": "orchestrates tiling_func and get_kernel_from_binary workflows that execute compiled code"
+    },
+    {
+      "path": "mskl/launcher/config.py",
+      "language": "python",
+      "risk": "High",
+      "module": "launcher",
+      "lines": 849,
+      "priority": 6,
+      "reason": "Processes user-provided configuration parameters including file paths, tensor data"
+    },
+    {
+      "path": "mskl/optune/kernel_modifier.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "optune",
+      "lines": 98,
+      "priority": 7,
+      "reason": "Modifies kernel source files based on user-provided configurations"
+    },
+    {
+      "path": "mskl/utils/safe_check.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "utils",
+      "lines": 191,
+      "priority": 8,
+      "reason": "Security validation functions for file paths and permissions - defense but also potential bypass"
+    },
+    {
+      "path": "mskl/utils/launcher_utils.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "utils",
+      "lines": 38,
+      "priority": 9,
+      "reason": "Uses ctypes.CDLL to load runtime libraries, reads environment variables"
+    },
+    {
+      "path": "mskl/utils/autotune_utils.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "utils",
+      "lines": 200,
+      "priority": 10,
+      "reason": "Utility functions for autotune, reads JSON files and kernel source files"
+    },
+    {
+      "path": "mskl/utils/logger.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "utils",
+      "lines": 87,
+      "priority": 11,
+      "reason": "Logging functionality, reads environment variable for log level"
+    },
+    {
+      "path": "mskl/launcher/context.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "launcher",
+      "lines": 149,
+      "priority": 12,
+      "reason": "Global context management, stores kernel parameters and paths"
+    },
+    {
+      "path": "mskl/optune/kernel_prof.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "optune",
+      "lines": 61,
+      "priority": 13,
+      "reason": "Kernel profiling via MSPTI library"
+    },
+    {
+      "path": "build.py",
+      "language": "python",
+      "risk": "High",
+      "module": "root",
+      "lines": 122,
+      "priority": 14,
+      "reason": "Build script that executes subprocess commands for building and testing"
+    },
+    {
+      "path": "setup.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "root",
+      "lines": 26,
+      "priority": 15,
+      "reason": "Package setup, reads environment variable for version"
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "mskl/launcher/compiler.py",
+      "line": 171,
+      "function": "compile",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "User calls mskl.compile(build_script, launch_src_file) from their script. build_script path is user-controlled and executed as bash script via subprocess.run",
+      "description": "API entry point that executes arbitrary bash scripts for compilation"
+    },
+    {
+      "file": "mskl/launcher/compiler.py",
+      "line": 319,
+      "function": "compile_executable",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "User calls mskl.compile_executable(build_script, src_file) from their script. build_script path is user-controlled and executed as bash script",
+      "description": "API entry point for compiling executables via user-provided build scripts"
+    },
+    {
+      "file": "mskl/launcher/opgen_workflow.py",
+      "line": 53,
+      "function": "tiling_func",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "User calls mskl.tiling_func() with op_type, inputs, outputs, lib_path, etc. Parameters influence generated code and compiled modules",
+      "description": "API entry point for tiling function invocation"
+    },
+    {
+      "file": "mskl/launcher/opgen_workflow.py",
+      "line": 74,
+      "function": "get_kernel_from_binary",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "User calls mskl.get_kernel_from_binary(kernel_binary_file) with path to kernel binary. Path is validated but user-controlled",
+      "description": "API entry point for loading kernel from binary file"
+    },
+    {
+      "file": "mskl/launcher/code_generator.py",
+      "line": 340,
+      "function": "Launcher",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "User creates Launcher(config) which generates C++ glue code. Config contains user-provided kernel_src_file and kernel_name",
+      "description": "Code generation entry point"
+    },
+    {
+      "file": "mskl/optune/tuner.py",
+      "line": 251,
+      "function": "autotune",
+      "type": "decorator",
+      "trust_level": "untrusted_local",
+      "justification": "Decorator @autotune(configs) receives user-provided config list. Configs are used to modify kernel source files",
+      "description": "Auto-tuning decorator entry point"
+    },
+    {
+      "file": "mskl/optune/tuner.py",
+      "line": 557,
+      "function": "autotune_v2",
+      "type": "decorator",
+      "trust_level": "untrusted_local",
+      "justification": "Decorator @autotune_v2(configs) receives user-provided config list and executes msprof profiling",
+      "description": "Auto-tuning v2 decorator entry point"
+    },
+    {
+      "file": "build.py",
+      "line": 117,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "CLI tool invoked by user with command line arguments. Executes subprocess commands for build/test",
+      "description": "Build script CLI entry point"
+    },
+    {
+      "file": "mskl/launcher/driver.py",
+      "line": 143,
+      "function": "is_lib_preloaded",
+      "type": "env",
+      "trust_level": "semi_trusted",
+      "justification": "Reads LD_PRELOAD environment variable to check for preloaded libraries. Environment variables are typically controlled by deployment/admin",
+      "description": "Environment variable read for security check"
+    },
+    {
+      "file": "mskl/launcher/driver.py",
+      "line": 31,
+      "function": "load_mspti_so",
+      "type": "env",
+      "trust_level": "semi_trusted",
+      "justification": "Reads ASCEND_HOME_PATH environment variable to load libmspti.so. Path is deployment-controlled",
+      "description": "Environment variable read for library loading"
+    },
+    {
+      "file": "mskl/utils/launcher_utils.py",
+      "line": 23,
+      "function": "get_cann_path",
+      "type": "env",
+      "trust_level": "semi_trusted",
+      "justification": "Reads ASCEND_HOME_PATH environment variable. Required for CANN installation path",
+      "description": "Environment variable read for CANN path"
+    },
+    {
+      "file": "mskl/utils/logger.py",
+      "line": 34,
+      "function": "module_init",
+      "type": "env",
+      "trust_level": "semi_trusted",
+      "justification": "Reads MSKL_LOG_LEVEL environment variable for log configuration",
+      "description": "Environment variable read for logging configuration"
+    }
+  ],
+  "attack_surfaces": [
+    "Bash script execution via mskl.compile() and mskl.compile_executable() - build_script parameter",
+    "Dynamic library loading via importlib.util - compiled .so modules",
+    "Code generation - C++ glue code with embedded kernel names and paths",
+    "File path parameters - kernel_src_file, kernel_binary_file, lib_path",
+    "Configuration parameters - op_type, inputs, outputs, attrs",
+    "Environment variables - ASCEND_HOME_PATH, LD_PRELOAD, MSKL_LOG_LEVEL",
+    "Auto-tune config modification - kernel source file rewriting"
+  ]
+}

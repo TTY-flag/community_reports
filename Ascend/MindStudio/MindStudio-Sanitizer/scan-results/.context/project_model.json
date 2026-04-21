@@ -1,0 +1,463 @@
+{
+  "project_name": "MindStudio-Sanitizer",
+  "scan_time": "2026-04-21T10:30:00Z",
+  "lsp_available": false,
+  "total_files": 150,
+  "total_lines": 45000,
+  "project_profile": {
+    "project_type": "cli_tool",
+    "deployment_model": "用户在 Linux 服务器上作为命令行工具执行，通过 LD_PRELOAD 钩子机制劫持用户算子程序的 Ascend Runtime/ACL/HAL API 调用，并通过 Unix Domain Socket 与主进程通信进行内存安全和竞态检测",
+    "trust_boundaries": [
+      {
+        "boundary": "User Application → Hooks Layer",
+        "trusted_side": "Sanitizer Internal",
+        "untrusted_side": "User Application",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Hooks Layer → Core Framework",
+        "trusted_side": "Core Framework",
+        "untrusted_side": "Hooks Layer",
+        "risk": "Low"
+      },
+      {
+        "boundary": "Unix Domain Socket",
+        "trusted_side": "Main Process",
+        "untrusted_side": "Child Process (same user)",
+        "risk": "Low"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "hooks",
+      "path": "csrc/hooks",
+      "language": "c_cpp",
+      "components": [
+        "runtime_hooks.cpp",
+        "hal_hooks/hal_hooks.cpp",
+        "acl_hooks/acl_hooks.cpp",
+        "ascendc_hooks/ascendc_hooks.cpp",
+        "hooks_verify.cpp",
+        "hook_report.cpp",
+        "basic_hooks.cpp",
+        "sanitizer_hooks.cpp",
+        "hook_logger.h"
+      ]
+    },
+    {
+      "name": "core_framework",
+      "path": "csrc/core/framework",
+      "language": "c_cpp",
+      "components": [
+        "communication.cpp",
+        "protocol.cpp",
+        "checker.cpp",
+        "command.cpp",
+        "thread_manager.cpp",
+        "device_manager.cpp",
+        "kernel_manager.cpp",
+        "process.cpp",
+        "cross_npu_checker.cpp",
+        "format_converter.cpp",
+        "record_parse.cpp",
+        "file_mapping.cpp"
+      ]
+    },
+    {
+      "name": "address_sanitizer",
+      "path": "csrc/address_sanitizer",
+      "language": "c_cpp",
+      "components": [
+        "address_sanitizer.cpp",
+        "shadow_memory.cpp",
+        "bounds_check.cpp",
+        "heap_block_manager.cpp",
+        "align_checker.cpp",
+        "asan_action.cpp",
+        "pm.cpp",
+        "error_buffer.cpp"
+      ]
+    },
+    {
+      "name": "race_sanitizer",
+      "path": "csrc/race_sanitizer",
+      "language": "c_cpp",
+      "components": [
+        "race_sanitizer.cpp",
+        "cross_npu_race_sanitizer.cpp",
+        "alg_framework/vector_clock.cpp",
+        "alg_framework/race_alg_impl.cpp",
+        "alg_framework/cross_core_race_alg_impl.cpp",
+        "alg_framework/cross_npu_race_alg_impl.cpp",
+        "alg_framework/single_pipe_race_alg_impl.cpp"
+      ]
+    },
+    {
+      "name": "sync_sanitizer",
+      "path": "csrc/sync_sanitizer",
+      "language": "c_cpp",
+      "components": [
+        "sync_sanitizer.cpp",
+        "sync_info_display.cpp"
+      ]
+    },
+    {
+      "name": "register_sanitizer",
+      "path": "csrc/register_sanitizer",
+      "language": "c_cpp",
+      "components": [
+        "register_sanitizer.cpp",
+        "register_info_display.cpp"
+      ]
+    },
+    {
+      "name": "plugin",
+      "path": "csrc/plugin",
+      "language": "c_cpp",
+      "components": [
+        "recorder.cpp",
+        "clang_interface.cpp",
+        "online_check.cpp",
+        "addr_process.cpp",
+        "parse_record.cpp",
+        "ccec/calc_instructions/*.cpp",
+        "ccec/move_instructions/*.cpp",
+        "ccec/dbi/dynamic_bind.cpp"
+      ]
+    },
+    {
+      "name": "cli_parser",
+      "path": "csrc/core",
+      "language": "c_cpp",
+      "components": [
+        "cli_parser.cpp"
+      ]
+    },
+    {
+      "name": "utility",
+      "path": "csrc/core/framework/utility",
+      "language": "c_cpp",
+      "components": [
+        "domain_socket.cpp",
+        "file_system.cpp",
+        "path.cpp",
+        "log.cpp",
+        "serializer.cpp",
+        "result.cpp",
+        "ustring.cpp",
+        "cmd.cpp",
+        "elf_loader.h",
+        "umask_guard.h"
+      ]
+    },
+    {
+      "name": "python_scripts",
+      "path": ".",
+      "language": "python",
+      "components": [
+        "build.py",
+        "download_dependencies.py",
+        "package/script/parser.py"
+      ]
+    }
+  ],
+  "files": [
+    {
+      "path": "csrc/hooks/runtime_hooks.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "hooks",
+      "lines": 971,
+      "priority": 1
+    },
+    {
+      "path": "csrc/hooks/hal_hooks/hal_hooks.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "hooks",
+      "lines": 172,
+      "priority": 1
+    },
+    {
+      "path": "csrc/hooks/acl_hooks/acl_hooks.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "hooks",
+      "lines": 389,
+      "priority": 1
+    },
+    {
+      "path": "csrc/hooks/ascendc_hooks/ascendc_hooks.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "hooks",
+      "lines": 484,
+      "priority": 2
+    },
+    {
+      "path": "csrc/hooks/hook_report.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "hooks",
+      "lines": 403,
+      "priority": 2
+    },
+    {
+      "path": "csrc/hooks/hooks_verify.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "hooks",
+      "lines": 95,
+      "priority": 3
+    },
+    {
+      "path": "csrc/core/framework/communication.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "core_framework",
+      "lines": 181,
+      "priority": 3
+    },
+    {
+      "path": "csrc/core/framework/utility/domain_socket.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "utility",
+      "lines": 298,
+      "priority": 3
+    },
+    {
+      "path": "csrc/core/framework/protocol.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "core_framework",
+      "lines": 215,
+      "priority": 2
+    },
+    {
+      "path": "csrc/core/framework/checker.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "core_framework",
+      "lines": 464,
+      "priority": 3
+    },
+    {
+      "path": "csrc/core/framework/command.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "core_framework",
+      "lines": 523,
+      "priority": 2
+    },
+    {
+      "path": "csrc/core/cli_parser.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "cli_parser",
+      "lines": 836,
+      "priority": 3
+    },
+    {
+      "path": "csrc/address_sanitizer/shadow_memory.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "address_sanitizer",
+      "lines": 381,
+      "priority": 2
+    },
+    {
+      "path": "csrc/address_sanitizer/bounds_check.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "address_sanitizer",
+      "lines": 200,
+      "priority": 2
+    },
+    {
+      "path": "csrc/address_sanitizer/heap_block_manager.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "address_sanitizer",
+      "lines": 250,
+      "priority": 2
+    },
+    {
+      "path": "csrc/address_sanitizer/address_sanitizer.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "address_sanitizer",
+      "lines": 724,
+      "priority": 3
+    },
+    {
+      "path": "csrc/race_sanitizer/race_sanitizer.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "race_sanitizer",
+      "lines": 301,
+      "priority": 3
+    },
+    {
+      "path": "csrc/race_sanitizer/alg_framework/vector_clock.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "race_sanitizer",
+      "lines": 150,
+      "priority": 3
+    },
+    {
+      "path": "build.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "python_scripts",
+      "lines": 50,
+      "priority": 4
+    },
+    {
+      "path": "download_dependencies.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "python_scripts",
+      "lines": 30,
+      "priority": 4
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "csrc/hooks/runtime_hooks.cpp",
+      "line": 592,
+      "function": "rtMalloc",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "用户算子程序通过 LD_PRELOAD 劫持调用此函数，传入 devPtr 和 size 参数，来自用户程序的内存分配请求",
+      "description": "Ascend Runtime 内存分配钩子，接收用户程序的内存分配请求"
+    },
+    {
+      "file": "csrc/hooks/runtime_hooks.cpp",
+      "line": 613,
+      "function": "rtFree",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "用户程序传入 devPtr 参数，可能包含恶意或异常地址",
+      "description": "Ascend Runtime 内存释放钩子"
+    },
+    {
+      "file": "csrc/hooks/runtime_hooks.cpp",
+      "line": 646,
+      "function": "rtMemcpy",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "用户程序传入 dst、src、cnt 参数，存在缓冲区溢出风险",
+      "description": "Ascend Runtime 内存拷贝钩子，接收源地址、目标地址和大小"
+    },
+    {
+      "file": "csrc/hooks/runtime_hooks.cpp",
+      "line": 805,
+      "function": "rtKernelLaunch",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "用户程序传入 stubFunc、args、argsSize 参数，args 缓冲区可能包含恶意数据",
+      "description": "Ascend Runtime 内核启动钩子，接收内核参数"
+    },
+    {
+      "file": "csrc/hooks/hal_hooks/hal_hooks.cpp",
+      "line": 37,
+      "function": "halMemAlloc",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "HAL 层内存分配，用户程序传入 size 和 flag 参数",
+      "description": "HAL 层内存分配钩子"
+    },
+    {
+      "file": "csrc/hooks/hal_hooks/hal_hooks.cpp",
+      "line": 90,
+      "function": "drvMemcpy",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "HAL 层内存拷贝，接收 dst、src、byteCount 参数",
+      "description": "HAL 层内存拷贝钩子"
+    },
+    {
+      "file": "csrc/hooks/acl_hooks/acl_hooks.cpp",
+      "line": 45,
+      "function": "aclrtMalloc",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "ACL API 内存分配，用户程序传入 devPtr 和 size 参数",
+      "description": "ACL 内存分配钩子"
+    },
+    {
+      "file": "csrc/hooks/acl_hooks/acl_hooks.cpp",
+      "line": 70,
+      "function": "aclrtMemcpy",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "ACL API 内存拷贝，接收 dst、src、count 参数",
+      "description": "ACL 内存拷贝钩子"
+    },
+    {
+      "file": "csrc/hooks/ascendc_hooks/ascendc_hooks.cpp",
+      "line": 437,
+      "function": "KERNEL_LAUNCH_INIT",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "AscendC 内核初始化，接收 blockDim 参数",
+      "description": "AscendC 内核初始化钩子"
+    },
+    {
+      "file": "csrc/hooks/ascendc_hooks/ascendc_hooks.cpp",
+      "line": 374,
+      "function": "KERNEL_LAUNCH_FINALIZE",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "AscendC 内核结束，接收 memInfo 和 blockDim 参数，memInfo 来自 Device 内存",
+      "description": "AscendC 内核结束钩子，处理内核执行记录"
+    },
+    {
+      "file": "csrc/core/cli_parser.cpp",
+      "line": 21,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "trusted_admin",
+      "justification": "命令行入口，由管理员/开发者直接执行，参数已做白名单校验",
+      "description": "CLI 工具入口，解析命令行参数"
+    },
+    {
+      "file": "csrc/core/framework/utility/domain_socket.cpp",
+      "line": 104,
+      "function": "DomainSocketServer::ListenAndBind",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "Unix Domain Socket 服务端，通过 SO_PEERCRED 验证连接进程 UID/GID，仅允许相同用户连接",
+      "description": "Unix Domain Socket 服务端监听"
+    },
+    {
+      "file": "csrc/core/framework/utility/domain_socket.cpp",
+      "line": 168,
+      "function": "DomainSocketServer::Read",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "从 Unix Domain Socket 读取数据，数据来自相同用户的子进程",
+      "description": "Unix Domain Socket 数据读取"
+    },
+    {
+      "file": "csrc/core/framework/protocol.cpp",
+      "line": 161,
+      "function": "MemCheckProtocol::GetPayLoad",
+      "type": "rpc",
+      "trust_level": "internal",
+      "justification": "协议解析内部函数，处理来自钩子进程的数据包",
+      "description": "协议数据包解析，根据包头类型解包"
+    }
+  ],
+  "attack_surfaces": [
+    "LD_PRELOAD 钩子机制: 劫持 Ascend Runtime/ACL/HAL API 调用",
+    "用户程序传入的内存参数: 地址、大小、拷贝参数",
+    "内核参数缓冲区: args、argsSize、tilingData",
+    "Unix Domain Socket IPC: 与钩子进程通信（已做 UID/GID 验证）",
+    "命令行参数: --tool, --log-file, --cache-size 等（已做白名单校验）",
+    "ELF 二进制解析: 用户算子内核二进制加载"
+  ]
+}

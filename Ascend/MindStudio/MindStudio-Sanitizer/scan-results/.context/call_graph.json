@@ -1,0 +1,675 @@
+{
+  "functions": {
+    "rtMalloc@csrc/hooks/runtime_hooks.cpp": {
+      "defined_at": 592,
+      "calls": [
+        "RuntimeSymbol::Instance().Get@csrc/hooks/runtime_hooks.cpp",
+        "HookReport::Instance().ReportMalloc@csrc/hooks/hook_report.cpp"
+      ],
+      "called_by": [
+        "User_Application_External"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "rtFree@csrc/hooks/runtime_hooks.cpp": {
+      "defined_at": 613,
+      "calls": [
+        "RuntimeSymbol::Instance().Get@csrc/hooks/runtime_hooks.cpp",
+        "HookReport::Instance().ReportFree@csrc/hooks/hook_report.cpp"
+      ],
+      "called_by": [
+        "User_Application_External"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "rtMemcpy@csrc/hooks/runtime_hooks.cpp": {
+      "defined_at": 646,
+      "calls": [
+        "RuntimeSymbol::Instance().Get@csrc/hooks/runtime_hooks.cpp",
+        "HookReport::Instance().ReportStore@csrc/hooks/hook_report.cpp",
+        "HookReport::Instance().ReportLoad@csrc/hooks/hook_report.cpp"
+      ],
+      "called_by": [
+        "User_Application_External"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "rtMemset@csrc/hooks/runtime_hooks.cpp": {
+      "defined_at": 628,
+      "calls": [
+        "RuntimeSymbol::Instance().Get@csrc/hooks/runtime_hooks.cpp",
+        "HookReport::Instance().ReportStore@csrc/hooks/hook_report.cpp"
+      ],
+      "called_by": [
+        "User_Application_External"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "rtDevBinaryRegister@csrc/hooks/runtime_hooks.cpp": {
+      "defined_at": 704,
+      "calls": [
+        "RuntimeSymbol::Instance().Get@csrc/hooks/runtime_hooks.cpp",
+        "MagicToKernelType@csrc/hooks/runtime_hooks.cpp",
+        "HandleMapping::GetInstance@csrc/hooks/runtime_hooks.cpp"
+      ],
+      "called_by": [
+        "User_Application_External"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "rtKernelLaunch@csrc/hooks/runtime_hooks.cpp": {
+      "defined_at": 805,
+      "calls": [
+        "RuntimeSymbol::Instance().Get@csrc/hooks/runtime_hooks.cpp",
+        "GetPcStartAddrStatic@csrc/hooks/runtime_hooks.cpp",
+        "ReportKernelBinaryByStub@csrc/hooks/runtime_hooks.cpp",
+        "KERNEL_LAUNCH_INIT@csrc/hooks/ascendc_hooks/ascendc_hooks.cpp",
+        "HookReport::Instance().SetBlockDim@csrc/hooks/hook_report.cpp",
+        "HookReport::Instance().ReportKernelInfo@csrc/hooks/hook_report.cpp",
+        "Sanitizer::Serialize@csrc/core/framework/utility/serializer.cpp",
+        "rtStreamSynchronize@csrc/hooks/runtime_hooks.cpp",
+        "GetAllocSectionHeaders@csrc/hooks/runtime_hooks.cpp",
+        "ReportSectionsMalloc@csrc/hooks/runtime_hooks.cpp",
+        "KERNEL_LAUNCH_FINALIZE@csrc/hooks/ascendc_hooks/ascendc_hooks.cpp",
+        "ReportSectionsFree@csrc/hooks/runtime_hooks.cpp"
+      ],
+      "called_by": [
+        "User_Application_External"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "rtKernelLaunchWithHandleV2@csrc/hooks/runtime_hooks.cpp": {
+      "defined_at": 847,
+      "calls": [
+        "RuntimeSymbol::Instance().Get@csrc/hooks/runtime_hooks.cpp",
+        "GetPcStartAddrDynamic@csrc/hooks/runtime_hooks.cpp",
+        "ReportKernelBinaryByHandle@csrc/hooks/runtime_hooks.cpp",
+        "KERNEL_LAUNCH_INIT@csrc/hooks/ascendc_hooks/ascendc_hooks.cpp",
+        "HookReport::Instance().SetBlockDim@csrc/hooks/hook_report.cpp",
+        "HookReport::Instance().ReportKernelInfo@csrc/hooks/hook_report.cpp",
+        "ProduceRtArgsEx@csrc/hooks/runtime_hooks.cpp",
+        "rtStreamSynchronize@csrc/hooks/runtime_hooks.cpp",
+        "GetAllocSectionHeaders@csrc/hooks/runtime_hooks.cpp",
+        "ReportSectionsMalloc@csrc/hooks/runtime_hooks.cpp",
+        "ReportOperatorMemInfo@csrc/hooks/runtime_hooks.cpp",
+        "ReportSectionsFree@csrc/hooks/runtime_hooks.cpp"
+      ],
+      "called_by": [
+        "User_Application_External"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "rtSetExceptionExtInfo@csrc/hooks/runtime_hooks.cpp": {
+      "defined_at": 925,
+      "calls": [
+        "RuntimeSymbol::Instance().Get@csrc/hooks/runtime_hooks.cpp",
+        "ExtractOpMemInfo@csrc/hooks/runtime_hooks.cpp"
+      ],
+      "called_by": [
+        "User_Application_External"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "halMemAlloc@csrc/hooks/hal_hooks/hal_hooks.cpp": {
+      "defined_at": 37,
+      "calls": [
+        "halMemAllocInner@csrc/hooks/hal_hooks/hal_hooks.cpp",
+        "GetMallocModuleId@csrc/hooks/hal_hooks/hal_hooks.cpp",
+        "HookReport::Instance().ReportMalloc@csrc/hooks/hook_report.cpp"
+      ],
+      "called_by": [
+        "User_Application_External"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "halMemFree@csrc/hooks/hal_hooks/hal_hooks.cpp": {
+      "defined_at": 59,
+      "calls": [
+        "HookReport::Instance().ReportFree@csrc/hooks/hook_report.cpp",
+        "halMemFreeInner@csrc/hooks/hal_hooks/hal_hooks.cpp"
+      ],
+      "called_by": [
+        "User_Application_External"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "drvMemcpy@csrc/hooks/hal_hooks/hal_hooks.cpp": {
+      "defined_at": 90,
+      "calls": [
+        "drvMemcpyInner@csrc/hooks/hal_hooks/hal_hooks.cpp",
+        "halIsDevicePtr@csrc/hooks/hal_hooks/hal_hooks.cpp",
+        "HookReport::Instance().ReportStore@csrc/hooks/hook_report.cpp",
+        "HookReport::Instance().ReportLoad@csrc/hooks/hook_report.cpp"
+      ],
+      "called_by": [
+        "User_Application_External"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "halMemcpy2D@csrc/hooks/hal_hooks/hal_hooks.cpp": {
+      "defined_at": 133,
+      "calls": [
+        "halMemcpy2DInner@csrc/hooks/hal_hooks/hal_hooks.cpp",
+        "IsValidHalMemcpy2DArg@csrc/hooks/hooks_verify.cpp",
+        "halIsDevicePtr@csrc/hooks/hal_hooks/hal_hooks.cpp",
+        "HookReport::Instance().ReportStore@csrc/hooks/hook_report.cpp",
+        "HookReport::Instance().ReportLoad@csrc/hooks/hook_report.cpp"
+      ],
+      "called_by": [
+        "User_Application_External"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "aclrtMalloc@csrc/hooks/acl_hooks/acl_hooks.cpp": {
+      "defined_at": 45,
+      "calls": [
+        "sanitizerRtMalloc@csrc/hooks/acl_hooks/acl_hooks.cpp"
+      ],
+      "called_by": [
+        "User_Application_External"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "aclrtMemcpy@csrc/hooks/acl_hooks/acl_hooks.cpp": {
+      "defined_at": 70,
+      "calls": [
+        "sanitizerRtMemcpy@csrc/hooks/acl_hooks/acl_hooks.cpp"
+      ],
+      "called_by": [
+        "User_Application_External"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "sanitizerRtMalloc@csrc/hooks/acl_hooks/acl_hooks.cpp": {
+      "defined_at": 120,
+      "calls": [
+        "AclSymbol::Instance().Get@csrc/hooks/acl_hooks/acl_hooks.cpp",
+        "HookReport::Instance().ReportMalloc@csrc/hooks/hook_report.cpp"
+      ],
+      "called_by": [
+        "aclrtMalloc@csrc/hooks/acl_hooks/acl_hooks.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "KERNEL_LAUNCH_INIT@csrc/hooks/ascendc_hooks/ascendc_hooks.cpp": {
+      "defined_at": 437,
+      "calls": [
+        "CheckBlockDimValid@csrc/hooks/ascendc_hooks/ascendc_hooks.cpp",
+        "AssignTotalBlockDim@csrc/hooks/ascendc_hooks/ascendc_hooks.cpp",
+        "DevMemManager::GetInstance@csrc/hooks/ascendc_hooks/ascendc_hooks.cpp",
+        "DevMemManager::MallocMemory@csrc/hooks/ascendc_hooks/ascendc_hooks.cpp",
+        "rtMemcpy@csrc/hooks/runtime_hooks.cpp",
+        "rtMemset@csrc/hooks/runtime_hooks.cpp"
+      ],
+      "called_by": [
+        "rtKernelLaunch@csrc/hooks/runtime_hooks.cpp",
+        "rtKernelLaunchWithHandleV2@csrc/hooks/runtime_hooks.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "KERNEL_LAUNCH_FINALIZE@csrc/hooks/ascendc_hooks/ascendc_hooks.cpp": {
+      "defined_at": 374,
+      "calls": [
+        "DevMemManager::GetInstance@csrc/hooks/ascendc_hooks/ascendc_hooks.cpp",
+        "DevMemManager::IsMemoryInit@csrc/hooks/ascendc_hooks/ascendc_hooks.cpp",
+        "CheckBlockDimValid@csrc/hooks/ascendc_hooks/ascendc_hooks.cpp",
+        "HookReport::Instance().GetCheckParms@csrc/hooks/hook_report.cpp",
+        "rtMemcpy@csrc/hooks/runtime_hooks.cpp",
+        "ReportSanitizerRecords@csrc/hooks/ascendc_hooks/ascendc_hooks.cpp",
+        "ReportSignalRecord@csrc/hooks/ascendc_hooks/ascendc_hooks.cpp"
+      ],
+      "called_by": [
+        "rtKernelLaunch@csrc/hooks/runtime_hooks.cpp",
+        "rtKernelLaunchWithHandleV2@csrc/hooks/runtime_hooks.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "ReportSanitizerRecords@csrc/hooks/ascendc_hooks/ascendc_hooks.cpp": {
+      "defined_at": 268,
+      "calls": [
+        "HookReport::Instance@csrc/hooks/hook_report.cpp",
+        "ParseRecord@csrc/hooks/ascendc_hooks/ascendc_hooks.cpp",
+        "HookReport::Instance().Report@csrc/hooks/hook_report.cpp"
+      ],
+      "called_by": [
+        "KERNEL_LAUNCH_FINALIZE@csrc/hooks/ascendc_hooks/ascendc_hooks.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "HookReport::Instance@csrc/hooks/hook_report.cpp": {
+      "defined_at": 72,
+      "calls": [
+        "HookReport::InitClient@csrc/hooks/hook_report.cpp"
+      ],
+      "called_by": [
+        "rtMalloc@csrc/hooks/runtime_hooks.cpp",
+        "rtFree@csrc/hooks/runtime_hooks.cpp",
+        "rtMemcpy@csrc/hooks/runtime_hooks.cpp",
+        "halMemAlloc@csrc/hooks/hal_hooks/hal_hooks.cpp",
+        "halMemFree@csrc/hooks/hal_hooks/hal_hooks.cpp",
+        "drvMemcpy@csrc/hooks/hal_hooks/hal_hooks.cpp",
+        "sanitizerRtMalloc@csrc/hooks/acl_hooks/acl_hooks.cpp",
+        "KERNEL_LAUNCH_INIT@csrc/hooks/ascendc_hooks/ascendc_hooks.cpp",
+        "KERNEL_LAUNCH_FINALIZE@csrc/hooks/ascendc_hooks/ascendc_hooks.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "HookReport::InitClient@csrc/hooks/hook_report.cpp": {
+      "defined_at": 87,
+      "calls": [
+        "ReadSockPathFromEnv@csrc/hooks/hook_report.cpp",
+        "CommunicationClient::ConnectToServer@csrc/core/framework/communication.cpp",
+        "CommunicationClient::Read@csrc/core/framework/communication.cpp"
+      ],
+      "called_by": [
+        "HookReport::Instance@csrc/hooks/hook_report.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "HookReport::ReportMalloc@csrc/hooks/hook_report.cpp": {
+      "defined_at": 179,
+      "calls": [
+        "CreateRecord@csrc/hooks/hook_report.cpp",
+        "HookReport::ReportMemOp@csrc/hooks/hook_report.cpp"
+      ],
+      "called_by": [
+        "rtMalloc@csrc/hooks/runtime_hooks.cpp",
+        "halMemAlloc@csrc/hooks/hal_hooks/hal_hooks.cpp",
+        "sanitizerRtMalloc@csrc/hooks/acl_hooks/acl_hooks.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "HookReport::ReportMemOp@csrc/hooks/hook_report.cpp": {
+      "defined_at": 217,
+      "calls": [
+        "Serialize@csrc/core/framework/utility/serializer.cpp",
+        "CommunicationClient::Write@csrc/core/framework/communication.cpp"
+      ],
+      "called_by": [
+        "HookReport::ReportMalloc@csrc/hooks/hook_report.cpp",
+        "HookReport::ReportFree@csrc/hooks/hook_report.cpp",
+        "HookReport::ReportStore@csrc/hooks/hook_report.cpp",
+        "HookReport::ReportLoad@csrc/hooks/hook_report.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "CommunicationClient::ConnectToServer@csrc/core/framework/communication.cpp": {
+      "defined_at": 161,
+      "calls": [
+        "DomainSocketClient::Connect@csrc/core/framework/utility/domain_socket.cpp"
+      ],
+      "called_by": [
+        "HookReport::InitClient@csrc/hooks/hook_report.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "Low"
+    },
+    "DomainSocketClient::Connect@csrc/core/framework/utility/domain_socket.cpp": {
+      "defined_at": 230,
+      "calls": [
+        "DomainSocket::CreateSocket@csrc/core/framework/utility/domain_socket.cpp"
+      ],
+      "called_by": [
+        "CommunicationClient::ConnectToServer@csrc/core/framework/communication.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "Low"
+    },
+    "DomainSocketServer::ListenAndBind@csrc/core/framework/utility/domain_socket.cpp": {
+      "defined_at": 104,
+      "calls": [
+        "DomainSocket::CreateSocket@csrc/core/framework/utility/domain_socket.cpp",
+        "UmaskGuard@csrc/core/framework/utility/umask_guard.h",
+        "bind@system",
+        "listen@system"
+      ],
+      "called_by": [
+        "CommunicationServer::StartListen@csrc/core/framework/communication.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "Low"
+    },
+    "DomainSocketServer::Accept@csrc/core/framework/utility/domain_socket.cpp": {
+      "defined_at": 128,
+      "calls": [
+        "accept@system",
+        "getsockopt@system",
+        "getuid@system",
+        "getgid@system"
+      ],
+      "called_by": [
+        "CommunicationServer::StartListen@csrc/core/framework/communication.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "DomainSocketServer::Read@csrc/core/framework/utility/domain_socket.cpp": {
+      "defined_at": 168,
+      "calls": [
+        "read@system"
+      ],
+      "called_by": [
+        "CommunicationServer::Read@csrc/core/framework/communication.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "MemCheckProtocol::GetPacket@csrc/core/framework/protocol.cpp": {
+      "defined_at": 196,
+      "calls": [
+        "MemCheckProtocol::GetPacketHead@csrc/core/framework/protocol.cpp",
+        "MemCheckProtocol::GetPayLoad@csrc/core/framework/protocol.cpp"
+      ],
+      "called_by": [
+        "Command::Exec@csrc/core/framework/command.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "MemCheckProtocol::GetPayLoad@csrc/core/framework/protocol.cpp": {
+      "defined_at": 161,
+      "calls": [
+        "MemCheckProtocol::GetTriviallyCopyable@csrc/core/framework/protocol.cpp",
+        "MemCheckProtocol::GetBinaryDataPacket@csrc/core/framework/protocol.cpp"
+      ],
+      "called_by": [
+        "MemCheckProtocol::GetPacket@csrc/core/framework/protocol.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "MemCheckProtocol::Feed@csrc/core/framework/protocol.cpp": {
+      "defined_at": 189,
+      "calls": [
+        "Extractor::Feed@csrc/core/framework/protocol.cpp"
+      ],
+      "called_by": [
+        "Command::Exec@csrc/core/framework/command.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "Checker::Do@csrc/core/framework/checker.cpp": {
+      "defined_at": 386,
+      "calls": [
+        "Checker::ParseOnlineError@csrc/core/framework/checker.cpp",
+        "RecordPreProcess::GetInstance().Process@csrc/core/framework/record_pre_process.cpp",
+        "Checker::ConsumeRecordThread@csrc/core/framework/checker.cpp"
+      ],
+      "called_by": [
+        "HandleDeviceInfo@csrc/core/framework/command.cpp",
+        "HandleKernelInfo@csrc/core/framework/command.cpp",
+        "HandleHostMemRecord@csrc/core/framework/command.cpp",
+        "HandleKernelBlock@csrc/core/framework/command.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "Command::Exec@csrc/core/framework/command.cpp": {
+      "defined_at": 377,
+      "calls": [
+        "Process::CreateSockPath@csrc/core/framework/process.cpp",
+        "ThreadManager@csrc/core/framework/thread_manager.cpp",
+        "Process::RegisterMsgTrap@csrc/core/framework/process.cpp",
+        "Process::Launch@csrc/core/framework/process.cpp",
+        "ThreadManager::ThreadFinish@csrc/core/framework/thread_manager.cpp",
+        "ThreadManager::PostLog@csrc/core/framework/thread_manager.cpp",
+        "MemCheckProtocol::Feed@csrc/core/framework/protocol.cpp",
+        "MemCheckProtocol::GetPacket@csrc/core/framework/protocol.cpp",
+        "HandleDeviceInfo@csrc/core/framework/command.cpp",
+        "HandleKernelInfo@csrc/core/framework/command.cpp",
+        "HandleHostMemRecord@csrc/core/framework/command.cpp",
+        "HandleKernelBlock@csrc/core/framework/command.cpp",
+        "HandleIpcMemRecord@csrc/core/framework/command.cpp",
+        "HandleKernelBinary@csrc/core/framework/command.cpp"
+      ],
+      "called_by": [
+        "CliParser::Interpretor@csrc/core/cli_parser.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "CliParser::Interpretor@csrc/core/cli_parser.cpp": {
+      "defined_at": 676,
+      "calls": [
+        "CliParser::Parse@csrc/core/cli_parser.cpp",
+        "DoUserCommand@csrc/core/cli_parser.cpp"
+      ],
+      "called_by": [
+        "main@csrc/main.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "CliParser::Parse@csrc/core/cli_parser.cpp": {
+      "defined_at": 775,
+      "calls": [
+        "SetPluginPath@csrc/core/cli_parser.cpp",
+        "GetRandomDumpPath@csrc/core/cli_parser.cpp",
+        "getopt_long@system",
+        "IsInWhiteList@csrc/core/cli_parser.cpp",
+        "ParseUserCommand@csrc/core/cli_parser.cpp"
+      ],
+      "called_by": [
+        "CliParser::Interpretor@csrc/core/cli_parser.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "AddressSanitizer::Do@csrc/address_sanitizer/address_sanitizer.cpp": {
+      "defined_at": 473,
+      "calls": [
+        "AddressSanitizer::GetRecordsNum@csrc/address_sanitizer/address_sanitizer.cpp",
+        "AddressSanitizer::ConvertSanEventToMemOpRecords@csrc/address_sanitizer/address_sanitizer.cpp",
+        "MergeRecords@csrc/address_sanitizer/address_sanitizer.cpp",
+        "AddressSanitizer::DoMemOpRecord@csrc/address_sanitizer/address_sanitizer.cpp"
+      ],
+      "called_by": [
+        "Checker::ConsumeRecordThread@csrc/core/framework/checker.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "AddressSanitizer::DoMemOpRecord@csrc/address_sanitizer/address_sanitizer.cpp": {
+      "defined_at": 613,
+      "calls": [
+        "AsanActionFactory::CreateAsanAction@csrc/address_sanitizer/asan_action.cpp",
+        "AddressSanitizer::ScopeDoAction@csrc/address_sanitizer/address_sanitizer.cpp",
+        "AddressSanitizer::errorBuffer_.Add@csrc/address_sanitizer/error_buffer.cpp"
+      ],
+      "called_by": [
+        "AddressSanitizer::Do@csrc/address_sanitizer/address_sanitizer.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "ShadowMemory::LoadNBytes@csrc/address_sanitizer/shadow_memory.cpp": {
+      "defined_at": 218,
+      "calls": [
+        "ShadowMemory::SkipSpace@csrc/address_sanitizer/shadow_memory.cpp",
+        "ShadowMemory::ValidateRange@csrc/address_sanitizer/shadow_memory.cpp",
+        "ShadowMemory::GetMemMap@csrc/address_sanitizer/shadow_memory.cpp",
+        "PM::GetRange@csrc/address_sanitizer/pm.cpp",
+        "ShadowMemory::MakeBadBytesMsg@csrc/address_sanitizer/shadow_memory.cpp"
+      ],
+      "called_by": [
+        "AsanAction::doAction@csrc/address_sanitizer/asan_action.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "ShadowMemory::StoreNBytes@csrc/address_sanitizer/shadow_memory.cpp": {
+      "defined_at": 251,
+      "calls": [
+        "ShadowMemory::SkipSpace@csrc/address_sanitizer/shadow_memory.cpp",
+        "ShadowMemory::ValidateRange@csrc/address_sanitizer/shadow_memory.cpp",
+        "ShadowMemory::GetMemMap@csrc/address_sanitizer/shadow_memory.cpp",
+        "PM::GetRange@csrc/address_sanitizer/pm.cpp",
+        "ShadowMemory::StoreNBytesInRange@csrc/address_sanitizer/shadow_memory.cpp",
+        "ShadowMemory::MakeBadBytesMsg@csrc/address_sanitizer/shadow_memory.cpp"
+      ],
+      "called_by": [
+        "AsanAction::doAction@csrc/address_sanitizer/asan_action.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "ShadowMemory::ValidateRange@csrc/address_sanitizer/shadow_memory.cpp": {
+      "defined_at": 344,
+      "calls": [],
+      "called_by": [
+        "ShadowMemory::LoadNBytes@csrc/address_sanitizer/shadow_memory.cpp",
+        "ShadowMemory::StoreNBytes@csrc/address_sanitizer/shadow_memory.cpp",
+        "ShadowMemory::MakeMemUndefined@csrc/address_sanitizer/shadow_memory.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "RaceSanitizer::Do@csrc/race_sanitizer/race_sanitizer.cpp": {
+      "defined_at": 209,
+      "calls": [
+        "RaceSanitizer::SingleBlockRaceCheck@csrc/race_sanitizer/race_sanitizer.cpp",
+        "RaceSanitizer::SinglePipeRaceCheck@csrc/race_sanitizer/race_sanitizer.cpp",
+        "RaceSanitizer::AllBlockRaceCheck@csrc/race_sanitizer/race_sanitizer.cpp",
+        "RaceSanitizer::RaceSanitizerRecord@csrc/race_sanitizer/race_sanitizer.cpp"
+      ],
+      "called_by": [
+        "Checker::ConsumeRecordThread@csrc/core/framework/checker.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "IsValidHalMemcpy2DArg@csrc/hooks/hooks_verify.cpp": {
+      "defined_at": 22,
+      "calls": [
+        "halIsDevicePtr@csrc/hooks/hal_hooks/hal_hooks.cpp"
+      ],
+      "called_by": [
+        "halMemcpy2D@csrc/hooks/hal_hooks/hal_hooks.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "IsValidRtMemcpy2dAsyncArg@csrc/hooks/hooks_verify.cpp": {
+      "defined_at": 65,
+      "calls": [],
+      "called_by": [
+        "sanitizerRtMemcpy2dAsync@csrc/hooks/acl_hooks/acl_hooks.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "User_Application_External:rtMalloc_args",
+      "path": [
+        "rtMalloc@csrc/hooks/runtime_hooks.cpp:592",
+        "HookReport::ReportMalloc@csrc/hooks/hook_report.cpp:179",
+        "HookReport::ReportMemOp@csrc/hooks/hook_report.cpp:217",
+        "CommunicationClient::Write@csrc/core/framework/communication.cpp:175",
+        "DomainSocketClient::Write@csrc/core/framework/utility/domain_socket.cpp:267"
+      ],
+      "sink": "DomainSocketClient::Write@csrc/core/framework/utility/domain_socket.cpp:281",
+      "sink_type": "ipc_write"
+    },
+    {
+      "source": "User_Application_External:rtMemcpy_args",
+      "path": [
+        "rtMemcpy@csrc/hooks/runtime_hooks.cpp:646",
+        "HookReport::ReportStore@csrc/hooks/hook_report.cpp:211",
+        "HookReport::ReportMemOp@csrc/hooks/hook_report.cpp:217",
+        "CommunicationClient::Write@csrc/core/framework/communication.cpp:175"
+      ],
+      "sink": "CommunicationClient::Write@csrc/core/framework/communication.cpp:175",
+      "sink_type": "ipc_write"
+    },
+    {
+      "source": "User_Application_External:rtKernelLaunch_args",
+      "path": [
+        "rtKernelLaunch@csrc/hooks/runtime_hooks.cpp:805",
+        "KERNEL_LAUNCH_INIT@csrc/hooks/ascendc_hooks/ascendc_hooks.cpp:437",
+        "DevMemManager::MallocMemory@csrc/hooks/ascendc_hooks/ascendc_hooks.cpp:454"
+      ],
+      "sink": "DevMemManager::MallocMemory@csrc/hooks/ascendc_hooks/ascendc_hooks.cpp:454",
+      "sink_type": "memory_allocation"
+    },
+    {
+      "source": "User_Application_External:rtKernelLaunch_memInfo",
+      "path": [
+        "KERNEL_LAUNCH_FINALIZE@csrc/hooks/ascendc_hooks/ascendc_hooks.cpp:374",
+        "ReportSanitizerRecords@csrc/hooks/ascendc_hooks/ascendc_hooks.cpp:268",
+        "HookReport::Report@csrc/hooks/hook_report.cpp:233",
+        "CommunicationClient::Write@csrc/core/framework/communication.cpp:175"
+      ],
+      "sink": "CommunicationClient::Write@csrc/core/framework/communication.cpp:175",
+      "sink_type": "ipc_write"
+    },
+    {
+      "source": "DomainSocketServer::Read@csrc/core/framework/utility/domain_socket.cpp:182",
+      "path": [
+        "CommunicationServer::Read@csrc/core/framework/communication.cpp:96",
+        "MemCheckProtocol::Feed@csrc/core/framework/protocol.cpp:189",
+        "MemCheckProtocol::GetPacket@csrc/core/framework/protocol.cpp:196",
+        "Checker::Do@csrc/core/framework/checker.cpp:386",
+        "AddressSanitizer::Do@csrc/address_sanitizer/address_sanitizer.cpp:473",
+        "ShadowMemory::LoadNBytes@csrc/address_sanitizer/shadow_memory.cpp:218"
+      ],
+      "sink": "ShadowMemory::LoadNBytes@csrc/address_sanitizer/shadow_memory.cpp:240",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "DomainSocketServer::Read@csrc/core/framework/utility/domain_socket.cpp:182",
+      "path": [
+        "MemCheckProtocol::Feed@csrc/core/framework/protocol.cpp:189",
+        "MemCheckProtocol::GetPacket@csrc/core/framework/protocol.cpp:196",
+        "Checker::Do@csrc/core/framework/checker.cpp:386",
+        "AddressSanitizer::Do@csrc/address_sanitizer/address_sanitizer.cpp:473",
+        "ShadowMemory::StoreNBytes@csrc/address_sanitizer/shadow_memory.cpp:251"
+      ],
+      "sink": "ShadowMemory::StoreNBytes@csrc/address_sanitizer/shadow_memory.cpp:267",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "User_Application_External:halMemcpy2D_args",
+      "path": [
+        "halMemcpy2D@csrc/hooks/hal_hooks/hal_hooks.cpp:133",
+        "IsValidHalMemcpy2DArg@csrc/hooks/hooks_verify.cpp:22"
+      ],
+      "sink": "IsValidHalMemcpy2DArg@csrc/hooks/hooks_verify.cpp:38",
+      "sink_type": "validation"
+    },
+    {
+      "source": "CliParser::Parse@csrc/core/cli_parser.cpp:787",
+      "path": [
+        "IsInWhiteList@csrc/core/cli_parser.cpp:748",
+        "ParseLogFile@csrc/core/cli_parser.cpp:167",
+        "IsLogFileSafe@csrc/core/cli_parser.cpp:144"
+      ],
+      "sink": "std::ofstream::open@csrc/core/cli_parser.cpp:157",
+      "sink_type": "file_operation"
+    }
+  ]
+}

@@ -1,0 +1,648 @@
+{
+  "functions": {
+    "BuildManager.__init__@build.py": {
+      "defined_at": 46,
+      "calls": [
+        "argparse.ArgumentParser@build.py",
+        "argparse.ArgumentParser.parse_args@build.py"
+      ],
+      "called_by": [
+        "main@build.py:94"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "构建管理器初始化，解析命令行参数"
+    },
+    "BuildManager.run@build.py": {
+      "defined_at": 67,
+      "calls": [
+        "DependencyManager.run@download_dependencies.py",
+        "os.chdir@build.py",
+        "subprocess.run@build.py"
+      ],
+      "called_by": [
+        "main@build.py:94"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "执行构建流程"
+    },
+    "BuildManager._execute_command@build.py": {
+      "defined_at": 63,
+      "calls": [
+        "logging.info@build.py",
+        "subprocess.run@build.py"
+      ],
+      "called_by": [
+        "BuildManager.run@build.py:67"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "执行外部命令"
+    },
+    "main@build.py": {
+      "defined_at": 94,
+      "calls": [
+        "BuildManager.__init__@build.py",
+        "BuildManager.run@build.py"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "构建脚本主入口"
+    },
+    "DependencyManager.__init__@download_dependencies.py": {
+      "defined_at": 45,
+      "calls": [
+        "json.loads@download_dependencies.py",
+        "Path.read_text@download_dependencies.py"
+      ],
+      "called_by": [
+        "main@download_dependencies.py:152"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "依赖管理器初始化，读取dependencies.json配置"
+    },
+    "DependencyManager.run@download_dependencies.py": {
+      "defined_at": 128,
+      "calls": [
+        "self.proc_artifact@download_dependencies.py",
+        "self.proc_submodule@download_dependencies.py"
+      ],
+      "called_by": [
+        "BuildManager.run@build.py:72"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "执行依赖下载流程"
+    },
+    "DependencyManager._exec_shell_cmd@download_dependencies.py": {
+      "defined_at": 51,
+      "calls": [
+        "logging.info@download_dependencies.py",
+        "subprocess.run@download_dependencies.py"
+      ],
+      "called_by": [
+        "DependencyManager.proc_submodule@download_dependencies.py",
+        "DependencyManager.proc_artifact@download_dependencies.py"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "执行Shell命令"
+    },
+    "DependencyManager.proc_artifact@download_dependencies.py": {
+      "defined_at": 93,
+      "calls": [
+        "self._exec_shell_cmd@download_dependencies.py",
+        "hashlib.sha256@download_dependencies.py",
+        "shutil.unpack_archive@download_dependencies.py",
+        "shutil.move@download_dependencies.py"
+      ],
+      "called_by": [
+        "DependencyManager.run@download_dependencies.py:128"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "下载并解压二进制包"
+    },
+    "main@download_dependencies.py": {
+      "defined_at": 152,
+      "calls": [
+        "DependencyManager.__init__@download_dependencies.py",
+        "DependencyManager.run@download_dependencies.py"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "依赖下载脚本主入口"
+    },
+    "Xmlparser.__init__@parser.py": {
+      "defined_at": 65,
+      "calls": [],
+      "called_by": [
+        "main@parser.py:474"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "XML解析器初始化"
+    },
+    "Xmlparser.parse@parser.py": {
+      "defined_at": 88,
+      "calls": [
+        "ET.parse@parser.py",
+        "self._parse_filelist_info@parser.py"
+      ],
+      "called_by": [
+        "main@parser.py:474"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "解析XML配置文件"
+    },
+    "do_copy@parser.py": {
+      "defined_at": 316,
+      "calls": [
+        "os.path.join@parser.py",
+        "os.makedirs@parser.py",
+        "copy_file_by_pattern@parser.py",
+        "creat_softlink@parser.py"
+      ],
+      "called_by": [
+        "main@parser.py:494"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "执行文件拷贝"
+    },
+    "copy_file_by_pattern@parser.py": {
+      "defined_at": 291,
+      "calls": [
+        "fnmatch.filter@parser.py",
+        "shutil.copy@parser.py",
+        "os.chmod@parser.py"
+      ],
+      "called_by": [
+        "do_copy@parser.py:346"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "按模式拷贝文件"
+    },
+    "creat_softlink@parser.py": {
+      "defined_at": 355,
+      "calls": [
+        "os.path.abspath@parser.py",
+        "os.remove@parser.py",
+        "subprocess.getstatusoutput@parser.py",
+        "os.symlink@parser.py"
+      ],
+      "called_by": [
+        "do_copy@parser.py:352"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "创建软链接"
+    },
+    "main@parser.py": {
+      "defined_at": 456,
+      "calls": [
+        "Xmlparser.__init__@parser.py",
+        "Xmlparser.parse@parser.py",
+        "generate_filelist@parser.py",
+        "do_copy@parser.py"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "打包解析脚本主入口"
+    },
+    "OpRunner.__init__@exec.py": {
+      "defined_at": 27,
+      "calls": [
+        "os.environ.get@exec.py",
+        "sys.exit@exec.py"
+      ],
+      "called_by": [
+        "main@exec.py:121"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "算子执行器初始化，读取环境变量"
+    },
+    "OpRunner.build@exec.py": {
+      "defined_at": 99,
+      "calls": [
+        "shutil.rmtree@exec.py",
+        "os.makedirs@exec.py",
+        "self._exec@exec.py"
+      ],
+      "called_by": [
+        "main@exec.py:121"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "构建算子工程"
+    },
+    "OpRunner.run@exec.py": {
+      "defined_at": 107,
+      "calls": [
+        "self.find_idle@exec.py",
+        "self._exec@exec.py"
+      ],
+      "called_by": [
+        "main@exec.py:121"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "运行算子"
+    },
+    "OpRunner.find_idle@exec.py": {
+      "defined_at": 80,
+      "calls": [
+        "subprocess.run@exec.py",
+        "OpRunner._extract_npu_ids@exec.py"
+      ],
+      "called_by": [
+        "OpRunner.run@exec.py:107"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "查找空闲NPU设备"
+    },
+    "OpRunner._exec@exec.py": {
+      "defined_at": 35,
+      "calls": [
+        "subprocess.run@exec.py"
+      ],
+      "called_by": [
+        "OpRunner.build@exec.py:99",
+        "OpRunner.run@exec.py:107"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "执行外部命令"
+    },
+    "main@exec.py": {
+      "defined_at": 121,
+      "calls": [
+        "OpRunner.__init__@exec.py",
+        "OpRunner.build@exec.py",
+        "OpRunner.run@exec.py"
+      ],
+      "called_by": [],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "算子执行脚本主入口"
+    },
+    "main@ctr_in.py": {
+      "defined_at": 424,
+      "calls": [
+        "check_docker@ctr_in.py",
+        "resolve_container@ctr_in.py",
+        "enter_container@ctr_in.py",
+        "start_container@ctr_in.py"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "Docker容器管理脚本主入口"
+    },
+    "enter_container@ctr_in.py": {
+      "defined_at": 322,
+      "calls": [
+        "ensure_container_running@ctr_in.py",
+        "show_container_details@ctr_in.py",
+        "os.execvp@ctr_in.py"
+      ],
+      "called_by": [
+        "main@ctr_in.py:424"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "进入Docker容器"
+    },
+    "start_container@ctr_in.py": {
+      "defined_at": 377,
+      "calls": [
+        "run_cmd@ctr_in.py"
+      ],
+      "called_by": [
+        "main@ctr_in.py:424"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "启动Docker容器，传入设备映射和权限配置"
+    },
+    "run_cmd@ctr_in.py": {
+      "defined_at": 67,
+      "calls": [
+        "subprocess.run@ctr_in.py"
+      ],
+      "called_by": [
+        "start_container@ctr_in.py:377",
+        "enter_container@ctr_in.py:322",
+        "resolve_container@ctr_in.py:337"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "执行Docker命令"
+    },
+    "get_npu_id@get_ai_soc_version.py": {
+      "defined_at": 47,
+      "calls": [
+        "subprocess.run@get_ai_soc_version.py",
+        "re.search@get_ai_soc_version.py"
+      ],
+      "called_by": [
+        "run_npu_smi@get_ai_soc_version.py:70"
+      ],
+      "receives_external_input": false,
+      "risk": "Low",
+      "description": "获取NPU设备ID"
+    },
+    "run_npu_smi@get_ai_soc_version.py": {
+      "defined_at": 70,
+      "calls": [
+        "get_npu_id@get_ai_soc_version.py",
+        "subprocess.run@get_ai_soc_version.py"
+      ],
+      "called_by": [
+        "main@get_ai_soc_version.py:109"
+      ],
+      "receives_external_input": false,
+      "risk": "Low",
+      "description": "执行npu-smi命令"
+    },
+    "main@get_ai_soc_version.py": {
+      "defined_at": 109,
+      "calls": [
+        "run_npu_smi@get_ai_soc_version.py",
+        "parse_chip_info@get_ai_soc_version.py",
+        "open@get_ai_soc_version.py",
+        "os.chmod@get_ai_soc_version.py"
+      ],
+      "called_by": [],
+      "receives_external_input": false,
+      "risk": "Low",
+      "description": "芯片型号检测脚本主入口"
+    },
+    "main@main.cpp": {
+      "defined_at": 102,
+      "calls": [
+        "Init@main.cpp",
+        "CreateAclTensor@main.cpp",
+        "aclnnAddCustomGetWorkspaceSize@main.cpp",
+        "aclrtMalloc@main.cpp",
+        "aclnnAddCustom@main.cpp",
+        "aclrtSynchronizeStream@main.cpp",
+        "aclrtMemcpy@main.cpp",
+        "DestroyResources@main.cpp"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "算子调用主程序入口，通过argv接收deviceId"
+    },
+    "Init@main.cpp": {
+      "defined_at": 49,
+      "calls": [
+        "aclInit@main.cpp",
+        "aclrtSetDevice@main.cpp",
+        "aclrtCreateStream@main.cpp"
+      ],
+      "called_by": [
+        "main@main.cpp:102"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "初始化ACL设备和流"
+    },
+    "CreateAclTensor@main.cpp": {
+      "defined_at": 63,
+      "calls": [
+        "GetShapeSize@main.cpp",
+        "aclrtMalloc@main.cpp",
+        "aclrtMemcpy@main.cpp",
+        "aclCreateTensor@main.cpp"
+      ],
+      "called_by": [
+        "main@main.cpp:102"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "创建ACL张量"
+    },
+    "DestroyResources@main.cpp": {
+      "defined_at": 81,
+      "calls": [
+        "aclDestroyTensor@main.cpp",
+        "aclrtFree@main.cpp",
+        "aclrtDestroyStream@main.cpp",
+        "aclrtResetDevice@main.cpp",
+        "aclFinalize@main.cpp"
+      ],
+      "called_by": [
+        "main@main.cpp:102"
+      ],
+      "receives_external_input": false,
+      "risk": "Low",
+      "description": "释放ACL资源"
+    },
+    "TilingFunc@add_custom.cpp(op_host)": {
+      "defined_at": 27,
+      "calls": [
+        "context->GetInputShape@add_custom.cpp",
+        "tiling.set_totalLength@add_custom.cpp",
+        "tiling.SaveToBuffer@add_custom.cpp"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Low",
+      "description": "Tiling策略配置函数"
+    },
+    "KernelAdd.Init@add_custom.cpp(op_kernel)": {
+      "defined_at": 25,
+      "calls": [
+        "AscendC::GetBlockNum@add_custom.cpp",
+        "AscendC::GetBlockIdx@add_custom.cpp",
+        "xGm.SetGlobalBuffer@add_custom.cpp",
+        "pipe.InitBuffer@add_custom.cpp"
+      ],
+      "called_by": [
+        "add_custom@add_custom.cpp(op_kernel):157"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "AI Core Kernel初始化"
+    },
+    "KernelAdd.Process@add_custom.cpp(op_kernel)": {
+      "defined_at": 54,
+      "calls": [
+        "CopyIn@add_custom.cpp",
+        "Compute@add_custom.cpp",
+        "CopyOut@add_custom.cpp"
+      ],
+      "called_by": [
+        "add_custom@add_custom.cpp(op_kernel):157"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "AI Core计算流水线处理"
+    },
+    "KernelAdd.CopyIn@add_custom.cpp(op_kernel)": {
+      "defined_at": 75,
+      "calls": [
+        "inQueueX.AllocTensor@add_custom.cpp",
+        "AscendC::DataCopy@add_custom.cpp",
+        "inQueueX.EnQue@add_custom.cpp"
+      ],
+      "called_by": [
+        "KernelAdd.Process@add_custom.cpp(op_kernel):54"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "数据从Global Memory搬运到UB"
+    },
+    "KernelAdd.Compute@add_custom.cpp(op_kernel)": {
+      "defined_at": 96,
+      "calls": [
+        "inQueueX.DeQue@add_custom.cpp",
+        "outQueueZ.AllocTensor@add_custom.cpp",
+        "AscendC::Add@add_custom.cpp",
+        "outQueueZ.EnQue@add_custom.cpp",
+        "inQueueX.FreeTensor@add_custom.cpp"
+      ],
+      "called_by": [
+        "KernelAdd.Process@add_custom.cpp(op_kernel):54"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "AI Core向量加法计算"
+    },
+    "KernelAdd.CopyOut@add_custom.cpp(op_kernel)": {
+      "defined_at": 121,
+      "calls": [
+        "outQueueZ.DeQue@add_custom.cpp",
+        "AscendC::DataCopy@add_custom.cpp",
+        "outQueueZ.FreeTensor@add_custom.cpp"
+      ],
+      "called_by": [
+        "KernelAdd.Process@add_custom.cpp(op_kernel):54"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "结果从UB回写到Global Memory"
+    },
+    "add_custom@add_custom.cpp(op_kernel)": {
+      "defined_at": 157,
+      "calls": [
+        "GET_TILING_DATA@add_custom.cpp",
+        "KernelAdd.Init@add_custom.cpp(op_kernel)",
+        "KernelAdd.Process@add_custom.cpp(op_kernel)"
+      ],
+      "called_by": [
+        "add_custom_do@add_custom.cpp(op_kernel):187"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "AI Core核函数入口"
+    },
+    "KernelAdd.CopyIn@add_custom.cpp(bug_code)": {
+      "defined_at": 40,
+      "calls": [
+        "inQueueX.AllocTensor@add_custom.cpp",
+        "AscendC::DataCopy@add_custom.cpp"
+      ],
+      "called_by": [
+        "KernelAdd.Process@add_custom.cpp(bug_code):29"
+      ],
+      "receives_external_input": false,
+      "risk": "High",
+      "description": "故意包含内存越界Bug（DataCopy长度错误：2 * tileLength而非tileLength）"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "sys.argv@build.py:49",
+      "path": [
+        "argparse.ArgumentParser.parse_args@build.py:57",
+        "BuildManager.__init__@build.py:46"
+      ],
+      "sink": "subprocess.run(['cmake', ...])@build.py:89",
+      "sink_type": "command_execution",
+      "description": "命令行参数传递到cmake执行"
+    },
+    {
+      "source": "sys.argv@download_dependencies.py:148",
+      "path": [
+        "argparse.ArgumentParser.parse_args@download_dependencies.py:150",
+        "DependencyManager.__init__@download_dependencies.py:45"
+      ],
+      "sink": "subprocess.run(['git', ...])@download_dependencies.py:67",
+      "sink_type": "command_execution",
+      "description": "命令行参数控制Git操作"
+    },
+    {
+      "source": "dependencies.json@download_dependencies.py:47",
+      "path": [
+        "json.loads@download_dependencies.py:47",
+        "DependencyManager.proc_artifact@download_dependencies.py:93"
+      ],
+      "sink": "subprocess.run(['curl', '-Lfk', ...])@download_dependencies.py:104",
+      "sink_type": "command_execution",
+      "description": "配置文件中的URL传递到curl下载"
+    },
+    {
+      "source": "sys.argv@parser.py:508",
+      "path": [
+        "argparse.ArgumentParser.parse_args@parser.py:514",
+        "Xmlparser.__init__@parser.py:65"
+      ],
+      "sink": "ET.parse(xml_file)@parser.py:90",
+      "sink_type": "file_operation",
+      "description": "命令行参数指定XML文件路径"
+    },
+    {
+      "source": "xml_file_content@parser.py:90",
+      "path": [
+        "Xmlparser.parse@parser.py:88",
+        "Xmlparser._parse_file_infos@parser.py:115",
+        "do_copy@parser.py:316"
+      ],
+      "sink": "shutil.copy@parser.py:308",
+      "sink_type": "file_operation",
+      "description": "XML配置控制文件拷贝操作"
+    },
+    {
+      "source": "os.environ['REAL_ASCEND_INSTALL_PATH']@exec.py:28",
+      "path": [
+        "OpRunner.__init__@exec.py:27",
+        "OpRunner.run@exec.py:107"
+      ],
+      "sink": "subprocess.run(binary, ...)@exec.py:118",
+      "sink_type": "command_execution",
+      "description": "环境变量控制算子执行路径"
+    },
+    {
+      "source": "sys.argv@ctr_in.py:426",
+      "path": [
+        "main@ctr_in.py:424",
+        "start_container@ctr_in.py:377"
+      ],
+      "sink": "subprocess.run(['docker', 'run', '--privileged=true', ...])@ctr_in.py:415",
+      "sink_type": "command_execution",
+      "description": "命令行参数控制Docker容器启动参数"
+    },
+    {
+      "source": "argv[1]@main.cpp:107",
+      "path": [
+        "strtol@main.cpp:107",
+        "Init@main.cpp:49",
+        "aclrtSetDevice@main.cpp:54"
+      ],
+      "sink": "aclrtSetDevice(deviceId)@main.cpp:54",
+      "sink_type": "device_operation",
+      "description": "命令行参数选择NPU设备"
+    },
+    {
+      "source": "tiling_data@add_custom.cpp(op_kernel):160",
+      "path": [
+        "GET_TILING_DATA@add_custom.cpp(op_kernel):160",
+        "KernelAdd.Init@add_custom.cpp(op_kernel):25"
+      ],
+      "sink": "AscendC::DataCopy(xLocal, xGm[...], tileLength)@add_custom.cpp(op_kernel):82",
+      "sink_type": "memory_operation",
+      "description": "Tiling配置控制内存拷贝长度"
+    },
+    {
+      "source": "progress * tileLength@add_custom.cpp(bug_code):44",
+      "path": [
+        "KernelAdd.CopyIn@add_custom.cpp(bug_code):40"
+      ],
+      "sink": "AscendC::DataCopy(xLocal, ..., 2 * tileLength)@add_custom.cpp(bug_code):44",
+      "sink_type": "memory_operation",
+      "description": "故意Bug：拷贝长度超出分配的UB缓冲区大小（2x tileLength而非tileLength）"
+    }
+  ]
+}

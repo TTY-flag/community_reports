@@ -1,0 +1,78 @@
+{
+  "scan_id": "scan-20260421-001",
+  "start_time": "2026-04-21T01:15:00Z",
+  "end_time": "2026-04-21T02:15:00Z",
+  "duration_seconds": 3600,
+  "project_name": "MindStudio-Sanitizer",
+  "status": "completed",
+  "agents": [
+    {
+      "name": "architecture",
+      "start_time": "2026-04-21T01:15:00Z",
+      "end_time": "2026-04-21T01:25:00Z",
+      "duration_seconds": 600,
+      "status": "success",
+      "outputs": ["project_model.json", "call_graph.json", "threat_analysis_report.md"],
+      "error": null
+    },
+    {
+      "name": "dataflow-scanner",
+      "start_time": "2026-04-21T01:25:00Z",
+      "end_time": "2026-04-21T01:47:00Z",
+      "duration_seconds": 1320,
+      "status": "success",
+      "outputs": ["scan.db"],
+      "error": null,
+      "item_count": 24
+    },
+    {
+      "name": "security-auditor",
+      "start_time": "2026-04-21T01:25:00Z",
+      "end_time": "2026-04-21T01:55:00Z",
+      "duration_seconds": 1800,
+      "status": "failed",
+      "outputs": [],
+      "error": "Task timed out after 30 minutes of inactivity"
+    },
+    {
+      "name": "verification",
+      "start_time": "2026-04-21T01:55:00Z",
+      "end_time": "2026-04-21T02:05:00Z",
+      "duration_seconds": 600,
+      "status": "success",
+      "outputs": ["scan.db"],
+      "error": null,
+      "item_count": 24
+    },
+    {
+      "name": "details-analyzer",
+      "start_time": null,
+      "end_time": null,
+      "duration_seconds": 0,
+      "status": "skipped",
+      "outputs": [],
+      "error": null,
+      "message": "No CONFIRMED vulnerabilities, skipped"
+    },
+    {
+      "name": "reporter",
+      "start_time": "2026-04-21T02:05:00Z",
+      "end_time": "2026-04-21T02:10:00Z",
+      "duration_seconds": 300,
+      "status": "success",
+      "outputs": ["report_confirmed.md", "report_unconfirmed.md"],
+      "error": null
+    }
+  ],
+  "summary": {
+    "project_type": "cli_tool",
+    "total_files_scanned": 150,
+    "total_lines": 45000,
+    "candidates_found": 24,
+    "confirmed_vulnerabilities": 0,
+    "likely_vulnerabilities": 9,
+    "possible_vulnerabilities": 10,
+    "false_positives": 5,
+    "lsp_available": false
+  }
+}

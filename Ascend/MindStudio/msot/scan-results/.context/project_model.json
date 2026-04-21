@@ -1,0 +1,322 @@
+{
+  "project_name": "MindStudio Operator Tools (msOT)",
+  "scan_time": "2026-04-21T01:17:00Z",
+  "lsp_available": true,
+  "lsp_notes": "C/C++ LSP available (clangd); Python LSP unavailable (pyright-langserver not found)",
+  "total_files": 13,
+  "total_lines": 2190,
+  "project_profile": {
+    "project_type": "library",
+    "deployment_model": "SDK/库项目，作为昇腾 AI 算子开发工具链被集成到开发环境中。Python 脚本用于构建、依赖下载和打包，C++ 代码为算子示例实现。主要在开发人员的本地昇腾开发环境中使用。",
+    "trust_boundaries": [
+      {
+        "boundary": "Developer Environment",
+        "trusted_side": "Build scripts, configuration files",
+        "untrusted_side": "None - fully controlled by developer",
+        "risk": "Low"
+      },
+      {
+        "boundary": "External Dependencies",
+        "trusted_side": "msOT codebase",
+        "untrusted_side": "Git submodules (mskpp, mskl, msopgen, etc.), downloaded artifacts",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "System Commands",
+        "trusted_side": "Python scripts",
+        "untrusted_side": "External commands (cmake, make, git, npu-smi, docker)",
+        "risk": "Medium"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "build_tools",
+      "path": ".",
+      "language": "python",
+      "components": [
+        "build.py",
+        "download_dependencies.py"
+      ],
+      "description": "构建管理工具，负责依赖拉取、CMake配置和编译"
+    },
+    {
+      "name": "package_parser",
+      "path": "package/script",
+      "language": "python",
+      "components": [
+        "parser.py"
+      ],
+      "description": "打包配置解析工具，解析XML配置并生成安装文件列表"
+    },
+    {
+      "name": "quick_start_public",
+      "path": "example/quick_start/public",
+      "language": "python",
+      "components": [
+        "get_ai_soc_version.py",
+        "ctr_in.py"
+      ],
+      "description": "公共工具脚本，用于芯片型号检测和Docker容器管理"
+    },
+    {
+      "name": "mskpp_demo",
+      "path": "example/quick_start/mskpp",
+      "language": "python",
+      "components": [
+        "mskpp_demo.py"
+      ],
+      "description": "msKPP性能预测工具示例代码"
+    },
+    {
+      "name": "msopgen_caller",
+      "path": "example/quick_start/msopgen/caller",
+      "language": "mixed",
+      "components": [
+        "main.cpp",
+        "exec.py",
+        "keep_soc_info.py"
+      ],
+      "description": "msOpGen算子工程生成示例，包含C++调用代码和Python执行脚本"
+    },
+    {
+      "name": "msopgen_op_host",
+      "path": "example/quick_start/msopgen/code/op_host",
+      "language": "c_cpp",
+      "components": [
+        "add_custom.cpp",
+        "add_custom_tiling.h"
+      ],
+      "description": "算子Host端实现，负责Tiling策略配置"
+    },
+    {
+      "name": "msopgen_op_kernel",
+      "path": "example/quick_start/msopgen/code/op_kernel",
+      "language": "c_cpp",
+      "components": [
+        "add_custom.cpp"
+      ],
+      "description": "算子Kernel端实现，AI Core核函数"
+    },
+    {
+      "name": "mssanitizer_bug_code",
+      "path": "example/quick_start/mssanitizer/bug_code",
+      "language": "c_cpp",
+      "components": [
+        "add_custom.cpp"
+      ],
+      "description": "msSanitizer异常检测工具的示例Bug代码（故意包含内存越界）"
+    }
+  ],
+  "files": [
+    {
+      "path": "build.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "build_tools",
+      "lines": 98,
+      "priority": 2,
+      "description": "构建管理脚本，执行cmake和make命令"
+    },
+    {
+      "path": "download_dependencies.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "build_tools",
+      "lines": 163,
+      "priority": 2,
+      "description": "依赖下载脚本，从远程拉取Git子模块和二进制包"
+    },
+    {
+      "path": "package/script/parser.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "package_parser",
+      "lines": 527,
+      "priority": 3,
+      "description": "XML配置解析和文件打包脚本"
+    },
+    {
+      "path": "example/quick_start/public/get_ai_soc_version.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "quick_start_public",
+      "lines": 144,
+      "priority": 4,
+      "description": "芯片型号检测工具，调用npu-smi命令"
+    },
+    {
+      "path": "example/quick_start/public/ctr_in.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "quick_start_public",
+      "lines": 460,
+      "priority": 2,
+      "description": "Docker容器管理工具，执行docker命令"
+    },
+    {
+      "path": "example/quick_start/mskpp/mskpp_demo.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "mskpp_demo",
+      "lines": 36,
+      "priority": 5,
+      "description": "msKPP示例代码"
+    },
+    {
+      "path": "example/quick_start/msopgen/caller/main.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "msopgen_caller",
+      "lines": 199,
+      "priority": 3,
+      "description": "算子调用主程序，初始化ACL并执行自定义算子"
+    },
+    {
+      "path": "example/quick_start/msopgen/caller/exec.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "msopgen_caller",
+      "lines": 128,
+      "priority": 3,
+      "description": "算子执行脚本，调用cmake和编译后的二进制"
+    },
+    {
+      "path": "example/quick_start/msopgen/caller/keep_soc_info.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "msopgen_caller",
+      "lines": 67,
+      "priority": 5,
+      "description": "SoC配置管理工具"
+    },
+    {
+      "path": "example/quick_start/msopgen/code/op_host/add_custom.cpp",
+      "language": "c_cpp",
+      "risk": "Low",
+      "module": "msopgen_op_host",
+      "lines": 84,
+      "priority": 5,
+      "description": "加法算子Host端Tiling实现"
+    },
+    {
+      "path": "example/quick_start/msopgen/code/op_host/add_custom_tiling.h",
+      "language": "c_cpp",
+      "risk": "Low",
+      "module": "msopgen_op_host",
+      "lines": 27,
+      "priority": 5,
+      "description": "Tiling数据结构定义"
+    },
+    {
+      "path": "example/quick_start/msopgen/code/op_kernel/add_custom.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "msopgen_op_kernel",
+      "lines": 192,
+      "priority": 3,
+      "description": "加法算子AI Core核函数实现"
+    },
+    {
+      "path": "example/quick_start/mssanitizer/bug_code/add_custom.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "mssanitizer_bug_code",
+      "lines": 92,
+      "priority": 1,
+      "description": "故意包含内存越界Bug的示例代码（用于测试msSanitizer）"
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "build.py",
+      "line": 49,
+      "function": "BuildManager.__init__",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "Python CLI工具，通过argparse解析命令行参数，本地用户可通过传入恶意参数影响构建过程",
+      "description": "构建管理器初始化，解析命令行参数"
+    },
+    {
+      "file": "download_dependencies.py",
+      "line": 147,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "Python CLI工具，解析命令行参数决定下载行为，本地用户可控制下载源",
+      "description": "依赖下载入口，解析命令行参数"
+    },
+    {
+      "file": "package/script/parser.py",
+      "line": 507,
+      "function": "args_prase",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "Python CLI工具，通过argparse解析xml文件路径和delivery路径，本地用户可指定任意路径",
+      "description": "打包解析器入口，解析XML配置文件"
+    },
+    {
+      "file": "example/quick_start/public/ctr_in.py",
+      "line": 424,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "Docker容器管理CLI工具，解析容器名称、用户名和镜像名，本地用户可控制Docker操作",
+      "description": "Docker容器管理入口"
+    },
+    {
+      "file": "example/quick_start/public/get_ai_soc_version.py",
+      "line": 47,
+      "function": "get_npu_id",
+      "type": "env",
+      "trust_level": "semi_trusted",
+      "justification": "读取NPU设备信息需要系统已安装CANN软件包，本地有权限用户才能执行npu-smi命令",
+      "description": "NPU芯片型号检测入口"
+    },
+    {
+      "file": "example/quick_start/msopgen/caller/exec.py",
+      "line": 27,
+      "function": "OpRunner.__init__",
+      "type": "env",
+      "trust_level": "semi_trusted",
+      "justification": "依赖环境变量REAL_ASCEND_INSTALL_PATH，该变量由运行脚本run.sh设置，需要正确的昇腾环境",
+      "description": "算子执行器初始化，读取环境变量"
+    },
+    {
+      "file": "example/quick_start/mskpp/mskpp_demo.py",
+      "line": 27,
+      "function": "__main__",
+      "type": "env",
+      "trust_level": "semi_trusted",
+      "justification": "依赖环境变量MY_STUDY_VAR_CHIP_SOC_TYPE指定芯片型号，需要正确的昇腾环境配置",
+      "description": "msKPP示例入口，读取芯片型号环境变量"
+    },
+    {
+      "file": "example/quick_start/msopgen/caller/main.cpp",
+      "line": 102,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "C++ CLI程序，通过argv[1]接收deviceId参数，本地用户可控制NPU设备选择",
+      "description": "算子调用主程序入口"
+    },
+    {
+      "file": "example/quick_start/msopgen/caller/exec.py",
+      "line": 107,
+      "function": "OpRunner.run",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "可通过sys.argv[1]传入自定义NPU ID，本地用户可控制设备选择",
+      "description": "算子执行入口，可接收命令行参数"
+    }
+  ],
+  "attack_surfaces": [
+    "命令行参数解析: argparse.ArgumentParser() (build.py, download_dependencies.py, parser.py, ctr_in.py)",
+    "环境变量读取: os.environ.get() (exec.py, mskpp_demo.py)",
+    "外部命令执行: subprocess.run() (build.py, download_dependencies.py, parser.py, exec.py, get_ai_soc_version.py, ctr_in.py)",
+    "文件系统操作: shutil.copy(), os.makedirs(), Path.read_text() (download_dependencies.py, parser.py, keep_soc_info.py)",
+    "Git操作: subprocess.run(['git', ...]) (download_dependencies.py)",
+    "Docker操作: subprocess.run(['docker', ...]) (ctr_in.py)",
+    "NPU设备访问: npu-smi命令调用 (get_ai_soc_version.py, exec.py)"
+  ]
+}

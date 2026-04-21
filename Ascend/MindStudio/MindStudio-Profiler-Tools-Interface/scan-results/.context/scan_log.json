@@ -1,0 +1,116 @@
+{
+  "scan_id": "scan_20250421_001",
+  "start_time": "2025-04-21T01:14:00Z",
+  "end_time": "2025-04-21T02:25:00Z",
+  "duration_seconds": 4260,
+  "project_name": "MindStudio-Profiler-Tools-Interface",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/shenteng/MindStudio/MindStudio-Profiler-Tools-Interface",
+  "language_composition": {
+    "cpp": 82,
+    "h": 62,
+    "py": 24
+  },
+  "production_files": 108,
+  "scan_mode": "autonomous",
+  "status": "success",
+  "summary": {
+    "total_vulnerabilities": 53,
+    "confirmed": 3,
+    "likely": 18,
+    "possible": 31,
+    "false_positive": 1,
+    "critical": 2,
+    "high": 5,
+    "medium": 14,
+    "low": 32
+  },
+  "agents": [
+    {
+      "name": "architecture",
+      "start_time": "2025-04-21T01:14:00Z",
+      "end_time": "2025-04-21T01:23:00Z",
+      "duration_seconds": 540,
+      "status": "success",
+      "outputs": [
+        "scan-results/.context/project_model.json",
+        "scan-results/.context/call_graph.json",
+        "scan-results/threat_analysis_report.md"
+      ],
+      "findings": {
+        "high_risk_modules": 2,
+        "attack_surfaces": 4
+      }
+    },
+    {
+      "name": "dataflow-scanner",
+      "start_time": "2025-04-21T01:24:00Z",
+      "end_time": "2025-04-21T01:28:00Z",
+      "duration_seconds": 240,
+      "status": "timeout",
+      "outputs": [],
+      "findings": {
+        "candidates": 0
+      },
+      "error": "Background tasks timeout"
+    },
+    {
+      "name": "security-auditor",
+      "start_time": "2025-04-21T01:24:00Z",
+      "end_time": "2025-04-21T01:28:30Z",
+      "duration_seconds": 270,
+      "status": "success",
+      "outputs": [],
+      "findings": {
+        "candidates": 4,
+        "critical": 1,
+        "high": 2,
+        "medium": 1
+      }
+    },
+    {
+      "name": "verification",
+      "start_time": "2025-04-21T01:29:00Z",
+      "end_time": "2025-04-21T01:41:00Z",
+      "duration_seconds": 720,
+      "status": "success",
+      "outputs": [],
+      "findings": {
+        "verified_total": 53,
+        "confirmed": 3,
+        "likely": 18,
+        "possible": 31,
+        "false_positive": 1
+      }
+    },
+    {
+      "name": "details-analyzer",
+      "start_time": "2025-04-21T01:42:00Z",
+      "end_time": "2025-04-21T01:49:00Z",
+      "duration_seconds": 420,
+      "status": "success",
+      "outputs": [
+        "scan-results/details/VULN-SEC-LIB-001.md",
+        "scan-results/details/VULN-DF-DATAFLOW-001.md",
+        "scan-results/details/VULN-CALLBACK-001.md"
+      ],
+      "findings": {
+        "confirmed_analyzed": 3,
+        "reports_generated": 3
+      }
+    },
+    {
+      "name": "reporter",
+      "start_time": "2025-04-21T02:20:00Z",
+      "end_time": "2025-04-21T02:25:00Z",
+      "duration_seconds": 300,
+      "status": "success",
+      "outputs": [
+        "scan-results/report_confirmed.md",
+        "scan-results/report_unconfirmed.md"
+      ],
+      "findings": {
+        "reports_generated": 2
+      }
+    }
+  ]
+}

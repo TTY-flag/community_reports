@@ -1,0 +1,90 @@
+{
+  "scan_id": "scan_msit_20250421",
+  "start_time": "2026-04-21T01:16:00Z",
+  "end_time": "2026-04-21T02:05:00Z",
+  "duration_seconds": 2940,
+  "project_name": "MindStudio/msit",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/shenteng/MindStudio/msit",
+  "status": "success",
+  "agents": [
+    {
+      "name": "architecture",
+      "start_time": "2026-04-21T01:16:30Z",
+      "end_time": "2026-04-21T01:23:31Z",
+      "status": "success",
+      "output_files": [
+        "scan-results/.context/project_model.json",
+        "scan-results/.context/call_graph.json",
+        "scan-results/threat_analysis_report.md"
+      ]
+    },
+    {
+      "name": "dataflow-scanner",
+      "start_time": "2026-04-21T01:24:00Z",
+      "end_time": "2026-04-21T01:30:06Z",
+      "status": "success",
+      "vulnerabilities_found": 9
+    },
+    {
+      "name": "security-auditor",
+      "start_time": "2026-04-21T01:24:00Z",
+      "end_time": "2026-04-21T01:31:11Z",
+      "status": "success",
+      "vulnerabilities_found": 7
+    },
+    {
+      "name": "verification",
+      "start_time": "2026-04-21T01:32:00Z",
+      "end_time": "2026-04-21T01:46:49Z",
+      "status": "success",
+      "results": {
+        "LIKELY": 2,
+        "POSSIBLE": 4,
+        "FALSE_POSITIVE": 10,
+        "CONFIRMED": 0
+      }
+    },
+    {
+      "name": "details-analyzer",
+      "start_time": null,
+      "end_time": null,
+      "status": "success",
+      "skipped_reason": "No CONFIRMED vulnerabilities"
+    },
+    {
+      "name": "reporter",
+      "start_time": "2026-04-21T01:47:00Z",
+      "end_time": "2026-04-21T01:52:46Z",
+      "status": "success",
+      "output_files": [
+        "scan-results/report_confirmed.md",
+        "scan-results/report_unconfirmed.md"
+      ]
+    }
+  ],
+  "summary": {
+    "total_candidates": 16,
+    "verified_results": {
+      "LIKELY": 2,
+      "POSSIBLE": 4,
+      "FALSE_POSITIVE": 10,
+      "CONFIRMED": 0
+    },
+    "modules_scanned": [
+      "msit",
+      "msmodelslim",
+      "msprechecker",
+      "msserviceprofiler",
+      "msmodelslim_cpp",
+      "msserviceprofiler_cpp"
+    ],
+    "languages": {
+      "python": 100,
+      "c_cpp": 14
+    },
+    "report_files": {
+      "confirmed": "scan-results/report_confirmed.md",
+      "unconfirmed": "scan-results/report_unconfirmed.md"
+    }
+  }
+}

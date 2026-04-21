@@ -1,0 +1,479 @@
+{
+  "project_name": "MindStudio-ModelSlim",
+  "scan_time": "2026-04-21T12:00:00Z",
+  "lsp_available": true,
+  "total_files": 747,
+  "total_lines": 105305,
+  "project_profile": {
+    "project_type": "library",
+    "deployment_model": "Python库，用户通过pip安装后在本地服务器或工作站上执行模型量化压缩任务。典型场景为AI工程师在本地环境调用API或CLI工具对PyTorch/MindSpore模型进行量化处理，生成的量化模型用于Ascend NPU推理部署。",
+    "trust_boundaries": [
+      {
+        "boundary": "User Input - Model Path",
+        "trusted_side": "Application logic",
+        "untrusted_side": "User-provided model files",
+        "risk": "High"
+      },
+      {
+        "boundary": "User Input - Config Path",
+        "trusted_side": "Application logic",
+        "untrusted_side": "User-provided YAML/JSON config files",
+        "risk": "High"
+      },
+      {
+        "boundary": "User Input - Save Path",
+        "trusted_side": "Application logic",
+        "untrusted_side": "User-specified output directory",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "External Model Files",
+        "trusted_side": "Application logic",
+        "untrusted_side": "Downloaded/pre-trained model weights (safetensors, pickle)",
+        "risk": "Critical"
+      },
+      {
+        "boundary": "Calibration Dataset",
+        "trusted_side": "Application logic",
+        "untrusted_side": "User-provided calibration data files (JSONL, JSON)",
+        "risk": "Medium"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "cli",
+      "path": "msmodelslim/cli",
+      "language": "python",
+      "components": ["__main__.py", "utils.py", "naive_quantization/__main__.py", "analysis/__main__.py", "auto_tuning/__main__.py"]
+    },
+    {
+      "name": "app_naive_quantization",
+      "path": "msmodelslim/app/naive_quantization",
+      "language": "python",
+      "components": ["application.py", "practice_manager_infra.py", "model_info_interface.py"]
+    },
+    {
+      "name": "app_analysis",
+      "path": "msmodelslim/app/analysis",
+      "language": "python",
+      "components": ["application.py"]
+    },
+    {
+      "name": "model",
+      "path": "msmodelslim/model",
+      "language": "python",
+      "components": ["interface.py", "plugin_factory.py", "base.py", "default/model_adapter.py", "qwen2_5/model_adapter.py", "qwen3/model_adapter.py", "qwen3_5_moe/model_adapter.py", "qwen3_omni_moe/model_adapter.py", "qwq/model_adapter.py", "deepseek_v3/model_adapter.py", "deepseek_v3_2/model_adapter.py", "glm_5/model_adapter.py", "kimi_k2/model_adapter.py", "kimi_k2_5/model_adapter.py"]
+    },
+    {
+      "name": "pytorch_weight_compression",
+      "path": "msmodelslim/pytorch/weight_compression",
+      "language": "mixed",
+      "components": ["compress_config.py", "compress_tools.py", "compress_utils.py", "security/src/File.cpp", "security/src/Log.cpp", "compress_graph/src/main.cpp", "compress_graph/src/graph_utils.cpp"]
+    },
+    {
+      "name": "pytorch_llm_ptq",
+      "path": "msmodelslim/pytorch/llm_ptq",
+      "language": "python",
+      "components": ["llm_ptq_tools/quant_tools.py", "anti_outlier/anti_outlier.py", "llm_ptq_tools/flat_quant/trainer.py"]
+    },
+    {
+      "name": "pytorch_quant",
+      "path": "msmodelslim/pytorch/quant",
+      "language": "python",
+      "components": ["ptq_tools/quant_tools.py"]
+    },
+    {
+      "name": "core_quant_service",
+      "path": "msmodelslim/core/quant_service",
+      "language": "python",
+      "components": ["proxy.py", "modelslim_v1/save/saver.py", "modelslim_v1/save/mindie_format.py", "modelslim_v1/save/ascendv1_distributed.py"]
+    },
+    {
+      "name": "utils_security",
+      "path": "msmodelslim/utils/security",
+      "language": "python",
+      "components": ["path.py", "model.py", "shell.py"]
+    },
+    {
+      "name": "utils_validation",
+      "path": "msmodelslim/utils/validation",
+      "language": "python",
+      "components": ["conversion.py", "type.py", "value.py"]
+    },
+    {
+      "name": "infra",
+      "path": "msmodelslim/infra",
+      "language": "python",
+      "components": ["file_dataset_loader.py", "dataset_loader/jsonl_dataset_loader.py", "yaml_practice_manager.py", "yaml_quant_config_exporter.py"]
+    },
+    {
+      "name": "processor",
+      "path": "msmodelslim/processor",
+      "language": "python",
+      "components": ["anti_outlier/awq/processor.py", "anti_outlier/smooth_quant/processor.py", "flat_quant/flat_quant.py", "quant/quant_processor.py"]
+    },
+    {
+      "name": "root_security",
+      "path": "security",
+      "language": "python",
+      "components": ["path.py", "type.py"]
+    },
+    {
+      "name": "ascend_utils_security",
+      "path": "ascend_utils/common/security",
+      "language": "python",
+      "components": ["pytorch.py", "mindspore.py", "path.py", "type.py"]
+    },
+    {
+      "name": "onnx_squant_ptq",
+      "path": "msmodelslim/onnx/squant_ptq",
+      "language": "python",
+      "components": ["onnx_quant_tools.py", "aok/tool_main.py", "aok/utils/utilities.py"]
+    }
+  ],
+  "files": [
+    {
+      "path": "msmodelslim/cli/__main__.py",
+      "language": "python",
+      "risk": "High",
+      "module": "cli",
+      "lines": 141,
+      "priority": 1
+    },
+    {
+      "path": "msmodelslim/app/naive_quantization/application.py",
+      "language": "python",
+      "risk": "High",
+      "module": "app_naive_quantization",
+      "lines": 479,
+      "priority": 1
+    },
+    {
+      "path": "msmodelslim/utils/security/path.py",
+      "language": "python",
+      "risk": "Critical",
+      "module": "utils_security",
+      "lines": 316,
+      "priority": 1
+    },
+    {
+      "path": "msmodelslim/utils/security/model.py",
+      "language": "python",
+      "risk": "Critical",
+      "module": "utils_security",
+      "lines": 90,
+      "priority": 1
+    },
+    {
+      "path": "msmodelslim/utils/security/shell.py",
+      "language": "python",
+      "risk": "Critical",
+      "module": "utils_security",
+      "lines": 311,
+      "priority": 1
+    },
+    {
+      "path": "security/path.py",
+      "language": "python",
+      "risk": "Critical",
+      "module": "root_security",
+      "lines": 156,
+      "priority": 1
+    },
+    {
+      "path": "security/type.py",
+      "language": "python",
+      "risk": "High",
+      "module": "root_security",
+      "lines": 120,
+      "priority": 2
+    },
+    {
+      "path": "msmodelslim/pytorch/weight_compression/security/src/File.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "pytorch_weight_compression",
+      "lines": 299,
+      "priority": 1
+    },
+    {
+      "path": "msmodelslim/pytorch/weight_compression/compress_graph/src/main.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "pytorch_weight_compression",
+      "lines": 282,
+      "priority": 1
+    },
+    {
+      "path": "msmodelslim/pytorch/weight_compression/compress_utils.py",
+      "language": "python",
+      "risk": "High",
+      "module": "pytorch_weight_compression",
+      "lines": 166,
+      "priority": 1
+    },
+    {
+      "path": "msmodelslim/model/qwen2_5_vl/model_adapter.py",
+      "language": "python",
+      "risk": "High",
+      "module": "model",
+      "lines": 550,
+      "priority": 2
+    },
+    {
+      "path": "msmodelslim/model/qwen3_5_moe/model_adapter.py",
+      "language": "python",
+      "risk": "High",
+      "module": "model",
+      "lines": 750,
+      "priority": 2
+    },
+    {
+      "path": "msmodelslim/model/qwen3_omni_moe/model_adapter.py",
+      "language": "python",
+      "risk": "High",
+      "module": "model",
+      "lines": 800,
+      "priority": 2
+    },
+    {
+      "path": "msmodelslim/core/quant_service/modelslim_v1/save/mindie_format.py",
+      "language": "python",
+      "risk": "High",
+      "module": "core_quant_service",
+      "lines": 350,
+      "priority": 2
+    },
+    {
+      "path": "msmodelslim/pytorch/weight_compression/compress_tools.py",
+      "language": "python",
+      "risk": "High",
+      "module": "pytorch_weight_compression",
+      "lines": 200,
+      "priority": 2
+    },
+    {
+      "path": "msmodelslim/model/default/model_adapter.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "model",
+      "lines": 150,
+      "priority": 3
+    },
+    {
+      "path": "msmodelslim/model/common/transformers.py",
+      "language": "python",
+      "risk": "High",
+      "module": "model",
+      "lines": 100,
+      "priority": 2
+    },
+    {
+      "path": "msmodelslim/infra/file_dataset_loader.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "infra",
+      "lines": 150,
+      "priority": 3
+    },
+    {
+      "path": "msmodelslim/infra/dataset_loader/jsonl_dataset_loader.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "infra",
+      "lines": 150,
+      "priority": 3
+    },
+    {
+      "path": "msmodelslim/infra/dataset_loader/legacy_directory_dataset_loader.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "infra",
+      "lines": 350,
+      "priority": 3
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "msmodelslim/cli/__main__.py",
+      "line": 34,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "CLI入口点，接收用户命令行参数（model_path, save_path, config_path等），参数可完全由用户控制",
+      "description": "命令行工具主入口，支持quant/analyze/tune三个子命令"
+    },
+    {
+      "file": "msmodelslim/cli/__main__.py",
+      "line": 50,
+      "function": "quant_parser.add_argument",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "量化命令参数解析，model_path、save_path、config_path等参数来自用户命令行输入",
+      "description": "解析量化命令参数"
+    },
+    {
+      "file": "msmodelslim/app/naive_quantization/application.py",
+      "line": 332,
+      "function": "NaiveQuantizationApplication.quant",
+      "type": "decorator",
+      "trust_level": "untrusted_local",
+      "justification": "公开API入口点，接收model_path、save_path、config_path等用户输入参数",
+      "description": "量化应用主入口函数"
+    },
+    {
+      "file": "msmodelslim/utils/security/model.py",
+      "line": 40,
+      "function": "SafeGenerator.get_config_from_pretrained",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "加载用户提供的模型配置文件，通过AutoConfig.from_pretrained解析",
+      "description": "安全加载模型配置"
+    },
+    {
+      "file": "msmodelslim/utils/security/model.py",
+      "line": 53,
+      "function": "SafeGenerator.get_model_from_pretrained",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "加载用户提供的模型权重文件，通过AutoModelForCausalLM.from_pretrained解析，可能涉及safetensors或pickle文件",
+      "description": "安全加载模型权重"
+    },
+    {
+      "file": "msmodelslim/utils/security/path.py",
+      "line": 210,
+      "function": "yaml_safe_load",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "加载用户提供的YAML配置文件，使用yaml.safe_load解析",
+      "description": "安全加载YAML文件"
+    },
+    {
+      "file": "msmodelslim/utils/security/path.py",
+      "line": 221,
+      "function": "json_safe_load",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "加载用户提供的JSON配置文件，使用json.load解析",
+      "description": "安全加载JSON文件"
+    },
+    {
+      "file": "msmodelslim/utils/security/shell.py",
+      "line": 192,
+      "function": "ShellRunner.run_safe_cmd",
+      "type": "cmdline",
+      "trust_level": "semi_trusted",
+      "justification": "执行外部命令，参数经过安全验证（validate_safe_identifier）后使用subprocess.run(shell=False)",
+      "description": "安全执行外部命令"
+    },
+    {
+      "file": "msmodelslim/utils/security/shell.py",
+      "line": 248,
+      "function": "AsyncProcess",
+      "type": "cmdline",
+      "trust_level": "semi_trusted",
+      "justification": "管理长期运行的进程（如vllm服务），参数经过安全验证后使用subprocess.Popen(shell=False)",
+      "description": "异步进程管理器"
+    },
+    {
+      "file": "msmodelslim/model/qwen2_5_vl/model_adapter.py",
+      "line": 97,
+      "function": "AutoProcessor.from_pretrained",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "加载模型处理器，model_path来自用户输入",
+      "description": "加载Qwen2.5-VL模型处理器"
+    },
+    {
+      "file": "msmodelslim/model/qwen2_5_vl/model_adapter.py",
+      "line": 429,
+      "function": "safe_open",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "使用safetensors.safe_open加载模型权重文件，file_path来自用户输入的model_path",
+      "description": "从safetensors加载权重"
+    },
+    {
+      "file": "msmodelslim/model/qwen3_5_moe/model_adapter.py",
+      "line": 541,
+      "function": "safe_open",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "使用safetensors.safe_open加载MoE模型权重文件",
+      "description": "从safetensors加载MoE权重"
+    },
+    {
+      "file": "msmodelslim/pytorch/weight_compression/compress_utils.py",
+      "line": 101,
+      "function": "subprocess.Popen",
+      "type": "cmdline",
+      "trust_level": "semi_trusted",
+      "justification": "调用compress_excutor执行权重压缩，参数经过数值验证（shape_k, shape_n等）后以列表形式传递，shell=False",
+      "description": "调用压缩执行器"
+    },
+    {
+      "file": "msmodelslim/pytorch/weight_compression/compress_graph/src/main.cpp",
+      "line": 211,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "semi_trusted",
+      "justification": "C++ CLI入口，接收压缩参数（dimK, dimN, inputWeightPath等）并调用File::CheckFileBeforeCreateOrWrite验证路径",
+      "description": "压缩图执行器主入口"
+    },
+    {
+      "file": "msmodelslim/pytorch/weight_compression/compress_graph/src/main.cpp",
+      "line": 55,
+      "function": "fopen",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "打开文件写入压缩输出，路径经过File::CheckFileBeforeCreateOrWrite安全检查",
+      "description": "打开文件写入"
+    },
+    {
+      "file": "msmodelslim/pytorch/weight_compression/compress_graph/src/graph_utils.cpp",
+      "line": 39,
+      "function": "GetDataFromBin",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "读取二进制输入权重文件，input_path来自命令行参数，未经过显式安全检查",
+      "description": "读取二进制输入文件"
+    },
+    {
+      "file": "msmodelslim/pytorch/weight_compression/security/src/File.cpp",
+      "line": 256,
+      "function": "File::CheckFileBeforeCreateOrWrite",
+      "type": "file",
+      "trust_level": "trusted_admin",
+      "justification": "安全检查函数，验证路径长度、字符、软链接、权限等，被其他函数调用作为安全边界",
+      "description": "文件写入前安全检查"
+    },
+    {
+      "file": "security/path.py",
+      "line": 56,
+      "function": "get_valid_path",
+      "type": "file",
+      "trust_level": "trusted_admin",
+      "justification": "路径安全检查函数，验证特殊字符、软链接、长度等，被其他函数调用作为安全边界",
+      "description": "路径安全检查"
+    },
+    {
+      "file": "security/path.py",
+      "line": 142,
+      "function": "json_safe_load",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "加载JSON文件，路径经过get_valid_read_path验证",
+      "description": "安全加载JSON"
+    }
+  ],
+  "attack_surfaces": [
+    "命令行接口: msmodelslim quant/analyze/tune 命令参数（model_path, save_path, config_path）",
+    "Python API接口: NaiveQuantizationApplication.quant() 函数参数",
+    "模型文件加载: safetensors文件、pickle文件、配置文件（AutoConfig/AutoModel/AutoTokenizer.from_pretrained）",
+    "配置文件解析: YAML/JSON配置文件（yaml_safe_load, json_safe_load）",
+    "数据集文件加载: JSONL/JSON校准数据集文件",
+    "外部命令执行: compress_excutor二进制执行（subprocess.Popen, shell=False）",
+    "C++ CLI接口: compress_excutor命令行参数（inputWeightPath, outputWeightPath等）"
+  ]
+}

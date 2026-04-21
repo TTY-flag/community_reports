@@ -1,0 +1,322 @@
+{
+  "project_name": "MindStudio Inference Tools (msIT)",
+  "scan_time": "2026-04-21T01:30:00Z",
+  "lsp_available": true,
+  "total_files": 300,
+  "total_lines": 25000,
+  "project_profile": {
+    "project_type": "cli_tool_python",
+    "deployment_model": "作为 Python CLI 工具在用户的本地环境或服务器上执行，用于模型推理开发、调试和调优。主要用户场景包括模型量化、精度比对、性能分析和环境预检。工具通过 pip 安装，以命令行方式运行。",
+    "trust_boundaries": [
+      {
+        "boundary": "CLI Interface",
+        "trusted_side": "User invoking the tool",
+        "untrusted_side": "File paths, model paths, and configuration values provided via command-line arguments",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "File System",
+        "trusted_side": "Tool-generated output files",
+        "untrusted_side": "User-provided input files (model files, config files, calibration datasets)",
+        "risk": "High"
+      },
+      {
+        "boundary": "Network Interface",
+        "trusted_side": "Tool internals",
+        "untrusted_side": "HTTP requests to vllm/MindIE servers for benchmarking",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Subprocess Execution",
+        "trusted_side": "Tool logic",
+        "untrusted_side": "External commands like atc, msprof, benchmark binaries",
+        "risk": "High"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "msit",
+      "path": "msit",
+      "language": "python",
+      "components": [
+        "components/benchmark",
+        "components/debug",
+        "components/analyze",
+        "components/convert",
+        "components/profile",
+        "components/llm",
+        "components/graph",
+        "components/tensor_view",
+        "components/utils"
+      ]
+    },
+    {
+      "name": "msmodelslim",
+      "path": "msmodelslim",
+      "language": "mixed",
+      "components": [
+        "msmodelslim/pytorch",
+        "msmodelslim/onnx",
+        "msmodelslim/cli",
+        "msmodelslim/utils",
+        "msmodelslim/model",
+        "msmodelslim/core",
+        "msmodelslim/app"
+      ]
+    },
+    {
+      "name": "msprechecker",
+      "path": "msprechecker",
+      "language": "python",
+      "components": [
+        "msprechecker/commands",
+        "msprechecker/collectors",
+        "msprechecker/checkers",
+        "msprechecker/validators",
+        "msprechecker/utils",
+        "msprechecker/cmate"
+      ]
+    },
+    {
+      "name": "msserviceprofiler",
+      "path": "msserviceprofiler",
+      "language": "mixed",
+      "components": [
+        "msserviceprofiler/ms_service_profiler_ext",
+        "msserviceprofiler/msservice_advisor",
+        "msserviceprofiler/msguard",
+        "msserviceprofiler/modelevalstate",
+        "msserviceprofiler/vllm_profiler"
+      ]
+    },
+    {
+      "name": "msmodelslim_cpp",
+      "path": "msmodelslim/msmodelslim/pytorch/weight_compression",
+      "language": "c_cpp",
+      "components": [
+        "compress_graph/src",
+        "security/src"
+      ]
+    },
+    {
+      "name": "msserviceprofiler_cpp",
+      "path": "msserviceprofiler/include",
+      "language": "c_cpp",
+      "components": [
+        "msServiceProfiler"
+      ]
+    }
+  ],
+  "files": [
+    {
+      "path": "msmodelslim/msmodelslim/utils/security/shell.py",
+      "language": "python",
+      "risk": "Critical",
+      "module": "msmodelslim",
+      "lines": 292,
+      "priority": 1,
+      "category": "命令/代码执行"
+    },
+    {
+      "path": "msmodelslim/msmodelslim/pytorch/weight_compression/security/src/File.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "msmodelslim_cpp",
+      "lines": 299,
+      "priority": 2,
+      "category": "文件操作"
+    },
+    {
+      "path": "msserviceprofiler/msserviceprofiler/msguard/security/injection.py",
+      "language": "python",
+      "risk": "High",
+      "module": "msserviceprofiler",
+      "lines": 112,
+      "priority": 3,
+      "category": "配置/反序列化"
+    },
+    {
+      "path": "msit/components/utils/security_check.py",
+      "language": "python",
+      "risk": "High",
+      "module": "msit",
+      "lines": 340,
+      "priority": 4,
+      "category": "文件操作"
+    },
+    {
+      "path": "msmodelslim/msmodelslim/utils/security/request.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "msmodelslim",
+      "lines": 215,
+      "priority": 5,
+      "category": "网络/通信"
+    },
+    {
+      "path": "msmodelslim/msmodelslim/pytorch/weight_compression/compress_graph/src/main.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "msmodelslim_cpp",
+      "lines": 278,
+      "priority": 6,
+      "category": "文件操作"
+    },
+    {
+      "path": "msit/components/__main__.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "msit",
+      "lines": 80,
+      "priority": 7,
+      "category": "请求处理"
+    },
+    {
+      "path": "msprechecker/msprechecker/cli.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "msprechecker",
+      "lines": 62,
+      "priority": 8,
+      "category": "请求处理"
+    },
+    {
+      "path": "msmodelslim/msmodelslim/cli/__main__.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "msmodelslim",
+      "lines": 112,
+      "priority": 9,
+      "category": "请求处理"
+    },
+    {
+      "path": "msserviceprofiler/msserviceprofiler/__main__.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "msserviceprofiler",
+      "lines": 51,
+      "priority": 10,
+      "category": "请求处理"
+    },
+    {
+      "path": "msprechecker/msprechecker/utils/network.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "msprechecker",
+      "lines": 50,
+      "priority": 11,
+      "category": "网络/通信"
+    },
+    {
+      "path": "msit/components/debug/compare/msquickcmp/cmp_process.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "msit",
+      "lines": 200,
+      "priority": 12,
+      "category": "配置/反序列化"
+    },
+    {
+      "path": "msit/components/llm/msit_llm/dump/initial.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "msit",
+      "lines": 150,
+      "priority": 13,
+      "category": "文件操作"
+    },
+    {
+      "path": "msserviceprofiler/include/msServiceProfiler/msServiceProfiler.h",
+      "language": "c_cpp",
+      "risk": "Low",
+      "module": "msserviceprofiler_cpp",
+      "lines": 52,
+      "priority": 14,
+      "category": "日志/调试"
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "msit/components/__main__.py",
+      "line": 46,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "CLI 入口点，通过 argparse 解析命令行参数，用户可以控制 --model_path、--output_path 等参数，这些参数直接影响文件读写操作",
+      "description": "msit 工具的主入口点，处理 debug、benchmark、analyze、convert 等子命令"
+    },
+    {
+      "file": "msmodelslim/msmodelslim/cli/__main__.py",
+      "line": 15,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "CLI 入口点，用户通过 --model_path 和 --save_path 参数指定模型文件路径，直接影响模型加载和输出操作",
+      "description": "msmodelslim 工具的主入口点，处理 quant、analyze、tune 等子命令"
+    },
+    {
+      "file": "msprechecker/msprechecker/cli.py",
+      "line": 32,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "CLI 入口点，用户可以控制预检参数和配置文件路径",
+      "description": "msprechecker 工具的主入口点，处理 precheck、dump、compare 等子命令"
+    },
+    {
+      "file": "msserviceprofiler/msserviceprofiler/__main__.py",
+      "line": 22,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "CLI 入口点，用户可以控制分析参数和配置路径",
+      "description": "msserviceprofiler 工具的主入口点，处理 compare、split、analyze 等子命令"
+    },
+    {
+      "file": "msmodelslim/msmodelslim/utils/security/shell.py",
+      "line": 217,
+      "function": "_run_cmd",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "执行外部命令的内部函数，虽然参数经过验证，但如果验证存在缺陷可能导致命令注入",
+      "description": "ShellRunner 内部方法，执行 subprocess.run 命令"
+    },
+    {
+      "file": "msmodelslim/msmodelslim/utils/security/request.py",
+      "line": 207,
+      "function": "safe_get",
+      "type": "network",
+      "trust_level": "semi_trusted",
+      "justification": "HTTP GET 请求函数，虽然限制了只能访问 localhost 或内网地址，但如果验证逻辑存在绕过可能导致 SSRF",
+      "description": "安全的 HTTP GET 请求函数"
+    },
+    {
+      "file": "msprechecker/msprechecker/utils/network.py",
+      "line": 20,
+      "function": "check_network",
+      "type": "network",
+      "trust_level": "semi_trusted",
+      "justification": "网络检查功能，可能涉及 socket 连接测试",
+      "description": "网络连通性检查函数"
+    },
+    {
+      "file": "msmodelslim/msmodelslim/pytorch/weight_compression/compress_graph/src/main.cpp",
+      "line": 210,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "C++ CLI 入口点，argv 参数直接用于文件路径，需要进行路径验证",
+      "description": "C++ 压缩图工具的主入口点"
+    }
+  ],
+  "attack_surfaces": [
+    "命令行参数: --model_path, --save_path, --output_path 等文件路径参数",
+    "配置文件: 用户提供的 JSON/YAML 配置文件",
+    "模型文件: 用户加载的模型文件（可能包含恶意代码）",
+    "外部命令执行: 通过 subprocess 调用 atc, msprof 等工具",
+    "HTTP 请求: 向 vllm/MindIE 服务发送请求进行性能测试",
+    "Pickle 反序列化: 加载校准数据或模型权重时可能涉及 pickle",
+    "网络检查: socket 连接测试功能"
+  ]
+}

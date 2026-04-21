@@ -1,0 +1,521 @@
+{
+  "project": "MindStudio-Profiler-Tools-Interface",
+  "language": ["C++", "Python"],
+  "generated_at": "2026-04-21",
+  
+  "call_graph": {
+    "entry_points": [
+      {
+        "function": "msptiSubscribe",
+        "file": "csrc/callback/callback_manager.cpp",
+        "calls": [
+          "CallbackManager::Init",
+          "CallbackManager::GetInstance"
+        ],
+        "depth": 1,
+        "risk_level": "high",
+        "data_flow": "User -> CallbackManager -> Subscriber"
+      },
+      {
+        "function": "msptiActivityRegisterCallbacks",
+        "file": "csrc/activity/activity_manager.cpp",
+        "calls": [
+          "ActivityManager::RegisterCallbacks",
+          "ActivityManager::GetInstance"
+        ],
+        "depth": 1,
+        "risk_level": "high",
+        "data_flow": "User -> ActivityManager -> BufferCallbacks"
+      },
+      {
+        "function": "aclrtSetDevice",
+        "file": "csrc/common/inject/acl_inject.cpp",
+        "calls": [
+          "pthread_once",
+          "Mspti::Common::RegisterFunction",
+          "Mspti::Common::GetFunction",
+          "THROW_FUNC_NOTFOUND",
+          "Mspti::Callback::CallbackScope::CallbackScope",
+          "func (dlsym resolved)"
+        ],
+        "depth": 2,
+        "risk_level": "critical",
+        "data_flow": "Application -> InjectWrapper -> OriginalACL -> CallbackScope"
+      },
+      {
+        "function": "aclrtLaunchKernel",
+        "file": "csrc/common/inject/acl_inject.cpp",
+        "calls": [
+          "pthread_once",
+          "Mspti::Common::RegisterFunction",
+          "Mspti::Common::GetFunction",
+          "THROW_FUNC_NOTFOUND",
+          "Mspti::Common::ContextManager::UpdateAndReportCorrelationId",
+          "Mspti::Callback::CallbackScope::CallbackScope",
+          "func (dlsym resolved)"
+        ],
+        "depth": 2,
+        "risk_level": "critical",
+        "data_flow": "Application -> InjectWrapper -> ContextManager -> CallbackScope -> KernelLaunch"
+      },
+      {
+        "function": "ChannelReader::Execute",
+        "file": "csrc/activity/ascend/channel/channel_reader.cpp",
+        "calls": [
+          "ProfChannelRead",
+          "TransDataToActivityBuffer",
+          "memcpy_s",
+          "TransTsFwData",
+          "TransStarsLog",
+          "TsfwConvert::GetInstance",
+          "SocLogConvert::GetInstance",
+          "ParserManager::ReportStepTrace",
+          "DeviceTaskCalculator::ReportStarsSocLog",
+          "KernelParser::ReportStarsSocLog"
+        ],
+        "depth": 3,
+        "risk_level": "critical",
+        "data_flow": "Driver -> ChannelReader -> Parser -> ActivityManager"
+      },
+      {
+        "function": "PyInit_mspti_C",
+        "file": "mspti/csrc/init.cpp",
+        "calls": [
+          "PyModule_Create",
+          "AddSubModule",
+          "PyModule_GetDict",
+          "PyImport_AddModule",
+          "PyDict_SetItemString",
+          "PyCFunction_NewEx"
+        ],
+        "depth": 2,
+        "risk_level": "medium",
+        "data_flow": "Python -> CExtension -> ModuleInit"
+      }
+    ],
+    
+    "critical_paths": [
+      {
+        "path_id": "PATH_001",
+        "description": "Dynamic Library Loading Chain",
+        "risk": "Library Injection / Environment Variable Manipulation",
+        "functions": [
+          {
+            "function": "FunctionLoader::Get",
+            "file": "csrc/common/function_loader.cpp",
+            "calls": ["CanonicalSoPath", "dlopen", "dlsym"]
+          },
+          {
+            "function": "CanonicalSoPath",
+            "file": "csrc/common/function_loader.cpp",
+            "calls": ["std::getenv(ASCEND_HOME_PATH)", "Utils::RealPath", "Utils::FileExist", "Utils::FileReadable"]
+          },
+          {
+            "function": "dlopen",
+            "external": true,
+            "risk": "Library path hijacking via ASCEND_HOME_PATH"
+          }
+        ]
+      },
+      {
+        "path_id": "PATH_002",
+        "description": "Driver Data Processing Chain",
+        "risk": "Buffer Overflow / Data Corruption",
+        "functions": [
+          {
+            "function": "ChannelReader::Execute",
+            "file": "csrc/activity/ascend/channel/channel_reader.cpp",
+            "calls": ["ProfChannelRead", "memcpy_s"]
+          },
+          {
+            "function": "ProfChannelRead",
+            "file": "csrc/common/inject/driver_inject.cpp",
+            "external": true,
+            "risk": "External driver data input"
+          },
+          {
+            "function": "TransDataToActivityBuffer",
+            "file": "csrc/activity/ascend/channel/channel_reader.cpp",
+            "calls": ["TransTsFwData", "TransStarsLog"]
+          },
+          {
+            "function": "TransTsFwData",
+            "file": "csrc/activity/ascend/channel/channel_reader.cpp",
+            "calls": ["TsfwConvert::TransData", "ParserManager::ReportStepTrace"]
+          }
+        ]
+      },
+      {
+        "path_id": "PATH_003",
+        "description": "User Callback Execution Chain",
+        "risk": "Arbitrary Code Execution",
+        "functions": [
+          {
+            "function": "CallbackManager::ExecuteCallback",
+            "file": "csrc/callback/callback_manager.cpp",
+            "calls": ["subscriber_ptr_->handle"]
+          },
+          {
+            "function": "CallbackScope::CallbackScope",
+            "file": "csrc/callback/callback_manager.h",
+            "calls": ["CallbackManager::ExecuteCallback"]
+          },
+          {
+            "function": "user_callback",
+            "external": true,
+            "risk": "User provided callback executes arbitrary code"
+          }
+        ]
+      },
+      {
+        "path_id": "PATH_004",
+        "description": "Python Callback Registration Chain",
+        "risk": "Python Code Injection",
+        "functions": [
+          {
+            "function": "RegisterCB",
+            "file": "mspti/csrc/init.cpp",
+            "calls": ["PyArg_ParseTuple", "MsptiAdapter::RegisterMstxCallback"]
+          },
+          {
+            "function": "MsptiAdapter::RegisterMstxCallback",
+            "file": "mspti/csrc/mspti_adapter.cpp",
+            "calls": ["Py_INCREF", "callback storage"]
+          },
+          {
+            "function": "python_callback_invocation",
+            "external": true,
+            "risk": "Stored Python callback executed during profiling"
+          }
+        ]
+      },
+      {
+        "path_id": "PATH_005",
+        "description": "Activity Buffer Callback Chain",
+        "risk": "Sensitive Data Exposure / Memory Corruption",
+        "functions": [
+          {
+            "function": "ActivityManager::Record",
+            "file": "csrc/activity/activity_manager.cpp",
+            "calls": ["ActivityBuffer::Record", "bufferRequested_handle_"]
+          },
+          {
+            "function": "ActivityBuffer::Record",
+            "file": "csrc/activity/activity_manager.cpp",
+            "calls": ["memcpy (implicit)", "bufferRequested_handle_ callback"]
+          },
+          {
+            "function": "bufferRequested_handle_",
+            "external": true,
+            "risk": "User callback receives profiling data buffer"
+          }
+        ]
+      }
+    ],
+    
+    "modules": {
+      "inject": {
+        "description": "API Hooking / Function Interposition",
+        "functions": [
+          {
+            "name": "aclrtSetDevice",
+            "file": "csrc/common/inject/acl_inject.cpp",
+            "calls": ["pthread_once", "LoadAclFunction", "CallbackScope", "original_aclrtSetDevice"],
+            "called_by": ["Application ACL API calls"],
+            "risk_level": "critical"
+          },
+          {
+            "name": "aclrtLaunchKernel",
+            "file": "csrc/common/inject/acl_inject.cpp",
+            "calls": ["pthread_once", "LoadAclFunction", "ContextManager::UpdateAndReportCorrelationId", "CallbackScope", "original_aclrtLaunchKernel"],
+            "called_by": ["Application Kernel Launch"],
+            "risk_level": "critical"
+          },
+          {
+            "name": "LoadAclFunction",
+            "file": "csrc/common/inject/acl_inject.cpp",
+            "calls": ["Mspti::Common::RegisterFunction"],
+            "called_by": ["pthread_once"],
+            "risk_level": "high"
+          },
+          {
+            "name": "HcclAllReduce",
+            "file": "csrc/common/inject/hccl_inject.cpp",
+            "calls": ["pthread_once", "LoadHcclFunction", "CallbackScope", "original_HcclAllReduce"],
+            "called_by": ["Application HCCL API calls"],
+            "risk_level": "critical"
+          },
+          {
+            "name": "MstxMarkAFunc",
+            "file": "csrc/common/inject/mstx_inject.cpp",
+            "calls": ["MstxDomainMgr::GetInstance", "ActivityManager::Record"],
+            "called_by": ["Application MSTX API calls"],
+            "risk_level": "high"
+          },
+          {
+            "name": "ProfChannelRead",
+            "file": "csrc/common/inject/driver_inject.cpp",
+            "calls": ["dlsym resolved driver function"],
+            "called_by": ["ChannelReader::Execute"],
+            "risk_level": "critical"
+          }
+        ]
+      },
+      "function_loader": {
+        "description": "Dynamic Library Loading",
+        "functions": [
+          {
+            "name": "FunctionLoader::Get",
+            "file": "csrc/common/function_loader.cpp",
+            "calls": ["CanonicalSoPath", "dlopen", "dlsym"],
+            "called_by": ["FunctionRegister::Get", "All inject modules"],
+            "risk_level": "critical"
+          },
+          {
+            "name": "CanonicalSoPath",
+            "file": "csrc/common/function_loader.cpp",
+            "calls": ["std::getenv", "Utils::RealPath", "Utils::FileExist", "Utils::FileReadable"],
+            "called_by": ["FunctionLoader::Get"],
+            "risk_level": "high"
+          },
+          {
+            "name": "FunctionRegister::Get",
+            "file": "csrc/common/function_loader.cpp",
+            "calls": ["FunctionLoader::Get"],
+            "called_by": ["RegisterFunction", "GetFunction template"],
+            "risk_level": "high"
+          }
+        ]
+      },
+      "channel": {
+        "description": "Driver Data Reading and Processing",
+        "functions": [
+          {
+            "name": "ChannelReader::Execute",
+            "file": "csrc/activity/ascend/channel/channel_reader.cpp",
+            "calls": ["ProfChannelRead", "memcpy_s", "TransDataToActivityBuffer"],
+            "called_by": ["DevTaskManager thread pool"],
+            "risk_level": "critical"
+          },
+          {
+            "name": "TransDataToActivityBuffer",
+            "file": "csrc/activity/ascend/channel/channel_reader.cpp",
+            "calls": ["TransTsFwData", "TransStarsLog"],
+            "called_by": ["ChannelReader::Execute"],
+            "risk_level": "high"
+          },
+          {
+            "name": "TransTsFwData",
+            "file": "csrc/activity/ascend/channel/channel_reader.cpp",
+            "calls": ["TsfwConvert::GetInstance", "TsfwConvert::TransData", "ParserManager::ReportStepTrace"],
+            "called_by": ["TransDataToActivityBuffer"],
+            "risk_level": "high"
+          },
+          {
+            "name": "TransStarsLog",
+            "file": "csrc/activity/ascend/channel/channel_reader.cpp",
+            "calls": ["SocLogConvert::GetInstance", "SocLogConvert::TransData", "DeviceTaskCalculator::ReportStarsSocLog", "KernelParser::ReportStarsSocLog"],
+            "called_by": ["TransDataToActivityBuffer"],
+            "risk_level": "high"
+          }
+        ]
+      },
+      "callback": {
+        "description": "Callback Subscription and Execution",
+        "functions": [
+          {
+            "name": "CallbackManager::Init",
+            "file": "csrc/callback/callback_manager.cpp",
+            "calls": ["subscriber_ptr_ allocation"],
+            "called_by": ["msptiSubscribe"],
+            "risk_level": "high"
+          },
+          {
+            "name": "CallbackManager::ExecuteCallback",
+            "file": "csrc/callback/callback_manager.cpp",
+            "calls": ["subscriber_ptr_->handle(userdata, domain, cbid, cbdata)"],
+            "called_by": ["CallbackScope constructor/destructor"],
+            "risk_level": "critical"
+          },
+          {
+            "name": "CallbackScope::CallbackScope",
+            "file": "csrc/callback/callback_manager.h",
+            "calls": ["CallbackManager::ExecuteCallback"],
+            "called_by": ["All injected API wrappers"],
+            "risk_level": "high"
+          }
+        ]
+      },
+      "activity": {
+        "description": "Activity Buffer Management",
+        "functions": [
+          {
+            "name": "ActivityManager::RegisterCallbacks",
+            "file": "csrc/activity/activity_manager.cpp",
+            "calls": ["bufferRequested_handle_ assignment", "bufferCompleted_handle_ assignment"],
+            "called_by": ["msptiActivityRegisterCallbacks"],
+            "risk_level": "high"
+          },
+          {
+            "name": "ActivityManager::Record",
+            "file": "csrc/activity/activity_manager.cpp",
+            "calls": ["ActivityBuffer::Record"],
+            "called_by": ["Parser modules", "Inject modules"],
+            "risk_level": "medium"
+          },
+          {
+            "name": "ActivityBuffer::Record",
+            "file": "csrc/activity/activity_manager.cpp",
+            "calls": ["memcpy_s"],
+            "called_by": ["ActivityManager::Record"],
+            "risk_level": "medium"
+          },
+          {
+            "name": "ActivityManager::FlushAll",
+            "file": "csrc/activity/activity_manager.cpp",
+            "calls": ["bufferCompleted_handle_ callback"],
+            "called_by": ["msptiActivityFlushAll", "Python stop_monitor"],
+            "risk_level": "high"
+          }
+        ]
+      },
+      "parser": {
+        "description": "Profiling Data Parsing",
+        "functions": [
+          {
+            "name": "ParserManager::ReportStepTrace",
+            "file": "csrc/activity/ascend/parser/parser_manager.cpp",
+            "calls": ["GetAnalysisTask", "ProfTask operations"],
+            "called_by": ["TransTsFwData"],
+            "risk_level": "medium"
+          },
+          {
+            "name": "KernelParser::ReportStarsSocLog",
+            "file": "csrc/activity/ascend/parser/kernel_parser.cpp",
+            "calls": ["Data parsing logic", "ActivityManager::Record"],
+            "called_by": ["TransStarsLog"],
+            "risk_level": "medium"
+          },
+          {
+            "name": "CannApiParser::ReportApi",
+            "file": "csrc/activity/ascend/parser/cann_api_parser.cpp",
+            "calls": ["CannTrackCache operations", "ActivityManager::Record"],
+            "called_by": ["ParserManager::ReportApi"],
+            "risk_level": "medium"
+          }
+        ]
+      },
+      "python_binding": {
+        "description": "Python C Extension",
+        "functions": [
+          {
+            "name": "PyInit_mspti_C",
+            "file": "mspti/csrc/init.cpp",
+            "calls": ["PyModule_Create", "AddSubModule"],
+            "called_by": ["Python import"],
+            "risk_level": "medium"
+          },
+          {
+            "name": "MsptiStart",
+            "file": "mspti/csrc/init.cpp",
+            "calls": ["MsptiAdapter::GetInstance", "MsptiAdapter::Start"],
+            "called_by": ["Python start()"],
+            "risk_level": "medium"
+          },
+          {
+            "name": "RegisterCB",
+            "file": "mspti/csrc/init.cpp",
+            "calls": ["PyArg_ParseTuple", "MsptiAdapter::RegisterMstxCallback/RegisterKernelCallback/RegisterHcclCallback"],
+            "called_by": ["Python registerCB()"],
+            "risk_level": "high"
+          },
+          {
+            "name": "MsptiAdapter::RegisterMstxCallback",
+            "file": "mspti/csrc/mspti_adapter.cpp",
+            "calls": ["Py_INCREF", "callback storage"],
+            "called_by": ["RegisterCB"],
+            "risk_level": "high"
+          }
+        ]
+      },
+      "utils": {
+        "description": "Utility Functions",
+        "functions": [
+          {
+            "name": "Utils::RealPath",
+            "file": "csrc/common/utils.cpp",
+            "calls": ["realpath"],
+            "called_by": ["CanonicalSoPath", "Path validation"],
+            "risk_level": "medium"
+          },
+          {
+            "name": "Utils::RelativeToAbsPath",
+            "file": "csrc/common/utils.cpp",
+            "calls": ["getcwd"],
+            "called_by": ["CanonicalSoPath"],
+            "risk_level": "medium"
+          },
+          {
+            "name": "Utils::GetEnv",
+            "file": "csrc/common/utils.cpp",
+            "calls": ["std::getenv"],
+            "called_by": ["CanonicalSoPath"],
+            "risk_level": "high"
+          },
+          {
+            "name": "Utils::CheckCharValid",
+            "file": "csrc/common/utils.cpp",
+            "calls": ["str.find"],
+            "called_by": ["Input validation"],
+            "risk_level": "low"
+          }
+        ]
+      }
+    },
+    
+    "cross_module_calls": [
+      {
+        "from_module": "inject",
+        "to_module": "callback",
+        "functions": ["CallbackScope constructor"],
+        "risk": "API hooking triggers callback execution"
+      },
+      {
+        "from_module": "inject",
+        "to_module": "activity",
+        "functions": ["ActivityManager::Record", "ContextManager::UpdateAndReportCorrelationId"],
+        "risk": "Profiling data recorded during hooked API calls"
+      },
+      {
+        "from_module": "channel",
+        "to_module": "parser",
+        "functions": ["ParserManager::ReportStepTrace", "KernelParser::ReportStarsSocLog"],
+        "risk": "Driver data flows to parser modules"
+      },
+      {
+        "from_module": "parser",
+        "to_module": "activity",
+        "functions": ["ActivityManager::Record"],
+        "risk": "Parsed data recorded to activity buffers"
+      },
+      {
+        "from_module": "python_binding",
+        "to_module": "inject",
+        "functions": ["MsptiAdapter::Start/Stop"],
+        "risk": "Python triggers profiling start/stop"
+      },
+      {
+        "from_module": "function_loader",
+        "to_module": "inject",
+        "functions": ["RegisterFunction", "GetFunction"],
+        "risk": "Library loading for all inject modules"
+      },
+      {
+        "from_module": "utils",
+        "to_module": "function_loader",
+        "functions": ["RealPath", "RelativeToAbsPath", "FileExist", "GetEnv"],
+        "risk": "Path validation for library loading"
+      }
+    ]
+  }
+}

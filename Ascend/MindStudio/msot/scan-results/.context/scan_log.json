@@ -1,0 +1,101 @@
+{
+  "scan_id": "scan_msot_20250421",
+  "start_time": "2026-04-21T01:17:00Z",
+  "end_time": "2026-04-21T02:17:00Z",
+  "duration_seconds": 3600,
+  "project_name": "MindStudio/msot",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/shenteng/MindStudio/msot",
+  "status": "success",
+  "agents": [
+    {
+      "name": "architecture",
+      "phase": 2,
+      "start_time": "2026-04-21T01:17:30Z",
+      "end_time": "2026-04-21T01:23:42Z",
+      "duration_seconds": 372,
+      "status": "success",
+      "output_files": [
+        "project_model.json",
+        "call_graph.json",
+        "threat_analysis_report.md"
+      ],
+      "summary": "分析 13 个文件，识别 8 个模块，9 个入口点，发现高风险文件"
+    },
+    {
+      "name": "dataflow-scanner",
+      "phase": 3,
+      "start_time": "2026-04-21T01:24:00Z",
+      "end_time": "2026-04-21T01:41:49Z",
+      "duration_seconds": 1069,
+      "status": "success",
+      "item_count": 63,
+      "summary": "扫描 9 个模块，发现 63 条候选漏洞 (1 Critical, 9 High, 37 Medium)"
+    },
+    {
+      "name": "security-auditor",
+      "phase": 3,
+      "start_time": "2026-04-21T01:24:00Z",
+      "end_time": "2026-04-21T01:28:09Z",
+      "duration_seconds": 249,
+      "status": "success",
+      "item_count": 50,
+      "summary": "审计 9 个模块，发现 50 条候选漏洞，识别 3 个跨模块安全问题"
+    },
+    {
+      "name": "verification",
+      "phase": 4,
+      "start_time": "2026-04-21T01:42:00Z",
+      "end_time": "2026-04-21T01:46:30Z",
+      "duration_seconds": 270,
+      "status": "success",
+      "item_count": 63,
+      "summary": "验证 63 条候选漏洞，9 条 CONFIRMED, 17 条 LIKELY, 18 条 POSSIBLE, 4 条 FALSE_POSITIVE"
+    },
+    {
+      "name": "details-analyzer",
+      "phase": 4.5,
+      "start_time": "2026-04-21T01:50:00Z",
+      "end_time": "2026-04-21T02:11:00Z",
+      "duration_seconds": 1260,
+      "status": "success",
+      "item_count": 9,
+      "output_files": [
+        "details/VULN-2026-MSSAN-001.md",
+        "details/VULN-001-privileged-container.md",
+        "details/VULN-PARSER-001.md",
+        "details/VULN-PARSER-002.md",
+        "details/msopgen-keep_soc_info-tmpfile-001.md",
+        "details/VULN-BUILD-008.md"
+      ],
+      "summary": "深度分析 9 条 CONFIRMED 漏洞，生成 6 个独立报告（3 条重复漏洞跳过）"
+    },
+    {
+      "name": "reporter",
+      "phase": 5,
+      "start_time": "2026-04-21T02:12:00Z",
+      "end_time": "2026-04-21T02:17:00Z",
+      "duration_seconds": 300,
+      "status": "success",
+      "output_files": [
+        "report_confirmed.md",
+        "report_unconfirmed.md"
+      ],
+      "summary": "生成漏洞扫描报告，包含执行摘要、Top 5 深度分析、修复建议"
+    }
+  ],
+  "summary": {
+    "total_vulnerabilities": 63,
+    "confirmed": 9,
+    "likely": 17,
+    "possible": 18,
+    "false_positive": 4,
+    "severity_distribution": {
+      "critical": 2,
+      "high": 9,
+      "medium": 36,
+      "low": 11
+    },
+    "modules_scanned": 9,
+    "files_analyzed": 13
+  }
+}

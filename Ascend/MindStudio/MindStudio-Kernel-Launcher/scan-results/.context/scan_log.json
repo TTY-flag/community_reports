@@ -1,0 +1,147 @@
+{
+  "scan_id": "8719bd25-cde6-4e70-972a-e75fe3a367bb",
+  "start_time": "2026-04-21T02:33:43-07:00",
+  "end_time": "2026-04-21T03:41:02-07:00",
+  "duration_seconds": 4019,
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/shenteng/MindStudio/MindStudio-Kernel-Launcher",
+  "project_name": "MindStudio-Kernel-Launcher",
+  "status": "success",
+  "scan_mode": "autonomous",
+  "language_composition": {
+    "python": 22,
+    "c_cpp": 0
+  },
+  "agents": [
+    {
+      "name": "architecture",
+      "start_time": "2026-04-21T02:33:43-07:00",
+      "end_time": "2026-04-21T02:41:00-07:00",
+      "duration_seconds": 437,
+      "status": "success",
+      "output_files": [
+        "scan-results/.context/project_model.json",
+        "scan-results/.context/call_graph.json",
+        "scan-results/threat_analysis_report.md"
+      ],
+      "summary": {
+        "modules": 3,
+        "entry_points": 13,
+        "critical_files": 5,
+        "high_files": 1
+      }
+    },
+    {
+      "name": "dataflow-scanner",
+      "start_time": "2026-04-21T02:41:00-07:00",
+      "end_time": "2026-04-21T02:49:05-07:00",
+      "duration_seconds": 485,
+      "status": "success",
+      "output_files": [
+        "scan-results/.context/scan.db"
+      ],
+      "summary": {
+        "vulnerabilities": 23,
+        "modules_scanned": 3,
+        "cross_module_chains": 2,
+        "severity_distribution": {
+          "critical": 3,
+          "high": 8,
+          "medium": 8,
+          "low": 4
+        }
+      }
+    },
+    {
+      "name": "security-auditor",
+      "start_time": "2026-04-21T02:41:00-07:00",
+      "end_time": "2026-04-21T02:52:00-07:00",
+      "duration_seconds": 660,
+      "status": "success",
+      "output_files": [
+        "scan-results/.context/scan.db"
+      ],
+      "summary": {
+        "vulnerabilities": 11,
+        "modules_audited": 3,
+        "cross_module_issues": 2,
+        "severity_distribution": {
+          "critical": 1,
+          "high": 6,
+          "medium": 2,
+          "low": 2
+        }
+      }
+    },
+    {
+      "name": "verification",
+      "start_time": "2026-04-21T02:54:12-07:00",
+      "end_time": "2026-04-21T03:04:00-07:00",
+      "duration_seconds": 588,
+      "status": "partial_success",
+      "output_files": [
+        "scan-results/.context/scan.db"
+      ],
+      "summary": {
+        "vulnerabilities_verified": 12,
+        "confirmed": 11,
+        "likely": 1,
+        "background_tasks_timeout": 4
+      }
+    },
+    {
+      "name": "details-analyzer",
+      "start_time": "2026-04-21T03:04:00-07:00",
+      "end_time": "2026-04-21T03:34:00-07:00",
+      "duration_seconds": 1800,
+      "status": "timeout",
+      "output_files": [],
+      "summary": {
+        "confirmed_vulnerabilities": 12,
+        "reports_generated": 0,
+        "reason": "Background task poll timeout"
+      }
+    },
+    {
+      "name": "reporter",
+      "start_time": "2026-04-21T03:35:04-07:00",
+      "end_time": "2026-04-21T03:41:02-07:00",
+      "duration_seconds": 358,
+      "status": "success",
+      "output_files": [
+        "scan-results/report_confirmed.md",
+        "scan-results/report_unconfirmed.md"
+      ],
+      "summary": {
+        "confirmed_report_lines": 1083,
+        "unconfirmed_report_lines": 337,
+        "top5_analyzed": true
+      }
+    }
+  ],
+  "summary": {
+    "total_vulnerabilities": 34,
+    "confirmed": 18,
+    "likely": 2,
+    "possible": 9,
+    "false_positive": 5,
+    "severity_distribution": {
+      "critical": 5,
+      "high": 10,
+      "medium": 13,
+      "low": 6
+    },
+    "module_distribution": {
+      "launcher": 15,
+      "utils": 11,
+      "optune": 6,
+      "cross_module": 2
+    },
+    "critical_findings": [
+      "跨模块攻击链: configs → 源码注入 → 编译 → 命令执行",
+      "命令注入: 用户bash脚本直接执行 (compile, compile_executable)",
+      "代码注入: 配置值直接写入内核源码无内容验证",
+      "动态库加载: importlib加载用户.so模块",
+      "环境变量风险: ASCEND_HOME_PATH控制库加载路径"
+    ]
+  }
+}

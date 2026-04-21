@@ -1,0 +1,417 @@
+{
+  "functions": {
+    "compile@mskl/launcher/compiler.py:171": {
+      "defined_at": 171,
+      "calls": [
+        "_check_compile_input@mskl/launcher/compiler.py:109",
+        "subprocess.run@stdlib",
+        "CompiledKernel.__init__@mskl/launcher/compiler.py:45"
+      ],
+      "called_by": [
+        "autotune@mskl/optune/tuner.py:251",
+        "Autotuner.compile_op@mskl/optune/tuner.py:125"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "Executes bash build_script with user-provided launch_src_file path, compiles to .so, returns CompiledKernel"
+    },
+    "compile_executable@mskl/launcher/compiler.py:319": {
+      "defined_at": 319,
+      "calls": [
+        "_check_compile_executable_input@mskl/launcher/compiler.py:339",
+        "subprocess.run@stdlib",
+        "CompiledExecutable.__init__@mskl/launcher/compiler.py:265"
+      ],
+      "called_by": [
+        "AutotunerV2.compile@mskl/optune/tuner.py:456"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "Executes bash build_script to compile executable, subprocess.run with user-controlled build_script"
+    },
+    "compile_tiling@mskl/launcher/compiler.py:216": {
+      "defined_at": 216,
+      "calls": [
+        "get_cann_path@mskl/utils/launcher_utils.py:23",
+        "subprocess.run@stdlib",
+        "importlib.util.spec_from_file_location@stdlib",
+        "importlib.util.module_from_spec@stdlib",
+        "spec.loader.exec_module@stdlib"
+      ],
+      "called_by": [
+        "tiling_func@mskl/launcher/opgen_workflow.py:53"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "Compiles tiling C++ file, loads compiled .so via importlib, extracts _tiling_func"
+    },
+    "compile_kernel_binary@mskl/launcher/compiler.py:242": {
+      "defined_at": 242,
+      "calls": [
+        "get_cann_path@mskl/utils/launcher_utils.py:23",
+        "subprocess.run@stdlib"
+      ],
+      "called_by": [
+        "get_kernel_from_binary@mskl/launcher/opgen_workflow.py:74"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "Compiles kernel binary launch file via g++, user-controlled kernel_binary_file parameter"
+    },
+    "CompiledKernel.__init__@mskl/launcher/compiler.py:45": {
+      "defined_at": 45,
+      "calls": [
+        "_check_constructor_input@mskl/launcher/compiler.py:89",
+        "NPULauncher.__init__@mskl/launcher/driver.py:70"
+      ],
+      "called_by": [
+        "compile@mskl/launcher/compiler.py:171",
+        "compile_kernel_binary@mskl/launcher/compiler.py:242"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "Creates kernel object, validates output_bin_path, initializes NPULauncher"
+    },
+    "CompiledKernel.launch@mskl/launcher/compiler.py:64": {
+      "defined_at": 64,
+      "calls": [
+        "_check_launch_input@mskl/launcher/compiler.py:96",
+        "NPULauncher.__call__@mskl/launcher/driver.py:78"
+      ],
+      "called_by": [
+        "Autotuner.launch@mskl/optune/tuner.py:68"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "Launches kernel on NPU with blockdim, stream, device_id parameters"
+    },
+    "NPULauncher.__call__@mskl/launcher/driver.py:78": {
+      "defined_at": 78,
+      "calls": [
+        "driver.set_device@mskl/launcher/driver.py:347",
+        "_arg_preprocess@mskl/launcher/driver.py:159",
+        "importlib.util.spec_from_file_location@stdlib",
+        "importlib.util.module_from_spec@stdlib",
+        "spec.loader.exec_module@stdlib",
+        "getattr@stdlib",
+        "driver.create_stream@mskl/launcher/driver.py:367",
+        "driver.synchronize_stream@mskl/launcher/driver.py:380",
+        "driver.destroy_stream@mskl/launcher/driver.py:374",
+        "_arg_postprocess@mskl/launcher/driver.py:311"
+      ],
+      "called_by": [
+        "CompiledKernel.launch@mskl/launcher/compiler.py:64"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "Loads .so module via importlib, executes kernel function with args - dynamic code execution"
+    },
+    "Launcher.__init__@mskl/launcher/code_generator.py:340": {
+      "defined_at": 340,
+      "calls": [
+        "KernelLauncher.__init__@mskl/launcher/code_generator.py:148",
+        "TilingLauncher.__init__@mskl/launcher/code_generator.py:262",
+        "KernelBinaryLauncher.__init__@mskl/launcher/code_generator.py:298"
+      ],
+      "called_by": [
+        "tiling_func@mskl/launcher/opgen_workflow.py:61",
+        "get_kernel_from_binary@mskl/launcher/opgen_workflow.py:87",
+        "code_gen@mskl/optune/tuner.py:120"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "Creates appropriate launcher based on config type"
+    },
+    "KernelLauncher.code_gen@mskl/launcher/code_generator.py:176": {
+      "defined_at": 176,
+      "calls": [
+        "parse_kernel_args_by_stack@mskl/launcher/code_generator.py:117",
+        "os.fdopen@stdlib",
+        "os.open@stdlib",
+        "f.write@stdlib"
+      ],
+      "called_by": [
+        "Launcher.code_gen@mskl/launcher/code_generator.py:352"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "Generates C++ glue code with kernel_name, kernel_src_file embedded - code injection risk"
+    },
+    "tiling_func@mskl/launcher/opgen_workflow.py:53": {
+      "defined_at": 53,
+      "calls": [
+        "TilingConfig.__init__@mskl/launcher/config.py:51",
+        "init_tmp_folder@mskl/launcher/opgen_workflow.py:33",
+        "Launcher.__init__@mskl/launcher/code_generator.py:340",
+        "Launcher.code_gen@mskl/launcher/code_generator.py:352",
+        "compile_tiling@mskl/launcher/compiler.py:216",
+        "run_tiling_func@generated_module"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "API entry point - takes op_type, inputs, outputs, lib_path, attrs, generates and executes tiling code"
+    },
+    "get_kernel_from_binary@mskl/launcher/opgen_workflow.py:74": {
+      "defined_at": 74,
+      "calls": [
+        "KernelBinaryInvokeConfig.__init__@mskl/launcher/config.py:790",
+        "init_tmp_folder@mskl/launcher/opgen_workflow.py:33",
+        "Launcher.__init__@mskl/launcher/code_generator.py:340",
+        "Launcher.code_gen@mskl/launcher/code_generator.py:352",
+        "compile_kernel_binary@mskl/launcher/compiler.py:242"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "API entry point - takes kernel_binary_file path, generates launch code, compiles and returns CompiledKernel"
+    },
+    "autotune@mskl/optune/tuner.py:251": {
+      "defined_at": 251,
+      "calls": [
+        "autotune_utils.check_autotune_params@mskl/utils/autotune_utils.py:27",
+        "Autotuner.pre_launch@mskl/optune/tuner.py:52",
+        "Executor.execute@mskl/optune/tuner.py:158"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "Decorator - receives user configs, executes pre-launch and parallel compilation/launch"
+    },
+    "autotune_v2@mskl/optune/tuner.py:557": {
+      "defined_at": 557,
+      "calls": [
+        "autotune_utils.check_autotune_v2_params@mskl/utils/autotune_utils.py:34",
+        "get_params_from_pre_launch@mskl/optune/tuner.py:380",
+        "AutotuneV2Scheduler.execute@mskl/optune/tuner.py:304"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "Decorator - receives configs, executes pre-launch and msprof profiling"
+    },
+    "AutotunerV2.launch@mskl/optune/tuner.py:462": {
+      "defined_at": 462,
+      "calls": [
+        "CompiledExecutable._launch@mskl/launcher/compiler.py:288",
+        "subprocess.run@stdlib",
+        "FileChecker.check_input_file@mskl/utils/safe_check.py:70",
+        "open@stdlib",
+        "csv.reader@stdlib"
+      ],
+      "called_by": [
+        "AutotuneV2Scheduler._launch_task@mskl/optune/tuner.py:345"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "Executes msprof profiling command, reads profiling results from CSV file"
+    },
+    "Replacer.replace_config@mskl/optune/kernel_modifier.py:93": {
+      "defined_at": 93,
+      "calls": [
+        "_replace_param@mskl/optune/kernel_modifier.py:63",
+        "_write_to_file@mskl/optune/kernel_modifier.py:53"
+      ],
+      "called_by": [
+        "Autotuner.gen_context@mskl/optune/tuner.py:112"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "Modifies kernel source file content based on config dictionary - code injection risk"
+    },
+    "Replacer.replace_src_with_config@mskl/optune/kernel_modifier.py:30": {
+      "defined_at": 30,
+      "calls": [
+        "autotune_utils.get_file_lines@mskl/utils/autotune_utils.py:92",
+        "_replace_param@mskl/optune/kernel_modifier.py:63",
+        "_write_to_file@mskl/optune/kernel_modifier.py:53"
+      ],
+      "called_by": [
+        "AutotunerV2.gen_src_file@mskl/optune/tuner.py:420"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "Static method - reads source file, modifies based on config, writes new file"
+    },
+    "load_mspti_so@mskl/launcher/driver.py:30": {
+      "defined_at": 30,
+      "calls": [
+        "os.getenv@stdlib",
+        "os.path.realpath@stdlib",
+        "ctypes.CDLL@stdlib"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "Loads libmspti.so from ASCEND_HOME_PATH - dynamic library loading"
+    },
+    "get_cann_path@mskl/utils/launcher_utils.py:23": {
+      "defined_at": 23,
+      "calls": [
+        "os.getenv@stdlib",
+        "os.path.isdir@stdlib"
+      ],
+      "called_by": [
+        "compile_tiling@mskl/launcher/compiler.py:216",
+        "compile_kernel_binary@mskl/launcher/compiler.py:242",
+        "TilingConfig._parse_lib_path@mskl/launcher/config.py:339",
+        "check_runtime_impl@mskl/utils/launcher_utils.py:30"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "Reads ASCEND_HOME_PATH environment variable, validates path"
+    },
+    "check_runtime_impl@mskl/utils/launcher_utils.py:30": {
+      "defined_at": 30,
+      "calls": [
+        "get_cann_path@mskl/utils/launcher_utils.py:23",
+        "ctypes.CDLL@stdlib"
+      ],
+      "called_by": [
+        "KernelBinaryLauncher.code_gen@mskl/launcher/code_generator.py:311"
+      ],
+      "receives_external_input": false,
+      "risk": "Low",
+      "description": "Checks if runtime library has rtKernelLaunchWithHandleV2 function"
+    },
+    "FileChecker.check_input_file@mskl/utils/safe_check.py:77": {
+      "defined_at": 77,
+      "calls": [
+        "is_string_char_valid@mskl/utils/safe_check.py:112",
+        "os.path.exists@stdlib",
+        "path_len_check_valid@mskl/utils/safe_check.py:136",
+        "is_soft_link_recusively@mskl/utils/safe_check.py:121",
+        "check_path_permission@mskl/utils/safe_check.py:145",
+        "check_file_size_valid@mskl/utils/safe_check.py:180"
+      ],
+      "called_by": [
+        "KernelInvokeConfig.__init__@mskl/launcher/config.py:31",
+        "compile@mskl/launcher/compiler.py:171",
+        "compile_executable@mskl/launcher/compiler.py:319",
+        "KernelBinaryInvokeConfig._check_kernel_binary_file@mskl/launcher/config.py:805",
+        "AutotunerV2.launch@mskl/optune/tuner.py:462"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "Validates file path for security - checks soft links, permissions, size"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "mskl.compile(build_script)@API",
+      "path": [
+        "compile@mskl/launcher/compiler.py:171",
+        "_check_compile_input@mskl/launcher/compiler.py:109",
+        "subprocess.run(['bash', build_script, ...])@compiler.py:206"
+      ],
+      "sink": "subprocess.run@stdlib",
+      "sink_type": "command_execution",
+      "description": "User-provided build_script path flows to subprocess.run as bash argument - command injection risk if build_script contains malicious path"
+    },
+    {
+      "source": "mskl.compile_executable(build_script)@API",
+      "path": [
+        "compile_executable@mskl/launcher/compiler.py:319",
+        "_check_compile_executable_input@mskl/launcher/compiler.py:339",
+        "subprocess.run(['bash', build_script, ...])@compiler.py:370"
+      ],
+      "sink": "subprocess.run@stdlib",
+      "sink_type": "command_execution",
+      "description": "User-provided build_script flows to subprocess.run - command injection risk"
+    },
+    {
+      "source": "CompiledKernel.__init__(output_bin_path)@compiler.py:45",
+      "path": [
+        "_check_constructor_input@mskl/launcher/compiler.py:89",
+        "FileChecker.check_input_file@mskl/utils/safe_check.py:77",
+        "NPULauncher.__init__(self._module=output_bin_path)@driver.py:70"
+      ],
+      "sink": "NPULauncher._module@driver.py",
+      "sink_type": "dynamic_library_path",
+      "description": "output_bin_path (validated) flows to NPULauncher for dynamic loading via importlib"
+    },
+    {
+      "source": "NPULauncher.__call__(self._module)@driver.py:78",
+      "path": [
+        "importlib.util.spec_from_file_location(module_name, self._module)@driver.py:103",
+        "importlib.util.module_from_spec(spec)@driver.py:104",
+        "spec.loader.exec_module(module)@driver.py:105",
+        "getattr(module, func_name)@driver.py:116"
+      ],
+      "sink": "func(blockdim, l2ctrl, stream, *kernel_meta)@driver.py:120",
+      "sink_type": "code_execution",
+      "description": "Dynamic .so module loaded and executed - if module path is compromised, arbitrary code execution"
+    },
+    {
+      "source": "KernelInvokeConfig(kernel_src_file, kernel_name)@config.py:31",
+      "path": [
+        "safe_check.check_variable_type@safe_check.py:61",
+        "FileChecker.check_input_file@safe_check.py:77",
+        "KernelLauncher.__init__(config)@code_generator.py:148",
+        "parse_kernel_args_by_stack()@code_generator.py:117"
+      ],
+      "sink": "KERNEL_TEMPLATE.format(kernel_src_file=...)@code_generator.py:247",
+      "sink_type": "code_generation",
+      "description": "User-provided kernel_src_file embedded in generated C++ code - if path contains special chars, could affect generated code"
+    },
+    {
+      "source": "TilingConfig(op_type, inputs, outputs, lib_path, attrs)@config.py:51",
+      "path": [
+        "_parse_io_params@config.py:771",
+        "_parse_attr@config.py:408",
+        "_gen_tds@config.py:693",
+        "TilingLauncher.code_gen@code_generator.py:273",
+        "OPGEN_TILING_TEMPLATE.format(op_type=..., lib_path=...)@code_generator.py:274"
+      ],
+      "sink": "Generated C++ code with embedded op_type, lib_path@code_generator.py",
+      "sink_type": "code_generation",
+      "description": "User-provided op_type, lib_path embedded in generated C++ code - template injection risk if not properly validated"
+    },
+    {
+      "source": "autotune(configs)@Decorator",
+      "path": [
+        "Autotuner.pre_launch@tuner.py:52",
+        "Replacer.__init__(kernel_file)@kernel_modifier.py:26",
+        "Replacer.replace_config(config)@kernel_modifier.py:93",
+        "_replace_param(key, value, lines)@kernel_modifier.py:63",
+        "_write_to_file(lines, output_file_path)@kernel_modifier.py:53"
+      ],
+      "sink": "Modified kernel source file@kernel_modifier.py",
+      "sink_type": "file_write",
+      "description": "User-provided configs used to modify kernel source files - arbitrary value injection into source code"
+    },
+    {
+      "source": "autotune_v2(configs)@Decorator",
+      "path": [
+        "AutotunerV2.launch@tuner.py:462",
+        "executable(*args, profiling_cmd=['msprof', 'op', ...])@tuner.py:504",
+        "subprocess.run(cmd, ...)@compiler.py:305"
+      ],
+      "sink": "subprocess.run@stdlib",
+      "sink_type": "command_execution",
+      "description": "Profiling command msprof executed with user-provided temp_dir path"
+    },
+    {
+      "source": "ASCEND_HOME_PATH@Environment",
+      "path": [
+        "get_cann_path@launcher_utils.py:23",
+        "os.path.join(cann_path, 'lib64/libruntime.so')@launcher_utils.py:32",
+        "ctypes.CDLL(runtime_lib)@launcher_utils.py:34"
+      ],
+      "sink": "ctypes.CDLL@stdlib",
+      "sink_type": "dynamic_library_loading",
+      "description": "Environment variable ASCEND_HOME_PATH controls runtime library loading path"
+    },
+    {
+      "source": "ASCEND_HOME_PATH@Environment",
+      "path": [
+        "load_mspti_so@driver.py:30",
+        "mspti_path = os.path.join(cann_path, 'lib64/libmspti.so')@driver.py:33",
+        "ctypes.CDLL(mspti_real_path)@driver.py:36"
+      ],
+      "sink": "ctypes.CDLL@stdlib",
+      "sink_type": "dynamic_library_loading",
+      "description": "ASCEND_HOME_PATH controls libmspti.so loading path - if compromised, arbitrary library loading"
+    }
+  ]
+}

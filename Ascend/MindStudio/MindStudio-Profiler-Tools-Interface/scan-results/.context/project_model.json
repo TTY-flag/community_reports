@@ -1,0 +1,364 @@
+{
+  "project_name": "MindStudio-Profiler-Tools-Interface",
+  "project_type": "NPU Performance Profiling API Library",
+  "language": ["C++", "Python"],
+  "version": "26.0.0-alpha.1",
+  "license": "Mulan PSL v2",
+  "vendor": "Huawei Technologies Co., Ltd.",
+  
+  "statistics": {
+    "total_files": 108,
+    "cpp_files": 82,
+    "header_files": 62,
+    "python_files": 24,
+    "total_lines_estimated": 25000
+  },
+  
+  "modules": {
+    "csrc": {
+      "description": "C/C++ core implementation",
+      "risk_level": "high",
+      "submodules": {
+        "include": {
+          "description": "Public API headers (mspti.h, mspti_activity.h, mspti_callback.h)",
+          "risk_level": "medium",
+          "files": ["mspti.h", "mspti_activity.h", "mspti_callback.h", "mspti_cbid.h", "mspti_result.h"],
+          "attack_surface": [
+            {
+              "type": "API_ENTRY_POINT",
+              "description": "Public C API entry points for profiling operations",
+              "functions": ["msptiSubscribe", "msptiActivityEnable", "msptiActivityRegisterCallbacks", "msptiActivityFlushAll"]
+            }
+          ]
+        },
+        "activity": {
+          "description": "Activity data collection and parsing",
+          "risk_level": "high",
+          "files": ["activity_manager.cpp", "activity_manager.h"],
+          "attack_surface": [
+            {
+              "type": "USER_CALLBACK",
+              "description": "User-provided callback functions for buffer handling",
+              "functions": ["msptiBuffersCallbackRequestFunc", "msptiBuffersCallbackCompleteFunc"],
+              "risk": "Malicious callback could access sensitive data or cause code execution"
+            }
+          ],
+          "submodules": {
+            "ascend": {
+              "description": "Ascend NPU specific activity handling",
+              "risk_level": "high",
+              "submodules": {
+                "channel": {
+                  "description": "Data channel reading from driver",
+                  "risk_level": "critical",
+                  "files": ["channel_reader.cpp", "channel_reader.h", "channel_pool.cpp", "channel_pool.h", "channel_pool_manager.cpp", "tsfw_convert.cpp", "soclog_convert.cpp", "stars_common.cpp"],
+                  "attack_surface": [
+                    {
+                      "type": "EXTERNAL_DATA_INPUT",
+                      "description": "Data read from driver via ProfChannelRead - potential buffer overflow",
+                      "functions": ["ProfChannelRead", "ChannelReader::Execute", "TransDataToActivityBuffer"],
+                      "risk": "Driver data could be malicious or corrupted, causing buffer overflow or parsing vulnerabilities"
+                    },
+                    {
+                      "type": "MEMORY_OPERATION",
+                      "description": "memcpy_s operations on channel buffer data",
+                      "functions": ["ChannelReader::Execute"],
+                      "risk": "Potential buffer overflow if memcpy bounds are incorrectly calculated"
+                    }
+                  ]
+                },
+                "parser": {
+                  "description": "Activity data parsing and reporting",
+                  "risk_level": "high",
+                  "files": ["parser_manager.cpp", "kernel_parser.cpp", "cann_api_parser.cpp", "hccl_calculator.cpp", "mstx_parser.cpp", "device_task_calculator.cpp", "cann_hash_cache.cpp", "cann_track_cache.cpp"],
+                  "attack_surface": [
+                    {
+                      "type": "DATA_PARSING",
+                      "description": "Parsing of profiling data from multiple sources",
+                      "functions": ["ParserManager::ReportStepTrace", "ParserManager::ReportApi"],
+                      "risk": "Malformed data could cause parsing errors or memory corruption"
+                    }
+                  ]
+                },
+                "reporter": {
+                  "description": "Memory and correlation reporters",
+                  "risk_level": "medium",
+                  "files": ["memory_reporter.cpp", "external_correlation_reporter.cpp"]
+                },
+                "entity": {
+                  "description": "Entity definitions for device tasks",
+                  "risk_level": "low",
+                  "files": ["device_task.h", "soclog.h", "communication_op_desc.h", "hccl_op_desc.h"]
+                }
+              }
+            }
+          }
+        },
+        "callback": {
+          "description": "Callback subscription and management",
+          "risk_level": "critical",
+          "files": ["callback_manager.cpp", "callback_manager.h"],
+          "attack_surface": [
+            {
+              "type": "USER_CALLBACK",
+              "description": "User-subscribed callback execution for Runtime and HCCL domains",
+              "functions": ["msptiSubscribe", "CallbackManager::ExecuteCallback", "CallbackScope constructor/destructor"],
+              "risk": "User callback functions are executed during API calls - could be exploited for code injection or data theft"
+            },
+            {
+              "type": "API_HOOKING",
+              "description": "Callback mechanism hooks into ACL/HCCL API calls",
+              "functions": ["CallbackScope"],
+              "risk": "API hooking infrastructure could be abused to intercept or modify API behavior"
+            }
+          ]
+        },
+        "common": {
+          "description": "Common utilities and infrastructure",
+          "risk_level": "high",
+          "submodules": {
+            "inject": {
+              "description": "API injection/hooking mechanism",
+              "risk_level": "critical",
+              "files": ["acl_inject.cpp", "acl_inject.h", "acl_mem_inject.cpp", "acl_mem_inject.h", "hccl_inject.cpp", "hccl_inject.h", "mstx_inject.cpp", "mstx_inject.h", "driver_inject.cpp", "driver_inject.h", "profapi_inject.cpp", "profapi_inject.h", "plog_inject.cpp", "inject_base.h", "hccl_range_mark.cpp"],
+              "attack_surface": [
+                {
+                  "type": "FUNCTION_INTERPOSITION",
+                  "description": "Dynamic library function injection using dlopen/dlsym",
+                  "functions": ["LoadAclFunction", "RegisterFunction", "dlopen", "dlsym"],
+                  "risk": "Library injection could be hijacked to load malicious libraries"
+                },
+                {
+                  "type": "ENVIRONMENT_VARIABLE",
+                  "description": "ASCEND_HOME_PATH environment variable used to locate libraries",
+                  "functions": ["CanonicalSoPath"],
+                  "risk": "Environment variable manipulation could redirect library loading to malicious paths"
+                },
+                {
+                  "type": "API_HOOKING",
+                  "description": "ACL, HCCL, MSTX API functions are hooked for profiling",
+                  "functions": ["aclrtSetDevice", "aclrtLaunchKernel", "hccl_inject functions"],
+                  "risk": "Hooked functions could be exploited to intercept or modify NPU operations"
+                }
+              ]
+            }
+          },
+          "files": ["function_loader.cpp", "function_loader.h", "context_manager.cpp", "context_manager.h", "utils.cpp", "utils.h", "thread_pool.cpp", "thread_pool.h", "runtime_utils.cpp", "runtime_utils.h"],
+          "attack_surface": [
+            {
+              "type": "PATH_MANIPULATION",
+              "description": "Path resolution and file access operations",
+              "functions": ["Utils::RealPath", "Utils::RelativeToAbsPath"],
+              "risk": "Potential path traversal if input validation is insufficient"
+            },
+            {
+              "type": "DYNAMIC_LOADING",
+              "description": "Dynamic library loading via dlopen",
+              "functions": ["FunctionLoader::Get", "dlopen"],
+              "risk": "Library loading could be hijacked via LD_LIBRARY_PATH or symlink attacks"
+            }
+          ]
+        }
+      }
+    },
+    "mspti": {
+      "description": "Python bindings and wrapper",
+      "risk_level": "high",
+      "submodules": {
+        "csrc": {
+          "description": "Python C extension implementation",
+          "risk_level": "critical",
+          "files": ["init.cpp", "mspti_adapter.cpp", "mspti_adapter.h", "activity_buffer_pool.cpp", "stub/mspti_stub.cpp"],
+          "attack_surface": [
+            {
+              "type": "PYTHON_CALLBACK",
+              "description": "Python callback registration and execution",
+              "functions": ["RegisterCB", "MsptiAdapter::RegisterMstxCallback", "MsptiAdapter::RegisterKernelCallback", "MsptiAdapter::RegisterHcclCallback"],
+              "risk": "Python callbacks could execute arbitrary code during profiling"
+            },
+            {
+              "type": "PYTHON_C_EXTENSION",
+              "description": "PyArg_ParseTuple for argument parsing",
+              "functions": ["MsptiFlushPeriod", "MsptiSetBufferSize", "EnableDomain", "DisableDomain"],
+              "risk": "Incorrect argument parsing could cause type confusion or buffer issues"
+            }
+          ]
+        },
+        "monitor": {
+          "description": "Python monitor classes",
+          "risk_level": "medium",
+          "files": ["base_monitor.py", "kernel_monitor.py", "hccl_monitor.py", "mstx_monitor.py", "_mspti_c.py"]
+        }
+      },
+      "files": ["__init__.py", "activity_data.py", "constant.py", "utils.py"]
+    }
+  },
+  
+  "entry_points": [
+    {
+      "name": "msptiSubscribe",
+      "file": "csrc/callback/callback_manager.cpp",
+      "type": "API_ENTRY",
+      "description": "Register callback subscriber for profiling events",
+      "risk": "high"
+    },
+    {
+      "name": "msptiActivityRegisterCallbacks",
+      "file": "csrc/activity/activity_manager.cpp",
+      "type": "API_ENTRY",
+      "description": "Register buffer request/completion callbacks",
+      "risk": "high"
+    },
+    {
+      "name": "aclrtSetDevice",
+      "file": "csrc/common/inject/acl_inject.cpp",
+      "type": "HOOKED_API",
+      "description": "Hooked ACL device setting function",
+      "risk": "medium"
+    },
+    {
+      "name": "aclrtLaunchKernel",
+      "file": "csrc/common/inject/acl_inject.cpp",
+      "type": "HOOKED_API",
+      "description": "Hooked ACL kernel launch function",
+      "risk": "medium"
+    },
+    {
+      "name": "ChannelReader::Execute",
+      "file": "csrc/activity/ascend/channel/channel_reader.cpp",
+      "type": "DATA_INPUT",
+      "description": "Read profiling data from driver channel",
+      "risk": "critical"
+    },
+    {
+      "name": "ProfChannelRead",
+      "file": "csrc/common/inject/driver_inject.cpp",
+      "type": "DRIVER_INTERFACE",
+      "description": "Direct driver channel read interface",
+      "risk": "critical"
+    },
+    {
+      "name": "PyInit_mspti_C",
+      "file": "mspti/csrc/init.cpp",
+      "type": "PYTHON_MODULE",
+      "description": "Python module initialization",
+      "risk": "medium"
+    },
+    {
+      "name": "RegisterCB",
+      "file": "mspti/csrc/init.cpp",
+      "type": "PYTHON_CALLBACK",
+      "description": "Python callback registration for Mstx/Kernel/Hccl",
+      "risk": "high"
+    }
+  ],
+  
+  "high_risk_files": [
+    {
+      "path": "csrc/common/inject/acl_inject.cpp",
+      "risk": "critical",
+      "reason": "API hooking via dlopen/dlsym, environment variable dependency"
+    },
+    {
+      "path": "csrc/common/inject/hccl_inject.cpp",
+      "risk": "critical",
+      "reason": "HCCL communication API hooking"
+    },
+    {
+      "path": "csrc/common/inject/driver_inject.cpp",
+      "risk": "critical",
+      "reason": "Direct driver interface, ProfChannelRead vulnerability potential"
+    },
+    {
+      "path": "csrc/common/function_loader.cpp",
+      "risk": "critical",
+      "reason": "Dynamic library loading with environment variable control"
+    },
+    {
+      "path": "csrc/activity/ascend/channel/channel_reader.cpp",
+      "risk": "critical",
+      "reason": "External data input from driver, memcpy operations"
+    },
+    {
+      "path": "csrc/activity/activity_manager.cpp",
+      "risk": "high",
+      "reason": "User callback execution, buffer management"
+    },
+    {
+      "path": "csrc/callback/callback_manager.cpp",
+      "risk": "critical",
+      "reason": "User callback subscription and execution"
+    },
+    {
+      "path": "mspti/csrc/init.cpp",
+      "risk": "high",
+      "reason": "Python C extension, callback registration"
+    },
+    {
+      "path": "mspti/csrc/mspti_adapter.cpp",
+      "risk": "high",
+      "reason": "Python-C bridge, callback storage and execution"
+    },
+    {
+      "path": "csrc/activity/ascend/parser/parser_manager.cpp",
+      "risk": "high",
+      "reason": "Data parsing from external sources"
+    }
+  ],
+  
+  "data_flow_boundaries": [
+    {
+      "boundary": "Driver -> Application",
+      "description": "Profiling data flows from NPU driver to application via ChannelReader",
+      "risk": "Driver data could be malicious or corrupted"
+    },
+    {
+      "boundary": "Application -> MSPTI",
+      "description": "User registers callbacks and receives profiling data",
+      "risk": "User callbacks execute in profiling context"
+    },
+    {
+      "boundary": "External Library -> MSPTI",
+      "description": "Dynamic library loading (libascendcl.so, libhccl.so, etc.)",
+      "risk": "Library path could be hijacked via environment variables"
+    },
+    {
+      "boundary": "Python -> C++",
+      "description": "Python bindings to C++ implementation",
+      "risk": "Python callbacks execute arbitrary code in C++ context"
+    }
+  ],
+  
+  "security_concerns": [
+    {
+      "category": "Library Injection",
+      "description": "FunctionLoader uses dlopen with RTLD_LAZY, library path determined by ASCEND_HOME_PATH",
+      "cwe": "CWE-426",
+      "severity": "high"
+    },
+    {
+      "category": "Untrusted Callback Execution",
+      "description": "User-provided callbacks executed during API calls without validation",
+      "cwe": "CWE-829",
+      "severity": "high"
+    },
+    {
+      "category": "Buffer Overflow",
+      "description": "ChannelReader uses memcpy_s with potentially attacker-controlled sizes",
+      "cwe": "CWE-120",
+      "severity": "medium"
+    },
+    {
+      "category": "Environment Variable Manipulation",
+      "description": "ASCEND_HOME_PATH controls library loading path",
+      "cwe": "CWE-78",
+      "severity": "medium"
+    },
+    {
+      "category": "Insecure Path Resolution",
+      "description": "Utils::RealPath and RelativeToAbsPath handle file paths",
+      "cwe": "CWE-22",
+      "severity": "low"
+    }
+  ]
+}

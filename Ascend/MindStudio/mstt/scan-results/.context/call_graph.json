@@ -1,0 +1,289 @@
+{
+  "functions": {
+    "main@debug/accuracy_tools/msprobe/msprobe.py": {
+      "defined_at": 36,
+      "calls": [
+        "compare_cli@debug/accuracy_tools/msprobe/core/compare/compare_cli.py",
+        "run_ut_command@debug/accuracy_tools/msprobe/pytorch/api_accuracy_checker/run_ut/run_ut.py",
+        "_api_precision_compare_command@debug/accuracy_tools/msprobe/pytorch/api_accuracy_checker/compare/api_precision_compare.py",
+        "_pt_graph_service_command@debug/accuracy_tools/msprobe/visualization/graph_service.py",
+        "merge_result_cli@debug/accuracy_tools/msprobe/core/compare/merge_result/merge_result_cli.py"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "compare_cli@debug/accuracy_tools/msprobe/core/compare/compare_cli.py": {
+      "defined_at": 27,
+      "calls": [
+        "load_json@debug/accuracy_tools/msprobe/core/common/file_utils.py",
+        "check_file_or_directory_path@debug/accuracy_tools/msprobe/core/common/file_utils.py",
+        "compare@debug/accuracy_tools/msprobe/pytorch/compare/pt_compare.py",
+        "compare_distributed@debug/accuracy_tools/msprobe/pytorch/compare/distributed_compare.py"
+      ],
+      "called_by": [
+        "main@debug/accuracy_tools/msprobe/msprobe.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "msprof_analyze_cli@profiler/msprof_analyze/cli/entrance.py": {
+      "defined_at": 78,
+      "calls": [
+        "analyze_cli@profiler/msprof_analyze/cli/analyze_cli.py",
+        "compare_cli@profiler/msprof_analyze/cli/compare_cli.py",
+        "cluster_cli@profiler/msprof_analyze/cli/cluster_cli.py"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "args_parse@profiler/affinity_cpu_bind/bind_core.py": {
+      "defined_at": 155,
+      "calls": [
+        "_launch_process@profiler/affinity_cpu_bind/bind_core.py",
+        "subprocess.Popen"
+      ],
+      "called_by": [
+        "run@profiler/affinity_cpu_bind/bind_core.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "_launch_process@profiler/affinity_cpu_bind/bind_core.py": {
+      "defined_at": 58,
+      "calls": [
+        "subprocess.Popen"
+      ],
+      "called_by": [
+        "args_parse@profiler/affinity_cpu_bind/bind_core.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "get_plugin_apps@plugins/tensorboard-plugins/tb_graph_ascend/server/plugin.py": {
+      "defined_at": 54,
+      "calls": [
+        "load_meta_dir@plugins/tensorboard-plugins/tb_graph_ascend/server/app/views/graph_views.py",
+        "load_graph_data@plugins/tensorboard-plugins/tb_graph_ascend/server/app/views/graph_views.py",
+        "save_data@plugins/tensorboard-plugins/tb_graph_ascend/server/app/views/graph_views.py"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "load_graph_data@plugins/tensorboard-plugins/tb_graph_ascend/server/app/views/graph_views.py": {
+      "defined_at": 74,
+      "calls": [
+        "GraphUtils.safe_check_load_file_path@plugins/tensorboard-plugins/tb_graph_ascend/server/app/utils/graph_utils.py",
+        "strategy.load_graph_data@plugins/tensorboard-plugins/tb_graph_ascend/server/app/service/"
+      ],
+      "called_by": [
+        "get_plugin_apps@plugins/tensorboard-plugins/tb_graph_ascend/server/plugin.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "save_data@plugins/tensorboard-plugins/tb_graph_ascend/server/app/views/graph_views.py": {
+      "defined_at": 255,
+      "calls": [
+        "GraphUtils.safe_json_loads@plugins/tensorboard-plugins/tb_graph_ascend/server/app/utils/graph_utils.py",
+        "strategy.save_data@plugins/tensorboard-plugins/tb_graph_ascend/server/app/service/"
+      ],
+      "called_by": [
+        "get_plugin_apps@plugins/tensorboard-plugins/tb_graph_ascend/server/plugin.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "forward@debug/accuracy_tools/msprobe/pytorch/hook_module/wrap_aten.py": {
+      "defined_at": 68,
+      "calls": [
+        "eval"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "__parse_command@msfmktransplt/src/ms_fmk_transplt/ms_fmk_transplt.py": {
+      "defined_at": 187,
+      "calls": [
+        "shutil.copytree",
+        "utils.check_input_file_valid@msfmktransplt/src/ms_fmk_transplt/utils/trans_utils.py",
+        "utils.check_path_pattern_valid@msfmktransplt/src/ms_fmk_transplt/utils/trans_utils.py"
+      ],
+      "called_by": [
+        "main@msfmktransplt/src/ms_fmk_transplt/ms_fmk_transplt.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "load_yaml@debug/accuracy_tools/msprobe/core/common/file_utils.py": {
+      "defined_at": 449,
+      "calls": [
+        "yaml.safe_load"
+      ],
+      "called_by": [
+        "forward@debug/accuracy_tools/msprobe/pytorch/hook_module/wrap_aten.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Low"
+    },
+    "load_json@debug/accuracy_tools/msprobe/core/common/file_utils.py": {
+      "defined_at": 471,
+      "calls": [
+        "json.load"
+      ],
+      "called_by": [
+        "compare_cli@debug/accuracy_tools/msprobe/core/compare/compare_cli.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Low"
+    },
+    "check_input_directory_path@profiler/msprof_analyze/prof_common/path_manager.py": {
+      "defined_at": 37,
+      "calls": [
+        "input_path_common_check@profiler/msprof_analyze/prof_common/path_manager.py",
+        "check_path_owner_consistent@profiler/msprof_analyze/prof_common/path_manager.py",
+        "check_path_readable@profiler/msprof_analyze/prof_common/path_manager.py"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Low"
+    },
+    "parse_config@debug/accuracy_tools/msprobe/ccsrc/base/DebuggerConfig.cpp": {
+      "defined_at": 120,
+      "calls": [
+        "nlohmann::json::parse",
+        "re2::RE2::Match"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "load_acl_library@debug/accuracy_tools/msprobe/ccsrc/third_party/ACL/AclApi.cpp": {
+      "defined_at": 45,
+      "calls": [
+        "dlopen",
+        "dlsym"
+      ],
+      "called_by": [],
+      "receives_external_input": false,
+      "risk": "High"
+    },
+    "get_rank_id@debug/accuracy_tools/msprobe/ccsrc/base/Environment.cpp": {
+      "defined_at": 57,
+      "calls": [
+        "getenv"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "run_bind_core@profiler/affinity_cpu_bind/bind_core.py": {
+      "defined_at": 136,
+      "calls": [
+        "subprocess.run",
+        "taskset"
+      ],
+      "called_by": [
+        "run@profiler/affinity_cpu_bind/bind_core.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "profile_space@profiler/tinker/profiler/profile_space.py": {
+      "defined_at": 220,
+      "calls": [
+        "subprocess.Popen",
+        "bash"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "sys.argv@debug/accuracy_tools/msprobe/msprobe.py:71",
+      "path": [
+        "parser.parse_args@debug/accuracy_tools/msprobe/msprobe.py:71",
+        "compare_cli@debug/accuracy_tools/msprobe/core/compare/compare_cli.py:27",
+        "load_json@debug/accuracy_tools/msprobe/core/common/file_utils.py:471"
+      ],
+      "sink": "json.load@debug/accuracy_tools/msprobe/core/common/file_utils.py:475",
+      "sink_type": "file_operation"
+    },
+    {
+      "source": "sys.argv@debug/accuracy_tools/msprobe/msprobe.py:71",
+      "path": [
+        "parser.parse_args@debug/accuracy_tools/msprobe/msprobe.py:71",
+        "forward@debug/accuracy_tools/msprobe/pytorch/hook_module/wrap_aten.py:68"
+      ],
+      "sink": "eval@debug/accuracy_tools/msprobe/pytorch/hook_module/wrap_aten.py:73",
+      "sink_type": "code_execution"
+    },
+    {
+      "source": "request.args.get@plugins/tensorboard-plugins/tb_graph_ascend/server/app/views/graph_views.py:76",
+      "path": [
+        "_get_strategy@plugins/tensorboard-plugins/tb_graph_ascend/server/app/views/graph_views.py:295",
+        "GraphUtils.safe_check_load_file_path@plugins/tensorboard-plugins/tb_graph_ascend/server/app/utils/graph_utils.py:406"
+      ],
+      "sink": "open@plugins/tensorboard-plugins/tb_graph_ascend/server/app/utils/graph_utils.py:450",
+      "sink_type": "file_operation"
+    },
+    {
+      "source": "request.get_data@plugins/tensorboard-plugins/tb_graph_ascend/server/app/views/graph_views.py:105",
+      "path": [
+        "GraphUtils.safe_json_loads@plugins/tensorboard-plugins/tb_graph_ascend/server/app/utils/graph_utils.py:137",
+        "strategy.save_data@plugins/tensorboard-plugins/tb_graph_ascend/server/app/service/"
+      ],
+      "sink": "file_write@plugins/tensorboard-plugins/tb_graph_ascend/server/app/service/",
+      "sink_type": "file_operation"
+    },
+    {
+      "source": "args.application@profiler/affinity_cpu_bind/bind_core.py:159",
+      "path": [
+        "_launch_process@profiler/affinity_cpu_bind/bind_core.py:58"
+      ],
+      "sink": "subprocess.Popen@profiler/affinity_cpu_bind/bind_core.py:61",
+      "sink_type": "process_execution"
+    },
+    {
+      "source": "os.getenv(SLURM_JOB_ID)@msfmktransplt/test/msFmkTransplt/resources/net/barlowtwins_amp/main.py:173",
+      "path": [],
+      "sink": "os.system@msfmktransplt/test/msFmkTransplt/resources/net/barlowtwins_amp/main.py:173",
+      "sink_type": "shell_execution"
+    },
+    {
+      "source": "config_file@debug/accuracy_tools/msprobe/ccsrc/base/DebuggerConfig.cpp:120",
+      "path": [
+        "nlohmann::json::parse@debug/accuracy_tools/msprobe/ccsrc/base/DebuggerConfig.cpp:125"
+      ],
+      "sink": "re2::RE2::Match@debug/accuracy_tools/msprobe/ccsrc/base/DebuggerConfig.cpp:180",
+      "sink_type": "regex_processing"
+    },
+    {
+      "source": "getenv(RANK_ID)@debug/accuracy_tools/msprobe/ccsrc/base/Environment.cpp:57",
+      "path": [
+        "std::stoi@debug/accuracy_tools/msprobe/ccsrc/base/Environment.cpp:58"
+      ],
+      "sink": "int32_t@debug/accuracy_tools/msprobe/ccsrc/base/Environment.cpp:60",
+      "sink_type": "variable_assignment"
+    },
+    {
+      "source": "self.profiler_script@profiler/tinker/profiler/profile_space.py:220",
+      "path": [
+        "subprocess.Popen@profiler/tinker/profiler/profile_space.py:220"
+      ],
+      "sink": "bash@profiler/tinker/profiler/profile_space.py:220",
+      "sink_type": "process_execution"
+    },
+    {
+      "source": "data_dtype@debug/accuracy_tools/msprobe/mindspore/api_accuracy_checker/generate_op_script/operator_replication.template:268",
+      "path": [],
+      "sink": "eval@debug/accuracy_tools/msprobe/mindspore/api_accuracy_checker/generate_op_script/operator_replication.template:268",
+      "sink_type": "code_execution"
+    }
+  ]
+}

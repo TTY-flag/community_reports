@@ -1,0 +1,330 @@
+{
+  "functions": {
+    "main@msit/components/__main__.py": {
+      "defined_at": 46,
+      "calls": [
+        "BaseCommand.register_parser@msit/components/utils/parser.py",
+        "args.handle@msit/components/utils/parser.py",
+        "root_privilege_warning@msit/components/utils/file_utils.py"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "input_sources": ["argparse: command-line arguments"]
+    },
+    "main@msmodelslim/msmodelslim/cli/__main__.py": {
+      "defined_at": 15,
+      "calls": [
+        "quant_main@msmodelslim/cli/naive_quantization/__main__.py",
+        "analysis_main@msmodelslim/cli/analysis/__main__.py",
+        "tuning_main@msmodelslim/cli/auto_tuning/__main__.py"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "input_sources": ["argparse: --model_path, --save_path, --config_path"]
+    },
+    "main@msprechecker/msprechecker/cli.py": {
+      "defined_at": 32,
+      "calls": [
+        "setup_precheck_parser@msprechecker/commands/precheck.py",
+        "setup_dump_parser@msprechecker/commands/dump.py",
+        "setup_compare_parser@msprechecker/commands/compare.py",
+        "Coordinator.execute@msprechecker/commands/coordinator.py"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "input_sources": ["argparse: various subcommands"]
+    },
+    "main@msserviceprofiler/msserviceprofiler/__main__.py": {
+      "defined_at": 22,
+      "calls": [
+        "advisor.arg_parse@msserviceprofiler/msservice_advisor/advisor.py",
+        "analyze.arg_parse@msserviceprofiler/ms_service_profiler_ext/analyze.py",
+        "split.arg_parse@msserviceprofiler/ms_service_profiler_ext/split.py",
+        "compare.arg_parse@msserviceprofiler/ms_service_profiler_ext/compare.py"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "input_sources": ["argparse: various subcommands"]
+    },
+    "_run_cmd@msmodelslim/msmodelslim/utils/security/shell.py": {
+      "defined_at": 202,
+      "calls": [
+        "subprocess.run@python_stdlib"
+      ],
+      "called_by": [
+        "ShellRunner.run_safe_cmd@msmodelslim/msmodelslim/utils/security/shell.py:173"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "input_sources": ["binary, options, extra_args from caller"]
+    },
+    "run_safe_cmd@msmodelslim/msmodelslim/utils/security/shell.py": {
+      "defined_at": 173,
+      "calls": [
+        "build_safe_command_with_options@msmodelslim/msmodelslim/utils/security/shell.py:116",
+        "build_safe_command@msmodelslim/msmodelslim/utils/security/shell.py:80",
+        "_run_cmd@msmodelslim/msmodelslim/utils/security/shell.py:202"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "input_sources": ["binary, options, extra_args parameters"]
+    },
+    "validate_safe_identifier@msmodelslim/msmodelslim/utils/security/shell.py": {
+      "defined_at": 17,
+      "calls": [],
+      "called_by": [
+        "sanitize_extra_args@msmodelslim/msmodelslim/utils/security/shell.py:46",
+        "build_safe_command@msmodelslim/msmodelslim/utils/security/shell.py:80"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "input_sources": ["value parameter to validate"]
+    },
+    "safe_get@msmodelslim/msmodelslim/utils/security/request.py": {
+      "defined_at": 155,
+      "calls": [
+        "validate_safe_host@msmodelslim/msmodelslim/utils/security/request.py:12",
+        "requests.get@python_stdlib"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "input_sources": ["url parameter"]
+    },
+    "validate_safe_host@msmodelslim/msmodelslim/utils/security/request.py": {
+      "defined_at": 12,
+      "calls": [
+        "socket.gethostbyname@python_stdlib"
+      ],
+      "called_by": [
+        "safe_get@msmodelslim/msmodelslim/utils/security/request.py:155",
+        "build_safe_url@msmodelslim/msmodelslim/utils/security/request.py:105"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "input_sources": ["host parameter"]
+    },
+    "pickle_load_s@msserviceprofiler/msserviceprofiler/msguard/security/injection.py": {
+      "defined_at": 103,
+      "calls": [
+        "open_s@msserviceprofiler/msguard/security/io.py",
+        "SafeUnpickler.load@python_stdlib"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "input_sources": ["file path or BytesIO data"]
+    },
+    "SafeUnpickler.find_class@msserviceprofiler/msserviceprofiler/msguard/security/injection.py": {
+      "defined_at": 91,
+      "calls": [
+        "pickle.Unpickler.find_class@python_stdlib"
+      ],
+      "called_by": [
+        "pickle_load_s@msserviceprofiler/msserviceprofiler/msguard/security/injection.py:103"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "input_sources": ["module_name, global_name from pickle stream"]
+    },
+    "sanitize_csv_value@msserviceprofiler/msserviceprofiler/msguard/security/injection.py": {
+      "defined_at": 44,
+      "calls": [
+        "is_safe_csv_value@msserviceprofiler/msserviceprofiler/msguard/security/injection.py:32"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "input_sources": ["value parameter"]
+    },
+    "get_valid_read_path@msit/components/utils/security_check.py": {
+      "defined_at": 92,
+      "calls": [
+        "get_valid_path@msit/components/utils/security_check.py:55",
+        "os.stat@python_stdlib",
+        "os.access@python_stdlib"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "input_sources": ["path parameter"]
+    },
+    "get_valid_write_path@msit/components/utils/security_check.py": {
+      "defined_at": 111,
+      "calls": [
+        "get_valid_path@msit/components/utils/security_check.py:55",
+        "check_write_directory@msit/components/utils/security_check.py:80"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "input_sources": ["path parameter"]
+    },
+    "CheckFileBeforeCreateOrWrite@msmodelslim/msmodelslim/pytorch/weight_compression/security/src/File.cpp": {
+      "defined_at": 256,
+      "calls": [
+        "GetAbsPath@msmodelslim/msmodelslim/pytorch/weight_compression/security/src/File.cpp:77",
+        "IsPathLengthLegal@msmodelslim/msmodelslim/pytorch/weight_compression/security/src/File.cpp:126",
+        "IsPathCharactersValid@msmodelslim/msmodelslim/pytorch/weight_compression/security/src/File.cpp:140",
+        "IsPathDepthValid@msmodelslim/msmodelslim/pytorch/weight_compression/security/src/File.cpp:145",
+        "IsRegularFile@msmodelslim/msmodelslim/pytorch/weight_compression/security/src/File.cpp:150",
+        "IsSoftLink@msmodelslim/msmodelslim/pytorch/weight_compression/security/src/File.cpp:188",
+        "CheckOwner@msmodelslim/msmodelslim/pytorch/weight_compression/security/src/File.cpp:200",
+        "CheckDir@msmodelslim/msmodelslim/pytorch/weight_compression/security/src/File.cpp:215"
+      ],
+      "called_by": [
+        "WriteDataToFile@msmodelslim/msmodelslim/pytorch/weight_compression/compress_graph/src/main.cpp:30"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "input_sources": ["path from argv"]
+    },
+    "main@msmodelslim/msmodelslim/pytorch/weight_compression/compress_graph/src/main.cpp": {
+      "defined_at": 210,
+      "calls": [
+        "CheckInputsStollValid@msmodelslim/msmodelslim/pytorch/weight_compression/compress_graph/src/main.cpp:182",
+        "std::stoll@cpp_stdlib",
+        "GraphUtils::GetDataFromBin@msmodelslim/msmodelslim/pytorch/weight_compression/compress_graph/src/graph_utils.cpp",
+        "RunSession@msmodelslim/msmodelslim/pytorch/weight_compression/compress_graph/src/main.cpp:144"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "input_sources": ["argc, argv from command line"]
+    },
+    "WriteDataToFile@msmodelslim/msmodelslim/pytorch/weight_compression/compress_graph/src/main.cpp": {
+      "defined_at": 30,
+      "calls": [
+        "File::CheckFileBeforeCreateOrWrite@msmodelslim/msmodelslim/pytorch/weight_compression/security/src/File.cpp:256",
+        "fopen@cpp_stdlib",
+        "fwrite@cpp_stdlib",
+        "fclose@cpp_stdlib"
+      ],
+      "called_by": [
+        "RunCompressGraph@msmodelslim/msmodelslim/pytorch/weight_compression/compress_graph/src/main.cpp:74"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "input_sources": ["filePath, data, count from caller"]
+    },
+    "CheckDir@msmodelslim/msmodelslim/pytorch/weight_compression/security/src/File.cpp": {
+      "defined_at": 215,
+      "calls": [
+        "GetAbsPath@msmodelslim/msmodelslim/pytorch/weight_compression/security/src/File.cpp:77",
+        "IsPathLengthLegal@msmodelslim/msmodelslim/pytorch/weight_compression/security/src/File.cpp:126",
+        "IsPathCharactersValid@msmodelslim/msmodelslim/pytorch/weight_compression/security/src/File.cpp:140",
+        "IsPathDepthValid@msmodelslim/msmodelslim/pytorch/weight_compression/security/src/File.cpp:145",
+        "IsPathExist@msmodelslim/msmodelslim/pytorch/weight_compression/security/src/File.cpp:120",
+        "IsSoftLink@msmodelslim/msmodelslim/pytorch/weight_compression/security/src/File.cpp:188",
+        "CheckOwner@msmodelslim/msmodelslim/pytorch/weight_compression/security/src/File.cpp:200",
+        "IsDir@msmodelslim/msmodelslim/pytorch/weight_compression/security/src/File.cpp:159",
+        "IsOtherWritable@msmodelslim/msmodelslim/pytorch/weight_compression/security/src/File.cpp:115"
+      ],
+      "called_by": [
+        "CheckFileBeforeCreateOrWrite@msmodelslim/msmodelslim/pytorch/weight_compression/security/src/File.cpp:256"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "input_sources": ["path from caller"]
+    }
+  },
+  "data_flows": [
+    {
+      "source": "argparse.parse_args@msit/components/__main__.py:66",
+      "path": [
+        "args.handle@msit/components/__main__.py:68",
+        "various_task_handlers@msit/components/*"
+      ],
+      "sink": "get_valid_read_path@msit/components/utils/security_check.py:92",
+      "sink_type": "file_operation",
+      "sink_function": "os.stat/os.access"
+    },
+    {
+      "source": "argparse.parse_args@msmodelslim/msmodelslim/cli/__main__.py:96",
+      "path": [
+        "quant_main@msmodelslim/cli/naive_quantization/__main__.py:98",
+        "model_loading@msmodelslim/msmodelslim/pytorch"
+      ],
+      "sink": "torch.load/trust_remote_code@pytorch",
+      "sink_type": "model_loading",
+      "sink_function": "torch.load"
+    },
+    {
+      "source": "argparse.parse_args@msmodelslim/msmodelslim/cli/__main__.py:96",
+      "path": [
+        "quant_main@msmodelslim/cli/naive_quantization/__main__.py:98",
+        "ShellRunner.run_safe_cmd@msmodelslim/msmodelslim/utils/security/shell.py:173"
+      ],
+      "sink": "subprocess.run@msmodelslim/msmodelslim/utils/security/shell.py:217",
+      "sink_type": "command_execution",
+      "sink_function": "subprocess.run"
+    },
+    {
+      "source": "argv@msmodelslim/msmodelslim/pytorch/weight_compression/compress_graph/src/main.cpp:210",
+      "path": [
+        "main@msmodelslim/msmodelslim/pytorch/weight_compression/compress_graph/src/main.cpp:210",
+        "RunCompressGraph@msmodelslim/msmodelslim/pytorch/weight_compression/compress_graph/src/main.cpp:74",
+        "WriteDataToFile@msmodelslim/msmodelslim/pytorch/weight_compression/compress_graph/src/main.cpp:30"
+      ],
+      "sink": "fopen@msmodelslim/msmodelslim/pytorch/weight_compression/compress_graph/src/main.cpp:54",
+      "sink_type": "file_operation",
+      "sink_function": "fopen/fwrite"
+    },
+    {
+      "source": "url_parameter@msmodelslim/msmodelslim/utils/security/request.py:155",
+      "path": [
+        "safe_get@msmodelslim/msmodelslim/utils/security/request.py:155",
+        "validate_safe_host@msmodelslim/msmodelslim/utils/security/request.py:12"
+      ],
+      "sink": "socket.gethostbyname@msmodelslim/msmodelslim/utils/security/request.py:39",
+      "sink_type": "network_operation",
+      "sink_function": "socket.gethostbyname"
+    },
+    {
+      "source": "url_parameter@msmodelslim/msmodelslim/utils/security/request.py:155",
+      "path": [
+        "safe_get@msmodelslim/msmodelslim/utils/security/request.py:155",
+        "requests.get@python_stdlib"
+      ],
+      "sink": "requests.get@msmodelslim/msmodelslim/utils/security/request.py:207",
+      "sink_type": "network_operation",
+      "sink_function": "requests.get"
+    },
+    {
+      "source": "pickle_file@msserviceprofiler/msserviceprofiler/msguard/security/injection.py:103",
+      "path": [
+        "pickle_load_s@msserviceprofiler/msserviceprofiler/msguard/security/injection.py:103",
+        "SafeUnpickler.load@python_stdlib",
+        "SafeUnpickler.find_class@msserviceprofiler/msserviceprofiler/msguard/security/injection.py:91"
+      ],
+      "sink": "pickle.Unpickler.find_class@msserviceprofiler/msserviceprofiler/msguard/security/injection.py:96",
+      "sink_type": "deserialization",
+      "sink_function": "pickle.Unpickler.find_class"
+    },
+    {
+      "source": "binary_parameter@msmodelslim/msmodelslim/utils/security/shell.py:173",
+      "path": [
+        "run_safe_cmd@msmodelslim/msmodelslim/utils/security/shell.py:173",
+        "build_safe_command_with_options@msmodelslim/msmodelslim/utils/security/shell.py:116",
+        "validate_safe_identifier@msmodelslim/msmodelslim/utils/security/shell.py:17"
+      ],
+      "sink": "regex_match@msmodelslim/msmodelslim/utils/security/shell.py:37",
+      "sink_type": "validation",
+      "sink_function": "re.match"
+    },
+    {
+      "source": "validated_cmd@msmodelslim/msmodelslim/utils/security/shell.py:202",
+      "path": [
+        "_run_cmd@msmodelslim/msmodelslim/utils/security/shell.py:202"
+      ],
+      "sink": "subprocess.run@msmodelslim/msmodelslim/utils/security/shell.py:217",
+      "sink_type": "command_execution",
+      "sink_function": "subprocess.run"
+    }
+  ]
+}

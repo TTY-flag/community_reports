@@ -1,0 +1,93 @@
+{
+  "scan_id": "550e8400-e29b-41d4-a716-446655440000",
+  "start_time": "2026-04-21T10:30:00Z",
+  "end_time": "2026-04-21T11:40:00Z",
+  "duration_seconds": 4200,
+  "project_name": "MindStudio-ModelSlim",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/shenteng/MindStudio/MindStudio-ModelSlim",
+  "status": "completed",
+  "agents": [
+    {
+      "name": "architecture",
+      "start_time": "2026-04-21T10:30:00Z",
+      "end_time": "2026-04-21T10:42:00Z",
+      "duration_seconds": 720,
+      "status": "success",
+      "outputs": [
+        "scan-results/.context/project_model.json",
+        "scan-results/.context/call_graph.json",
+        "scan-results/threat_analysis_report.md"
+      ],
+      "error": null
+    },
+    {
+      "name": "dataflow-scanner",
+      "start_time": "2026-04-21T10:42:00Z",
+      "end_time": "2026-04-21T11:24:00Z",
+      "duration_seconds": 2520,
+      "status": "success",
+      "outputs": [
+        "scan-results/.context/scan.db"
+      ],
+      "error": null
+    },
+    {
+      "name": "security-auditor",
+      "start_time": "2026-04-21T10:42:00Z",
+      "end_time": "2026-04-21T11:27:40Z",
+      "duration_seconds": 2740,
+      "status": "success",
+      "outputs": [
+        "scan-results/.context/scan.db"
+      ],
+      "error": null
+    },
+    {
+      "name": "verification",
+      "start_time": "2026-04-21T11:27:40Z",
+      "end_time": "2026-04-21T11:38:00Z",
+      "duration_seconds": 620,
+      "status": "success",
+      "outputs": [
+        "scan-results/.context/scan.db"
+      ],
+      "error": null
+    },
+    {
+      "name": "details-analyzer",
+      "start_time": "2026-04-21T11:38:00Z",
+      "end_time": "2026-04-21T11:39:00Z",
+      "duration_seconds": 60,
+      "status": "partial",
+      "outputs": [
+        "scan-results/details/"
+      ],
+      "error": "后台任务仍在处理，部分报告已生成"
+    },
+    {
+      "name": "reporter",
+      "start_time": "2026-04-21T11:39:00Z",
+      "end_time": "2026-04-21T11:40:00Z",
+      "duration_seconds": 60,
+      "status": "success",
+      "outputs": [
+        "scan-results/report_confirmed.md",
+        "scan-results/report_unconfirmed.md"
+      ],
+      "error": null
+    }
+  ],
+  "summary": {
+    "project_type": "library",
+    "total_files_scanned": 747,
+    "total_lines": 105305,
+    "candidates_found": 71,
+    "confirmed_vulnerabilities": 13,
+    "likely_vulnerabilities": 18,
+    "possible_vulnerabilities": 22,
+    "false_positives": 18,
+    "critical_count": 8,
+    "high_count": 17,
+    "lsp_available": true
+  }
+}

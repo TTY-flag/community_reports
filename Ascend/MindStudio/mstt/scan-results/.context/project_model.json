@@ -1,0 +1,429 @@
+{
+  "project_name": "MindStudio Training Tools (mstt)",
+  "scan_time": "2026-04-21T12:00:00Z",
+  "lsp_available": true,
+  "total_files": 897,
+  "total_lines": 119308,
+  "project_profile": {
+    "project_type": "cli_tool_python",
+    "deployment_model": "Linux服务器上的命令行工具和TensorBoard插件，用于AI模型训练的调试、迁移和性能分析",
+    "trust_boundaries": [
+      {
+        "boundary": "Network Interface (TensorBoard)",
+        "trusted_side": "Local TensorBoard server",
+        "untrusted_side": "Remote clients (when --bind_all enabled)",
+        "risk": "High"
+      },
+      {
+        "boundary": "Command Line Interface",
+        "trusted_side": "User shell process",
+        "untrusted_side": "Command line arguments and environment variables",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "File System",
+        "trusted_side": "Application logic",
+        "untrusted_side": "User-provided input/output paths, configuration files",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Python C Extension",
+        "trusted_side": "Python interpreter",
+        "untrusted_side": "C/C++ native code (dlopen loaded libraries)",
+        "risk": "Medium"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "msprobe",
+      "path": "debug/accuracy_tools/msprobe",
+      "language": "mixed",
+      "components": [
+        "msprobe.py",
+        "pytorch/",
+        "mindspore/",
+        "core/",
+        "ccsrc/"
+      ]
+    },
+    {
+      "name": "msprof_analyze",
+      "path": "profiler/msprof_analyze",
+      "language": "python",
+      "components": [
+        "cli/entrance.py",
+        "advisor/",
+        "cluster_analyse/",
+        "compare_tools/",
+        "prof_common/"
+      ]
+    },
+    {
+      "name": "msfmktransplt",
+      "path": "msfmktransplt/src/ms_fmk_transplt",
+      "language": "python",
+      "components": [
+        "ms_fmk_transplt.py",
+        "analysis/",
+        "transfer/",
+        "global_analysis/"
+      ]
+    },
+    {
+      "name": "tinker",
+      "path": "profiler/tinker",
+      "language": "python",
+      "components": [
+        "tinker_auto_parallel.py",
+        "profiler/",
+        "search/",
+        "model/",
+        "utils/"
+      ]
+    },
+    {
+      "name": "tb_graph_ascend",
+      "path": "plugins/tensorboard-plugins/tb_graph_ascend/server",
+      "language": "python",
+      "components": [
+        "plugin.py",
+        "app/views/graph_views.py",
+        "app/service/",
+        "app/utils/"
+      ]
+    },
+    {
+      "name": "affinity_cpu_bind",
+      "path": "profiler/affinity_cpu_bind",
+      "language": "python",
+      "components": [
+        "bind_core.py"
+      ]
+    },
+    {
+      "name": "msprobe_ccsrc",
+      "path": "debug/accuracy_tools/msprobe/ccsrc",
+      "language": "c_cpp",
+      "components": [
+        "core/PrecisionDebugger.cpp",
+        "core/AclDumper.cpp",
+        "base/DebuggerConfig.cpp",
+        "base/Environment.cpp",
+        "utils/FileUtils.cpp",
+        "third_party/ACL/AclApi.cpp"
+      ]
+    }
+  ],
+  "files": [
+    {
+      "path": "debug/accuracy_tools/msprobe/msprobe.py",
+      "language": "python",
+      "risk": "High",
+      "module": "msprobe",
+      "lines": 166,
+      "priority": 1
+    },
+    {
+      "path": "debug/accuracy_tools/msprobe/pytorch/hook_module/wrap_aten.py",
+      "language": "python",
+      "risk": "Critical",
+      "module": "msprobe",
+      "lines": 113,
+      "priority": 1
+    },
+    {
+      "path": "debug/accuracy_tools/msprobe/core/common/file_utils.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "msprobe",
+      "lines": 1096,
+      "priority": 2
+    },
+    {
+      "path": "debug/accuracy_tools/msprobe/ccsrc/core/AclDumpDataProcessor.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "msprobe_ccsrc",
+      "lines": 900,
+      "priority": 2
+    },
+    {
+      "path": "debug/accuracy_tools/msprobe/ccsrc/base/DebuggerConfig.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "msprobe_ccsrc",
+      "lines": 350,
+      "priority": 2
+    },
+    {
+      "path": "debug/accuracy_tools/msprobe/ccsrc/third_party/ACL/AclApi.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "msprobe_ccsrc",
+      "lines": 200,
+      "priority": 2
+    },
+    {
+      "path": "profiler/msprof_analyze/cli/entrance.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "msprof_analyze",
+      "lines": 93,
+      "priority": 2
+    },
+    {
+      "path": "profiler/msprof_analyze/prof_common/path_manager.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "msprof_analyze",
+      "lines": 278,
+      "priority": 2
+    },
+    {
+      "path": "profiler/msprof_analyze/cli/compare_cli.py",
+      "language": "python",
+      "risk": "High",
+      "module": "msprof_analyze",
+      "lines": 70,
+      "priority": 1
+    },
+    {
+      "path": "msfmktransplt/src/ms_fmk_transplt/ms_fmk_transplt.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "msfmktransplt",
+      "lines": 272,
+      "priority": 2
+    },
+    {
+      "path": "profiler/tinker/tinker_auto_parallel.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "tinker",
+      "lines": 200,
+      "priority": 2
+    },
+    {
+      "path": "profiler/tinker/profiler/profile_space.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "tinker",
+      "lines": 350,
+      "priority": 2
+    },
+    {
+      "path": "profiler/affinity_cpu_bind/bind_core.py",
+      "language": "python",
+      "risk": "High",
+      "module": "affinity_cpu_bind",
+      "lines": 262,
+      "priority": 1
+    },
+    {
+      "path": "plugins/tensorboard-plugins/tb_graph_ascend/server/plugin.py",
+      "language": "python",
+      "risk": "High",
+      "module": "tb_graph_ascend",
+      "lines": 107,
+      "priority": 1
+    },
+    {
+      "path": "plugins/tensorboard-plugins/tb_graph_ascend/server/app/views/graph_views.py",
+      "language": "python",
+      "risk": "High",
+      "module": "tb_graph_ascend",
+      "lines": 302,
+      "priority": 1
+    },
+    {
+      "path": "plugins/tensorboard-plugins/tb_graph_ascend/server/app/utils/graph_utils.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "tb_graph_ascend",
+      "lines": 650,
+      "priority": 2
+    },
+    {
+      "path": "scripts/run_script/main.sh",
+      "language": "python",
+      "risk": "Medium",
+      "module": "scripts",
+      "lines": 221,
+      "priority": 3
+    },
+    {
+      "path": "msfmktransplt/test/msFmkTransplt/resources/net/barlowtwins_amp/main.py",
+      "language": "python",
+      "risk": "Critical",
+      "module": "msfmktransplt_test",
+      "lines": 200,
+      "priority": 1
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "debug/accuracy_tools/msprobe/msprobe.py",
+      "line": 36,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "命令行入口，接收用户提供的框架参数、路径参数等，通过sys.argv直接索引解析",
+      "description": "msprobe CLI主入口，支持compare/run_ut/api_precision_compare等子命令"
+    },
+    {
+      "file": "profiler/msprof_analyze/cli/entrance.py",
+      "line": 78,
+      "function": "msprof_analyze_cli",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "Click框架CLI入口，接收profiling路径、输出路径等参数，可被本地用户控制",
+      "description": "msprof-analyze CLI主入口，支持advisor/compare/cluster子命令"
+    },
+    {
+      "file": "msfmktransplt/src/ms_fmk_transplt/ms_fmk_transplt.py",
+      "line": 187,
+      "function": "__parse_command",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "argparse CLI入口，接收input/output路径和version参数",
+      "description": "PyTorch GPU到NPU迁移工具CLI入口"
+    },
+    {
+      "file": "profiler/affinity_cpu_bind/bind_core.py",
+      "line": 155,
+      "function": "args_parse",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "argparse CLI，接收--application参数直接执行用户命令，存在命令注入风险",
+      "description": "CPU绑核工具CLI，可通过--application参数启动任意进程"
+    },
+    {
+      "file": "profiler/tinker/tinker_auto_parallel.py",
+      "line": 1,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "argparse CLI入口，接收模型配置和profiling路径",
+      "description": "Tinker自动并行策略寻优工具入口"
+    },
+    {
+      "file": "plugins/tensorboard-plugins/tb_graph_ascend/server/plugin.py",
+      "line": 54,
+      "function": "get_plugin_apps",
+      "type": "web_route",
+      "trust_level": "untrusted_network",
+      "justification": "TensorBoard HTTP插件，创建19个REST API端点，默认绑定localhost但可通过--bind_all暴露到网络",
+      "description": "模型可视化TensorBoard插件HTTP端点"
+    },
+    {
+      "file": "plugins/tensorboard-plugins/tb_graph_ascend/server/app/views/graph_views.py",
+      "line": 64,
+      "function": "load_meta_dir",
+      "type": "web_route",
+      "trust_level": "untrusted_network",
+      "justification": "GET端点，扫描logdir目录返回.vis文件列表",
+      "description": "HTTP GET端点 - 加载元数据目录"
+    },
+    {
+      "file": "plugins/tensorboard-plugins/tb_graph_ascend/server/app/views/graph_views.py",
+      "line": 74,
+      "function": "load_graph_data",
+      "type": "web_route",
+      "trust_level": "untrusted_network",
+      "justification": "GET端点，接收run/tag/type查询参数加载图数据",
+      "description": "HTTP GET端点 - 加载图可视化数据"
+    },
+    {
+      "file": "plugins/tensorboard-plugins/tb_graph_ascend/server/app/views/graph_views.py",
+      "line": 103,
+      "function": "load_graph_config_info",
+      "type": "web_route",
+      "trust_level": "untrusted_network",
+      "justification": "POST端点，接收JSON payload解析metaData",
+      "description": "HTTP POST端点 - 加载图配置信息"
+    },
+    {
+      "file": "plugins/tensorboard-plugins/tb_graph_ascend/server/app/views/graph_views.py",
+      "line": 255,
+      "function": "save_data",
+      "type": "web_route",
+      "trust_level": "untrusted_network",
+      "justification": "POST端点，可写入数据到服务器文件系统",
+      "description": "HTTP POST端点 - 保存图数据（文件写入操作）"
+    },
+    {
+      "file": "debug/accuracy_tools/msprobe/pytorch/hook_module/wrap_aten.py",
+      "line": 73,
+      "function": "forward",
+      "type": "decorator",
+      "trust_level": "semi_trusted",
+      "justification": "eval()执行动态PyTorch算子，self.op来自YAML配置文件",
+      "description": "动态算子执行 - eval代码注入风险点"
+    },
+    {
+      "file": "debug/accuracy_tools/msprobe/mindspore/api_accuracy_checker/generate_op_script/operator_replication.template",
+      "line": 268,
+      "function": "generate_code",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "eval(data_dtype)从配置数据中解析dtype字符串",
+      "description": "模板代码生成中的eval()调用"
+    },
+    {
+      "file": "debug/accuracy_tools/msprobe/ccsrc/base/Environment.cpp",
+      "line": 57,
+      "function": "get_rank_id",
+      "type": "env",
+      "trust_level": "untrusted_local",
+      "justification": "读取RANK_ID环境变量",
+      "description": "C++环境变量读取 - RANK_ID"
+    },
+    {
+      "file": "debug/accuracy_tools/msprobe/ccsrc/base/ErrorInfosManager.cpp",
+      "line": 143,
+      "function": "get_log_level",
+      "type": "env",
+      "trust_level": "untrusted_local",
+      "justification": "读取MSPROBE_LOG_LEVEL环境变量",
+      "description": "C++环境变量读取 - MSPROBE_LOG_LEVEL"
+    },
+    {
+      "file": "debug/accuracy_tools/msprobe/ccsrc/third_party/ACL/AclApi.cpp",
+      "line": 45,
+      "function": "load_acl_library",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "dlopen加载libascendcl.so等动态库",
+      "description": "动态库加载 - ACL API"
+    },
+    {
+      "file": "debug/accuracy_tools/msprobe/ccsrc/base/DebuggerConfig.cpp",
+      "line": 120,
+      "function": "parse_config",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "解析外部JSON配置文件，使用re2正则表达式",
+      "description": "JSON配置文件解析"
+    },
+    {
+      "file": "msfmktransplt/test/msFmkTransplt/resources/net/barlowtwins_amp/main.py",
+      "line": 173,
+      "function": "requeue_job",
+      "type": "env",
+      "trust_level": "untrusted_local",
+      "justification": "os.system()执行包含环境变量SLURM_JOB_ID的shell命令",
+      "description": "os.system命令注入 - SLURM环境变量"
+    }
+  ],
+  "attack_surfaces": [
+    "CLI接口: msprobe/mprof-analyze/msfmktransplt/tinker/bind_core (命令行参数注入风险)",
+    "HTTP接口: TensorBoard插件graph_ascend (19个REST端点，无认证)",
+    "文件输入: JSON/YAML配置文件解析、NPY数据加载",
+    "环境变量: RANK_ID/MSPROBE_LOG_LEVEL/SLURM_JOB_ID",
+    "动态库加载: dlopen加载libascendcl.so/libmindspore_ascend.so",
+    "Python C扩展: ccsrc模块与Python交互边界",
+    "代码注入: eval()在wrap_aten.py和operator_replication.template",
+    "进程执行: subprocess.Popen/run在bind_core.py/profile_space.py"
+  ]
+}

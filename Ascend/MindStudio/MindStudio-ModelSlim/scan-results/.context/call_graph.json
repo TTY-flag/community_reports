@@ -1,0 +1,495 @@
+{
+  "functions": {
+    "main@msmodelslim/cli/__main__.py:34": {
+      "defined_at": 34,
+      "calls": [
+        "set_logger_level@msmodelslim/utils/logging.py",
+        "argparse.ArgumentParser",
+        "quant_main@msmodelslim/cli/naive_quantization/__main__.py",
+        "analysis_main@msmodelslim/cli/analysis/__main__.py",
+        "tuning_main@msmodelslim/cli/auto_tuning/__main__.py"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "quant@msmodelslim/app/naive_quantization/application.py:332": {
+      "defined_at": 332,
+      "calls": [
+        "convert_to_readable_dir@msmodelslim/utils/validation/conversion.py",
+        "convert_to_writable_dir@msmodelslim/utils/validation/conversion.py",
+        "validate_device_index@msmodelslim/app/naive_quantization/application.py:98",
+        "convert_to_readable_file@msmodelslim/utils/validation/conversion.py",
+        "_quant@msmodelslim/app/naive_quantization/application.py:425"
+      ],
+      "called_by": [
+        "quant_main@msmodelslim/cli/naive_quantization/__main__.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "_quant@msmodelslim/app/naive_quantization/application.py:425": {
+      "defined_at": 425,
+      "calls": [
+        "model_factory.create@msmodelslim/model/plugin_factory.py",
+        "get_best_practice@msmodelslim/app/naive_quantization/application.py:203",
+        "quant_service.quantize@msmodelslim/core/quant_service/proxy.py"
+      ],
+      "called_by": [
+        "quant@msmodelslim/app/naive_quantization/application.py:332"
+      ],
+      "receives_external_input": false,
+      "risk": "High"
+    },
+    "get_best_practice@msmodelslim/app/naive_quantization/application.py:203": {
+      "defined_at": 203,
+      "calls": [
+        "yaml_safe_load@msmodelslim/utils/security/path.py:210",
+        "PracticeConfig.model_validate",
+        "get_config@msmodelslim/app/naive_quantization/application.py:249"
+      ],
+      "called_by": [
+        "_quant@msmodelslim/app/naive_quantization/application.py:425"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "get_valid_read_path@security/path.py:102": {
+      "defined_at": 102,
+      "calls": [
+        "get_valid_path@security/path.py:56",
+        "os.path.isfile",
+        "os.stat",
+        "os.access"
+      ],
+      "called_by": [
+        "SafeGenerator.get_config_from_pretrained@msmodelslim/utils/security/model.py:40",
+        "SafeGenerator.get_model_from_pretrained@msmodelslim/utils/security/model.py:53",
+        "get_valid_read_path@msmodelslim/utils/security/path.py:127"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "get_valid_path@security/path.py:56": {
+      "defined_at": 56,
+      "calls": [
+        "PATH_WHITE_LIST_REGEX.search",
+        "os.path.islink",
+        "os.path.realpath",
+        "os.path.split"
+      ],
+      "called_by": [
+        "get_valid_read_path@security/path.py:102",
+        "get_valid_write_path@security/path.py:123",
+        "json_safe_load@security/path.py:142"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "json_safe_load@security/path.py:142": {
+      "defined_at": 142,
+      "calls": [
+        "get_valid_read_path@security/path.py:102",
+        "json.load",
+        "check_dict_character@security/type.py"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "yaml_safe_load@msmodelslim/utils/security/path.py:210": {
+      "defined_at": 210,
+      "calls": [
+        "get_valid_read_path@msmodelslim/utils/security/path.py:127",
+        "yaml.safe_load",
+        "check_dict_character@msmodelslim/utils/validation/type.py"
+      ],
+      "called_by": [
+        "get_best_practice@msmodelslim/app/naive_quantization/application.py:203"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "json_safe_load@msmodelslim/utils/security/path.py:221": {
+      "defined_at": 221,
+      "calls": [
+        "get_valid_read_path@msmodelslim/utils/security/path.py:127",
+        "json.load",
+        "check_dict_character@msmodelslim/utils/validation/type.py"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "get_valid_read_path@msmodelslim/utils/security/path.py:127": {
+      "defined_at": 127,
+      "calls": [
+        "check_dirpath_before_read@msmodelslim/utils/security/path.py:115",
+        "get_valid_path@msmodelslim/utils/security/path.py:60",
+        "os.path.isfile",
+        "os.stat",
+        "os.access"
+      ],
+      "called_by": [
+        "SafeGenerator.get_config_from_pretrained@msmodelslim/utils/security/model.py:40",
+        "yaml_safe_load@msmodelslim/utils/security/path.py:210"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "get_config_from_pretrained@msmodelslim/utils/security/model.py:40": {
+      "defined_at": 40,
+      "calls": [
+        "get_valid_read_path@msmodelslim/utils/security/path.py:127",
+        "AutoConfig.from_pretrained"
+      ],
+      "called_by": [
+        "TransformersModel._load_model@msmodelslim/model/common/transformers.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "get_model_from_pretrained@msmodelslim/utils/security/model.py:53": {
+      "defined_at": 53,
+      "calls": [
+        "get_valid_read_path@msmodelslim/utils/security/path.py:127",
+        "AutoModelForCausalLM.from_pretrained"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "get_tokenizer_from_pretrained@msmodelslim/utils/security/model.py:66": {
+      "defined_at": 66,
+      "calls": [
+        "get_valid_read_path@msmodelslim/utils/security/path.py:127",
+        "AutoTokenizer.from_pretrained"
+      ],
+      "called_by": [
+        "Qwen2_5ModelAdapter._load_model@msmodelslim/model/qwen2_5/model_adapter.py",
+        "Qwen3ModelAdapter._load_model@msmodelslim/model/qwen3/model_adapter.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "run_safe_cmd@msmodelslim/utils/security/shell.py:192": {
+      "defined_at": 192,
+      "calls": [
+        "build_safe_command_with_options@msmodelslim/utils/security/shell.py:135",
+        "build_safe_command@msmodelslim/utils/security/shell.py:99",
+        "_run_cmd@msmodelslim/utils/security/shell.py:221"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "_run_cmd@msmodelslim/utils/security/shell.py:221": {
+      "defined_at": 221,
+      "calls": [
+        "subprocess.run"
+      ],
+      "called_by": [
+        "run_safe_cmd@msmodelslim/utils/security/shell.py:192"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "validate_safe_identifier@msmodelslim/utils/security/shell.py:36": {
+      "defined_at": 36,
+      "calls": [
+        "SAFE_IDENTIFIER_REGEX.match"
+      ],
+      "called_by": [
+        "build_safe_command@msmodelslim/utils/security/shell.py:99",
+        "sanitize_extra_args@msmodelslim/utils/security/shell.py:65"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "compress_weight_fun@msmodelslim/pytorch/weight_compression/compress_utils.py:45": {
+      "defined_at": 45,
+      "calls": [
+        "get_valid_write_path@ascend_utils/common/security/path.py",
+        "makedirs@msmodelslim/pytorch/weight_compression/compress_utils.py:39",
+        "subprocess.Popen",
+        "np.fromfile",
+        "safe_delete_path_if_exists@ascend_utils/common/security/path.py"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "main@msmodelslim/pytorch/weight_compression/compress_graph/src/main.cpp:211": {
+      "defined_at": 211,
+      "calls": [
+        "CheckInputsStollValid@msmodelslim/pytorch/weight_compression/compress_graph/src/main.cpp:183",
+        "std::stoll",
+        "GraphUtils::CheckShape@msmodelslim/pytorch/weight_compression/compress_graph/src/graph_utils.cpp:22",
+        "GraphUtils::GetDataSizeFromShape@msmodelslim/pytorch/weight_compression/compress_graph/src/graph_utils.cpp:32",
+        "GraphUtils::GetDataFromBin@msmodelslim/pytorch/weight_compression/compress_graph/src/graph_utils.cpp:39",
+        "RunSession@msmodelslim/pytorch/weight_compression/compress_graph/src/main.cpp:145"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "WriteDataToFile@msmodelslim/pytorch/weight_compression/compress_graph/src/main.cpp:31": {
+      "defined_at": 31,
+      "calls": [
+        "File::CheckFileBeforeCreateOrWrite@msmodelslim/pytorch/weight_compression/security/src/File.cpp:256",
+        "fopen",
+        "fwrite",
+        "fclose"
+      ],
+      "called_by": [
+        "RunCompressGraph@msmodelslim/pytorch/weight_compression/compress_graph/src/main.cpp:75"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "GetDataFromBin@msmodelslim/pytorch/weight_compression/compress_graph/src/graph_utils.cpp:39": {
+      "defined_at": 39,
+      "calls": [
+        "std::ifstream::open",
+        "std::ifstream::read",
+        "new uint8_t[]"
+      ],
+      "called_by": [
+        "main@msmodelslim/pytorch/weight_compression/compress_graph/src/main.cpp:211"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "CheckFileBeforeCreateOrWrite@msmodelslim/pytorch/weight_compression/security/src/File.cpp:256": {
+      "defined_at": 256,
+      "calls": [
+        "GetAbsPath@msmodelslim/pytorch/weight_compression/security/src/File.cpp:77",
+        "IsPathLengthLegal@msmodelslim/pytorch/weight_compression/security/src/File.cpp:126",
+        "IsPathCharactersValid@msmodelslim/pytorch/weight_compression/security/src/File.cpp:140",
+        "IsPathDepthValid@msmodelslim/pytorch/weight_compression/security/src/File.cpp:145",
+        "IsPathExist@msmodelslim/pytorch/weight_compression/security/src/File.cpp:120",
+        "IsSoftLink@msmodelslim/pytorch/weight_compression/security/src/File.cpp:188",
+        "GetFilePermissions@msmodelslim/pytorch/weight_compression/security/src/File.cpp:177",
+        "CheckOwner@msmodelslim/pytorch/weight_compression/security/src/File.cpp:200",
+        "CheckDir@msmodelslim/pytorch/weight_compression/security/src/File.cpp:215"
+      ],
+      "called_by": [
+        "WriteDataToFile@msmodelslim/pytorch/weight_compression/compress_graph/src/main.cpp:31"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "CheckDir@msmodelslim/pytorch/weight_compression/security/src/File.cpp:215": {
+      "defined_at": 215,
+      "calls": [
+        "GetAbsPath@msmodelslim/pytorch/weight_compression/security/src/File.cpp:77",
+        "IsPathLengthLegal@msmodelslim/pytorch/weight_compression/security/src/File.cpp:126",
+        "IsPathCharactersValid@msmodelslim/pytorch/weight_compression/security/src/File.cpp:140",
+        "IsPathDepthValid@msmodelslim/pytorch/weight_compression/security/src/File.cpp:145",
+        "IsPathExist@msmodelslim/pytorch/weight_compression/security/src/File.cpp:120",
+        "IsSoftLink@msmodelslim/pytorch/weight_compression/security/src/File.cpp:188",
+        "CheckOwner@msmodelslim/pytorch/weight_compression/security/src/File.cpp:200",
+        "IsDir@msmodelslim/pytorch/weight_compression/security/src/File.cpp:159",
+        "IsOtherWritable@msmodelslim/pytorch/weight_compression/security/src/File.cpp:115"
+      ],
+      "called_by": [
+        "CheckFileBeforeCreateOrWrite@msmodelslim/pytorch/weight_compression/security/src/File.cpp:256"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "GetAbsPath@msmodelslim/pytorch/weight_compression/security/src/File.cpp:77": {
+      "defined_at": 77,
+      "calls": [
+        "GetFullPath@msmodelslim/pytorch/weight_compression/security/src/File.cpp:28",
+        "SplitPath@msmodelslim/pytorch/weight_compression/security/src/File.cpp:58"
+      ],
+      "called_by": [
+        "CheckDir@msmodelslim/pytorch/weight_compression/security/src/File.cpp:215",
+        "CheckFileBeforeCreateOrWrite@msmodelslim/pytorch/weight_compression/security/src/File.cpp:256",
+        "IsSoftLink@msmodelslim/pytorch/weight_compression/security/src/File.cpp:188",
+        "CheckOwner@msmodelslim/pytorch/weight_compression/security/src/File.cpp:200"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "safe_open@safetensors": {
+      "defined_at": 0,
+      "calls": [],
+      "called_by": [
+        "_load_layer_weights_from_safetensors@msmodelslim/model/qwen2_5_vl/model_adapter.py:429",
+        "_load_layer_weights_from_safetensors@msmodelslim/model/qwen3_5_moe/model_adapter.py:541",
+        "_load_layer_weights_from_safetensors@msmodelslim/model/qwen3_omni_moe/model_adapter.py:636"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "_load_layer_weights_from_safetensors@msmodelslim/model/qwen2_5_vl/model_adapter.py:429": {
+      "defined_at": 429,
+      "calls": [
+        "get_valid_read_path@msmodelslim/utils/security/path.py:127",
+        "safe_open@safetensors"
+      ],
+      "called_by": [
+        "_load_decoder_layer@msmodelslim/model/qwen2_5_vl/model_adapter.py:438"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "AutoConfig.from_pretrained@transformers": {
+      "defined_at": 0,
+      "calls": [],
+      "called_by": [
+        "get_config_from_pretrained@msmodelslim/utils/security/model.py:40"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "AutoModelForCausalLM.from_pretrained@transformers": {
+      "defined_at": 0,
+      "calls": [],
+      "called_by": [
+        "get_model_from_pretrained@msmodelslim/utils/security/model.py:53",
+        "Qwen2_5_VLForConditionalGeneration.from_pretrained@msmodelslim/model/qwen2_5_vl/model_adapter.py:216"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "AutoTokenizer.from_pretrained@transformers": {
+      "defined_at": 0,
+      "calls": [],
+      "called_by": [
+        "get_tokenizer_from_pretrained@msmodelslim/utils/security/model.py:66"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "AutoProcessor.from_pretrained@transformers": {
+      "defined_at": 0,
+      "calls": [],
+      "called_by": [
+        "Qwen2_5_VLModelAdapter._load_processor@msmodelslim/model/qwen2_5_vl/model_adapter.py:97"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "argv@msmodelslim/cli/__main__.py:34",
+      "path": [
+        "argparse.ArgumentParser.parse_args@msmodelslim/cli/__main__.py:125",
+        "quant_main@msmodelslim/cli/naive_quantization/__main__.py:53",
+        "NaiveQuantizationApplication.quant@msmodelslim/app/naive_quantization/application.py:332"
+      ],
+      "sink": "model_path@msmodelslim/app/naive_quantization/application.py:332",
+      "sink_type": "parameter"
+    },
+    {
+      "source": "argv@msmodelslim/cli/__main__.py:34",
+      "path": [
+        "argparse.ArgumentParser.parse_args@msmodelslim/cli/__main__.py:125",
+        "quant_main@msmodelslim/cli/naive_quantization/__main__.py:53",
+        "NaiveQuantizationApplication.quant@msmodelslim/app/naive_quantization/application.py:332"
+      ],
+      "sink": "save_path@msmodelslim/app/naive_quantization/application.py:332",
+      "sink_type": "parameter"
+    },
+    {
+      "source": "argv@msmodelslim/cli/__main__.py:34",
+      "path": [
+        "argparse.ArgumentParser.parse_args@msmodelslim/cli/__main__.py:125",
+        "quant_main@msmodelslim/cli/naive_quantization/__main__.py:53",
+        "NaiveQuantizationApplication.quant@msmodelslim/app/naive_quantization/application.py:332",
+        "_quant@msmodelslim/app/naive_quantization/application.py:425",
+        "get_best_practice@msmodelslim/app/naive_quantization/application.py:203",
+        "yaml_safe_load@msmodelslim/utils/security/path.py:210",
+        "open@msmodelslim/utils/security/path.py:215"
+      ],
+      "sink": "yaml.safe_load@msmodelslim/utils/security/path.py:216",
+      "sink_type": "file_operation"
+    },
+    {
+      "source": "model_path@msmodelslim/app/naive_quantization/application.py:332",
+      "path": [
+        "convert_to_readable_dir@msmodelslim/utils/validation/conversion.py",
+        "_quant@msmodelslim/app/naive_quantization/application.py:425",
+        "model_factory.create@msmodelslim/model/plugin_factory.py",
+        "TransformersModel._load_model@msmodelslim/model/common/transformers.py",
+        "SafeGenerator.get_config_from_pretrained@msmodelslim/utils/security/model.py:40",
+        "get_valid_read_path@msmodelslim/utils/security/path.py:127",
+        "AutoConfig.from_pretrained@transformers"
+      ],
+      "sink": "AutoConfig.from_pretrained@transformers",
+      "sink_type": "model_loading"
+    },
+    {
+      "source": "model_path@msmodelslim/model/qwen2_5_vl/model_adapter.py",
+      "path": [
+        "Qwen2_5_VLModelAdapter._load_processor@msmodelslim/model/qwen2_5_vl/model_adapter.py:97",
+        "AutoProcessor.from_pretrained@transformers"
+      ],
+      "sink": "AutoProcessor.from_pretrained@transformers",
+      "sink_type": "model_loading"
+    },
+    {
+      "source": "model_path@msmodelslim/model/qwen2_5_vl/model_adapter.py",
+      "path": [
+        "_load_layer_weights_from_safetensors@msmodelslim/model/qwen2_5_vl/model_adapter.py:429",
+        "get_valid_read_path@msmodelslim/utils/security/path.py:127",
+        "safe_open@safetensors"
+      ],
+      "sink": "safe_open@safetensors",
+      "sink_type": "model_loading"
+    },
+    {
+      "source": "argv@msmodelslim/pytorch/weight_compression/compress_graph/src/main.cpp:211",
+      "path": [
+        "std::stoll@msmodelslim/pytorch/weight_compression/compress_graph/src/main.cpp:217",
+        "GraphUtils::GetDataFromBin@msmodelslim/pytorch/weight_compression/compress_graph/src/graph_utils.cpp:39",
+        "std::ifstream::open@msmodelslim/pytorch/weight_compression/compress_graph/src/graph_utils.cpp:41"
+      ],
+      "sink": "std::ifstream::read@msmodelslim/pytorch/weight_compression/compress_graph/src/graph_utils.cpp:67",
+      "sink_type": "file_operation"
+    },
+    {
+      "source": "argv@msmodelslim/pytorch/weight_compression/compress_graph/src/main.cpp:211",
+      "path": [
+        "RunCompressGraph@msmodelslim/pytorch/weight_compression/compress_graph/src/main.cpp:75",
+        "WriteDataToFile@msmodelslim/pytorch/weight_compression/compress_graph/src/main.cpp:31",
+        "File::CheckFileBeforeCreateOrWrite@msmodelslim/pytorch/weight_compression/security/src/File.cpp:256",
+        "fopen@msmodelslim/pytorch/weight_compression/compress_graph/src/main.cpp:55"
+      ],
+      "sink": "fwrite@msmodelslim/pytorch/weight_compression/compress_graph/src/main.cpp:62",
+      "sink_type": "file_operation"
+    },
+    {
+      "source": "weights@msmodelslim/pytorch/weight_compression/compress_utils.py:45",
+      "path": [
+        "compress_weight_fun@msmodelslim/pytorch/weight_compression/compress_utils.py:45",
+        "subprocess.Popen@msmodelslim/pytorch/weight_compression/compress_utils.py:101"
+      ],
+      "sink": "subprocess.Popen@msmodelslim/pytorch/weight_compression/compress_utils.py:101",
+      "sink_type": "command_execution"
+    },
+    {
+      "source": "binary@msmodelslim/utils/security/shell.py:192",
+      "path": [
+        "run_safe_cmd@msmodelslim/utils/security/shell.py:192",
+        "build_safe_command_with_options@msmodelslim/utils/security/shell.py:135",
+        "validate_safe_identifier@msmodelslim/utils/security/shell.py:36"
+      ],
+      "sink": "SAFE_IDENTIFIER_REGEX.match@msmodelslim/utils/security/shell.py:56",
+      "sink_type": "validation"
+    },
+    {
+      "source": "path@security/path.py:56",
+      "path": [
+        "get_valid_path@security/path.py:56",
+        "PATH_WHITE_LIST_REGEX.search@security/path.py:60"
+      ],
+      "sink": "raise ValueError@security/path.py:61",
+      "sink_type": "validation"
+    }
+  ]
+}
