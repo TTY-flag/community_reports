@@ -1,0 +1,325 @@
+{
+  "project_name": "msprof",
+  "scan_time": "2026-04-20T06:00:00Z",
+  "lsp_available": false,
+  "total_files": 1155,
+  "total_lines": 125906,
+  "project_profile": {
+    "project_type": "cli_tool",
+    "deployment_model": "Linux 服务器上的命令行工具，用于分析 AI 任务性能数据",
+    "trust_boundaries": [
+      {
+        "boundary": "User Input (CLI Arguments)",
+        "trusted_side": "Application logic",
+        "untrusted_side": "User-provided paths and configurations",
+        "risk": "Critical"
+      },
+      {
+        "boundary": "File System Input",
+        "trusted_side": "Application logic",
+        "untrusted_side": "Profiling data files from external sources",
+        "risk": "High"
+      },
+      {
+        "boundary": "Configuration Files",
+        "trusted_side": "Application logic",
+        "untrusted_side": "info.json, sample.json from profiling data",
+        "risk": "High"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "msinterface",
+      "path": "analysis/msinterface",
+      "language": "python",
+      "components": [
+        "msprof_entrance.py",
+        "msprof_export.py",
+        "msprof_analyze.py",
+        "msprof_import.py",
+        "msprof_query.py"
+      ]
+    },
+    {
+      "name": "common_func",
+      "path": "analysis/common_func",
+      "language": "python",
+      "components": [
+        "file_manager.py",
+        "msprof_common.py",
+        "info_conf_reader.py",
+        "path_manager.py",
+        "db_manager.py",
+        "config_mgr.py"
+      ]
+    },
+    {
+      "name": "csrc_infrastructure",
+      "path": "analysis/csrc/infrastructure",
+      "language": "c_cpp",
+      "components": [
+        "infrastructure/utils/file.cpp",
+        "infrastructure/db/database.cpp",
+        "infrastructure/db/db_runner.cpp",
+        "infrastructure/dfx/log.cpp"
+      ]
+    },
+    {
+      "name": "csrc_domain_parser",
+      "path": "analysis/csrc/domain/services/parser",
+      "language": "c_cpp",
+      "components": [
+        "host/cann/api_event_parser.cpp",
+        "host/cann/compact_info_parser.cpp",
+        "host/cann/addition_info_parser.cpp",
+        "host/cann/hash_data.cpp"
+      ]
+    },
+    {
+      "name": "msparser",
+      "path": "analysis/msparser",
+      "language": "python",
+      "components": [
+        "factory/parser_factory.py",
+        "compact_info/hccl_op_info_parser.py",
+        "compact_info/memcpy_info_parser.py",
+        "npu_mem/npu_mem_parser.py"
+      ]
+    },
+    {
+      "name": "mscalculate",
+      "path": "analysis/mscalculate",
+      "language": "python",
+      "components": [
+        "factory/calculator_factory.py",
+        "data_analysis/task_scheduler_calculator.py",
+        "hccl/hccl_calculator.py"
+      ]
+    },
+    {
+      "name": "host_prof",
+      "path": "analysis/host_prof",
+      "language": "python",
+      "components": [
+        "host_cpu_usage/cpu_usage_analysis.py",
+        "host_mem_usage/mem_usage_analysis.py",
+        "host_syscall/host_syscall_analysis.py"
+      ]
+    },
+    {
+      "name": "framework",
+      "path": "analysis/framework",
+      "language": "python",
+      "components": [
+        "collection_engine.py",
+        "file_dispatch.py",
+        "prof_factory_maker.py",
+        "load_info_manager.py"
+      ]
+    },
+    {
+      "name": "scripts",
+      "path": "scripts",
+      "language": "mixed",
+      "components": [
+        "create_run_package.sh",
+        "install_profiling_msprof.sh",
+        "msprof_data_collection.sh",
+        "run_script/install.sh",
+        "run_script/main.sh"
+      ]
+    },
+    {
+      "name": "samples",
+      "path": "samples",
+      "language": "c_cpp",
+      "components": [
+        "mstx_with_domain/mstx_with_domain.cpp",
+        "common/util_acl.h",
+        "common/util_mstx.h"
+      ]
+    }
+  ],
+  "files": [
+    {
+      "path": "analysis/msinterface/msprof_entrance.py",
+      "language": "python",
+      "risk": "Critical",
+      "module": "msinterface",
+      "lines": 258,
+      "priority": 1
+    },
+    {
+      "path": "analysis/common_func/file_manager.py",
+      "language": "python",
+      "risk": "Critical",
+      "module": "common_func",
+      "lines": 355,
+      "priority": 1
+    },
+    {
+      "path": "analysis/common_func/msprof_common.py",
+      "language": "python",
+      "risk": "Critical",
+      "module": "common_func",
+      "lines": 293,
+      "priority": 1
+    },
+    {
+      "path": "analysis/common_func/info_conf_reader.py",
+      "language": "python",
+      "risk": "High",
+      "module": "common_func",
+      "lines": 577,
+      "priority": 2
+    },
+    {
+      "path": "analysis/msinterface/msprof_export.py",
+      "language": "python",
+      "risk": "High",
+      "module": "msinterface",
+      "lines": 850,
+      "priority": 2
+    },
+    {
+      "path": "analysis/csrc/infrastructure/utils/file.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "csrc_infrastructure",
+      "lines": 542,
+      "priority": 2
+    },
+    {
+      "path": "analysis/csrc/infrastructure/db/database.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "csrc_infrastructure",
+      "lines": 1098,
+      "priority": 2
+    },
+    {
+      "path": "analysis/csrc/domain/services/parser/host/cann/api_event_parser.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "csrc_domain_parser",
+      "lines": 200,
+      "priority": 3
+    },
+    {
+      "path": "analysis/framework/file_dispatch.py",
+      "language": "python",
+      "risk": "High",
+      "module": "framework",
+      "lines": 235,
+      "priority": 3
+    },
+    {
+      "path": "analysis/framework/collection_engine.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "framework",
+      "lines": 123,
+      "priority": 4
+    },
+    {
+      "path": "scripts/run_script/install.sh",
+      "language": "mixed",
+      "risk": "High",
+      "module": "scripts",
+      "lines": 100,
+      "priority": 3
+    },
+    {
+      "path": "scripts/create_run_package.sh",
+      "language": "mixed",
+      "risk": "Medium",
+      "module": "scripts",
+      "lines": 200,
+      "priority": 4
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "analysis/msinterface/msprof_entrance.py",
+      "line": 107,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "CLI 入口，用户通过命令行参数控制工具行为，路径参数可被外部控制",
+      "description": "接收用户命令行参数，启动 msprof 工具"
+    },
+    {
+      "file": "analysis/msinterface/msprof_entrance.py",
+      "line": 164,
+      "function": "construct_arg_parser",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "解析用户提供的命令行参数，包括路径、配置文件等",
+      "description": "构建 argparse 参数解析器"
+    },
+    {
+      "file": "analysis/msinterface/msprof_entrance.py",
+      "line": 60,
+      "function": "_handle_export_command",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "处理用户指定的数据导出目录",
+      "description": "处理 export 命令"
+    },
+    {
+      "file": "analysis/msinterface/msprof_entrance.py",
+      "line": 80,
+      "function": "_handle_analyze_command",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "处理用户指定的分析目录",
+      "description": "处理 analyze 命令"
+    },
+    {
+      "file": "analysis/common_func/info_conf_reader.py",
+      "line": 80,
+      "function": "__get_json_data",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "从用户提供的目录读取 info.json 配置文件",
+      "description": "读取并解析 JSON 配置文件"
+    },
+    {
+      "file": "analysis/common_func/file_manager.py",
+      "line": 204,
+      "function": "check_path_valid",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "校验用户提供的文件路径，防止路径遍历攻击",
+      "description": "校验文件路径有效性"
+    },
+    {
+      "file": "analysis/csrc/infrastructure/utils/file.cpp",
+      "line": 309,
+      "function": "FileReader::Open",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "C++ 层打开用户提供的文件进行读取",
+      "description": "打开文件进行读取操作"
+    },
+    {
+      "file": "analysis/csrc/domain/services/parser/host/cann/api_event_parser.cpp",
+      "line": 1,
+      "function": "parse_api_event",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "解析用户提供的二进制性能数据文件",
+      "description": "解析 API 事件数据"
+    }
+  ],
+  "attack_surfaces": [
+    "CLI 命令行参数 (-dir/--collection-dir, --reports-path)",
+    "文件系统读取 (profiling data directory)",
+    "JSON 配置文件解析 (info.json, sample.json)",
+    "二进制数据文件解析 (profiling binary files)",
+    "SQLite 数据库操作 (读写数据库文件)",
+    "Shell 脚本执行 (安装/构建脚本)",
+    "CSV/JSON 文件导出"
+  ]
+}

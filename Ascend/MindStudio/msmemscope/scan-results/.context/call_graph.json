@@ -1,0 +1,559 @@
+{
+  "functions": {
+    "main@csrc/main.cpp": {
+      "defined_at": 22,
+      "calls": [
+        "ClientParser::Interpretor@csrc/framework/client_parser.cpp"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "程序主入口，接收命令行参数"
+    },
+    "ClientParser::Interpretor@csrc/framework/client_parser.cpp": {
+      "defined_at": 211,
+      "calls": [
+        "ClientParser::Parse@csrc/framework/client_parser.cpp",
+        "DoUserCommand@csrc/framework/client_parser.cpp"
+      ],
+      "called_by": [
+        "main@csrc/main.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "命令行解析入口，处理argc/argv"
+    },
+    "ClientParser::Parse@csrc/framework/client_parser.cpp": {
+      "defined_at": 859,
+      "calls": [
+        "GetLongOptArray@csrc/framework/client_parser.cpp",
+        "GetShortOptString@csrc/framework/client_parser.cpp",
+        "ParseUserCommand@csrc/framework/client_parser.cpp",
+        "InitialConfig@csrc/framework/client_parser.cpp"
+      ],
+      "called_by": [
+        "ClientParser::Interpretor@csrc/framework/client_parser.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "解析命令行参数，调用getopt_long"
+    },
+    "ParseUserCommand@csrc/framework/client_parser.cpp": {
+      "defined_at": 750,
+      "calls": [
+        "ParseSelectSteps@csrc/framework/client_parser.cpp",
+        "ParseAnalysis@csrc/framework/client_parser.cpp",
+        "ParseCallstack@csrc/framework/client_parser.cpp",
+        "ParseInputPaths@csrc/framework/client_parser.cpp",
+        "ParseOutputPath@csrc/framework/client_parser.cpp",
+        "ParseDataLevel@csrc/framework/client_parser.cpp",
+        "ParseEventTraceType@csrc/framework/client_parser.cpp",
+        "ParseWatchConfig@csrc/framework/client_parser.cpp",
+        "ParseDevice@csrc/framework/client_parser.cpp",
+        "ParseDataFormat@csrc/framework/client_parser.cpp",
+        "ParseCollectMode@csrc/framework/client_parser.cpp"
+      ],
+      "called_by": [
+        "ClientParser::Parse@csrc/framework/client_parser.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "分发参数解析到具体函数"
+    },
+    "ParseInputPaths@csrc/framework/client_parser.cpp": {
+      "defined_at": 387,
+      "calls": [
+        "Utility::SplitString@csrc/utility/string_validator.cpp",
+        "Utility::CheckIsValidInputPath@csrc/utility/path.cpp",
+        "Utility::IsFileSizeSafe@csrc/utility/utils.h"
+      ],
+      "called_by": [
+        "ParseUserCommand@csrc/framework/client_parser.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "解析输入文件路径参数"
+    },
+    "ParseOutputPath@csrc/framework/client_parser.cpp": {
+      "defined_at": 416,
+      "calls": [
+        "Utility::Path::Resolved@csrc/utility/path.cpp",
+        "Utility::CheckIsValidOutputPath@csrc/utility/path.cpp",
+        "Utility::IsValidOutputPath@csrc/utility/string_validator.cpp",
+        "strncpy_s"
+      ],
+      "called_by": [
+        "ParseUserCommand@csrc/framework/client_parser.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "解析输出路径参数，使用strncpy_s拷贝"
+    },
+    "DoUserCommand@csrc/framework/client_parser.cpp": {
+      "defined_at": 188,
+      "calls": [
+        "UserCommandPrecheck@csrc/framework/client_parser.cpp",
+        "ConfigManager::SetConfig@csrc/event_trace/trace_manager/event_trace_manager.cpp",
+        "Command::Exec@csrc/framework/command.cpp"
+      ],
+      "called_by": [
+        "ClientParser::Interpretor@csrc/framework/client_parser.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "High",
+      "description": "执行用户命令"
+    },
+    "Command::Exec@csrc/framework/command.cpp": {
+      "defined_at": 32,
+      "calls": [
+        "MemoryCompare::RunComparison@csrc/analysis/memory_compare.cpp",
+        "Process::Launch@csrc/framework/process.cpp"
+      ],
+      "called_by": [
+        "DoUserCommand@csrc/framework/client_parser.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "High",
+      "description": "执行分析命令或启动目标进程"
+    },
+    "Process::Launch@csrc/framework/process.cpp": {
+      "defined_at": 163,
+      "calls": [
+        "ExecCmd::ExecCmd@csrc/framework/process.cpp",
+        "Process::SetPreloadEnv@csrc/framework/process.cpp",
+        "Process::DoLaunch@csrc/framework/process.cpp"
+      ],
+      "called_by": [
+        "Command::Exec@csrc/framework/command.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "启动被检测的目标进程"
+    },
+    "Process::SetPreloadEnv@csrc/framework/process.cpp": {
+      "defined_at": 172,
+      "calls": [
+        "getenv",
+        "Utility::Path::Resolved@csrc/utility/path.cpp",
+        "Utility::Path::Exists@csrc/utility/path.cpp",
+        "Utility::Join@csrc/utility/ustring.cpp",
+        "setenv"
+      ],
+      "called_by": [
+        "Process::Launch@csrc/framework/process.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "High",
+      "description": "设置LD_PRELOAD环境变量"
+    },
+    "Process::DoLaunch@csrc/framework/process.cpp": {
+      "defined_at": 224,
+      "calls": [
+        "execvpe",
+        "_exit"
+      ],
+      "called_by": [
+        "Process::Launch@csrc/framework/process.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "使用execvpe执行目标程序"
+    },
+    "PyInit__msmemscope@csrc/python_itf/msleaksmodule.cpp": {
+      "defined_at": 142,
+      "calls": [
+        "PyModule_Create",
+        "PyMemScope_GetWatcher@csrc/python_itf/watcherobject.cpp",
+        "PyMemScope_GetTracer@csrc/python_itf/tracerobject.cpp",
+        "PyMemScope_GetDescriber@csrc/python_itf/describerobject.cpp",
+        "PyMemScope_GetReportTensor@csrc/python_itf/report_tensor.cpp",
+        "PyModule_AddObject"
+      ],
+      "called_by": [],
+      "receives_external_input": false,
+      "risk": "High",
+      "description": "Python模块初始化入口"
+    },
+    "MsmemscopeConfig@csrc/python_itf/msleaksmodule.cpp": {
+      "defined_at": 73,
+      "calls": [
+        "PyDict_Next",
+        "PyUnicode_AsUTF8",
+        "ConfigManager::SetConfig@csrc/event_trace/trace_manager/event_trace_manager.cpp"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "Python config()接口，处理kwargs参数"
+    },
+    "PyMemScopeWatcherWatch@csrc/python_itf/watcherobject.cpp": {
+      "defined_at": 148,
+      "calls": [
+        "PyUnicode_AsUTF8",
+        "ParseInputArgs@csrc/python_itf/watcherobject.cpp",
+        "TensorDumper::SetDumpNums@csrc/event_trace/memory_watch/tensor_dumper.cpp",
+        "TensorDumper::SetDumpName@csrc/event_trace/memory_watch/tensor_dumper.cpp",
+        "TensorMonitor::AddWatchTensor@csrc/event_trace/memory_watch/tensor_monitor.cpp"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "Python watcher.watch()接口，添加内存监测对象"
+    },
+    "ParseInputArgs@csrc/python_itf/watcherobject.cpp": {
+      "defined_at": 106,
+      "calls": [
+        "IsTorchTensor@csrc/python_itf/watcherobject.cpp",
+        "ParseTensorPtrAndSize@csrc/python_itf/watcherobject.cpp",
+        "PyLong_AsUnsignedLongLong"
+      ],
+      "called_by": [
+        "PyMemScopeWatcherWatch@csrc/python_itf/watcherobject.cpp",
+        "PyMemScopeWatcherRemove@csrc/python_itf/watcherobject.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "解析Python传入的tensor或addr+length参数"
+    },
+    "LibLoad@csrc/event_trace/vallina_symbol.cpp": {
+      "defined_at": 26,
+      "calls": [
+        "getenv",
+        "dlopen"
+      ],
+      "called_by": [
+        "VallinaSymbol::Instance@csrc/event_trace/vallina_symbol.h"
+      ],
+      "receives_external_input": false,
+      "risk": "Critical",
+      "description": "动态库加载函数"
+    },
+    "ExecuteCommand@csrc/event_trace/vallina_symbol.cpp": {
+      "defined_at": 52,
+      "calls": [
+        "popen",
+        "fgets",
+        "pclose"
+      ],
+      "called_by": [
+        "Sqlite3LibLoader::Load@csrc/event_trace/vallina_symbol.h"
+      ],
+      "receives_external_input": false,
+      "risk": "Critical",
+      "description": "执行shell命令(which sqlite3)"
+    },
+    "Sqlite3LibLoader::Load@csrc/event_trace/vallina_symbol.h": {
+      "defined_at": 47,
+      "calls": [
+        "ExecuteCommand@csrc/event_trace/vallina_symbol.cpp",
+        "FindLibParentDir@csrc/event_trace/vallina_symbol.cpp",
+        "FindAndLoadSqliteInDir@csrc/event_trace/vallina_symbol.cpp"
+      ],
+      "called_by": [
+        "VallinaSymbol<csrc/event_trace/vallina_symbol.h>::Instance"
+      ],
+      "receives_external_input": false,
+      "risk": "Critical",
+      "description": "查找并加载SQLite库"
+    },
+    "FindAndLoadSqliteInDir@csrc/event_trace/vallina_symbol.cpp": {
+      "defined_at": 146,
+      "calls": [
+        "ValidateLibrary@csrc/event_trace/vallina_symbol.cpp",
+        "dlopen",
+        "opendir",
+        "readdir",
+        "closedir",
+        "stat"
+      ],
+      "called_by": [
+        "Sqlite3LibLoader::Load@csrc/event_trace/vallina_symbol.h"
+      ],
+      "receives_external_input": false,
+      "risk": "High",
+      "description": "递归搜索目录查找并加载SQLite库"
+    },
+    "ValidateLibrary@csrc/event_trace/vallina_symbol.cpp": {
+      "defined_at": 117,
+      "calls": [
+        "stat",
+        "getuid"
+      ],
+      "called_by": [
+        "FindAndLoadSqliteInDir@csrc/event_trace/vallina_symbol.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "验证库文件权限安全性"
+    },
+    "Sqlite3Open@csrc/utility/sqlite_loader.cpp": {
+      "defined_at": 20,
+      "calls": [
+        "VallinaSymbol::Get@csrc/event_trace/vallina_symbol.h",
+        "sqlite3_open"
+      ],
+      "called_by": [
+        "FileCreateManager::CreateDbFile@csrc/utility/file.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "打开SQLite数据库文件"
+    },
+    "FileCreateManager::CreateDbFile@csrc/utility/file.cpp": {
+      "defined_at": 163,
+      "calls": [
+        "FileCreateManager::CreateFile@csrc/utility/file.cpp",
+        "Sqlite3Open@csrc/utility/sqlite_loader.cpp",
+        "Sqlite3Exec@csrc/utility/sqlite_loader.cpp",
+        "TableExists@csrc/utility/file.cpp"
+      ],
+      "called_by": [
+        "DataHandler::Write@csrc/analysis/data_handler.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "创建SQLite数据库文件"
+    },
+    "CheckIsValidInputPath@csrc/utility/path.cpp": {
+      "defined_at": 248,
+      "calls": [
+        "Utility::Path::Resolved@csrc/utility/path.cpp",
+        "Utility::Path::Exists@csrc/utility/path.cpp",
+        "Utility::Path::IsReadable@csrc/utility/path.cpp",
+        "Utility::Path::IsValidLength@csrc/utility/path.cpp",
+        "Utility::Path::IsValidDepth@csrc/utility/path.cpp",
+        "Utility::Path::IsSoftLink@csrc/utility/path.cpp",
+        "Utility::Path::IsPermissionValid@csrc/utility/path.cpp"
+      ],
+      "called_by": [
+        "ParseInputPaths@csrc/framework/client_parser.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "验证输入路径安全性"
+    },
+    "CheckIsValidOutputPath@csrc/utility/path.cpp": {
+      "defined_at": 292,
+      "calls": [
+        "Utility::Path::Resolved@csrc/utility/path.cpp",
+        "CheckStrIsStartsWithInvalidChar@csrc/utility/utils.h",
+        "Utility::Path::IsValidLength@csrc/utility/path.cpp",
+        "Utility::Path::IsValidDepth@csrc/utility/path.cpp",
+        "Utility::Path::IsSoftLink@csrc/utility/path.cpp",
+        "Utility::Path::IsPermissionValid@csrc/utility/path.cpp"
+      ],
+      "called_by": [
+        "ParseOutputPath@csrc/framework/client_parser.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "验证输出路径安全性"
+    },
+    "MstxTableCoreInject@csrc/event_trace/mstx_hooks/mstx_inject.cpp": {
+      "defined_at": 69,
+      "calls": [
+        "MstxMarkAFunc@csrc/event_trace/mstx_hooks/mstx_inject.cpp",
+        "MstxRangeStartAFunc@csrc/event_trace/mstx_hooks/mstx_inject.cpp",
+        "MstxRangeEndFunc@csrc/event_trace/mstx_hooks/mstx_inject.cpp"
+      ],
+      "called_by": [
+        "InitInjectionMstx@csrc/event_trace/mstx_hooks/mstx_inject.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "注入MSTX核心函数表"
+    },
+    "halMemAlloc@csrc/event_trace/hal_hooks/hal_hooks.cpp": {
+      "defined_at": 28,
+      "calls": [
+        "halMemAllocInner",
+        "EventTraceManager::IsTracingEnabled@csrc/event_trace/trace_manager/event_trace_manager.cpp",
+        "Utility::GetCallstack@csrc/utility/call_stack.cpp",
+        "EventReport::ReportMalloc@csrc/event_trace/event_report.cpp"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "HAL内存分配Hook函数"
+    },
+    "halMemFree@csrc/event_trace/hal_hooks/hal_hooks.cpp": {
+      "defined_at": 52,
+      "calls": [
+        "halMemFreeInner",
+        "EventTraceManager::IsTracingEnabled@csrc/event_trace/trace_manager/event_trace_manager.cpp",
+        "Utility::GetCallstack@csrc/utility/call_stack.cpp",
+        "EventReport::ReportFree@csrc/event_trace/event_report.cpp"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "HAL内存释放Hook函数"
+    },
+    "ConfigManager::SetConfig@csrc/event_trace/trace_manager/event_trace_manager.cpp": {
+      "defined_at": 120,
+      "calls": [
+        "ConfigManager::SetConfigImpl@csrc/event_trace/trace_manager/event_trace_manager.cpp",
+        "Utility::SetLogLevel@csrc/utility/log.cpp",
+        "Utility::JsonConfig::SaveConfigToJson@csrc/utility/json_manager.cpp",
+        "EventTraceManager::HandleWithATenCollect@csrc/event_trace/trace_manager/event_trace_manager.cpp",
+        "EventTraceManager::HandleWithDecompose@csrc/event_trace/trace_manager/event_trace_manager.cpp"
+      ],
+      "called_by": [
+        "MsmemscopeConfig@csrc/python_itf/msleaksmodule.cpp",
+        "DoUserCommand@csrc/framework/client_parser.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "设置配置参数"
+    },
+    "EventTraceManager::HandleWithATenCollect@csrc/event_trace/trace_manager/event_trace_manager.cpp": {
+      "defined_at": 294,
+      "calls": [
+        "Utility::MemScopePythonCall@csrc/utility/cpython.cpp"
+      ],
+      "called_by": [
+        "ConfigManager::SetConfig@csrc/event_trace/trace_manager/event_trace_manager.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "调用Python模块启用ATen采集"
+    },
+    "Dump::WriteToFile@csrc/analysis/dump.cpp": {
+      "defined_at": 171,
+      "calls": [
+        "DataHandler::Write@csrc/analysis/data_handler.cpp"
+      ],
+      "called_by": [
+        "Dump::DumpMemoryEvent@csrc/analysis/dump.cpp",
+        "Dump::DumpMstxEvent@csrc/analysis/dump.cpp",
+        "Dump::DumpOpLaunchEvent@csrc/analysis/dump.cpp",
+        "Dump::DumpKernelLaunchEvent@csrc/analysis/dump.cpp",
+        "Dump::DumpSystemEvent@csrc/analysis/dump.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "将事件数据写入文件"
+    },
+    "LeaksAnalyzer::read_file@python/msmemscope/analyzer/leaks.py": {
+      "defined_at": 71,
+      "calls": [
+        "open",
+        "csv.DictReader"
+      ],
+      "called_by": [
+        "LeaksAnalyzer::analyze@python/msmemscope/analyzer/leaks.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "读取CSV分析数据文件"
+    },
+    "LeaksAnalyzer::analyze@python/msmemscope/analyzer/leaks.py": {
+      "defined_at": 62,
+      "calls": [
+        "LeaksAnalyzer::read_file@python/msmemscope/analyzer/leaks.py",
+        "LeaksAnalyzer::analyze_leaks@python/msmemscope/analyzer/leaks.py",
+        "LeaksAnalyzer::print_leaks_result@python/msmemscope/analyzer/leaks.py"
+      ],
+      "called_by": [
+        "check_leaks@python/msmemscope/analyzer/leaks.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "执行内存泄漏分析"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "argv@csrc/main.cpp:22",
+      "path": [
+        "ClientParser::Interpretor@csrc/framework/client_parser.cpp:211",
+        "ClientParser::Parse@csrc/framework/client_parser.cpp:859",
+        "ParseUserCommand@csrc/framework/client_parser.cpp:750",
+        "ParseOutputPath@csrc/framework/client_parser.cpp:416"
+      ],
+      "sink": "strncpy_s(config.outputDir)@csrc/framework/client_parser.cpp:444",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "argv@csrc/main.cpp:22",
+      "path": [
+        "ClientParser::Interpretor@csrc/framework/client_parser.cpp:211",
+        "ClientParser::Parse@csrc/framework/client_parser.cpp:859",
+        "ParseUserCommand@csrc/framework/client_parser.cpp:750",
+        "ParseInputPaths@csrc/framework/client_parser.cpp:387",
+        "CheckIsValidInputPath@csrc/utility/path.cpp:248"
+      ],
+      "sink": "stat(path)@csrc/utility/path.cpp:182",
+      "sink_type": "file_operation"
+    },
+    {
+      "source": "argv@csrc/main.cpp:22",
+      "path": [
+        "ClientParser::Interpretor@csrc/framework/client_parser.cpp:211",
+        "ClientParser::Parse@csrc/framework/client_parser.cpp:859",
+        "ParseUserCommand@csrc/framework/client_parser.cpp:750",
+        "DoUserCommand@csrc/framework/client_parser.cpp:188",
+        "Command::Exec@csrc/framework/command.cpp:32",
+        "Process::Launch@csrc/framework/process.cpp:163"
+      ],
+      "sink": "execvpe(cmd.ExecPath(), cmd.ExecArgv(), environ)@csrc/framework/process.cpp:227",
+      "sink_type": "process_execution"
+    },
+    {
+      "source": "kwargs@csrc/python_itf/msleaksmodule.cpp:73",
+      "path": [
+        "MsmemscopeConfig@csrc/python_itf/msleaksmodule.cpp:73",
+        "PyUnicode_AsUTF8@csrc/python_itf/msleaksmodule.cpp:97",
+        "ConfigManager::SetConfig@csrc/event_trace/trace_manager/event_trace_manager.cpp:120"
+      ],
+      "sink": "Utility::JsonConfig::SaveConfigToJson@csrc/utility/json_manager.cpp",
+      "sink_type": "file_operation"
+    },
+    {
+      "source": "tensor/addr@csrc/python_itf/watcherobject.cpp:148",
+      "path": [
+        "PyMemScopeWatcherWatch@csrc/python_itf/watcherobject.cpp:148",
+        "ParseInputArgs@csrc/python_itf/watcherobject.cpp:106",
+        "PyLong_AsUnsignedLongLong@csrc/python_itf/watcherobject.cpp:130"
+      ],
+      "sink": "TensorMonitor::AddWatchTensor@csrc/event_trace/memory_watch/tensor_monitor.cpp",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "path_string@csrc/event_trace/vallina_symbol.cpp:52",
+      "path": [
+        "ExecuteCommand@csrc/event_trace/vallina_symbol.cpp:52",
+        "popen@csrc/event_trace/vallina_symbol.cpp:55"
+      ],
+      "sink": "fgets(buffer)@csrc/event_trace/vallina_symbol.cpp:62",
+      "sink_type": "command_execution"
+    },
+    {
+      "source": "libPath@csrc/event_trace/vallina_symbol.cpp:26",
+      "path": [
+        "LibLoad@csrc/event_trace/vallina_symbol.cpp:26",
+        "dlopen@csrc/event_trace/vallina_symbol.cpp:37"
+      ],
+      "sink": "dlsym(handle, symbol)@csrc/event_trace/vallina_symbol.h:93",
+      "sink_type": "library_loading"
+    },
+    {
+      "source": "filename@csrc/utility/sqlite_loader.cpp:20",
+      "path": [
+        "Sqlite3Open@csrc/utility/sqlite_loader.cpp:20",
+        "sqlite3_open@csrc/utility/sqlite_loader.cpp:26"
+      ],
+      "sink": "Sqlite3Exec(db, sql)@csrc/utility/sqlite_loader.cpp:54",
+      "sink_type": "database_operation"
+    },
+    {
+      "source": "input_path@python/msmemscope/analyzer/leaks.py:71",
+      "path": [
+        "LeaksAnalyzer::read_file@python/msmemscope/analyzer/leaks.py:71",
+        "open@python/msmemscope/analyzer/leaks.py:74"
+      ],
+      "sink": "csv.DictReader@python/msmemscope/analyzer/leaks.py:75",
+      "sink_type": "file_operation"
+    }
+  ]
+}

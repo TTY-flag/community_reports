@@ -1,0 +1,617 @@
+{
+  "project_name": "msMemScope",
+  "scan_time": "2026-04-20T06:00:00Z",
+  "lsp_available": true,
+  "total_files": 137,
+  "total_lines": 20534,
+  "project_profile": {
+    "project_type": "cli_tool",
+    "deployment_model": "Linux服务器上的开发调测工具，通过命令行或Python接口运行，用于内存泄漏检测和性能分析。工具通过LD_PRELOAD机制注入Hook库到目标进程，采集内存事件数据并输出CSV/SQLite格式的分析结果。",
+    "trust_boundaries": [
+      {
+        "boundary": "命令行接口",
+        "trusted_side": "工具内部逻辑",
+        "untrusted_side": "本地用户（命令行参数、输入文件路径、输出路径）",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Python API接口",
+        "trusted_side": "工具内部逻辑",
+        "untrusted_side": "Python调用者（配置参数、监测tensor数据）",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "文件系统",
+        "trusted_side": "工具内部逻辑",
+        "untrusted_side": "用户可控的文件路径（输入CSV/DB文件、输出目录）",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "动态库加载",
+        "trusted_side": "工具内部逻辑",
+        "untrusted_side": "外部动态库（SQLite、Hook库、Ascend库）",
+        "risk": "High"
+      },
+      {
+        "boundary": "目标进程",
+        "trusted_side": "Hook库采集逻辑",
+        "untrusted_side": "被检测的目标进程内存空间",
+        "risk": "Low"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "framework",
+      "path": "csrc/framework",
+      "language": "c_cpp",
+      "components": [
+        "client_parser.cpp",
+        "client_parser.h",
+        "command.cpp",
+        "command.h",
+        "config_info.h",
+        "process.cpp",
+        "process.h",
+        "record_info.h"
+      ]
+    },
+    {
+      "name": "python_itf",
+      "path": "csrc/python_itf",
+      "language": "c_cpp",
+      "components": [
+        "msleaksmodule.cpp",
+        "tracerobject.cpp",
+        "tracerobject.h",
+        "watcherobject.cpp",
+        "watcherobject.h",
+        "describerobject.cpp",
+        "describerobject.h",
+        "report_tensor.cpp",
+        "report_tensor.h"
+      ]
+    },
+    {
+      "name": "utility",
+      "path": "csrc/utility",
+      "language": "c_cpp",
+      "components": [
+        "file.cpp",
+        "file.h",
+        "path.cpp",
+        "path.h",
+        "sqlite_loader.cpp",
+        "sqlite_loader.h",
+        "string_validator.cpp",
+        "string_validator.h",
+        "ustring.cpp",
+        "ustring.h",
+        "json_manager.cpp",
+        "json_manager.h",
+        "log.cpp",
+        "log.h",
+        "call_stack.cpp",
+        "call_stack.h",
+        "cpython.cpp",
+        "cpython.h",
+        "utils.h",
+        "bit_field.h",
+        "comm_def.h",
+        "umask_guard.h",
+        "calculate_data_check_sum.cpp",
+        "calculate_data_check_sum.h"
+      ]
+    },
+    {
+      "name": "analysis",
+      "path": "csrc/analysis",
+      "language": "c_cpp",
+      "components": [
+        "dump.cpp",
+        "dump.h",
+        "event_dispatcher.cpp",
+        "event_dispatcher.h",
+        "memory_state_manager.cpp",
+        "memory_state_manager.h",
+        "memory_compare.cpp",
+        "memory_compare.h",
+        "hal_analyzer.cpp",
+        "hal_analyzer.h",
+        "mstx_analyzer.cpp",
+        "mstx_analyzer.h",
+        "stepinner_analyzer.cpp",
+        "stepinner_analyzer.h",
+        "inefficient_analyzer.cpp",
+        "inefficient_analyzer.h",
+        "decompose_analyzer.cpp",
+        "decompose_analyzer.h",
+        "py_step_manager.cpp",
+        "py_step_manager.h",
+        "data_handler.cpp",
+        "data_handler.h",
+        "event.h",
+        "data.h",
+        "state.h",
+        "state_manager.h",
+        "constant.h",
+        "analyzer_base.h",
+        "python_trace_event.h"
+      ]
+    },
+    {
+      "name": "event_trace",
+      "path": "csrc/event_trace",
+      "language": "c_cpp",
+      "components": [
+        "vallina_symbol.cpp",
+        "vallina_symbol.h",
+        "event_report.cpp",
+        "event_report.h",
+        "python_trace.cpp",
+        "python_trace.h",
+        "describe_trace.cpp",
+        "describe_trace.h",
+        "ascend_hal.h",
+        "ascend_hal_stub.cpp"
+      ]
+    },
+    {
+      "name": "event_trace_hal_hooks",
+      "path": "csrc/event_trace/hal_hooks",
+      "language": "c_cpp",
+      "components": [
+        "hal_hooks.cpp",
+        "hal_hooks.h"
+      ]
+    },
+    {
+      "name": "event_trace_mstx_hooks",
+      "path": "csrc/event_trace/mstx_hooks",
+      "language": "c_cpp",
+      "components": [
+        "mstx_inject.cpp",
+        "mstx_inject.h",
+        "mstx_manager.cpp",
+        "mstx_manager.h",
+        "aten_manager.cpp",
+        "aten_manager.h",
+        "mstx_info.h"
+      ]
+    },
+    {
+      "name": "event_trace_kernel_hooks",
+      "path": "csrc/event_trace/kernel_hooks",
+      "language": "c_cpp",
+      "components": [
+        "acl_hooks.cpp",
+        "acl_hooks.h",
+        "runtime_hooks.cpp",
+        "runtime_hooks.h",
+        "kernel_event_trace.cpp",
+        "kernel_event_trace.h",
+        "driver_prof_api.cpp",
+        "driver_prof_api.h",
+        "runtime_prof_api.cpp",
+        "runtime_prof_api.h",
+        "stars_common.cpp",
+        "stars_common.h"
+      ]
+    },
+    {
+      "name": "event_trace_atb_hooks",
+      "path": "csrc/event_trace/atb_hooks",
+      "language": "c_cpp",
+      "components": [
+        "atb_hooks.cpp",
+        "atb_hooks.h",
+        "atb_stub.h",
+        "enum2string.cpp",
+        "enum2string.h",
+        "mki_stub.h"
+      ]
+    },
+    {
+      "name": "event_trace_memory_pool_trace",
+      "path": "csrc/event_trace/memory_pool_trace",
+      "language": "c_cpp",
+      "components": [
+        "memory_pool_trace_manager.cpp",
+        "memory_pool_trace_manager.h",
+        "atb_memory_pool_trace.cpp",
+        "atb_memory_pool_trace.h",
+        "pta_caching_pool_trace.cpp",
+        "pta_caching_pool_trace.h",
+        "pta_workspace_pool_trace.cpp",
+        "pta_workspace_pool_trace.h",
+        "mindspore_memory_pool_trace.cpp",
+        "mindspore_memory_pool_trace.h",
+        "memory_pool_trace_base.h"
+      ]
+    },
+    {
+      "name": "event_trace_memory_watch",
+      "path": "csrc/event_trace/memory_watch",
+      "language": "c_cpp",
+      "components": [
+        "memory_watch.cpp",
+        "memory_watch.h",
+        "tensor_monitor.cpp",
+        "tensor_monitor.h",
+        "tensor_dumper.cpp",
+        "tensor_dumper.h"
+      ]
+    },
+    {
+      "name": "event_trace_trace_manager",
+      "path": "csrc/event_trace/trace_manager",
+      "language": "c_cpp",
+      "components": [
+        "event_trace_manager.cpp",
+        "event_trace_manager.h"
+      ]
+    },
+    {
+      "name": "python_analyzer",
+      "path": "python/msmemscope/analyzer",
+      "language": "python",
+      "components": [
+        "__init__.py",
+        "base.py",
+        "leaks.py",
+        "inefficient.py",
+        "utility_function.py"
+      ]
+    },
+    {
+      "name": "python_core",
+      "path": "python/msmemscope",
+      "language": "python",
+      "components": [
+        "__init__.py",
+        "aten_collection.py",
+        "describe.py",
+        "optimizer_step_hook.py"
+      ]
+    },
+    {
+      "name": "main",
+      "path": "csrc",
+      "language": "c_cpp",
+      "components": [
+        "main.cpp",
+        "dummy.cpp"
+      ]
+    }
+  ],
+  "files": [
+    {
+      "path": "csrc/framework/client_parser.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "framework",
+      "lines": 896,
+      "priority": 1
+    },
+    {
+      "path": "csrc/event_trace/vallina_symbol.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "event_trace",
+      "lines": 190,
+      "priority": 2
+    },
+    {
+      "path": "csrc/python_itf/watcherobject.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "python_itf",
+      "lines": 273,
+      "priority": 3
+    },
+    {
+      "path": "csrc/python_itf/msleaksmodule.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "python_itf",
+      "lines": 178,
+      "priority": 4
+    },
+    {
+      "path": "csrc/framework/process.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "framework",
+      "lines": 272,
+      "priority": 5
+    },
+    {
+      "path": "csrc/utility/file.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "utility",
+      "lines": 265,
+      "priority": 6
+    },
+    {
+      "path": "csrc/utility/path.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "utility",
+      "lines": 334,
+      "priority": 7
+    },
+    {
+      "path": "csrc/utility/sqlite_loader.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "utility",
+      "lines": 169,
+      "priority": 8
+    },
+    {
+      "path": "csrc/event_trace/mstx_hooks/mstx_inject.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "event_trace_mstx_hooks",
+      "lines": 188,
+      "priority": 9
+    },
+    {
+      "path": "csrc/event_trace/hal_hooks/hal_hooks.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "event_trace_hal_hooks",
+      "lines": 73,
+      "priority": 10
+    },
+    {
+      "path": "csrc/event_trace/kernel_hooks/acl_hooks.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "event_trace_kernel_hooks",
+      "lines": 150,
+      "priority": 11
+    },
+    {
+      "path": "csrc/event_trace/kernel_hooks/runtime_hooks.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "event_trace_kernel_hooks",
+      "lines": 200,
+      "priority": 12
+    },
+    {
+      "path": "csrc/utility/string_validator.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "utility",
+      "lines": 140,
+      "priority": 13
+    },
+    {
+      "path": "csrc/event_trace/trace_manager/event_trace_manager.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "event_trace_trace_manager",
+      "lines": 334,
+      "priority": 14
+    },
+    {
+      "path": "csrc/event_trace/event_report.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "event_trace",
+      "lines": 500,
+      "priority": 15
+    },
+    {
+      "path": "csrc/analysis/dump.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "analysis",
+      "lines": 210,
+      "priority": 16
+    },
+    {
+      "path": "csrc/analysis/memory_compare.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "analysis",
+      "lines": 300,
+      "priority": 17
+    },
+    {
+      "path": "csrc/python_itf/tracerobject.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "python_itf",
+      "lines": 114,
+      "priority": 18
+    },
+    {
+      "path": "csrc/python_itf/describerobject.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "python_itf",
+      "lines": 100,
+      "priority": 19
+    },
+    {
+      "path": "csrc/utility/json_manager.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "utility",
+      "lines": 150,
+      "priority": 20
+    },
+    {
+      "path": "python/msmemscope/__init__.py",
+      "language": "python",
+      "risk": "High",
+      "module": "python_core",
+      "lines": 47,
+      "priority": 21
+    },
+    {
+      "path": "python/msmemscope/analyzer/leaks.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "python_analyzer",
+      "lines": 197,
+      "priority": 22
+    },
+    {
+      "path": "python/msmemscope/analyzer/__init__.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "python_analyzer",
+      "lines": 78,
+      "priority": 23
+    },
+    {
+      "path": "python/msmemscope/aten_collection.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "python_core",
+      "lines": 200,
+      "priority": 24
+    },
+    {
+      "path": "csrc/main.cpp",
+      "language": "c_cpp",
+      "risk": "Low",
+      "module": "main",
+      "lines": 27,
+      "priority": 25
+    },
+    {
+      "path": "csrc/framework/command.cpp",
+      "language": "c_cpp",
+      "risk": "Low",
+      "module": "framework",
+      "lines": 46,
+      "priority": 26
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "csrc/main.cpp",
+      "line": 22,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "CLI工具的主入口，接收用户命令行参数(argc, argv)，用户可以控制所有参数内容",
+      "description": "程序主入口，解析命令行参数并执行命令"
+    },
+    {
+      "file": "csrc/framework/client_parser.cpp",
+      "line": 211,
+      "function": "ClientParser::Interpretor",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "命令行参数解析入口，接收argc/argv并解析大量用户可控参数（路径、步骤、分析类型等）",
+      "description": "解析命令行参数并配置工具行为"
+    },
+    {
+      "file": "csrc/framework/client_parser.cpp",
+      "line": 387,
+      "function": "ParseInputPaths",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "解析用户指定的输入文件路径（--input参数），路径内容完全由用户控制",
+      "description": "解析内存对比分析所需的输入文件路径"
+    },
+    {
+      "file": "csrc/framework/client_parser.cpp",
+      "line": 416,
+      "function": "ParseOutputPath",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "解析用户指定的输出目录路径（--output参数），路径内容完全由用户控制",
+      "description": "解析分析结果输出目录路径"
+    },
+    {
+      "file": "csrc/python_itf/msleaksmodule.cpp",
+      "line": 142,
+      "function": "PyInit__msmemscope",
+      "type": "decorator",
+      "trust_level": "untrusted_local",
+      "justification": "Python C扩展模块入口，被Python解释器调用，配置参数由Python调用者传入",
+      "description": "Python模块初始化，注册start/stop/config/step等接口"
+    },
+    {
+      "file": "csrc/python_itf/msleaksmodule.cpp",
+      "line": 73,
+      "function": "MsmemscopeConfig",
+      "type": "decorator",
+      "trust_level": "untrusted_local",
+      "justification": "Python config()接口，接收用户传入的kwargs配置参数，包括路径、分析类型等",
+      "description": "Python接口配置工具参数"
+    },
+    {
+      "file": "csrc/python_itf/watcherobject.cpp",
+      "line": 148,
+      "function": "PyMemScopeWatcherWatch",
+      "type": "decorator",
+      "trust_level": "untrusted_local",
+      "justification": "Python watcher.watch()接口，接收用户传入的tensor或addr+length参数进行内存监测",
+      "description": "Python接口添加内存监测对象"
+    },
+    {
+      "file": "csrc/event_trace/vallina_symbol.cpp",
+      "line": 52,
+      "function": "ExecuteCommand",
+      "type": "cmdline",
+      "trust_level": "semi_trusted",
+      "justification": "通过popen执行外部命令(which sqlite3)，命令参数来自硬编码字符串，但popen本身存在风险",
+      "description": "执行外部shell命令查找sqlite3库路径"
+    },
+    {
+      "file": "csrc/framework/process.cpp",
+      "line": 172,
+      "function": "Process::SetPreloadEnv",
+      "type": "env",
+      "trust_level": "trusted_admin",
+      "justification": "设置LD_PRELOAD环境变量，Hook库路径来自工具安装目录和ATB_HOME_PATH环境变量，由管理员/部署者控制",
+      "description": "设置进程预加载的Hook库环境变量"
+    },
+    {
+      "file": "csrc/framework/process.cpp",
+      "line": 163,
+      "function": "Process::Launch",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "启动目标进程执行内存采集，目标程序路径和参数由用户命令行指定",
+      "description": "启动被检测的目标进程"
+    },
+    {
+      "file": "python/msmemscope/__init__.py",
+      "line": 28,
+      "function": "ctypes.CDLL",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "动态加载libascend_leaks.so，路径来自ASCEND_HOME_PATH环境变量拼接，环境变量由部署者控制",
+      "description": "Python模块初始化时加载C扩展库"
+    },
+    {
+      "file": "python/msmemscope/analyzer/leaks.py",
+      "line": 71,
+      "function": "LeaksAnalyzer.read_file",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "读取用户指定的CSV文件进行分析，文件路径由Python调用者传入",
+      "description": "读取CSV内存事件数据文件"
+    }
+  ],
+  "attack_surfaces": [
+    "命令行参数接口: msmemscope <options> <prog-and-args>",
+    "Python API接口: msmemscope.config(), msmemscope.start(), msmemscope.stop(), msmemscope.watcher.watch()",
+    "文件输入接口: --input=path1,path2 (CSV/DB文件)",
+    "文件输出接口: --output=path (输出目录)",
+    "动态库加载: dlopen(libsqlite3.so), dlopen(libascend_leaks.so)",
+    "Hook注入机制: LD_PRELOAD设置，Hook库注入目标进程",
+    "Shell命令执行: popen(\"which sqlite3\")",
+    "进程执行: execvpe()执行用户指定的目标程序"
+  ]
+}

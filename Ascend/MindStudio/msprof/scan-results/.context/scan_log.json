@@ -1,0 +1,75 @@
+{
+  "scan_id": "183ce1ab-f9e6-47e6-89a4-98ed3866cf12",
+  "start_time": "2026-04-20T12:58:42Z",
+  "end_time": "2026-04-20T14:30:32Z",
+  "duration_seconds": 6710,
+  "project_name": "msprof",
+  "status": "completed",
+  "agents": [
+    {
+      "name": "architecture",
+      "start_time": "2026-04-20T12:58:42Z",
+      "end_time": "2026-04-20T13:06:05Z",
+      "duration_seconds": 443,
+      "status": "success",
+      "outputs": ["project_model.json", "call_graph.json", "threat_analysis_report.md"],
+      "error": null
+    },
+    {
+      "name": "dataflow-scanner",
+      "start_time": "2026-04-20T13:06:10Z",
+      "end_time": "2026-04-20T13:36:10Z",
+      "duration_seconds": 1800,
+      "status": "failed",
+      "outputs": [],
+      "error": "Task timed out after 30 minutes of inactivity"
+    },
+    {
+      "name": "security-auditor",
+      "start_time": "2026-04-20T13:06:10Z",
+      "end_time": "2026-04-20T13:11:03Z",
+      "duration_seconds": 293,
+      "status": "success",
+      "outputs": ["scan.db"],
+      "error": null
+    },
+    {
+      "name": "verification",
+      "start_time": "2026-04-20T13:11:03Z",
+      "end_time": "2026-04-20T14:22:37Z",
+      "duration_seconds": 694,
+      "status": "success",
+      "outputs": ["scan.db"],
+      "error": null
+    },
+    {
+      "name": "details-analyzer",
+      "start_time": "2026-04-20T14:23:37Z",
+      "end_time": "2026-04-20T14:25:06Z",
+      "duration_seconds": 89,
+      "status": "partial",
+      "outputs": [],
+      "error": "details-worker task still running, report not generated"
+    },
+    {
+      "name": "reporter",
+      "start_time": "2026-04-20T14:28:00Z",
+      "end_time": "2026-04-20T14:30:32Z",
+      "duration_seconds": 152,
+      "status": "success",
+      "outputs": ["report_confirmed.md", "report_unconfirmed.md"],
+      "error": null
+    }
+  ],
+  "summary": {
+    "project_type": "cli_tool_python",
+    "total_files_scanned": 1155,
+    "total_lines": 125906,
+    "candidates_found": 66,
+    "confirmed_vulnerabilities": 1,
+    "likely_vulnerabilities": 18,
+    "possible_vulnerabilities": 26,
+    "false_positives": 21,
+    "lsp_available": false
+  }
+}

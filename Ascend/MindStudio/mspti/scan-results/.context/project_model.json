@@ -1,0 +1,310 @@
+{
+  "project_name": "msPTI (MindStudio Profiling Tools Interface)",
+  "scan_time": "2026-04-20T00:00:00Z",
+  "lsp_available": true,
+  "total_files": 97,
+  "total_lines": 4608,
+  "project_profile": {
+    "project_type": "library",
+    "deployment_model": "作为华为昇腾NPU性能分析工具库，被用户应用程序通过C API或Python API调用。通常部署在华为昇腾AI处理器环境中，与libascendcl.so、libhccl.so、libprofapi.so等华为昇腾库协同工作。",
+    "trust_boundaries": [
+      {
+        "boundary": "Library API Interface",
+        "trusted_side": "User Application",
+        "untrusted_side": "msPTI Library",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Dynamic Library Loading",
+        "trusted_side": "msPTI Library",
+        "untrusted_side": "External Libraries (libascendcl.so, libhccl.so, libprofapi.so, libascend_hal.so)",
+        "risk": "Critical"
+      },
+      {
+        "boundary": "Driver Channel Data",
+        "trusted_side": "msPTI Library",
+        "untrusted_side": "Device Driver (Kernel/Hardware)",
+        "risk": "High"
+      },
+      {
+        "boundary": "Environment Variables",
+        "trusted_side": "msPTI Library",
+        "untrusted_side": "System Environment (ASCEND_HOME_PATH)",
+        "risk": "High"
+      },
+      {
+        "boundary": "User Callback Functions",
+        "trusted_side": "msPTI Library",
+        "untrusted_side": "User-provided Callback Code",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Marker/Domain Names",
+        "trusted_side": "msPTI Library",
+        "untrusted_side": "User-provided Strings (msg, domain names)",
+        "risk": "Medium"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "include",
+      "path": "csrc/include",
+      "language": "c_cpp",
+      "components": ["mspti.h", "mspti_callback.h", "mspti_activity.h", "mspti_result.h", "mspti_cbid.h"]
+    },
+    {
+      "name": "callback",
+      "path": "csrc/callback",
+      "language": "c_cpp",
+      "components": ["callback_manager.cpp", "callback_manager.h"]
+    },
+    {
+      "name": "activity",
+      "path": "csrc/activity",
+      "language": "c_cpp",
+      "components": ["activity_manager.cpp", "activity_manager.h"]
+    },
+    {
+      "name": "activity_ascend_channel",
+      "path": "csrc/activity/ascend/channel",
+      "language": "c_cpp",
+      "components": ["channel_reader.cpp", "channel_reader.h", "channel_pool.cpp", "channel_pool_manager.cpp", "soclog_convert.cpp", "stars_common.cpp", "channel_data.h"]
+    },
+    {
+      "name": "activity_ascend_parser",
+      "path": "csrc/activity/ascend/parser",
+      "language": "c_cpp",
+      "components": ["parser_manager.cpp", "kernel_parser.cpp", "mstx_parser.cpp", "hccl_calculator.cpp", "device_task_calculator.cpp", "cann_hash_cache.cpp", "cann_track_cache.cpp"]
+    },
+    {
+      "name": "activity_ascend_reporter",
+      "path": "csrc/activity/ascend/reporter",
+      "language": "c_cpp",
+      "components": ["memory_reporter.cpp", "external_correlation_reporter.cpp"]
+    },
+    {
+      "name": "common_inject",
+      "path": "csrc/common/inject",
+      "language": "c_cpp",
+      "components": ["acl_inject.cpp", "driver_inject.cpp", "hccl_inject.cpp", "mstx_inject.cpp", "profapi_inject.cpp", "acl_mem_inject.cpp", "plog_inject.cpp", "inject_base.h"]
+    },
+    {
+      "name": "common_utils",
+      "path": "csrc/common",
+      "language": "c_cpp",
+      "components": ["function_loader.cpp", "utils.cpp", "context_manager.cpp", "thread_pool.cpp", "runtime_utils.cpp", "plog_manager.cpp"]
+    },
+    {
+      "name": "mspti_python",
+      "path": "mspti",
+      "language": "python",
+      "components": ["__init__.py", "constant.py", "utils.py", "activity_data.py", "monitor/base_monitor.py", "monitor/kernel_monitor.py", "monitor/hccl_monitor.py", "monitor/mstx_monitor.py"]
+    }
+  ],
+  "files": [
+    {
+      "path": "csrc/common/function_loader.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "common_utils",
+      "lines": 141,
+      "priority": 1
+    },
+    {
+      "path": "csrc/common/inject/acl_inject.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "common_inject",
+      "lines": 329,
+      "priority": 2
+    },
+    {
+      "path": "csrc/common/inject/driver_inject.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "common_inject",
+      "lines": 170,
+      "priority": 3
+    },
+    {
+      "path": "csrc/common/inject/hccl_inject.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "common_inject",
+      "lines": 373,
+      "priority": 4
+    },
+    {
+      "path": "csrc/common/inject/mstx_inject.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "common_inject",
+      "lines": 461,
+      "priority": 5
+    },
+    {
+      "path": "csrc/common/inject/profapi_inject.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "common_inject",
+      "lines": 217,
+      "priority": 6
+    },
+    {
+      "path": "csrc/activity/ascend/channel/channel_reader.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "activity_ascend_channel",
+      "lines": 157,
+      "priority": 7
+    },
+    {
+      "path": "csrc/activity/activity_manager.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "activity",
+      "lines": 428,
+      "priority": 8
+    },
+    {
+      "path": "csrc/callback/callback_manager.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "callback",
+      "lines": 248,
+      "priority": 9
+    },
+    {
+      "path": "csrc/common/utils.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "common_utils",
+      "lines": 149,
+      "priority": 10
+    },
+    {
+      "path": "csrc/activity/ascend/parser/kernel_parser.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "activity_ascend_parser",
+      "lines": 274,
+      "priority": 11
+    },
+    {
+      "path": "csrc/activity/ascend/channel/soclog_convert.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "activity_ascend_channel",
+      "lines": 116,
+      "priority": 12
+    },
+    {
+      "path": "csrc/include/mspti_callback.h",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "include",
+      "lines": 256,
+      "priority": 13
+    },
+    {
+      "path": "csrc/include/mspti_activity.h",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "include",
+      "lines": 860,
+      "priority": 14
+    },
+    {
+      "path": "mspti/monitor/base_monitor.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "mspti_python",
+      "lines": 73,
+      "priority": 15
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "csrc/callback/callback_manager.cpp",
+      "line": 226,
+      "function": "msptiSubscribe",
+      "type": "decorator",
+      "trust_level": "semi_trusted",
+      "justification": "公共API入口点，用户通过此函数订阅回调，传入自定义回调函数和用户数据，用户数据直接传递到回调中",
+      "description": "注册性能分析回调订阅者"
+    },
+    {
+      "file": "csrc/activity/activity_manager.cpp",
+      "line": 388,
+      "function": "msptiActivityRegisterCallbacks",
+      "type": "decorator",
+      "trust_level": "semi_trusted",
+      "justification": "公共API入口点，用户注册缓冲区回调函数，回调函数由用户实现并可能处理来自驱动的数据",
+      "description": "注册活动记录缓冲区回调"
+    },
+    {
+      "file": "csrc/common/function_loader.cpp",
+      "line": 74,
+      "function": "dlopen",
+      "type": "env",
+      "trust_level": "untrusted_local",
+      "justification": "使用dlopen动态加载外部库，库路径由ASCEND_HOME_PATH环境变量决定，可能被恶意用户篡改导致加载恶意库",
+      "description": "动态加载libascendcl.so/libhccl.so/libprofapi.so等外部库"
+    },
+    {
+      "file": "csrc/common/inject/driver_inject.cpp",
+      "line": 120,
+      "function": "ProfChannelRead",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "从驱动通道读取原始性能数据，数据来自设备驱动层，可能被篡改或包含异常数据结构",
+      "description": "从驱动读取通道数据"
+    },
+    {
+      "file": "csrc/activity/ascend/channel/channel_reader.cpp",
+      "line": 85,
+      "function": "ChannelReader::Execute",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "从驱动读取数据后直接进行类型转换和解析，数据未经过验证直接reinterpret_cast",
+      "description": "读取并解析通道数据"
+    },
+    {
+      "file": "csrc/common/inject/mstx_inject.cpp",
+      "line": 193,
+      "function": "MstxMarkAFunc",
+      "type": "stdin",
+      "trust_level": "semi_trusted",
+      "justification": "用户提供的msg字符串直接传递到内部处理，仅做长度检查，未对内容进行完整验证",
+      "description": "处理用户标记消息"
+    },
+    {
+      "file": "csrc/common/utils.cpp",
+      "line": 58,
+      "function": "CanonicalSoPath",
+      "type": "env",
+      "trust_level": "untrusted_local",
+      "justification": "从ASCEND_HOME_PATH环境变量获取库路径，路径拼接后使用realpath规范化但未做充分验证",
+      "description": "从环境变量解析动态库路径"
+    },
+    {
+      "file": "csrc/activity/ascend/parser/kernel_parser.cpp",
+      "line": 86,
+      "function": "KernelParser::ReportRtTaskTrack",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "从MsprofCompactInfo结构解析数据，数据来自profapi回调，结构体内容可能包含异常值",
+      "description": "解析内核任务追踪数据"
+    }
+  ],
+  "attack_surfaces": [
+    "动态库加载机制: dlopen/dlsym 加载 libascendcl.so, libhccl.so, libprofapi.so, libascend_hal.so",
+    "环境变量依赖: ASCEND_HOME_PATH 控制动态库搜索路径",
+    "驱动数据通道: ProfChannelRead 从设备驱动读取原始二进制数据",
+    "用户回调机制: msptiSubscribe/msptiActivityRegisterCallbacks 注册用户回调函数",
+    "字符串输入: mstx标记函数的消息字符串(msg)、域名(domain)",
+    "结构体转换: reinterpret_cast 直接转换驱动数据为内部结构体",
+    "缓冲区操作: memcpy_s 复制活动记录数据到用户提供的缓冲区"
+  ]
+}

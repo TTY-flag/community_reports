@@ -1,0 +1,576 @@
+{
+  "functions": {
+    "main@dynolog_npu/dynolog/src/Main.cpp": {
+      "defined_at": 11,
+      "calls": [
+        "ThreadManager::run@dynolog_npu/dynolog/src/ThreadManager.cpp"
+      ],
+      "called_by": [],
+      "receives_external_input": false,
+      "risk": "Low"
+    },
+    "ThreadManager::run@dynolog_npu/dynolog/src/ThreadManager.cpp": {
+      "defined_at": 199,
+      "calls": [
+        "gflags::ParseCommandLineFlags@external",
+        "google::InitGoogleLogging@external",
+        "ThreadManager::start_threads@dynolog_npu/dynolog/src/ThreadManager.cpp",
+        "IsRoot@dynolog_npu/dynolog/src/utils.cpp"
+      ],
+      "called_by": [
+        "main@dynolog_npu/dynolog/src/Main.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "ThreadManager::start_threads@dynolog_npu/dynolog/src/ThreadManager.cpp": {
+      "defined_at": 166,
+      "calls": [
+        "IPCMonitor::IPCMonitor@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp",
+        "IPCMonitor::setLogger@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp",
+        "IPCMonitor::loop@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp",
+        "IPCMonitor::dataLoop@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp",
+        "SimpleJsonServer::SimpleJsonServer@dynolog_npu/dynolog/src/rpc/SimpleJsonServer.cpp",
+        "SimpleJsonServer::run@dynolog_npu/dynolog/src/rpc/SimpleJsonServer.cpp"
+      ],
+      "called_by": [
+        "ThreadManager::run@dynolog_npu/dynolog/src/ThreadManager.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "SimpleJsonServerBase::initSocket@dynolog_npu/dynolog/src/rpc/SimpleJsonServer.cpp": {
+      "defined_at": 72,
+      "calls": [
+        "::socket@system",
+        "::setsockopt@system",
+        "::bind@system",
+        "::listen@system"
+      ],
+      "called_by": [
+        "SimpleJsonServerBase::SimpleJsonServerBase@dynolog_npu/dynolog/src/rpc/SimpleJsonServer.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "Critical",
+      "sink_type": "network_operation"
+    },
+    "SimpleJsonServerBase::loop@dynolog_npu/dynolog/src/rpc/SimpleJsonServer.cpp": {
+      "defined_at": 303,
+      "calls": [
+        "SimpleJsonServerBase::processOne@dynolog_npu/dynolog/src/rpc/SimpleJsonServer.cpp"
+      ],
+      "called_by": [
+        "ThreadManager::start_threads@dynolog_npu/dynolog/src/ThreadManager.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "SimpleJsonServerBase::processOne@dynolog_npu/dynolog/src/rpc/SimpleJsonServer.cpp": {
+      "defined_at": 314,
+      "calls": [
+        "ClientSocketWrapper::accept@dynolog_npu/dynolog/src/rpc/SimpleJsonServer.cpp",
+        "ClientSocketWrapper::get_message@dynolog_npu/dynolog/src/rpc/SimpleJsonServer.cpp",
+        "processOneImpl@external",
+        "ClientSocketWrapper::send_response@dynolog_npu/dynolog/src/rpc/SimpleJsonServer.cpp"
+      ],
+      "called_by": [
+        "SimpleJsonServerBase::loop@dynolog_npu/dynolog/src/rpc/SimpleJsonServer.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "ClientSocketWrapper::accept@dynolog_npu/dynolog/src/rpc/SimpleJsonServer.cpp": {
+      "defined_at": 151,
+      "calls": [
+        "::accept@system",
+        "inet_ntop@system",
+        "::setsockopt@system",
+        "SSL_new@openssl",
+        "SSL_set_fd@openssl",
+        "SSL_accept@openssl"
+      ],
+      "called_by": [
+        "SimpleJsonServerBase::processOne@dynolog_npu/dynolog/src/rpc/SimpleJsonServer.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "sink_type": "network_operation"
+    },
+    "ClientSocketWrapper::get_message@dynolog_npu/dynolog/src/rpc/SimpleJsonServer.cpp": {
+      "defined_at": 199,
+      "calls": [
+        "read_helper@dynolog_npu/dynolog/src/rpc/SimpleJsonServer.cpp"
+      ],
+      "called_by": [
+        "SimpleJsonServerBase::processOne@dynolog_npu/dynolog/src/rpc/SimpleJsonServer.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "sink_type": "memory_operation"
+    },
+    "IPCMonitor::loop@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp": {
+      "defined_at": 55,
+      "calls": [
+        "FabricManager::recv@dynolog_npu/dynolog/src/ipcfabric/FabricManager.h",
+        "FabricManager::retrieve_msg@dynolog_npu/dynolog/src/ipcfabric/FabricManager.h",
+        "IPCMonitor::processMsg@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp",
+        "usleep@system"
+      ],
+      "called_by": [
+        "ThreadManager::start_threads@dynolog_npu/dynolog/src/ThreadManager.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "IPCMonitor::processMsg@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp": {
+      "defined_at": 79,
+      "calls": [
+        "IPCMonitor::registerLibkinetoContext@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp",
+        "IPCMonitor::getLibkinetoOnDemandRequest@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp",
+        "IPCMonitor::updateLibkinetoStatus@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp"
+      ],
+      "called_by": [
+        "IPCMonitor::loop@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "data_flow": "msg->metadata.type -> memcmp -> processMsg"
+    },
+    "IPCMonitor::processDataMsg@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp": {
+      "defined_at": 141,
+      "calls": [
+        "nlohmann::json::accept@external",
+        "nlohmann::json::parse@external",
+        "IPCMonitor::LogData@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp"
+      ],
+      "called_by": [
+        "IPCMonitor::dataLoop@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "sink_type": "json_parse"
+    },
+    "IPCMonitor::getLibkinetoOnDemandRequest@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp": {
+      "defined_at": 173,
+      "calls": [
+        "LibkinetoConfigManager::obtainOnDemandConfig@dynolog_npu/dynolog/src/LibkinetoConfigManager.cpp",
+        "Message::constructMessage@external",
+        "FabricManager::sync_send@dynolog_npu/dynolog/src/ipcfabric/FabricManager.h"
+      ],
+      "called_by": [
+        "IPCMonitor::processMsg@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "LibkinetoConfigManager::readConfigFromConfigFile@dynolog_npu/dynolog/src/LibkinetoConfigManager.cpp": {
+      "defined_at": 103,
+      "calls": [
+        "std::ifstream::open@system",
+        "std::istreambuf_iterator@system"
+      ],
+      "called_by": [
+        "LibkinetoConfigManager::refreshBaseConfig@dynolog_npu/dynolog/src/LibkinetoConfigManager.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "sink_type": "file_read"
+    },
+    "IpcClient::Init@plugin/ipc_monitor/NpuIpcClient.cpp": {
+      "defined_at": 21,
+      "calls": [
+        "GetPids@plugin/ipc_monitor/utils/utils.cpp"
+      ],
+      "called_by": [
+        "DynoLogNpuMonitor::Init@plugin/ipc_monitor/DynoLogNpuMonitor.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "Low"
+    },
+    "IpcClient::IpcClientNpuConfig@plugin/ipc_monitor/NpuIpcClient.cpp": {
+      "defined_at": 63,
+      "calls": [
+        "malloc@system",
+        "Message::ConstructMessage@external",
+        "IpcClient::SyncSendMessage@plugin/ipc_monitor/NpuIpcClient.cpp",
+        "IpcClient::PollRecvMessage@plugin/ipc_monitor/NpuIpcClient.cpp"
+      ],
+      "called_by": [
+        "DynoLogNpuMonitor::Poll@plugin/ipc_monitor/DynoLogNpuMonitor.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "sink_type": "memory_operation"
+    },
+    "IpcClient::SyncSendMessage@plugin/ipc_monitor/NpuIpcClient.cpp": {
+      "defined_at": 114,
+      "calls": [
+        "NpuIpcEndPoint::BuildSendNpuCtxt@plugin/ipc_monitor/NpuIpcEndPoint.h",
+        "NpuIpcEndPoint::TrySendMessage@plugin/ipc_monitor/NpuIpcEndPoint.h"
+      ],
+      "called_by": [
+        "IpcClient::RegisterInstance@plugin/ipc_monitor/NpuIpcClient.cpp",
+        "IpcClient::SendNpuStatus@plugin/ipc_monitor/NpuIpcClient.cpp",
+        "IpcClient::IpcClientNpuConfig@plugin/ipc_monitor/NpuIpcClient.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "sink_type": "ipc_send"
+    },
+    "InputParser::DynoLogGetOpts@plugin/ipc_monitor/InputParser.cpp": {
+      "defined_at": 142,
+      "calls": [
+        "validateArgs@plugin/ipc_monitor/InputParser.cpp",
+        "str2Kinds@plugin/ipc_monitor/InputParser.cpp",
+        "Str2Uint32@plugin/ipc_monitor/utils/utils.cpp",
+        "Str2Bool@plugin/ipc_monitor/utils/utils.cpp"
+      ],
+      "called_by": [
+        "DynoLogNpuMonitor::EnableMsptiMonitor@plugin/ipc_monitor/DynoLogNpuMonitor.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "sink_type": "input_parse"
+    },
+    "MsptiMonitor::Start@plugin/ipc_monitor/mspti_monitor/MsptiMonitor.cpp": {
+      "defined_at": 42,
+      "calls": [
+        "MsptiMonitor::Thread::Start@external",
+        "MsptiDataProcessBase::SetReportInterval@external",
+        "MsptiDataProcessBase::Run@external"
+      ],
+      "called_by": [
+        "DynoLogNpuMonitor::DealMonitorReq@plugin/ipc_monitor/DynoLogNpuMonitor.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "Low"
+    },
+    "MsptiMonitor::Run@plugin/ipc_monitor/mspti_monitor/MsptiMonitor.cpp": {
+      "defined_at": 179,
+      "calls": [
+        "msptiSubscribe@mspti",
+        "msptiActivityRegisterCallbacks@mspti",
+        "msptiActivityFlushAll@mspti",
+        "msptiUnsubscribe@mspti",
+        "msptiActivityDisable@mspti"
+      ],
+      "called_by": [
+        "MsptiMonitor::Start@plugin/ipc_monitor/mspti_monitor/MsptiMonitor.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "sink_type": "mspti_callback"
+    },
+    "MsptiMonitor::BufferRequest@plugin/ipc_monitor/mspti_monitor/MsptiMonitor.cpp": {
+      "defined_at": 225,
+      "calls": [
+        "MsptiMalloc@plugin/ipc_monitor/utils/utils.cpp"
+      ],
+      "called_by": [
+        "msptiActivityRegisterCallbacks@mspti"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "sink_type": "memory_operation"
+    },
+    "MsptiMonitor::BufferComplete@plugin/ipc_monitor/mspti_monitor/MsptiMonitor.cpp": {
+      "defined_at": 249,
+      "calls": [
+        "msptiActivityGetNextRecord@mspti",
+        "MsptiMonitor::BufferConsume@plugin/ipc_monitor/mspti_monitor/MsptiMonitor.cpp",
+        "MsptiFree@plugin/ipc_monitor/utils/utils.cpp"
+      ],
+      "called_by": [
+        "msptiActivityRegisterCallbacks@mspti"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "sink_type": "buffer_process"
+    },
+    "MsptiMonitor::BufferConsume@plugin/ipc_monitor/mspti_monitor/MsptiMonitor.cpp": {
+      "defined_at": 271,
+      "calls": [
+        "MsptiDataProcessBase::ConsumeMsptiData@external"
+      ],
+      "called_by": [
+        "MsptiMonitor::BufferComplete@plugin/ipc_monitor/mspti_monitor/MsptiMonitor.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "DBProcessManager::ConsumeMsptiData@plugin/ipc_monitor/db/DBProcessManager.cpp": {
+      "defined_at": 466,
+      "calls": [
+        "DBProcessManager::ProcessApiData@plugin/ipc_monitor/db/DBProcessManager.cpp",
+        "DBProcessManager::ProcessCommunicationData@plugin/ipc_monitor/db/DBProcessManager.cpp",
+        "DBProcessManager::ProcessKernelData@plugin/ipc_monitor/db/DBProcessManager.cpp",
+        "DBProcessManager::ProcessMstxData@plugin/ipc_monitor/db/DBProcessManager.cpp"
+      ],
+      "called_by": [
+        "MsptiMonitor::BufferConsume@plugin/ipc_monitor/mspti_monitor/MsptiMonitor.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "sink_type": "database_write"
+    },
+    "DBProcessManager::SaveData@plugin/ipc_monitor/db/DBProcessManager.cpp": {
+      "defined_at": 185,
+      "calls": [
+        "DBProcessManager::CheckAndInitDB@plugin/ipc_monitor/db/DBProcessManager.cpp",
+        "DBProcessManager::SaveIncDataToDB@external"
+      ],
+      "called_by": [
+        "DBProcessManager::ExecuteTask@plugin/ipc_monitor/db/DBProcessManager.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "sink_type": "database_write"
+    },
+    "JsonlProcessManager::ConsumeMsptiData@plugin/ipc_monitor/jsonl/JsonlProcessManager.cpp": {
+      "defined_at": 362,
+      "calls": [
+        "JsonlProcessManager::ProcessApiData@plugin/ipc_monitor/jsonl/JsonlProcessManager.cpp",
+        "JsonlProcessManager::ProcessCommunicationData@plugin/ipc_monitor/jsonl/JsonlProcessManager.cpp",
+        "JsonlProcessManager::ProcessKernelData@plugin/ipc_monitor/jsonl/JsonlProcessManager.cpp",
+        "JsonlProcessManager::ProcessMstxData@plugin/ipc_monitor/jsonl/JsonlProcessManager.cpp"
+      ],
+      "called_by": [
+        "MsptiMonitor::BufferConsume@plugin/ipc_monitor/mspti_monitor/MsptiMonitor.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "sink_type": "file_write"
+    },
+    "JsonlProcessManager::ProcessApiData@plugin/ipc_monitor/jsonl/JsonlProcessManager.cpp": {
+      "defined_at": 185,
+      "calls": [
+        "nlohmann::json::operator[]@external",
+        "JsonlDataDumper::Record@plugin/ipc_monitor/jsonl/JsonlDataDumper.cpp"
+      ],
+      "called_by": [
+        "JsonlProcessManager::ConsumeMsptiData@plugin/ipc_monitor/jsonl/JsonlProcessManager.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "sink_type": "json_construct"
+    },
+    "NpuIpcEndPoint::NpuIpcEndPoint@plugin/ipc_monitor/NpuIpcEndPoint.h": {
+      "defined_at": 57,
+      "calls": [
+        "socket@system",
+        "SetSocketAdress@plugin/ipc_monitor/NpuIpcEndPoint.h",
+        "unlink@system",
+        "bind@system",
+        "chmod@system"
+      ],
+      "called_by": [
+        "IpcClient::Init@plugin/ipc_monitor/NpuIpcClient.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "High",
+      "sink_type": "ipc_init"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "SimpleJsonServer::processOne@dynolog_npu/dynolog/src/rpc/SimpleJsonServer.cpp:321",
+      "path": [
+        "ClientSocketWrapper::get_message@dynolog_npu/dynolog/src/rpc/SimpleJsonServer.cpp:199",
+        "processOneImpl@external"
+      ],
+      "sink": "ServiceHandler::handleRequest@external",
+      "sink_type": "json_process",
+      "cross_module": true
+    },
+    {
+      "source": "IPCMonitor::dataLoop@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp:67",
+      "path": [
+        "FabricManager::recv@dynolog_npu/dynolog/src/ipcfabric/FabricManager.h",
+        "IPCMonitor::processDataMsg@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp:141"
+      ],
+      "sink": "nlohmann::json::parse@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp:161",
+      "sink_type": "json_parse",
+      "cross_module": false
+    },
+    {
+      "source": "MsptiMonitor::BufferComplete@plugin/ipc_monitor/mspti_monitor/MsptiMonitor.cpp:249",
+      "path": [
+        "msptiActivityGetNextRecord@mspti",
+        "MsptiMonitor::BufferConsume@plugin/ipc_monitor/mspti_monitor/MsptiMonitor.cpp:271",
+        "DBProcessManager::ConsumeMsptiData@plugin/ipc_monitor/db/DBProcessManager.cpp:466"
+      ],
+      "sink": "DBProcessManager::SaveIncDataToDB@plugin/ipc_monitor/db/DBProcessManager.cpp",
+      "sink_type": "database_write",
+      "cross_module": true
+    },
+    {
+      "source": "DynoLogNpuMonitor::EnableMsptiMonitor@plugin/ipc_monitor/DynoLogNpuMonitor.cpp:123",
+      "path": [
+        "InputParser::DynoLogGetOpts@plugin/ipc_monitor/InputParser.cpp:142",
+        "validateArgs@plugin/ipc_monitor/InputParser.cpp:104"
+      ],
+      "sink": "std::unordered_map::find@plugin/ipc_monitor/InputParser.cpp",
+      "sink_type": "input_parse",
+      "cross_module": false
+    },
+    {
+      "source": "IpcClient::IpcClientNpuConfig@plugin/ipc_monitor/NpuIpcClient.cpp:63",
+      "path": [
+        "malloc@system",
+        "IpcClient::SyncSendMessage@plugin/ipc_monitor/NpuIpcClient.cpp:114",
+        "NpuIpcEndPoint::TrySendMessage@plugin/ipc_monitor/NpuIpcEndPoint.h:117"
+      ],
+      "sink": "sendmsg@system",
+      "sink_type": "ipc_send",
+      "cross_module": false
+    },
+    {
+      "source": "IpcClient::Recv@plugin/ipc_monitor/NpuIpcClient.cpp:137",
+      "path": [
+        "NpuIpcEndPoint::TryPeekMessage@plugin/ipc_monitor/NpuIpcEndPoint.h:154",
+        "recvmsg@system"
+      ],
+      "sink": "msgDynoDeque_.push_back@plugin/ipc_monitor/NpuIpcClient.cpp:171",
+      "sink_type": "ipc_recv",
+      "cross_module": false
+    },
+    {
+      "source": "LibkinetoConfigManager::refreshBaseConfig@dynolog_npu/dynolog/src/LibkinetoConfigManager.cpp:121",
+      "path": [
+        "readConfigFromConfigFile@dynolog_npu/dynolog/src/LibkinetoConfigManager.cpp:103",
+        "std::ifstream::open@system"
+      ],
+      "sink": "/etc/libkineto.conf@dynolog_npu/dynolog/src/LibkinetoConfigManager.cpp:28",
+      "sink_type": "file_read",
+      "cross_module": false
+    }
+  ],
+  "cross_module_calls": [
+    {
+      "caller": "ThreadManager::start_threads@dynolog_npu/dynolog/src/ThreadManager.cpp:166",
+      "callee": "IPCMonitor::loop@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp:55",
+      "caller_module": "dynolog_daemon",
+      "callee_module": "dynolog_daemon",
+      "description": "启动IPC监控线程"
+    },
+    {
+      "caller": "ThreadManager::start_threads@dynolog_npu/dynolog/src/ThreadManager.cpp:192",
+      "callee": "SimpleJsonServer::run@dynolog_npu/dynolog/src/rpc/SimpleJsonServer.cpp:332",
+      "caller_module": "dynolog_daemon",
+      "callee_module": "dynolog_daemon",
+      "description": "启动RPC服务器线程"
+    },
+    {
+      "caller": "IPCMonitor::getLibkinetoOnDemandRequest@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp:201",
+      "callee": "LibkinetoConfigManager::obtainOnDemandConfig@dynolog_npu/dynolog/src/LibkinetoConfigManager.cpp:183",
+      "caller_module": "dynolog_daemon",
+      "callee_module": "dynolog_daemon",
+      "description": "获取libkineto配置"
+    },
+    {
+      "caller": "DynoLogNpuMonitor::Init@plugin/ipc_monitor/DynoLogNpuMonitor.cpp:50",
+      "callee": "IpcClient::Init@plugin/ipc_monitor/NpuIpcClient.cpp:21",
+      "caller_module": "ipc_monitor_plugin",
+      "callee_module": "ipc_monitor_plugin",
+      "description": "初始化IPC客户端"
+    },
+    {
+      "caller": "DynoLogNpuMonitor::EnableMsptiMonitor@plugin/ipc_monitor/DynoLogNpuMonitor.cpp:125",
+      "callee": "InputParser::DynoLogGetOpts@plugin/ipc_monitor/InputParser.cpp:142",
+      "caller_module": "ipc_monitor_plugin",
+      "callee_module": "ipc_monitor_plugin",
+      "description": "解析监控配置"
+    },
+    {
+      "caller": "DynoLogNpuMonitor::DealMonitorReq@plugin/ipc_monitor/DynoLogNpuMonitor.cpp:62",
+      "callee": "MsptiMonitor::Start@plugin/ipc_monitor/mspti_monitor/MsptiMonitor.cpp:42",
+      "caller_module": "ipc_monitor_plugin",
+      "callee_module": "ipc_monitor_plugin",
+      "description": "启动MSPTI监控"
+    },
+    {
+      "caller": "MsptiMonitor::BufferConsume@plugin/ipc_monitor/mspti_monitor/MsptiMonitor.cpp:276",
+      "callee": "DBProcessManager::ConsumeMsptiData@plugin/ipc_monitor/db/DBProcessManager.cpp:466",
+      "caller_module": "ipc_monitor_plugin",
+      "callee_module": "ipc_monitor_plugin",
+      "description": "处理MSPTI数据并写入数据库"
+    },
+    {
+      "caller": "MsptiMonitor::BufferConsume@plugin/ipc_monitor/mspti_monitor/MsptiMonitor.cpp:276",
+      "callee": "JsonlProcessManager::ConsumeMsptiData@plugin/ipc_monitor/jsonl/JsonlProcessManager.cpp:362",
+      "caller_module": "ipc_monitor_plugin",
+      "callee_module": "ipc_monitor_plugin",
+      "description": "处理MSPTI数据并写入JSONL"
+    },
+    {
+      "caller": "IPCMonitor::processMsg@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp:79",
+      "callee": "IPCMonitor::registerLibkinetoContext@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp:219",
+      "caller_module": "dynolog_daemon",
+      "callee_module": "dynolog_daemon",
+      "description": "注册libkineto上下文"
+    },
+    {
+      "caller": "IpcClient::SyncSendMessage@plugin/ipc_monitor/NpuIpcClient.cpp:114",
+      "callee": "NpuIpcEndPoint::TrySendMessage@plugin/ipc_monitor/NpuIpcEndPoint.h:117",
+      "caller_module": "ipc_monitor_plugin",
+      "callee_module": "ipc_monitor_plugin",
+      "description": "发送IPC消息到Unix Socket"
+    },
+    {
+      "caller": "NpuIpcEndPoint::TrySendMessage@plugin/ipc_monitor/NpuIpcEndPoint.h:119",
+      "callee": "sendmsg@system",
+      "caller_module": "ipc_monitor_plugin",
+      "callee_module": "system",
+      "description": "系统调用发送消息"
+    },
+    {
+      "caller": "FabricManager::recv@dynolog_npu/dynolog/src/ipcfabric/FabricManager.h",
+      "callee": "recvmsg@system",
+      "caller_module": "dynolog_daemon",
+      "callee_module": "system",
+      "description": "系统调用接收IPC消息"
+    }
+  ],
+  "high_risk_functions": [
+    {
+      "function": "SimpleJsonServerBase::initSocket@dynolog_npu/dynolog/src/rpc/SimpleJsonServer.cpp:72",
+      "risk": "Critical",
+      "reason": "监听公网TCP端口1778，可能暴露给远程攻击者"
+    },
+    {
+      "function": "ClientSocketWrapper::accept@dynolog_npu/dynolog/src/rpc/SimpleJsonServer.cpp:151",
+      "risk": "Critical",
+      "reason": "接受远程客户端连接，处理IPv6地址解析"
+    },
+    {
+      "function": "ClientSocketWrapper::get_message@dynolog_npu/dynolog/src/rpc/SimpleJsonServer.cpp:199",
+      "risk": "Critical",
+      "reason": "从网络读取数据，消息大小由客户端控制"
+    },
+    {
+      "function": "IPCMonitor::processDataMsg@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp:141",
+      "risk": "Critical",
+      "reason": "解析IPC JSON消息，可能触发JSON解析漏洞"
+    },
+    {
+      "function": "IPCMonitor::processMsg@dynolog_npu/dynolog/src/tracing/IPCMonitor.cpp:79",
+      "risk": "Critical",
+      "reason": "处理IPC消息类型判断，使用memcmp可能绕过"
+    },
+    {
+      "function": "InputParser::DynoLogGetOpts@plugin/ipc_monitor/InputParser.cpp:142",
+      "risk": "High",
+      "reason": "解析来自守护进程的配置字符串，验证逻辑可能不完整"
+    },
+    {
+      "function": "MsptiMonitor::BufferComplete@plugin/ipc_monitor/mspti_monitor/MsptiMonitor.cpp:249",
+      "risk": "High",
+      "reason": "处理MSPTI原始缓冲区数据，可能存在缓冲区溢出"
+    },
+    {
+      "function": "NpuIpcEndPoint::NpuIpcEndPoint@plugin/ipc_monitor/NpuIpcEndPoint.h:57",
+      "risk": "High",
+      "reason": "创建Unix Domain Socket，路径验证可能不足"
+    }
+  ]
+}

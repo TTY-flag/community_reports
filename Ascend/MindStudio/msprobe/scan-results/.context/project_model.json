@@ -1,0 +1,345 @@
+{
+  "project_name": "msprobe",
+  "scan_time": "2026-04-20T10:30:00Z",
+  "lsp_available": true,
+  "total_files": 503,
+  "total_lines": 90436,
+  "project_profile": {
+    "project_type": "cli_tool_python",
+    "deployment_model": "Python CLI 工具，由本地用户在开发环境中执行，用于调试 AI 模型精度问题。主要场景包括 PyTorch/MindSpore 训练和推理的精度数据采集、比对和分析。",
+    "trust_boundaries": [
+      {
+        "boundary": "CLI Interface",
+        "trusted_side": "Application logic",
+        "untrusted_side": "Local user (command line arguments)",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Configuration File Input",
+        "trusted_side": "Application logic",
+        "untrusted_side": "Local user (JSON/YAML config files)",
+        "risk": "High"
+      },
+      {
+        "boundary": "Data File Input",
+        "trusted_side": "Application logic",
+        "untrusted_side": "Local user (dump data files, golden data files)",
+        "risk": "High"
+      },
+      {
+        "boundary": "C/C++ Extension Boundary",
+        "trusted_side": "Python code",
+        "untrusted_side": "C/C++ adump module",
+        "risk": "Medium"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "cli_entry",
+      "path": "python/msprobe",
+      "language": "python",
+      "components": ["msprobe.py", "__init__.py"]
+    },
+    {
+      "name": "core_compare",
+      "path": "python/msprobe/core/compare",
+      "language": "python",
+      "components": ["acc_compare.py", "compare_cli.py", "atb_data_compare.py", "torchair_acc_cmp.py", "utils.py"]
+    },
+    {
+      "name": "core_dump",
+      "path": "python/msprobe/core/dump",
+      "language": "python",
+      "components": ["dump2db/dump2db.py", "dump2db/db_utils.py"]
+    },
+    {
+      "name": "core_config_check",
+      "path": "python/msprobe/core/config_check",
+      "language": "python",
+      "components": ["config_check_cli.py", "config_checker.py"]
+    },
+    {
+      "name": "core_file_utils",
+      "path": "python/msprobe/core/common",
+      "language": "python",
+      "components": ["file_utils.py", "const.py", "utils.py", "exceptions.py"]
+    },
+    {
+      "name": "pytorch_dump",
+      "path": "python/msprobe/pytorch/dump",
+      "language": "python",
+      "components": ["dump_process.py", "dump_tool.py"]
+    },
+    {
+      "name": "mindspore_dump",
+      "path": "python/msprobe/mindspore/dump",
+      "language": "python",
+      "components": ["dump_process.py", "dump_tool.py"]
+    },
+    {
+      "name": "infer_offline",
+      "path": "python/msprobe/infer/offline",
+      "language": "python",
+      "components": ["compare/msquickcmp/main.py", "compare/msquickcmp/dump/dump_process.py"]
+    },
+    {
+      "name": "visualization",
+      "path": "python/msprobe/visualization",
+      "language": "python",
+      "components": ["graph_service.py", "graph/graph.py", "builder/graph_builder.py"]
+    },
+    {
+      "name": "overflow_check",
+      "path": "python/msprobe/overflow_check",
+      "language": "python",
+      "components": ["analyzer.py", "graph.py", "utils.py"]
+    },
+    {
+      "name": "adump_core",
+      "path": "ccsrc/adump/core",
+      "language": "c_cpp",
+      "components": ["PrecisionDebugger.cpp", "AclDumpDataProcessor.cpp", "AclDumper.cpp", "AclTensor.cpp"]
+    },
+    {
+      "name": "adump_base",
+      "path": "ccsrc/adump/base",
+      "language": "c_cpp",
+      "components": ["DebuggerConfig.cpp", "Environment.cpp", "ErrorInfosManager.cpp"]
+    },
+    {
+      "name": "adump_utils",
+      "path": "ccsrc/adump/utils",
+      "language": "c_cpp",
+      "components": ["FileUtils.cpp", "FileOperation.cpp", "DataUtils.cpp", "MathUtils.cpp", "CPythonUtils.cpp"]
+    },
+    {
+      "name": "adump_if_python",
+      "path": "ccsrc/adump/if/python",
+      "language": "c_cpp",
+      "components": ["PrecisionDebuggerIfPython.cpp", "CPythonAgent.cpp", "ACLDump.cpp", "MsProbeIfPython.cpp"]
+    },
+    {
+      "name": "adump_third_party",
+      "path": "ccsrc/adump/third_party",
+      "language": "c_cpp",
+      "components": ["ACL/AclApi.cpp"]
+    }
+  ],
+  "files": [
+    {
+      "path": "python/msprobe/msprobe.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "cli_entry",
+      "lines": 107,
+      "priority": 1
+    },
+    {
+      "path": "python/msprobe/core/common/file_utils.py",
+      "language": "python",
+      "risk": "Critical",
+      "module": "core_file_utils",
+      "lines": 1169,
+      "priority": 1
+    },
+    {
+      "path": "python/msprobe/core/common/utils.py",
+      "language": "python",
+      "risk": "High",
+      "module": "core_file_utils",
+      "lines": 500,
+      "priority": 2
+    },
+    {
+      "path": "python/msprobe/core/compare/acc_compare.py",
+      "language": "python",
+      "risk": "High",
+      "module": "core_compare",
+      "lines": 400,
+      "priority": 2
+    },
+    {
+      "path": "python/msprobe/core/compare/utils.py",
+      "language": "python",
+      "risk": "High",
+      "module": "core_compare",
+      "lines": 800,
+      "priority": 3
+    },
+    {
+      "path": "python/msprobe/core/dump/dump2db/dump2db.py",
+      "language": "python",
+      "risk": "High",
+      "module": "core_dump",
+      "lines": 407,
+      "priority": 3
+    },
+    {
+      "path": "python/msprobe/core/config_check/config_check_cli.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "core_config_check",
+      "lines": 51,
+      "priority": 4
+    },
+    {
+      "path": "python/msprobe/infer/offline/compare/msquickcmp/main.py",
+      "language": "python",
+      "risk": "High",
+      "module": "infer_offline",
+      "lines": 200,
+      "priority": 3
+    },
+    {
+      "path": "ccsrc/adump/base/DebuggerConfig.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "adump_base",
+      "lines": 515,
+      "priority": 1
+    },
+    {
+      "path": "ccsrc/adump/utils/FileUtils.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "adump_utils",
+      "lines": 614,
+      "priority": 1
+    },
+    {
+      "path": "ccsrc/adump/utils/FileOperation.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "adump_utils",
+      "lines": 182,
+      "priority": 2
+    },
+    {
+      "path": "ccsrc/adump/core/AclDumpDataProcessor.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "adump_core",
+      "lines": 922,
+      "priority": 1
+    },
+    {
+      "path": "ccsrc/adump/utils/CPythonUtils.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "adump_utils",
+      "lines": 540,
+      "priority": 2
+    },
+    {
+      "path": "ccsrc/adump/if/python/PrecisionDebuggerIfPython.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "adump_if_python",
+      "lines": 175,
+      "priority": 2
+    },
+    {
+      "path": "ccsrc/adump/core/PrecisionDebugger.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "adump_core",
+      "lines": 140,
+      "priority": 3
+    },
+    {
+      "path": "ccsrc/adump/third_party/ACL/AclApi.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "adump_third_party",
+      "lines": 150,
+      "priority": 4
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "python/msprobe/msprobe.py",
+      "line": 34,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "CLI 工具入口，本地用户通过命令行参数控制工具行为，参数值可被攻击者（本地非特权用户）控制",
+      "description": "解析命令行参数并调用对应子命令"
+    },
+    {
+      "file": "python/msprobe/core/common/file_utils.py",
+      "line": 525,
+      "function": "load_json",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "读取 JSON 配置文件，文件路径由用户通过 CLI 参数传入，文件内容由用户控制",
+      "description": "加载 JSON 配置文件内容"
+    },
+    {
+      "file": "python/msprobe/core/common/file_utils.py",
+      "line": 503,
+      "function": "load_yaml",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "读取 YAML 配置文件，文件路径由用户通过 CLI 参数传入，文件内容由用户控制",
+      "description": "加载 YAML 配置文件内容"
+    },
+    {
+      "file": "python/msprobe/core/common/file_utils.py",
+      "line": 515,
+      "function": "load_npy",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "读取 numpy 数据文件，文件路径由用户通过 CLI 参数传入，文件内容可能包含恶意构造的数组",
+      "description": "加载 numpy 数据文件"
+    },
+    {
+      "file": "python/msprobe/core/dump/dump2db/dump2db.py",
+      "line": 323,
+      "function": "_process_dump_file",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "处理 dump.json 文件，文件路径和数据内容由用户控制，包含大量 tensor 统计数据",
+      "description": "解析 dump.json 文件并导入数据库"
+    },
+    {
+      "file": "ccsrc/adump/base/DebuggerConfig.cpp",
+      "line": 462,
+      "function": "LoadConfig",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "C++ 层加载配置文件，配置路径由 Python 传入（来自用户 CLI 参数），配置内容由用户控制",
+      "description": "加载并解析 JSON 配置文件"
+    },
+    {
+      "file": "ccsrc/adump/core/AclDumpDataProcessor.cpp",
+      "line": 886,
+      "function": "DumpToDisk",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "处理 ACL dump 数据并写入磁盘，数据来源为 ACL API（硬件层），但路径配置来自用户",
+      "description": "处理并写入 dump 数据到磁盘"
+    },
+    {
+      "file": "ccsrc/adump/if/python/PrecisionDebuggerIfPython.cpp",
+      "line": 42,
+      "function": "InitPrecisionDebugger",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "Python C API 接口，从 Python 层接收 framework 和 config_path 参数，参数来自用户 CLI",
+      "description": "初始化 PrecisionDebugger C++ 对象"
+    }
+  ],
+  "attack_surfaces": [
+    "CLI 参数解析: argparse 解析命令行参数",
+    "JSON 配置文件解析: nlohmann::json (C++), json.load() (Python)",
+    "YAML 配置文件解析: yaml.safe_load()",
+    "Numpy 文件解析: np.load() with allow_pickle=False",
+    "Protobuf 数据解析: AclDumpMsg::DumpData.ParseFromArray()",
+    "CSV 文件读写: pd.read_csv(), csv.writer",
+    "Excel 文件读写: pd.read_excel(), pd.ExcelWriter",
+    "ZIP 文件处理: zipfile.ZipFile",
+    "文件路径处理: os.path, FileUtils::GetAbsPath",
+    "Python C API 边界: PyObject_Call, PyDict_GetItemString"
+  ]
+}

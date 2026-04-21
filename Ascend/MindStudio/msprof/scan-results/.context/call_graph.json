@@ -1,0 +1,302 @@
+{
+  "functions": {
+    "main@analysis/msinterface/msprof_entrance.py": {
+      "defined_at": 107,
+      "calls": [
+        "construct_arg_parser@analysis/msinterface/msprof_entrance.py",
+        "_handle_export_command@analysis/msinterface/msprof_entrance.py",
+        "_handle_query_command@analysis/msinterface/msprof_entrance.py",
+        "_handle_import_command@analysis/msinterface/msprof_entrance.py",
+        "_handle_analyze_command@analysis/msinterface/msprof_entrance.py",
+        "check_path_char_valid@analysis/common_func/msprof_common.py",
+        "check_path_valid@analysis/common_func/msprof_common.py",
+        "check_parent_dir_invalid@analysis/common_func/file_manager.py"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "construct_arg_parser@analysis/msinterface/msprof_entrance.py": {
+      "defined_at": 164,
+      "calls": [
+        "_query_parser@analysis/msinterface/msprof_entrance.py",
+        "_export_parser@analysis/msinterface/msprof_entrance.py",
+        "_import_parser@analysis/msinterface/msprof_entrance.py",
+        "_analyze_parser@analysis/msinterface/msprof_entrance.py"
+      ],
+      "called_by": ["main@analysis/msinterface/msprof_entrance.py"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "_handle_export_command@analysis/msinterface/msprof_entrance.py": {
+      "defined_at": 60,
+      "calls": [
+        "process@analysis/msinterface/msprof_export.py"
+      ],
+      "called_by": ["main@analysis/msinterface/msprof_entrance.py"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "_handle_analyze_command@analysis/msinterface/msprof_entrance.py": {
+      "defined_at": 80,
+      "calls": [
+        "process@analysis/msinterface/msprof_analyze.py"
+      ],
+      "called_by": ["main@analysis/msinterface/msprof_entrance.py"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "process@analysis/msinterface/msprof_export.py": {
+      "defined_at": 342,
+      "calls": [
+        "check_path_valid@analysis/common_func/msprof_common.py",
+        "check_file_readable@analysis/common_func/file_manager.py",
+        "_process_sub_dirs@analysis/msinterface/msprof_export.py",
+        "_show_cluster_tuning@analysis/msinterface/msprof_export.py"
+      ],
+      "called_by": ["_handle_export_command@analysis/msinterface/msprof_entrance.py"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "process@analysis/msinterface/msprof_analyze.py": {
+      "defined_at": 40,
+      "calls": [
+        "check_prof_level0@analysis/common_func/data_check_manager.py",
+        "process@analysis/analyzer/communication_analyzer.py",
+        "_clear_dir@analysis/msinterface/msprof_analyze.py"
+      ],
+      "called_by": ["_handle_analyze_command@analysis/msinterface/msprof_entrance.py"],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "check_path_valid@analysis/common_func/file_manager.py": {
+      "defined_at": 204,
+      "calls": [
+        "is_link@analysis/common_func/file_manager.py",
+        "is_root_user@analysis/common_func/file_manager.py",
+        "is_other_writable@analysis/common_func/file_manager.py",
+        "check_path_owner@analysis/common_func/file_manager.py"
+      ],
+      "called_by": [
+        "main@analysis/msinterface/msprof_entrance.py",
+        "process@analysis/msinterface/msprof_export.py",
+        "__get_json_data@analysis/common_func/info_conf_reader.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "check_path_valid@analysis/common_func/msprof_common.py": {
+      "defined_at": 104,
+      "calls": [
+        "check_dir_writable@analysis/common_func/file_manager.py"
+      ],
+      "called_by": [
+        "process@analysis/msinterface/msprof_export.py",
+        "_load_host_start_time@analysis/common_func/info_conf_reader.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "__get_json_data@analysis/common_func/info_conf_reader.py": {
+      "defined_at": 80,
+      "calls": [
+        "FileOpen@analysis/common_func/file_manager.py",
+        "json.loads@stdlib"
+      ],
+      "called_by": [
+        "_load_json@analysis/common_func/info_conf_reader.py",
+        "get_root_data@analysis/common_func/info_conf_reader.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "_load_json@analysis/common_func/info_conf_reader.py": {
+      "defined_at": 488,
+      "calls": [
+        "__get_json_data@analysis/common_func/info_conf_reader.py",
+        "get_conf_file_path@analysis/common_func/info_conf_reader.py"
+      ],
+      "called_by": ["load_info@analysis/common_func/info_conf_reader.py"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "FileOpen@analysis/common_func/file_manager.py": {
+      "defined_at": 141,
+      "calls": [
+        "check_path_valid@analysis/common_func/file_manager.py",
+        "open@stdlib"
+      ],
+      "called_by": [
+        "__get_json_data@analysis/common_func/info_conf_reader.py",
+        "_load_dev_start_time@analysis/common_func/info_conf_reader.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "FdOpen@analysis/common_func/file_manager.py": {
+      "defined_at": 162,
+      "calls": [
+        "check_dir_writable@analysis/common_func/file_manager.py",
+        "os.open@stdlib",
+        "os.fdopen@stdlib"
+      ],
+      "called_by": [
+        "storage_query_result_json_file@analysis/common_func/file_manager.py",
+        "add_all_file_complete@analysis/common_func/msprof_common.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "analyze_collect_data@analysis/common_func/msprof_common.py": {
+      "defined_at": 183,
+      "calls": [
+        "check_collection_dir@analysis/common_func/msprof_common.py",
+        "prepare_for_parse@analysis/common_func/msprof_common.py",
+        "update_sample_json@analysis/common_func/msprof_common.py",
+        "AI@analysis/framework/collection_engine.py",
+        "FileDispatch@analysis/framework/file_dispatch.py"
+      ],
+      "called_by": ["_analyse_data@analysis/msinterface/msprof_export.py"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "dispatch_parser@analysis/framework/file_dispatch.py": {
+      "defined_at": 219,
+      "calls": [
+        "pick_up_files@analysis/framework/file_dispatch.py",
+        "create_parser_factory@analysis/framework/prof_factory_maker.py"
+      ],
+      "called_by": ["analyze_collect_data@analysis/common_func/msprof_common.py"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "File::Check@analysis/csrc/infrastructure/utils/file.cpp": {
+      "defined_at": 288,
+      "calls": [
+        "File::IsSoftLink@analysis/csrc/infrastructure/utils/file.cpp",
+        "File::Size@analysis/csrc/infrastructure/utils/file.cpp"
+      ],
+      "called_by": [
+        "FileReader::Open@analysis/csrc/infrastructure/utils/file.cpp",
+        "FileReader::Check@analysis/csrc/infrastructure/utils/file.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "FileReader::Open@analysis/csrc/infrastructure/utils/file.cpp": {
+      "defined_at": 309,
+      "calls": [
+        "File::Check@analysis/csrc/infrastructure/utils/file.cpp",
+        "inStream_.open@std"
+      ],
+      "called_by": ["DataProcessor::Run@analysis/csrc/domain/data_process/data_processor.cpp"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "FileReader::ReadJson@analysis/csrc/infrastructure/utils/file.cpp": {
+      "defined_at": 351,
+      "calls": [
+        "nlohmann::json::parse@nlohmann_json"
+      ],
+      "called_by": ["DataProcessor::Process@analysis/csrc/domain/data_process/data_processor.cpp"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "DataProcessor::Run@analysis/csrc/domain/data_process/data_processor.cpp": {
+      "defined_at": 29,
+      "calls": [
+        "DataProcessor::Process@analysis/csrc/domain/data_process/data_processor.cpp",
+        "DataProcessor::CheckPathAndTable@analysis/csrc/domain/data_process/data_processor.cpp"
+      ],
+      "called_by": ["ParserFactory::parse@analysis/csrc/domain/services/parser"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "DBManager::check_connect_db_path@analysis/common_func/db_manager.py": {
+      "defined_at": 1,
+      "calls": [
+        "sqlite3.connect@stdlib"
+      ],
+      "called_by": [
+        "get_model_id_set@analysis/msinterface/msprof_export.py",
+        "_check_index_id@analysis/msinterface/msprof_export.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "DBManager::fetch_all_data@analysis/common_func/db_manager.py": {
+      "defined_at": 1,
+      "calls": [
+        "cursor.execute@sqlite3"
+      ],
+      "called_by": [
+        "get_model_id_set@analysis/msinterface/msprof_export.py",
+        "_set_default_model_id@analysis/msinterface/msprof_export.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "sys.argv@analysis/msinterface/msprof_entrance.py:114",
+      "path": [
+        "main@analysis/msinterface/msprof_entrance.py:107",
+        "construct_arg_parser@analysis/msinterface/msprof_entrance.py:164",
+        "_handle_export_command@analysis/msinterface/msprof_entrance.py:60",
+        "process@analysis/msinterface/msprof_export.py:342",
+        "_process_sub_dirs@analysis/msinterface/msprof_export.py:680"
+      ],
+      "sink": "os.path.realpath@analysis/msinterface/msprof_export.py:257",
+      "sink_type": "file_operation"
+    },
+    {
+      "source": "args.collection_path@analysis/msinterface/msprof_entrance.py:47",
+      "path": [
+        "main@analysis/msinterface/msprof_entrance.py:107",
+        "check_path_valid@analysis/common_func/file_manager.py:204",
+        "os.path.exists@stdlib"
+      ],
+      "sink": "check_path_valid@analysis/common_func/file_manager.py:204",
+      "sink_type": "file_operation"
+    },
+    {
+      "source": "info.json file content@analysis/common_func/info_conf_reader.py:90",
+      "path": [
+        "__get_json_data@analysis/common_func/info_conf_reader.py:80",
+        "json.loads@stdlib",
+        "_load_json@analysis/common_func/info_conf_reader.py:488"
+      ],
+      "sink": "InfoConfReader._info_json@analysis/common_func/info_conf_reader.py:59",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "profiling binary file@analysis/csrc/infrastructure/utils/file.cpp:319",
+      "path": [
+        "FileReader::Open@analysis/csrc/infrastructure/utils/file.cpp:309",
+        "FileReader::ReadBinary@analysis/csrc/infrastructure/utils/file.cpp:327"
+      ],
+      "sink": "DataProcessor::Process@analysis/csrc/domain/data_process/data_processor.cpp:32",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "sample.json file content@analysis/common_func/info_conf_reader.py:90",
+      "path": [
+        "__get_json_data@analysis/common_func/info_conf_reader.py:80",
+        "_load_json@analysis/common_func/info_conf_reader.py:488",
+        "analyze_collect_data@analysis/common_func/msprof_common.py:183"
+      ],
+      "sink": "AI.__init__@analysis/framework/collection_engine.py:47",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "DBManager SQL query@analysis/common_func/db_manager.py",
+      "path": [
+        "get_model_id_set@analysis/msinterface/msprof_export.py:277",
+        "cursor.execute@sqlite3"
+      ],
+      "sink": "model_ids_set@analysis/msinterface/msprof_export.py:296",
+      "sink_type": "memory_operation"
+    }
+  ]
+}
