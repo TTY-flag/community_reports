@@ -1,0 +1,569 @@
+{
+  "call_graph": {
+    "description": "Function call graph for UBS IO project - key call relationships for security analysis",
+    
+    "entry_points": {
+      "posix_interceptor": {
+        "module": "io_interceptor",
+        "functions": [
+          {
+            "name": "HookOpen",
+            "file": "posix_interceptor.cpp",
+            "calls": ["CheckPath", "InitNativeHook", "NATIVE(open)", "PROXY(open)"]
+          },
+          {
+            "name": "HookPread",
+            "file": "posix_interceptor.cpp",
+            "calls": ["CheckPointer", "InitNativeHook", "NATIVE(pread)", "PROXY(pread)"]
+          },
+          {
+            "name": "HookPwrite",
+            "file": "posix_interceptor.cpp",
+            "calls": ["CheckPointer", "InitNativeHook", "NATIVE(pwrite)", "PROXY(pwrite)"]
+          },
+          {
+            "name": "HookRead",
+            "file": "posix_interceptor.cpp",
+            "calls": ["CheckPointer", "InitNativeHook", "NATIVE(read)", "PROXY(read)"]
+          },
+          {
+            "name": "HookWrite",
+            "file": "posix_interceptor.cpp",
+            "calls": ["CheckPointer", "InitNativeHook", "NATIVE(write)", "PROXY(write)"]
+          },
+          {
+            "name": "HookStat",
+            "file": "posix_interceptor.cpp",
+            "calls": ["CheckPath", "CheckPointer", "InitNativeHook", "NATIVE(__xstat)", "PROXY(__xstat)"]
+          },
+          {
+            "name": "HookUnlink",
+            "file": "posix_interceptor.cpp",
+            "calls": ["CheckPath", "InitNativeHook", "NATIVE(unlink)", "PROXY(unlink)"]
+          },
+          {
+            "name": "HookTruncate",
+            "file": "posix_interceptor.cpp",
+            "calls": ["CheckPath", "InitNativeHook", "NATIVE(truncate)", "PROXY(truncate)"]
+          },
+          {
+            "name": "InitHook",
+            "file": "posix_interceptor.cpp",
+            "calls": ["NativeOperationsLoader::Initialize", "ProxyOperationsLoader::Initialize"]
+          }
+        ]
+      },
+      
+      "net_engine": {
+        "module": "net",
+        "functions": [
+          {
+            "name": "Start",
+            "file": "net_engine.cpp",
+            "calls": ["StartRpcService", "StartIpcService", "InitMemoryAllocator"]
+          },
+          {
+            "name": "SyncCall",
+            "file": "net_engine.h",
+            "calls": ["GetCtrlChanel", "ch->Call"]
+          },
+          {
+            "name": "SyncRead",
+            "file": "net_engine.h",
+            "calls": ["GetDataChanel", "ch->Get"]
+          },
+          {
+            "name": "SyncWrite",
+            "file": "net_engine.h",
+            "calls": ["GetDataChanel", "ch->Put"]
+          },
+          {
+            "name": "Reply",
+            "file": "net_engine.h",
+            "calls": ["ctx.Channel()->Reply"]
+          },
+          {
+            "name": "RegisterNewRequestHandler",
+            "file": "net_engine.h",
+            "calls": ["mHandlers[opCode] = h"]
+          },
+          {
+            "name": "RequestReceived",
+            "file": "net_engine.cpp",
+            "calls": ["mHandlers[opCode]"]
+          },
+          {
+            "name": "RegisterMemoryRegion",
+            "file": "net_engine.h",
+            "calls": ["mRpcService->RegisterMemoryRegion"]
+          },
+          {
+            "name": "SendFds",
+            "file": "net_engine.h",
+            "calls": ["ch->SendFds"]
+          },
+          {
+            "name": "ReceiveFds",
+            "file": "net_engine.h",
+            "calls": ["GetCtrlChanel", "ch->ReceiveFds"]
+          }
+        ]
+      },
+      
+      "interceptor_server": {
+        "module": "interceptor/server",
+        "functions": [
+          {
+            "name": "HandleInterceptorRead",
+            "file": "interceptor_server.cpp",
+            "calls": ["CheckInterceptorReadReq", "malloc", "BioReadHook", "BioClientNet::Instance()->GetNetEngine()->Reply", "free"]
+          },
+          {
+            "name": "HandleInterceptorWrite",
+            "file": "interceptor_server.cpp",
+            "calls": ["CheckInterceptorWriteReq", "BioWriteHook", "BioClientNet::Instance()->GetNetEngine()->Reply"]
+          },
+          {
+            "name": "HandleInterceptorAllocPage",
+            "file": "interceptor_server.cpp",
+            "calls": ["CheckInterceptorAllocPageReq", "BioAllocCacheSpace", "BioClientNet::Instance()->GetNetEngine()->Reply"]
+          },
+          {
+            "name": "HandleInterceptorLargeWrite",
+            "file": "interceptor_server.cpp",
+            "calls": ["CheckInterceptorLargeWriteReq", "BioWriteCopyFreeHook", "BioClientNet::Instance()->GetNetEngine()->Reply"]
+          },
+          {
+            "name": "RegisterOpcode",
+            "file": "interceptor_server.cpp",
+            "calls": ["netEngine->RegisterNewRequestHandler"]
+          }
+        ]
+      },
+      
+      "bio_server": {
+        "module": "server",
+        "functions": [
+          {
+            "name": "Start",
+            "file": "bio_server.cpp",
+            "calls": ["BioConfigInit", "BioLoggerInit", "BioTraceInit", "BioUnderFsInit", "BioBdmInit", "BioNetInit", "BioCmInit", "BioMirrorServerInit", "BioCacheInit", "BioFlowInit"]
+          },
+          {
+            "name": "BioConfigInit",
+            "file": "bio_server.cpp",
+            "calls": ["BioConfig::Initialize"]
+          },
+          {
+            "name": "BioNetInit",
+            "file": "bio_server.cpp",
+            "calls": ["StartRpcService", "StartIpcService"]
+          },
+          {
+            "name": "HandleCmNodeEvent",
+            "file": "bio_server.cpp",
+            "calls": ["mCm->GetNodeInfo"]
+          }
+        ]
+      },
+      
+      "bio_client": {
+        "module": "sdk",
+        "functions": [
+          {
+            "name": "Start",
+            "file": "bio_client.cpp",
+            "calls": ["BioClientLoggerInit", "BioClientAgentInit", "BioClientNetPreInit", "BioClientNetPostInit", "BioClientMirrorInit", "BioClientUnderfsInit"]
+          },
+          {
+            "name": "Put",
+            "file": "bio_client.h",
+            "calls": ["mMirror->Put", "UnderFs::Instance()->Put"]
+          },
+          {
+            "name": "Get",
+            "file": "bio_client.h",
+            "calls": ["mMirror->Get", "UnderFs::Instance()->Stat", "UnderFs::Instance()->Get"]
+          },
+          {
+            "name": "CalculateLocation",
+            "file": "bio_client.h",
+            "calls": ["mMirror->SelectingPt"]
+          }
+        ]
+      },
+      
+      "bdm_core": {
+        "module": "disk/common",
+        "functions": [
+          {
+            "name": "BdmAlloc",
+            "file": "bdm_core.c",
+            "calls": ["BdmGetBdmObj", "bdm->ops.alloc", "ENCODE_CHUNK_ID"]
+          },
+          {
+            "name": "BdmFree",
+            "file": "bdm_core.c",
+            "calls": ["BdmGetBdmObj", "DENCODE_CHUNK_ID", "bdm->ops.free"]
+          },
+          {
+            "name": "BdmRead",
+            "file": "bdm_core.c",
+            "calls": ["CHUNK_ID_TO_BDMID", "BdmGetBdmObj", "DENCODE_CHUNK_ID", "bdm->ops.read"]
+          },
+          {
+            "name": "BdmWrite",
+            "file": "bdm_core.c",
+            "calls": ["CHUNK_ID_TO_BDMID", "BdmGetBdmObj", "DENCODE_CHUNK_ID", "bdm->ops.write"]
+          },
+          {
+            "name": "BdmReadAsync",
+            "file": "bdm_core.c",
+            "calls": ["CHUNK_ID_TO_BDMID", "BdmGetBdmObj", "DENCODE_CHUNK_ID", "bdm->ops.readAsync"]
+          },
+          {
+            "name": "BdmWriteAsync",
+            "file": "bdm_core.c",
+            "calls": ["CHUNK_ID_TO_BDMID", "BdmGetBdmObj", "DENCODE_CHUNK_ID", "bdm->ops.writeAsync"]
+          },
+          {
+            "name": "BdmInit",
+            "file": "bdm_core.c",
+            "calls": ["KunpengCpuCheck/CheckCpuVendor", "BdmObjInit", "BdmDiskInit"]
+          },
+          {
+            "name": "BdmStart",
+            "file": "bdm_core.c",
+            "calls": ["IsDiskFile", "BdmDevicesCreate", "BdmCreate"]
+          }
+        ]
+      },
+      
+      "bio_config": {
+        "module": "config",
+        "functions": [
+          {
+            "name": "Initialize",
+            "file": "bio_config_instance.cpp",
+            "calls": ["BakFileProcess", "Configuration::GetInstance", "conf->ReadConf", "DumpToLog", "conf->Validate", "AutoConfAfterLoadFromFile"]
+          },
+          {
+            "name": "AutoConfAfterLoadFromFile",
+            "file": "bio_config_instance.cpp",
+            "calls": ["AutoConfigNet", "AutoConfigDaemon", "AutoConfigCm", "AutoConfigClient", "AutoConfigUnderFs"]
+          },
+          {
+            "name": "AutoConfigNet",
+            "file": "bio_config_instance.cpp",
+            "calls": ["IpUtil::FilterIpByMask", "FileUtil::CanonicalPath"]
+          },
+          {
+            "name": "AutoConfigDaemonDisk",
+            "file": "bio_config_instance.cpp",
+            "calls": ["StrUtil::Split", "FileUtil::CanonicalPath", "FileUtil::GetDiskCapacity"]
+          }
+        ]
+      },
+      
+      "openssl_dl": {
+        "module": "security/openssl_tools",
+        "functions": [
+          {
+            "name": "LoadOpensslApiDl",
+            "file": "bio_openssl_api_dl.cpp",
+            "calls": ["GetLibPath", "dlopen", "LoadCryptoMethod", "LoadSSLMethod", "dlclose"]
+          },
+          {
+            "name": "LoadCryptoMethod",
+            "file": "bio_openssl_api_dl.cpp",
+            "calls": ["dlsym (multiple OpenSSL crypto functions)"]
+          },
+          {
+            "name": "LoadSSLMethod",
+            "file": "bio_openssl_api_dl.cpp",
+            "calls": ["dlsym (multiple OpenSSL SSL functions)"]
+          },
+          {
+            "name": "GetLibPath",
+            "file": "bio_openssl_api_dl.cpp",
+            "calls": ["access"]
+          }
+        ]
+      },
+      
+      "tls_util": {
+        "module": "common",
+        "functions": [
+          {
+            "name": "LoadDecryptFunction",
+            "file": "bio_tls_util.h",
+            "calls": ["dlopen", "dlsym", "dlclose"]
+          },
+          {
+            "name": "DefaultDecrypter",
+            "file": "bio_tls_util.h",
+            "calls": ["std::copy_n"]
+          },
+          {
+            "name": "CloseTlsLib",
+            "file": "bio_tls_util.h",
+            "calls": ["dlclose"]
+          }
+        ]
+      },
+      
+      "zk_adapter": {
+        "module": "cluster/common",
+        "functions": [
+          {
+            "name": "CmClientZkInit",
+            "file": "cm_zkadapter.c",
+            "calls": ["zookeeper API functions"]
+          },
+          {
+            "name": "CmServerZkInit",
+            "file": "cm_zkadapter.c",
+            "calls": ["zookeeper API functions"]
+          },
+          {
+            "name": "CmZkCreate",
+            "file": "cm_zkadapter.c",
+            "calls": ["zoo_create"]
+          },
+          {
+            "name": "CmZkGet",
+            "file": "cm_zkadapter.c",
+            "calls": ["zoo_get"]
+          },
+          {
+            "name": "CmZkSet",
+            "file": "cm_zkadapter.c",
+            "calls": ["zoo_set"]
+          },
+          {
+            "name": "CmClientZkGetNodeInfo",
+            "file": "cm_zkadapter.c",
+            "calls": ["CmZkGet"]
+          },
+          {
+            "name": "CmClientZkRecordNodeInfo",
+            "file": "cm_zkadapter.c",
+            "calls": ["CmZkCreate"]
+          }
+        ]
+      },
+      
+      "ceph_system": {
+        "module": "underfs",
+        "functions": [
+          {
+            "name": "Init",
+            "file": "ceph_system.cpp",
+            "calls": ["rados_create", "rados_conf_read_file", "rados_connect", "rados_ioctx_create"]
+          },
+          {
+            "name": "Put",
+            "file": "ceph_system.cpp",
+            "calls": ["rados_write"]
+          },
+          {
+            "name": "Get",
+            "file": "ceph_system.cpp",
+            "calls": ["rados_read"]
+          },
+          {
+            "name": "Delete",
+            "file": "ceph_system.cpp",
+            "calls": ["rados_remove"]
+          },
+          {
+            "name": "Stat",
+            "file": "ceph_system.cpp",
+            "calls": ["rados_stat"]
+          }
+        ]
+      },
+      
+      "mirror_client": {
+        "module": "sdk",
+        "functions": [
+          {
+            "name": "Put",
+            "file": "mirror_client.cpp",
+            "calls": ["SelectingPt", "SyncCall", "UnderFs::Instance()->Put"]
+          },
+          {
+            "name": "Get",
+            "file": "mirror_client.cpp",
+            "calls": ["SelectingPt", "SyncCall", "SyncRead"]
+          },
+          {
+            "name": "DeleteKey",
+            "file": "mirror_client.cpp",
+            "calls": ["SyncCall"]
+          },
+          {
+            "name": "StatObject",
+            "file": "mirror_client.cpp",
+            "calls": ["SyncCall"]
+          }
+        ]
+      }
+    },
+    
+    "cross_module_calls": [
+      {
+        "from": "posix_interceptor.cpp:PROXY(pread)",
+        "to": "interceptor_proxy.cpp",
+        "to_function": "ProxyPread"
+      },
+      {
+        "from": "interceptor_proxy.cpp",
+        "to": "interceptor_net.cpp",
+        "to_function": "SendSync"
+      },
+      {
+        "from": "interceptor_net.cpp:SendSync",
+        "to": "net_engine.h",
+        "to_function": "SyncCall"
+      },
+      {
+        "from": "net_engine.h:SyncCall",
+        "to": "interceptor_server.cpp",
+        "to_function": "HandleInterceptorRead"
+      },
+      {
+        "from": "interceptor_server.cpp:HandleInterceptorRead",
+        "to": "mirror_server.cpp",
+        "to_function": "BioReadHook"
+      },
+      {
+        "from": "mirror_server.cpp",
+        "to": "cache/rcache.cpp",
+        "to_function": "Get"
+      },
+      {
+        "from": "cache/rcache.cpp",
+        "to": "disk/bdm_core.c",
+        "to_function": "BdmRead"
+      },
+      {
+        "from": "bio_server.cpp:Start",
+        "to": "bio_config_instance.cpp",
+        "to_function": "Initialize"
+      },
+      {
+        "from": "bio_config_instance.cpp:AutoConfigNet",
+        "to": "bio_tls_util.h",
+        "to_function": "LoadDecryptFunction"
+      },
+      {
+        "from": "bio_openssl_api_dl.cpp:LoadOpensslApiDl",
+        "to": "libssl.so/libcrypto.so",
+        "to_function": "OpenSSL API functions"
+      },
+      {
+        "from": "cluster/cm.cpp",
+        "to": "cluster/common/cm_zkadapter.c",
+        "to_function": "CmClientZkInit/CmServerZkInit"
+      },
+      {
+        "from": "mirror_client.cpp",
+        "to": "sdk/bio_client_net.cpp",
+        "to_function": "SyncCall"
+      },
+      {
+        "from": "sdk/bio_client_net.cpp",
+        "to": "net/net_engine.h",
+        "to_function": "SyncCall/SyncRead"
+      },
+      {
+        "from": "underfs/ceph_system.cpp",
+        "to": "librados",
+        "to_function": "rados_* functions"
+      }
+    ],
+    
+    "critical_call_paths": [
+      {
+        "name": "Read Request Flow",
+        "path": [
+          {"module": "io_interceptor", "file": "posix_interceptor.cpp", "function": "HookPread"},
+          {"module": "interceptor/client", "file": "interceptor_proxy.cpp", "function": "ProxyPread"},
+          {"module": "interceptor/client", "file": "interceptor_net.cpp", "function": "SendSync"},
+          {"module": "net", "file": "net_engine.h", "function": "SyncCall"},
+          {"module": "interceptor/server", "file": "interceptor_server.cpp", "function": "HandleInterceptorRead"},
+          {"module": "server", "file": "mirror_server.cpp", "function": "BioReadHook"},
+          {"module": "cache", "file": "rcache.cpp", "function": "Get"},
+          {"module": "disk", "file": "bdm_core.c", "function": "BdmRead"}
+        ],
+        "risk_level": "HIGH"
+      },
+      {
+        "name": "Write Request Flow",
+        "path": [
+          {"module": "io_interceptor", "file": "posix_interceptor.cpp", "function": "HookPwrite"},
+          {"module": "interceptor/client", "file": "interceptor_proxy.cpp", "function": "ProxyPwrite"},
+          {"module": "interceptor/client", "file": "interceptor_net.cpp", "function": "SendSync"},
+          {"module": "net", "file": "net_engine.h", "function": "SyncCall"},
+          {"module": "interceptor/server", "file": "interceptor_server.cpp", "function": "HandleInterceptorWrite"},
+          {"module": "server", "file": "mirror_server.cpp", "function": "BioWriteHook"},
+          {"module": "cache", "file": "wcache.cpp", "function": "Put"},
+          {"module": "disk", "file": "bdm_core.c", "function": "BdmWrite"}
+        ],
+        "risk_level": "HIGH"
+      },
+      {
+        "name": "Network RPC Request Flow",
+        "path": [
+          {"module": "net", "file": "net_engine.cpp", "function": "RequestReceived"},
+          {"module": "net", "file": "net_engine.h", "function": "mHandlers[opCode]"},
+          {"module": "server", "file": "mirror_server.cpp", "function": "HandleRequest"},
+          {"module": "cache", "file": "cache.cpp", "function": "Get/Put"},
+          {"module": "disk", "file": "bdm_core.c", "function": "BdmRead/BdmWrite"}
+        ],
+        "risk_level": "HIGH"
+      },
+      {
+        "name": "TLS Initialization Flow",
+        "path": [
+          {"module": "config", "file": "bio_config_instance.cpp", "function": "AutoConfigNet"},
+          {"module": "common", "file": "bio_tls_util.h", "function": "LoadDecryptFunction"},
+          {"module": "security", "file": "bio_openssl_api_dl.cpp", "function": "LoadOpensslApiDl"},
+          {"module": "external", "file": "libssl.so", "function": "OpenSSL functions"}
+        ],
+        "risk_level": "HIGH"
+      },
+      {
+        "name": "Configuration Loading Flow",
+        "path": [
+          {"module": "server", "file": "bio_server.cpp", "function": "BioConfigInit"},
+          {"module": "config", "file": "bio_config_instance.cpp", "function": "Initialize"},
+          {"module": "config", "file": "bio_config_instance.cpp", "function": "AutoConfAfterLoadFromFile"},
+          {"module": "config", "file": "bio_config_instance.cpp", "function": "AutoConfigNet/AutoConfigDaemon/AutoConfigCm"}
+        ],
+        "risk_level": "MEDIUM"
+      },
+      {
+        "name": "ZooKeeper Cluster Flow",
+        "path": [
+          {"module": "cluster", "file": "cm.cpp", "function": "Init"},
+          {"module": "cluster/common", "file": "cm_zkadapter.c", "function": "CmClientZkInit/CmServerZkInit"},
+          {"module": "cluster/server", "file": "cm_server_init.c", "function": "CmServerInit"},
+          {"module": "cluster/client", "file": "cm_client_init.c", "function": "CmClientInit"}
+        ],
+        "risk_level": "HIGH"
+      },
+      {
+        "name": "Disk Device Flow",
+        "path": [
+          {"module": "disk", "file": "bdm_core.c", "function": "BdmInit"},
+          {"module": "disk", "file": "bdm_core.c", "function": "BdmStart"},
+          {"module": "disk", "file": "bdm_core.c", "function": "BdmDevicesCreate"},
+          {"module": "disk", "file": "bdm_disk.c", "function": "BdmCreate"}
+        ],
+        "risk_level": "HIGH"
+      }
+    ]
+  }
+}

@@ -1,0 +1,456 @@
+{
+  "project_name": "ubs-io",
+  "description": "NPU IO Acceleration Service Suite - Provides NPU Direct Storage, distributed KV/file cache, and block storage extension features",
+  "language": "C/C++",
+  "total_source_files": 229,
+  "build_system": "CMake",
+  "license": "Mulan PSL v2",
+  
+  "modules": {
+    "ubsio-boostio": {
+      "description": "Main IO cache implementation",
+      "file_count": 227,
+      "risk_level": "HIGH",
+      "sub_modules": {
+        "net": {
+          "description": "Network engine - RPC/IPC services with RDMA/TCP support",
+          "risk_level": "HIGH",
+          "attack_surface": "Network messages, RDMA operations, connection handling",
+          "key_files": [
+            "net_engine.h",
+            "net_engine.cpp",
+            "net_connector.h",
+            "net_connector.cpp",
+            "net_channel_mgr.h",
+            "net_executor_pool.h",
+            "net_common.h",
+            "net_block_pool.h"
+          ]
+        },
+        "server": {
+          "description": "Main server process - bio_server, mirror_server",
+          "risk_level": "HIGH",
+          "attack_surface": "Server initialization, request handling, cluster coordination",
+          "key_files": [
+            "bio_server.h",
+            "bio_server.cpp",
+            "mirror_server.h",
+            "mirror_server.cpp",
+            "mirror_server_crb.h",
+            "mirror_server_crb.cpp"
+          ]
+        },
+        "cluster": {
+          "description": "Cluster management with ZooKeeper integration",
+          "risk_level": "HIGH",
+          "attack_surface": "ZooKeeper data, node discovery, PT distribution",
+          "key_files": [
+            "cm.h",
+            "cm.cpp",
+            "cm_zkadapter.h",
+            "cm_zkadapter.c",
+            "cm_zk_api_dl.h",
+            "cm_zk_api_dl.c",
+            "cm_server_init.c",
+            "cm_client_init.c",
+            "cm_server_schedule.c",
+            "cm_client_schedule.c"
+          ]
+        },
+        "cache": {
+          "description": "Read/write cache with memory and disk tiers",
+          "risk_level": "MEDIUM",
+          "attack_surface": "Cache allocation, eviction, data storage",
+          "key_files": [
+            "cache.cpp",
+            "rcache.cpp",
+            "rcache_manager.cpp",
+            "rcache_evict.cpp",
+            "wcache.cpp",
+            "wcache_manager.cpp",
+            "wcache_index.cpp",
+            "cache_overload_ctrl.cpp",
+            "cache_slice_operator.cpp"
+          ]
+        },
+        "disk": {
+          "description": "Block device management (BDM) - Low-level disk operations",
+          "risk_level": "HIGH",
+          "attack_surface": "Direct disk I/O, memory allocation, chunk management",
+          "key_files": [
+            "bdm_core.c",
+            "bdm_disk.c",
+            "bdm_obj.c",
+            "bdm_allocator.c",
+            "bdm_threadpool_common.c",
+            "bdm_threadpool_x86.c",
+            "bdm_threadpool_arm.c",
+            "bdm_common.cpp"
+          ]
+        },
+        "sdk": {
+          "description": "Client SDK - bio_client, mirror_client, network client",
+          "risk_level": "HIGH",
+          "attack_surface": "Client network operations, data requests",
+          "key_files": [
+            "bio_client.h",
+            "bio_client.cpp",
+            "bio_client_net.h",
+            "bio_client_net.cpp",
+            "bio_client_agent.cpp",
+            "mirror_client.h",
+            "mirror_client.cpp",
+            "bio.cpp",
+            "bio_qos.cpp"
+          ]
+        },
+        "flow": {
+          "description": "Flow management and task pool",
+          "risk_level": "MEDIUM",
+          "attack_surface": "Task scheduling, flow ID allocation",
+          "key_files": [
+            "flow.cpp",
+            "flow_manager.cpp",
+            "flow_task_pool.cpp",
+            "flow_id_allocator.cpp",
+            "slice.cpp"
+          ]
+        },
+        "interceptor": {
+          "description": "Client/server IO interceptor",
+          "risk_level": "HIGH",
+          "attack_surface": "Network interception, remote file operations",
+          "key_files": [
+            "interceptor_server.cpp",
+            "interceptor_proxy.cpp",
+            "interceptor_net.cpp",
+            "interceptor_fileio.cpp",
+            "interceptor_fd.cpp",
+            "interceptor_path.cpp",
+            "interceptor_proxy_init.cpp",
+            "proxy_operations.cpp",
+            "bufvec.cpp"
+          ]
+        },
+        "io_interceptor": {
+          "description": "POSIX file operations interception - syscall hooking",
+          "risk_level": "HIGH",
+          "attack_surface": "POSIX syscall hooking, file path handling",
+          "key_files": [
+            "posix_interceptor.h",
+            "posix_interceptor.cpp",
+            "filestream_interceptor.h",
+            "filestream_interceptor.cpp",
+            "posix_interface.cpp",
+            "filestream_interface.cpp",
+            "proxy_operations_loader.cpp",
+            "native_operations_loader.cpp",
+            "interceptor.h"
+          ]
+        },
+        "security": {
+          "description": "TLS/SSL with OpenSSL, certificate expiration check",
+          "risk_level": "HIGH",
+          "attack_surface": "TLS connections, certificate validation, password decryption",
+          "key_files": [
+            "bio_openssl_api_dl.cpp",
+            "bio_openssl_api_dl.h",
+            "expire_checker.cpp",
+            "expire_checker.h"
+          ]
+        },
+        "underfs": {
+          "description": "Underlying filesystems - Ceph, HDFS, Local",
+          "risk_level": "HIGH",
+          "attack_surface": "External filesystem operations, data storage/retrieval",
+          "key_files": [
+            "file_system.h",
+            "underfs.h",
+            "ceph_system.h",
+            "ceph_system.cpp",
+            "hdfs_system.h",
+            "hdfs_system.cpp",
+            "local_system.h",
+            "local_system.cpp",
+            "file_system_factory.h"
+          ]
+        },
+        "config": {
+          "description": "Configuration management",
+          "risk_level": "MEDIUM",
+          "attack_surface": "Configuration file parsing, path validation",
+          "key_files": [
+            "bio_config_instance.h",
+            "bio_config_instance.cpp"
+          ]
+        },
+        "daemon": {
+          "description": "Background daemon process",
+          "risk_level": "MEDIUM",
+          "attack_surface": "Service lifecycle management",
+          "key_files": [
+            "bio_daemon.cpp"
+          ]
+        },
+        "message": {
+          "description": "Network message definitions",
+          "risk_level": "HIGH",
+          "attack_surface": "Message parsing, request handling",
+          "key_files": [
+            "message.h",
+            "message_op.h"
+          ]
+        },
+        "htracer": {
+          "description": "Tracing service",
+          "risk_level": "LOW",
+          "attack_surface": "Performance tracing",
+          "key_files": [
+            "htracer_service.cpp",
+            "htracer.cpp"
+          ]
+        },
+        "common": {
+          "description": "Common utilities",
+          "risk_level": "MEDIUM",
+          "attack_surface": "Utility functions, CRC, string operations",
+          "key_files": [
+            "bio_log.cpp",
+            "bio_crc_util.h",
+            "bio_str_util.h",
+            "bio_file_util.h",
+            "bio_ip_util.h",
+            "bio_tls_util.h",
+            "bio_err.h",
+            "bio_types.h",
+            "bio_ref.h"
+          ]
+        }
+      }
+    },
+    "ubsio-nds": {
+      "description": "NPU Direct Storage - KV and file direct interfaces",
+      "file_count": 2,
+      "risk_level": "HIGH",
+      "attack_surface": "Kernel module, NPU memory operations",
+      "key_files": [
+        "nds_comm_include.h",
+        "nds_file.h"
+      ]
+    }
+  },
+  
+  "attack_surfaces": {
+    "network_interfaces": {
+      "risk_level": "HIGH",
+      "description": "RPC/IPC services with RDMA/TCP support",
+      "components": [
+        {
+          "name": "RPC Service",
+          "entry_points": ["net_engine.h:StartRpcService", "net_engine.h:RegisterNewRequestHandler"],
+          "data_types": ["Network messages", "opCode requests", "RDMA read/write"],
+          "potential_vulnerabilities": ["Message parsing", "opCode validation", "RDMA buffer handling"]
+        },
+        {
+          "name": "IPC Service",
+          "entry_points": ["net_engine.h:StartIpcService", "net_engine.h:RequestIPCReceived"],
+          "data_types": ["Shared memory", "File descriptors"],
+          "potential_vulnerabilities": ["Shared memory validation", "FD passing"]
+        },
+        {
+          "name": "Connection Handling",
+          "entry_points": ["net_connector.h:SyncConnect", "net_connector.h:AsyncConnect"],
+          "data_types": ["Connection info", "Peer addresses"],
+          "potential_vulnerabilities": ["Connection spoofing", "Timeout handling"]
+        }
+      ]
+    },
+    "file_io_interception": {
+      "risk_level": "HIGH",
+      "description": "POSIX syscall interception for file operations",
+      "components": [
+        {
+          "name": "POSIX Hooks",
+          "entry_points": [
+            "posix_interceptor.cpp:HookOpen",
+            "posix_interceptor.cpp:HookRead",
+            "posix_interceptor.cpp:HookWrite",
+            "posix_interceptor.cpp:HookPread",
+            "posix_interceptor.cpp:HookPwrite",
+            "posix_interceptor.cpp:HookStat",
+            "posix_interceptor.cpp:HookUnlink"
+          ],
+          "data_types": ["File paths", "Buffers", "Offsets"],
+          "potential_vulnerabilities": ["Path traversal", "Buffer overflow", "Integer overflow in offsets"]
+        },
+        {
+          "name": "Interceptor Server",
+          "entry_points": [
+            "interceptor_server.cpp:HandleInterceptorRead",
+            "interceptor_server.cpp:HandleInterceptorWrite",
+            "interceptor_server.cpp:HandleInterceptorAllocPage",
+            "interceptor_server.cpp:HandleInterceptorLargeWrite"
+          ],
+          "data_types": ["InterceptorPreadIn", "InterceptorPwriteIn", "InterceptorAllocPageReq"],
+          "potential_vulnerabilities": ["Request validation", "Memory allocation", "Size checks"]
+        }
+      ]
+    },
+    "external_inputs": {
+      "risk_level": "HIGH",
+      "description": "External data sources and configuration",
+      "components": [
+        {
+          "name": "ZooKeeper Integration",
+          "entry_points": ["cm_zkadapter.c:CmClientZkInit", "cm_zkadapter.c:CmServerZkInit"],
+          "data_types": ["Node information", "PT entries", "Cluster state"],
+          "potential_vulnerabilities": ["Data validation from ZK", "Node spoofing"]
+        },
+        {
+          "name": "Configuration Files",
+          "entry_points": ["bio_config_instance.cpp:Initialize"],
+          "data_types": ["bio.conf", "Disk paths", "TLS certificates"],
+          "potential_vulnerabilities": ["Path validation", "Configuration injection"]
+        },
+        {
+          "name": "External Filesystems",
+          "entry_points": ["ceph_system.cpp:Init", "hdfs_system.cpp:Init"],
+          "data_types": ["Ceph objects", "HDFS files"],
+          "potential_vulnerabilities": ["External data validation"]
+        },
+        {
+          "name": "Dynamic Library Loading",
+          "entry_points": ["bio_openssl_api_dl.cpp:LoadOpensslApiDl", "bio_tls_util.h:LoadDecryptFunction"],
+          "data_types": ["libssl.so", "libcrypto.so", "Decrypter library"],
+          "potential_vulnerabilities": ["Library path validation", "Function pointer validation"]
+        }
+      ]
+    },
+    "security_components": {
+      "risk_level": "HIGH",
+      "description": "TLS/SSL and authentication",
+      "components": [
+        {
+          "name": "TLS Utility",
+          "entry_points": ["bio_tls_util.h:LoadDecryptFunction", "bio_tls_util.h:DefaultDecrypter"],
+          "data_types": ["Cipher text", "Plain text", "Password"],
+          "potential_vulnerabilities": ["Decryption handling", "Password handling"]
+        },
+        {
+          "name": "OpenSSL Dynamic Loading",
+          "entry_points": ["bio_openssl_api_dl.cpp:LoadCryptoMethod", "bio_openssl_api_dl.cpp:LoadSSLMethod"],
+          "data_types": ["SSL context", "Certificates", "Keys"],
+          "potential_vulnerabilities": ["Certificate validation", "Key handling"]
+        }
+      ]
+    },
+    "block_device_management": {
+      "risk_level": "HIGH",
+      "description": "Direct disk I/O operations",
+      "components": [
+        {
+          "name": "BDM Core",
+          "entry_points": [
+            "bdm_core.c:BdmAlloc",
+            "bdm_core.c:BdmFree",
+            "bdm_core.c:BdmRead",
+            "bdm_core.c:BdmWrite",
+            "bdm_core.c:BdmReadAsync",
+            "bdm_core.c:BdmWriteAsync"
+          ],
+          "data_types": ["Chunk IDs", "Buffers", "Offsets", "Lengths"],
+          "potential_vulnerabilities": ["Integer overflow", "Buffer overflow", "Chunk ID validation"]
+        },
+        {
+          "name": "Disk Management",
+          "entry_points": ["bdm_core.c:BdmStart", "bdm_core.c:BdmUpdate"],
+          "data_types": ["Disk paths", "Capacity"],
+          "potential_vulnerabilities": ["Path validation", "Capacity limits"]
+        }
+      ]
+    }
+  },
+  
+  "entry_points": [
+    {
+      "type": "Network RPC",
+      "location": "net/net_engine.cpp",
+      "function": "RequestReceived",
+      "description": "Handles incoming RPC requests with opCode dispatch"
+    },
+    {
+      "type": "Network IPC",
+      "location": "net/net_engine.cpp",
+      "function": "RequestIPCReceived",
+      "description": "Handles incoming IPC requests via shared memory"
+    },
+    {
+      "type": "POSIX Hook",
+      "location": "io_interceptor/src/posix_interceptor.cpp",
+      "function": "HookOpen/HookRead/HookWrite",
+      "description": "Intercepts POSIX file operations"
+    },
+    {
+      "type": "Interceptor Server",
+      "location": "interceptor/server/interceptor_server.cpp",
+      "function": "HandleInterceptorRead/HandleInterceptorWrite",
+      "description": "Handles remote file operation requests"
+    },
+    {
+      "type": "Configuration",
+      "location": "config/bio_config_instance.cpp",
+      "function": "Initialize",
+      "description": "Loads and validates configuration file"
+    },
+    {
+      "type": "ZooKeeper",
+      "location": "cluster/common/cm_zkadapter.c",
+      "function": "CmClientZkInit/CmServerZkInit",
+      "description": "Initializes ZooKeeper connection and data handling"
+    },
+    {
+      "type": "TLS",
+      "location": "security/openssl_tools/bio_openssl_api_dl.cpp",
+      "function": "LoadOpensslApiDl",
+      "description": "Loads OpenSSL libraries and initializes TLS"
+    },
+    {
+      "type": "Underlying FS",
+      "location": "underfs/ceph_system.cpp",
+      "function": "Init/Get/Put",
+      "description": "Operations on external Ceph storage"
+    }
+  ],
+  
+  "data_flow": {
+    "description": "Data flows from intercepted POSIX calls through network to cache/disk storage",
+    "flow_paths": [
+      {
+        "name": "File Read Path",
+        "path": ["posix_interceptor.cpp:HookPread", "interceptor_proxy.cpp", "interceptor_net.cpp", "interceptor_server.cpp:HandleInterceptorRead", "cache/rcache.cpp", "disk/bdm_core.c:BdmRead"]
+      },
+      {
+        "name": "File Write Path",
+        "path": ["posix_interceptor.cpp:HookPwrite", "interceptor_proxy.cpp", "interceptor_net.cpp", "interceptor_server.cpp:HandleInterceptorWrite", "cache/wcache.cpp", "disk/bdm_core.c:BdmWrite"]
+      },
+      {
+        "name": "Network Request Path",
+        "path": ["net/net_engine.cpp:RequestReceived", "message handler", "server/mirror_server.cpp", "cache operations", "disk operations"]
+      },
+      {
+        "name": "Configuration Path",
+        "path": ["config/bio_config_instance.cpp:Initialize", "file parsing", "validation", "module configuration"]
+      },
+      {
+        "name": "TLS Path",
+        "path": ["bio_openssl_api_dl.cpp:LoadOpensslApiDl", "SSL initialization", "certificate loading", "TLS connection"]
+      }
+    ]
+  },
+  
+  "excluded_paths": [
+    "3rdparty/",
+    "test/",
+    "tests/"
+  ]
+}

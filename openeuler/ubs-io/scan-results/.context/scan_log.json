@@ -1,0 +1,97 @@
+{
+  "scan_id": "scan_ubs-io_20260420",
+  "start_time": "2026-04-20T04:10:00Z",
+  "end_time": "2026-04-20T05:07:50Z",
+  "duration_seconds": 3450,
+  "project_name": "ubs-io",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/openeuler/ubs-io",
+  "status": "success",
+  "agents": [
+    {
+      "name": "architecture",
+      "start_time": "2026-04-20T04:11:00Z",
+      "end_time": "2026-04-20T04:18:45Z",
+      "duration_seconds": 465,
+      "status": "success",
+      "output_files": [
+        "project_model.json",
+        "call_graph.json",
+        "threat_analysis_report.md"
+      ],
+      "summary": "分析项目架构，识别6个高风险模块和6个主要攻击面"
+    },
+    {
+      "name": "dataflow-scanner",
+      "start_time": "2026-04-20T04:19:00Z",
+      "end_time": "2026-04-20T04:43:56Z",
+      "duration_seconds": 1496,
+      "status": "success",
+      "items_processed": 13,
+      "items_found": 207,
+      "summary": "扫描13个模块，发现207个数据流漏洞候选（77 HIGH, 107 MEDIUM, 23 LOW）"
+    },
+    {
+      "name": "security-auditor",
+      "start_time": "2026-04-20T04:19:00Z",
+      "end_time": "2026-04-20T04:39:33Z",
+      "duration_seconds": 1233,
+      "status": "success",
+      "items_processed": 11,
+      "items_found": 165,
+      "summary": "审计11个模块，发现165个安全问题（61 HIGH, 87 MEDIUM, 17 LOW），6个跨模块漏洞链"
+    },
+    {
+      "name": "verification",
+      "start_time": "2026-04-20T04:44:00Z",
+      "end_time": "2026-04-20T04:51:41Z",
+      "duration_seconds": 461,
+      "status": "success",
+      "items_processed": 205,
+      "summary": "验证205个候选漏洞，确认23个CONFIRMED、68个LIKELY、106个POSSIBLE、8个FALSE_POSITIVE"
+    },
+    {
+      "name": "details-analyzer",
+      "start_time": "2026-04-20T04:50:00Z",
+      "end_time": "2026-04-20T05:20:00Z",
+      "duration_seconds": 420,
+      "status": "success",
+      "items_processed": 23,
+      "items_total": 23,
+      "output_files": [
+        "NET-002.md", "CLUSTER-INPUTVAL-002.md", "VULN-IO-012.md",
+        "SDK-IL-001.md", "SDK-IL-002.md", "SDK-IL-003.md",
+        "VULN-IO-001.md", "NET-007.md", "VULN-IO-004.md",
+        "VULN-IO-007.md", "CLUSTER-TRUSTBOUND-005.md", "VULN-IO-011.md",
+        "VULN-IO-015.md", "VULN-IO-017.md", "DISK-001.md",
+        "DISK-002.md", "DISK-003.md", "DISK-008.md",
+        "VULN-COMMON-006.md", "XM-004.md", "VULN-IO-016.md",
+        "VUL-UNDERFS-008.md", "VULN-COMMON-002.md"
+      ],
+      "summary": "深度分析23个CONFIRMED漏洞，全部完成（含漏洞概述、攻击场景、修复建议）"
+    },
+    {
+      "name": "reporter",
+      "start_time": "2026-04-20T05:00:00Z",
+      "end_time": "2026-04-20T05:07:50Z",
+      "duration_seconds": 350,
+      "status": "success",
+      "output_files": [
+        "report_confirmed.md",
+        "report_unconfirmed.md"
+      ],
+      "summary": "生成完整漏洞报告，report_confirmed.md含执行摘要和Top 5深度分析"
+    }
+  ],
+  "summary": {
+    "total_vulnerabilities": 205,
+    "confirmed": 23,
+    "likely": 68,
+    "possible": 106,
+    "false_positive": 8,
+    "high_severity": 71,
+    "medium_severity": 107,
+    "low_severity": 27,
+    "top_modules": ["sdk", "underfs", "server", "net", "io_interceptor"],
+    "top_cwe_types": ["CWE-22", "CWE-190", "CWE-20", "CWE-822", "CWE-426"]
+  }
+}
