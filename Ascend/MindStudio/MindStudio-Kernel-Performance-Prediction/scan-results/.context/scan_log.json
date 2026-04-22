@@ -1,0 +1,92 @@
+{
+  "scan_id": "scan-20260421-001",
+  "start_time": "2026-04-21T10:00:00Z",
+  "end_time": "2026-04-21T11:30:00Z",
+  "duration_seconds": 5400,
+  "project_name": "MindStudio-Kernel-Performance-Prediction",
+  "status": "completed",
+  "agents": [
+    {
+      "name": "architecture",
+      "start_time": "2026-04-21T10:05:00Z",
+      "end_time": "2026-04-21T10:12:32Z",
+      "duration_seconds": 452,
+      "status": "success",
+      "outputs": [
+        "scan-results/.context/project_model.json",
+        "scan-results/.context/call_graph.json",
+        "scan-results/threat_analysis_report.md"
+      ],
+      "error": null
+    },
+    {
+      "name": "dataflow-scanner",
+      "start_time": "2026-04-21T10:13:00Z",
+      "end_time": "2026-04-21T10:48:47Z",
+      "duration_seconds": 2147,
+      "status": "success",
+      "outputs": [
+        "scan-results/.context/scan.db"
+      ],
+      "error": null,
+      "item_count": 9
+    },
+    {
+      "name": "security-auditor",
+      "start_time": "2026-04-21T10:13:00Z",
+      "end_time": "2026-04-21T10:17:09Z",
+      "duration_seconds": 249,
+      "status": "failed",
+      "outputs": [],
+      "error": "Task timeout or connection lost"
+    },
+    {
+      "name": "verification",
+      "start_time": "2026-04-21T10:50:00Z",
+      "end_time": "2026-04-21T10:54:05Z",
+      "duration_seconds": 245,
+      "status": "success",
+      "outputs": [
+        "scan-results/.context/scan.db"
+      ],
+      "error": null,
+      "item_count": 9
+    },
+    {
+      "name": "details-analyzer",
+      "start_time": "2026-04-21T10:55:00Z",
+      "end_time": "2026-04-21T11:08:43Z",
+      "duration_seconds": 823,
+      "status": "success",
+      "outputs": [
+        "scan-results/details/VULN-DF-CPP-001.md",
+        "scan-results/details/VULN-DF-CPP-002.md",
+        "scan-results/details/VULN-DF-CPP-003.md"
+      ],
+      "error": null,
+      "item_count": 3
+    },
+    {
+      "name": "reporter",
+      "start_time": "2026-04-21T11:10:00Z",
+      "end_time": "2026-04-21T11:13:09Z",
+      "duration_seconds": 189,
+      "status": "success",
+      "outputs": [
+        "scan-results/report_confirmed.md",
+        "scan-results/report_unconfirmed.md"
+      ],
+      "error": null
+    }
+  ],
+  "summary": {
+    "project_type": "library",
+    "total_files_scanned": 82,
+    "total_lines": 15000,
+    "candidates_found": 9,
+    "confirmed_vulnerabilities": 3,
+    "likely_vulnerabilities": 3,
+    "false_positives": 3,
+    "lsp_available": false
+  }
+}

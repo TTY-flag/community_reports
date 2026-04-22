@@ -1,0 +1,837 @@
+{
+  "call_graph_info": {
+    "project": "memfabric_hybrid",
+    "generated_at": "2026-04-21T06:10:00Z",
+    "method": "Static analysis based on code review",
+    "language": "C++/Python/Go"
+  },
+  "entry_functions": [
+    {
+      "name": "smem_bm_init",
+      "file": "src/smem/csrc/smem_bm/smem_bm.cpp",
+      "line": 1,
+      "calls": [
+        {
+          "target": "smem_bm_init_inner",
+          "file": "src/smem/csrc/smem_bm/smem_bm.cpp",
+          "type": "direct"
+        },
+        {
+          "target": "StoreFactory::CreateStore",
+          "file": "src/smem/csrc/config_store/smem_store_factory.cpp",
+          "type": "direct"
+        },
+        {
+          "target": "smem_set_extern_logger",
+          "file": "src/smem/csrc/common/smem_logger.cpp",
+          "type": "direct"
+        }
+      ]
+    },
+    {
+      "name": "smem_bm_create",
+      "file": "src/smem/csrc/smem_bm/smem_bm.cpp",
+      "line": 50,
+      "calls": [
+        {
+          "target": "smem_bm_create_inner",
+          "file": "src/smem/csrc/smem_bm/smem_bm.cpp",
+          "type": "direct"
+        },
+        {
+          "target": "hybm_va_manager::GetInstance",
+          "file": "src/hybm/csrc/mm/hybm_va_manager.cpp",
+          "type": "direct"
+        },
+        {
+          "target": "HybmEntity::Create",
+          "file": "src/hybm/csrc/entity/hybm_entity_default.cpp",
+          "type": "direct"
+        }
+      ]
+    },
+    {
+      "name": "smem_bm_copy",
+      "file": "src/smem/csrc/smem_bm/smem_bm.cpp",
+      "line": 150,
+      "calls": [
+        {
+          "target": "smem_bm_copy_inner",
+          "file": "src/smem/csrc/smem_bm/smem_bm.cpp",
+          "type": "direct"
+        },
+        {
+          "target": "HybmDataOperator::CopyData",
+          "file": "src/hybm/csrc/data_operation/host/hybm_compose_data_op.cpp",
+          "type": "direct"
+        },
+        {
+          "target": "HostDataOpRdma::DataCopy",
+          "file": "src/hybm/csrc/data_operation/host/hybm_data_op_host_rdma.cpp",
+          "type": "indirect",
+          "via": "HybmDataOperator"
+        },
+        {
+          "target": "HostDataOpShm::DataCopy",
+          "file": "src/hybm/csrc/data_operation/host/hybm_data_op_host_shm.cpp",
+          "type": "indirect",
+          "via": "HybmDataOperator"
+        },
+        {
+          "target": "HostDataOpSdma::DataCopy",
+          "file": "src/hybm/csrc/data_operation/host/hybm_data_op_sdma.cpp",
+          "type": "indirect",
+          "via": "HybmDataOperator"
+        },
+        {
+          "target": "DeviceDataOpRdma::DataCopy",
+          "file": "src/hybm/csrc/data_operation/host/hybm_data_op_device_rdma.cpp",
+          "type": "indirect",
+          "via": "HybmDataOperator"
+        }
+      ]
+    },
+    {
+      "name": "AccTcpServerDefault::Start",
+      "file": "src/acc_links/csrc/acc_tcp_server_default.cpp",
+      "line": 45,
+      "calls": [
+        {
+          "target": "ValidateOptions",
+          "file": "src/acc_links/csrc/acc_tcp_server_default.cpp",
+          "type": "direct"
+        },
+        {
+          "target": "ValidateHandler",
+          "file": "src/acc_links/csrc/acc_tcp_server_default.cpp",
+          "type": "direct"
+        },
+        {
+          "target": "GenerateSslCtx",
+          "file": "src/acc_links/csrc/acc_tcp_server_default.cpp",
+          "type": "direct"
+        },
+        {
+          "target": "StartWorkers",
+          "file": "src/acc_links/csrc/acc_tcp_server_default.cpp",
+          "type": "direct"
+        },
+        {
+          "target": "StartListener",
+          "file": "src/acc_links/csrc/acc_tcp_server_default.cpp",
+          "type": "direct"
+        },
+        {
+          "target": "LoadDynamicLib",
+          "file": "src/acc_links/csrc/acc_tcp_server_default.cpp",
+          "type": "direct",
+          "external_input": true
+        }
+      ]
+    },
+    {
+      "name": "AccTcpSslHelper::InitSSL",
+      "file": "src/acc_links/csrc/security/acc_tcp_ssl_helper.cpp",
+      "line": 104,
+      "calls": [
+        {
+          "target": "LoadCaCert",
+          "file": "src/acc_links/csrc/security/acc_tcp_ssl_helper.cpp",
+          "type": "direct"
+        },
+        {
+          "target": "LoadServerCert",
+          "file": "src/acc_links/csrc/security/acc_tcp_ssl_helper.cpp",
+          "type": "direct"
+        },
+        {
+          "target": "LoadPrivateKey",
+          "file": "src/acc_links/csrc/security/acc_tcp_ssl_helper.cpp",
+          "type": "direct",
+          "external_input": true
+        },
+        {
+          "target": "CertVerify",
+          "file": "src/acc_links/csrc/security/acc_tcp_ssl_helper.cpp",
+          "type": "direct"
+        }
+      ]
+    },
+    {
+      "name": "AccTcpSslHelper::LoadPrivateKey",
+      "file": "src/acc_links/csrc/security/acc_tcp_ssl_helper.cpp",
+      "line": 191,
+      "calls": [
+        {
+          "target": "ReadFile",
+          "file": "src/acc_links/csrc/security/acc_tcp_ssl_helper.cpp",
+          "type": "direct"
+        },
+        {
+          "target": "mDecryptHandler_",
+          "file": "src/smem/csrc/python_wrapper/memfabric_hybrid/pymf_hybrid.cpp",
+          "type": "callback",
+          "external_input": true,
+          "taint_source": true
+        },
+        {
+          "target": "OpenSslApiWrapper::SslCtxUsePrivateKeyFile",
+          "file": "src/acc_links/csrc/under_api/openssl/openssl_api_wrapper.h",
+          "type": "direct"
+        }
+      ]
+    },
+    {
+      "name": "AccStoreServer::ReceiveMessageHandler",
+      "file": "src/smem/csrc/config_store/tcp_store/smem_tcp_config_store_server.cpp",
+      "line": 167,
+      "calls": [
+        {
+          "target": "SmemMessagePacker::Unpack",
+          "file": "src/smem/csrc/config_store/tcp_store/smem_message_packer.cpp",
+          "type": "direct",
+          "external_input": true,
+          "taint_source": true
+        },
+        {
+          "target": "SetHandler",
+          "file": "src/smem/csrc/config_store/tcp_store/smem_tcp_config_store_server.cpp",
+          "type": "indirect",
+          "via": "requestHandlers_ map"
+        },
+        {
+          "target": "GetHandler",
+          "file": "src/smem/csrc/config_store/tcp_store/smem_tcp_config_store_server.cpp",
+          "type": "indirect",
+          "via": "requestHandlers_ map"
+        },
+        {
+          "target": "AddHandler",
+          "file": "src/smem/csrc/config_store/tcp_store/smem_tcp_config_store_server.cpp",
+          "type": "indirect",
+          "via": "requestHandlers_ map"
+        },
+        {
+          "target": "AppendHandler",
+          "file": "src/smem/csrc/config_store/tcp_store/smem_tcp_config_store_server.cpp",
+          "type": "indirect",
+          "via": "requestHandlers_ map"
+        },
+        {
+          "target": "WriteHandler",
+          "file": "src/smem/csrc/config_store/tcp_store/smem_tcp_config_store_server.cpp",
+          "type": "indirect",
+          "via": "requestHandlers_ map"
+        },
+        {
+          "target": "CasHandler",
+          "file": "src/smem/csrc/config_store/tcp_store/smem_tcp_config_store_server.cpp",
+          "type": "indirect",
+          "via": "requestHandlers_ map"
+        }
+      ]
+    },
+    {
+      "name": "SmemMessagePacker::Unpack",
+      "file": "src/smem/csrc/config_store/tcp_store/smem_message_packer.cpp",
+      "line": 89,
+      "calls": [],
+      "taint_source": true,
+      "description": "Unpacks binary message from network - key taint source"
+    },
+    {
+      "name": "RdmaTransportManager::WriteRemote",
+      "file": "src/hybm/csrc/transport/device/device_rdma_transport_manager.cpp",
+      "line": 409,
+      "calls": [
+        {
+          "target": "RemoteIO",
+          "file": "src/hybm/csrc/transport/device/device_rdma_transport_manager.cpp",
+          "type": "direct"
+        },
+        {
+          "target": "CorrectHostRegWr",
+          "file": "src/hybm/csrc/transport/device/device_rdma_transport_manager.cpp",
+          "type": "direct",
+          "external_input": true
+        },
+        {
+          "target": "DlHccpApi::RaSendWrV2",
+          "file": "src/hybm/csrc/under_api/dl_hccp_api.cpp",
+          "type": "direct"
+        }
+      ]
+    },
+    {
+      "name": "RdmaTransportManager::ReadRemote",
+      "file": "src/hybm/csrc/transport/device/device_rdma_transport_manager.cpp",
+      "line": 397,
+      "calls": [
+        {
+          "target": "RemoteIO",
+          "file": "src/hybm/csrc/transport/device/device_rdma_transport_manager.cpp",
+          "type": "direct"
+        },
+        {
+          "target": "CorrectHostRegWr",
+          "file": "src/hybm/csrc/transport/device/device_rdma_transport_manager.cpp",
+          "type": "direct",
+          "external_input": true
+        }
+      ]
+    },
+    {
+      "name": "HostDataOpRdma::DataCopy",
+      "file": "src/hybm/csrc/data_operation/host/hybm_data_op_host_rdma.cpp",
+      "line": 149,
+      "calls": [
+        {
+          "target": "TransformVa",
+          "file": "src/hybm/csrc/data_operation/host/hybm_data_op_host_rdma.cpp",
+          "type": "direct"
+        },
+        {
+          "target": "CopyHost2Gva",
+          "file": "src/hybm/csrc/data_operation/host/hybm_data_op_host_rdma.cpp",
+          "type": "indirect",
+          "via": "switch direction"
+        },
+        {
+          "target": "CopyGva2Host",
+          "file": "src/hybm/csrc/data_operation/host/hybm_data_op_host_rdma.cpp",
+          "type": "indirect",
+          "via": "switch direction"
+        },
+        {
+          "target": "CopyDevice2Gva",
+          "file": "src/hybm/csrc/data_operation/host/hybm_data_op_host_rdma.cpp",
+          "type": "indirect",
+          "via": "switch direction"
+        },
+        {
+          "target": "CopyGva2Device",
+          "file": "src/hybm/csrc/data_operation/host/hybm_data_op_host_rdma.cpp",
+          "type": "indirect",
+          "via": "switch direction"
+        }
+      ]
+    },
+    {
+      "name": "HostDataOpRdma::SafePut",
+      "file": "src/hybm/csrc/data_operation/host/hybm_data_op_host_rdma.cpp",
+      "line": 267,
+      "calls": [
+        {
+          "target": "transportManager_->QueryHasRegistered",
+          "file": "src/hybm/csrc/transport/host/host_hcom_transport_manager.cpp",
+          "type": "direct"
+        },
+        {
+          "target": "transportManager_->WriteRemote",
+          "file": "src/hybm/csrc/transport/host/host_hcom_transport_manager.cpp",
+          "type": "direct",
+          "external_input": true,
+          "taint_sink": true
+        },
+        {
+          "target": "rdmaSwapMemoryAllocator_->Allocate",
+          "file": "src/hybm/csrc/common/hybm_rbtree_range_pool.cpp",
+          "type": "direct"
+        },
+        {
+          "target": "DlHybridApi::Memcpy",
+          "file": "src/hybm/csrc/under_api/dl_hybrid_api.cpp",
+          "type": "direct"
+        }
+      ]
+    },
+    {
+      "name": "HostDataOpRdma::SafeGet",
+      "file": "src/hybm/csrc/data_operation/host/hybm_data_op_host_rdma.cpp",
+      "line": 321,
+      "calls": [
+        {
+          "target": "transportManager_->QueryHasRegistered",
+          "file": "src/hybm/csrc/transport/host/host_hcom_transport_manager.cpp",
+          "type": "direct"
+        },
+        {
+          "target": "transportManager_->ReadRemote",
+          "file": "src/hybm/csrc/transport/host/host_hcom_transport_manager.cpp",
+          "type": "direct",
+          "external_input": true,
+          "taint_source": true
+        },
+        {
+          "target": "rdmaSwapMemoryAllocator_->Allocate",
+          "file": "src/hybm/csrc/common/hybm_rbtree_range_pool.cpp",
+          "type": "direct"
+        },
+        {
+          "target": "DlHybridApi::Memcpy",
+          "file": "src/hybm/csrc/under_api/dl_hybrid_api.cpp",
+          "type": "direct"
+        }
+      ]
+    },
+    {
+      "name": "HybmMapShareMemory",
+      "file": "src/hybm/csrc/driver/userspace/devmm_ioctl.cpp",
+      "line": 48,
+      "calls": [
+        {
+          "target": "ioctl(DEVMM_SVM_IPC_MEM_QUERY)",
+          "file": "kernel driver",
+          "type": "syscall",
+          "external_input": true
+        },
+        {
+          "target": "ioctl(DEVMM_SVM_IPC_MEM_OPEN)",
+          "file": "kernel driver",
+          "type": "syscall",
+          "external_input": true
+        },
+        {
+          "target": "ioctl(DEVMM_SVM_PREFETCH)",
+          "file": "kernel driver",
+          "type": "syscall",
+          "external_input": true
+        }
+      ]
+    },
+    {
+      "name": "OpenSslApiWrapper::Load",
+      "file": "src/acc_links/csrc/under_api/openssl/openssl_api_dl.cpp",
+      "line": 20,
+      "calls": [
+        {
+          "target": "dlopen",
+          "file": "system",
+          "type": "syscall",
+          "external_input": true,
+          "taint_source": true
+        },
+        {
+          "target": "dlsym",
+          "file": "system",
+          "type": "syscall",
+          "external_input": true,
+          "taint_source": true
+        }
+      ]
+    },
+    {
+      "name": "DlAclApi::LoadLibrary",
+      "file": "src/hybm/csrc/under_api/dl_acl_api.cpp",
+      "line": 1,
+      "calls": [
+        {
+          "target": "dlopen",
+          "file": "system",
+          "type": "syscall",
+          "external_input": true,
+          "taint_source": true
+        },
+        {
+          "target": "dlsym",
+          "file": "system",
+          "type": "syscall",
+          "external_input": true
+        }
+      ]
+    },
+    {
+      "name": "py_decrypt_handler_wrapper",
+      "file": "src/smem/csrc/python_wrapper/memfabric_hybrid/pymf_hybrid.cpp",
+      "line": 374,
+      "calls": [
+        {
+          "target": "g_py_decrypt_func",
+          "file": "Python interpreter",
+          "type": "callback",
+          "external_input": true,
+          "taint_source": true,
+          "description": "Python callback for TLS private key decryption - high risk injection point"
+        }
+      ]
+    }
+  ],
+  "taint_flows": [
+    {
+      "id": "TF001",
+      "name": "TCP Message to KV Store",
+      "source": {
+        "function": "AccStoreServer::ReceiveMessageHandler",
+        "file": "src/smem/csrc/config_store/tcp_store/smem_tcp_config_store_server.cpp",
+        "line": 167,
+        "variable": "context.DataPtr()",
+        "description": "Raw binary data from TCP connection"
+      },
+      "propagation": [
+        {
+          "function": "SmemMessagePacker::Unpack",
+          "file": "src/smem/csrc/config_store/tcp_store/smem_message_packer.cpp",
+          "line": 89,
+          "variable": "message.keys, message.values"
+        }
+      ],
+      "sink": {
+        "function": "backend_->Put",
+        "file": "src/smem/csrc/config_store/tcp_store/smem_tcp_config_store_server.cpp",
+        "line": 356,
+        "variable": "key, value",
+        "description": "Data stored in configuration backend"
+      },
+      "cwe": "CWE-20: Improper Input Validation",
+      "severity": "HIGH"
+    },
+    {
+      "id": "TF002",
+      "name": "RDMA Remote Memory Read to Local Memory",
+      "source": {
+        "function": "transportManager_->ReadRemote",
+        "file": "src/hybm/csrc/transport/host/host_hcom_transport_manager.cpp",
+        "line": 200,
+        "variable": "rAddr (remote address)",
+        "description": "Remote memory address specified by caller"
+      },
+      "propagation": [
+        {
+          "function": "HostDataOpRdma::SafeGet",
+          "file": "src/hybm/csrc/data_operation/host/hybm_data_op_host_rdma.cpp",
+          "line": 321,
+          "variable": "tmpHost (swap buffer)"
+        },
+        {
+          "function": "DlHybridApi::Memcpy",
+          "file": "src/hybm/csrc/data_operation/host/hybm_data_op_host_rdma.cpp",
+          "line": 363,
+          "variable": "destVA"
+        }
+      ],
+      "sink": {
+        "function": "destVA",
+        "file": "User memory",
+        "variable": "Application memory buffer",
+        "description": "Remote memory copied to local application memory"
+      },
+      "cwe": "CWE-125: Out-of-bounds Read",
+      "severity": "HIGH"
+    },
+    {
+      "id": "TF003",
+      "name": "Python Decrypt Callback to SSL Context",
+      "source": {
+        "function": "g_py_decrypt_func",
+        "file": "src/smem/csrc/python_wrapper/memfabric_hybrid/pymf_hybrid.cpp",
+        "line": 374,
+        "variable": "cipherText",
+        "description": "Encrypted private key password from Python callback"
+      },
+      "propagation": [
+        {
+          "function": "py_decrypt_handler_wrapper",
+          "file": "src/smem/csrc/python_wrapper/memfabric_hybrid/pymf_hybrid.cpp",
+          "line": 374,
+          "variable": "plain"
+        },
+        {
+          "function": "AccTcpSslHelper::LoadPrivateKey",
+          "file": "src/acc_links/csrc/security/acc_tcp_ssl_helper.cpp",
+          "line": 214,
+          "variable": "buffer"
+        }
+      ],
+      "sink": {
+        "function": "OpenSslApiWrapper::SslCtxSetDefaultPasswdCbUserdata",
+        "file": "src/acc_links/csrc/security/acc_tcp_ssl_helper.cpp",
+        "line": 222,
+        "variable": "mKeyPass.first",
+        "description": "Decrypted password used for SSL private key"
+      },
+      "cwe": "CWE-94: Code Injection",
+      "severity": "HIGH"
+    },
+    {
+      "id": "TF004",
+      "name": "Dynamic Library Path Loading",
+      "source": {
+        "function": "OpenSslApiWrapper::Load",
+        "file": "src/acc_links/csrc/under_api/openssl/openssl_api_dl.cpp",
+        "line": 20,
+        "variable": "dynLibPath",
+        "description": "Path to dynamic library specified by configuration"
+      },
+      "propagation": [
+        {
+          "function": "FileUtil::Realpath",
+          "file": "src/util/csrc/mf_file_util.h",
+          "line": 1,
+          "variable": "libPath"
+        }
+      ],
+      "sink": {
+        "function": "dlopen",
+        "file": "system",
+        "variable": "libPath",
+        "description": "Dynamic library loaded into process"
+      },
+      "cwe": "CWE-426: Untrusted Search Path",
+      "severity": "HIGH"
+    },
+    {
+      "id": "TF005",
+      "name": "Certificate File Path to SSL Context",
+      "source": {
+        "function": "tlsTopPath + tlsCert",
+        "file": "Configuration",
+        "variable": "Certificate file path",
+        "description": "Certificate file path from configuration"
+      },
+      "propagation": [
+        {
+          "function": "AccTcpSslHelper::LoadServerCert",
+          "file": "src/acc_links/csrc/security/acc_tcp_ssl_helper.cpp",
+          "line": 177,
+          "variable": "tmpPath"
+        },
+        {
+          "function": "mf::FileUtil::Realpath",
+          "file": "src/util/csrc/mf_file_util.h",
+          "line": 180,
+          "variable": "tmpPath"
+        }
+      ],
+      "sink": {
+        "function": "OpenSslApiWrapper::SslCtxUseCertificateFile",
+        "file": "src/acc_links/csrc/security/acc_tcp_ssl_helper.cpp",
+        "line": 184,
+        "variable": "tmpPath.c_str()",
+        "description": "Certificate loaded into SSL context"
+      },
+      "cwe": "CWE-295: Improper Certificate Validation",
+      "severity": "HIGH"
+    },
+    {
+      "id": "TF006",
+      "name": "WriteHandler Offset to Memory Write",
+      "source": {
+        "function": "AccStoreServer::WriteHandler",
+        "file": "src/smem/csrc/config_store/tcp_store/smem_tcp_config_store_server.cpp",
+        "line": 711,
+        "variable": "value.data()",
+        "description": "Value containing offset and data from network"
+      },
+      "propagation": [
+        {
+          "function": "AccStoreServer::WriteHandler",
+          "file": "src/smem/csrc/config_store/tcp_store/smem_tcp_config_store_server.cpp",
+          "line": 731,
+          "variable": "offset"
+        }
+      ],
+      "sink": {
+        "function": "std::copy_n",
+        "file": "src/smem/csrc/config_store/tcp_store/smem_tcp_config_store_server.cpp",
+        "line": 768,
+        "variable": "curValue.data() + offset",
+        "description": "Data written to memory at offset specified by network message"
+      },
+      "cwe": "CWE-787: Out-of-bounds Write",
+      "severity": "HIGH"
+    },
+    {
+      "id": "TF007",
+      "name": "AddHandler to Integer Overflow",
+      "source": {
+        "function": "AccStoreServer::AddHandler",
+        "file": "src/smem/csrc/config_store/tcp_store/smem_tcp_config_store_server.cpp",
+        "line": 566,
+        "variable": "request.values[0]",
+        "description": "Value to add from network message"
+      },
+      "propagation": [
+        {
+          "function": "AccStoreServer::AddHandler",
+          "file": "src/smem/csrc/config_store/tcp_store/smem_tcp_config_store_server.cpp",
+          "line": 584,
+          "variable": "valueNum"
+        },
+        {
+          "function": "AccStoreServer::AddHandler",
+          "file": "src/smem/csrc/config_store/tcp_store/smem_tcp_config_store_server.cpp",
+          "line": 606,
+          "variable": "storedValueNum"
+        }
+      ],
+      "sink": {
+        "function": "storedValueNum += valueNum",
+        "file": "src/smem/csrc/config_store/tcp_store/smem_tcp_config_store_server.cpp",
+        "line": 621,
+        "variable": "storedValueNum",
+        "description": "Integer addition with overflow check present"
+      },
+      "cwe": "CWE-190: Integer Overflow",
+      "severity": "MEDIUM",
+      "mitigation": "Overflow check present at line 614-619"
+    },
+    {
+      "id": "TF008",
+      "name": "GVA Address to Memory Operations",
+      "source": {
+        "function": "smem_bm_copy",
+        "file": "src/smem/csrc/smem_bm/smem_bm.cpp",
+        "line": 150,
+        "variable": "params.src, params.dest",
+        "description": "Global Virtual Address from API call"
+      },
+      "propagation": [
+        {
+          "function": "HostDataOpRdma::TransformVa",
+          "file": "src/hybm/csrc/data_operation/host/hybm_data_op_host_rdma.cpp",
+          "line": 98,
+          "variable": "src, dst"
+        }
+      ],
+      "sink": {
+        "function": "HostDataOpRdma::SafePut",
+        "file": "src/hybm/csrc/data_operation/host/hybm_data_op_host_rdma.cpp",
+        "line": 267,
+        "variable": "srcBase, destBase",
+        "description": "Address used for RDMA operations"
+      },
+      "cwe": "CWE-119: Buffer Overflow",
+      "severity": "HIGH"
+    }
+  ],
+  "cross_module_calls": [
+    {
+      "caller_module": "smem",
+      "caller_file": "src/smem/csrc/smem_bm/smem_bm.cpp",
+      "caller_function": "smem_bm_copy",
+      "callee_module": "hybm",
+      "callee_file": "src/hybm/csrc/data_operation/host/hybm_compose_data_op.cpp",
+      "callee_function": "HybmDataOperator::CopyData",
+      "description": "Cross-module data copy from smem API to hybm data operation"
+    },
+    {
+      "caller_module": "smem",
+      "caller_file": "src/smem/csrc/smem_bm/smem_bm.cpp",
+      "caller_function": "smem_bm_create",
+      "callee_module": "hybm",
+      "callee_file": "src/hybm/csrc/entity/hybm_entity_default.cpp",
+      "callee_function": "HybmEntityDefault::Create",
+      "description": "Cross-module entity creation"
+    },
+    {
+      "caller_module": "smem",
+      "caller_file": "src/smem/csrc/config_store/tcp_store/smem_tcp_config_store_server.cpp",
+      "caller_function": "AccStoreServer::Startup",
+      "callee_module": "acc_links",
+      "callee_file": "src/acc_links/csrc/acc_tcp_server_default.cpp",
+      "callee_function": "AccTcpServerDefault::Start",
+      "description": "Cross-module TCP server usage"
+    },
+    {
+      "caller_module": "acc_links",
+      "caller_file": "src/acc_links/csrc/acc_tcp_server_default.cpp",
+      "caller_function": "AccTcpServerDefault::LoadDynamicLib",
+      "callee_module": "util",
+      "callee_file": "src/util/csrc/mf_file_util.h",
+      "callee_function": "FileUtil::Realpath",
+      "description": "Cross-module file validation"
+    },
+    {
+      "caller_module": "acc_links",
+      "caller_file": "src/acc_links/csrc/security/acc_tcp_ssl_helper.cpp",
+      "caller_function": "AccTcpSslHelper::LoadPrivateKey",
+      "callee_module": "smem",
+      "callee_file": "src/smem/csrc/python_wrapper/memfabric_hybrid/pymf_hybrid.cpp",
+      "callee_function": "py_decrypt_handler_wrapper",
+      "description": "Cross-module decrypt callback from Python wrapper"
+    },
+    {
+      "caller_module": "hybm",
+      "caller_file": "src/hybm/csrc/data_operation/host/hybm_data_op_host_rdma.cpp",
+      "caller_function": "HostDataOpRdma::SafePut",
+      "callee_module": "hybm",
+      "callee_file": "src/hybm/csrc/transport/host/host_hcom_transport_manager.cpp",
+      "callee_function": "HostHcomTransportManager::WriteRemote",
+      "description": "Intra-module RDMA transport call"
+    },
+    {
+      "caller_module": "hybm",
+      "caller_file": "src/hybm/csrc/transport/device/device_rdma_transport_manager.cpp",
+      "caller_function": "RdmaTransportManager::RemoteIO",
+      "callee_module": "hybm",
+      "callee_file": "src/hybm/csrc/under_api/dl_hccp_api.cpp",
+      "callee_function": "DlHccpApi::RaSendWrV2",
+      "description": "Intra-module HCCP API call for RDMA"
+    }
+  ],
+  "high_risk_functions": [
+    {
+      "name": "SmemMessagePacker::Unpack",
+      "file": "src/smem/csrc/config_store/tcp_store/smem_message_packer.cpp",
+      "line": 89,
+      "risk_reason": "Network data unpacking without validation",
+      "cwe": ["CWE-20", "CWE-787"]
+    },
+    {
+      "name": "AccTcpSslHelper::LoadPrivateKey",
+      "file": "src/acc_links/csrc/security/acc_tcp_ssl_helper.cpp",
+      "line": 191,
+      "risk_reason": "Private key decryption callback injection",
+      "cwe": ["CWE-94", "CWE-327"]
+    },
+    {
+      "name": "RdmaTransportManager::RemoteIO",
+      "file": "src/hybm/csrc/transport/device/device_rdma_transport_manager.cpp",
+      "line": 718,
+      "risk_reason": "Remote memory access via RDMA",
+      "cwe": ["CWE-119", "CWE-125", "CWE-787"]
+    },
+    {
+      "name": "HostDataOpRdma::SafePut",
+      "file": "src/hybm/csrc/data_operation/host/hybm_data_op_host_rdma.cpp",
+      "line": 267,
+      "risk_reason": "Unvalidated memory address for RDMA write",
+      "cwe": ["CWE-787", "CWE-20"]
+    },
+    {
+      "name": "HostDataOpRdma::SafeGet",
+      "file": "src/hybm/csrc/data_operation/host/hybm_data_op_host_rdma.cpp",
+      "line": 321,
+      "risk_reason": "Unvalidated memory address for RDMA read",
+      "cwe": ["CWE-125", "CWE-20"]
+    },
+    {
+      "name": "AccStoreServer::WriteHandler",
+      "file": "src/smem/csrc/config_store/tcp_store/smem_tcp_config_store_server.cpp",
+      "line": 711,
+      "risk_reason": "Offset-based memory write from network input",
+      "cwe": ["CWE-787"]
+    },
+    {
+      "name": "HybmMapShareMemory",
+      "file": "src/hybm/csrc/driver/userspace/devmm_ioctl.cpp",
+      "line": 48,
+      "risk_reason": "ioctl to kernel driver for memory mapping",
+      "cwe": ["CWE-782", "CWE-20"]
+    },
+    {
+      "name": "OpenSslApiWrapper::Load",
+      "file": "src/acc_links/csrc/under_api/openssl/openssl_api_dl.cpp",
+      "line": 20,
+      "risk_reason": "Dynamic library loading with path validation",
+      "cwe": ["CWE-426", "CWE-114"]
+    },
+    {
+      "name": "py_decrypt_handler_wrapper",
+      "file": "src/smem/csrc/python_wrapper/memfabric_hybrid/pymf_hybrid.cpp",
+      "line": 374,
+      "risk_reason": "Python callback for cryptographic operation",
+      "cwe": ["CWE-94", "CWE-20"]
+    }
+  ]
+}

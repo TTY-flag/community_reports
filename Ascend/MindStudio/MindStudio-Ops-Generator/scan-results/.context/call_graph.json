@@ -1,0 +1,448 @@
+{
+  "functions": {
+    "main@msopgen/msopgen.py": {
+      "defined_at": 58,
+      "calls": [
+        "_msopgen_task@msopgen/msopgen.py",
+        "_do_gen_cmd@msopgen/msopgen.py",
+        "_do_compile_cmd@msopgen/msopgen.py",
+        "_do_sim_cmd@msopgen/msopgen.py"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "_msopgen_task@msopgen/msopgen.py": {
+      "defined_at": 46,
+      "calls": [
+        "ArgParser@msopgen/interface/arg_parser.py",
+        "OpFileGenerator@msopgen/interface/op_file_generator.py",
+        "OpFileCompile@msopgen/interface/op_file_compile.py",
+        "Simulator.run@msopgen/simulator/simulator.py"
+      ],
+      "called_by": [
+        "main@msopgen/msopgen.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "__init__@msopgen/interface/arg_parser.py": {
+      "defined_at": 36,
+      "calls": [
+        "_check_input_path@msopgen/interface/arg_parser.py",
+        "_check_output_path@msopgen/interface/arg_parser.py",
+        "_check_framework@msopgen/interface/arg_parser.py",
+        "_check_compute_unit_valid@msopgen/interface/arg_parser.py"
+      ],
+      "called_by": [
+        "_msopgen_task@msopgen/msopgen.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "_check_input_path@msopgen/interface/arg_parser.py": {
+      "defined_at": 235,
+      "calls": [
+        "check_path_is_valid@msopgen/interface/utils.py",
+        "check_input_permission_valid@msopgen/interface/utils.py",
+        "os.path.realpath"
+      ],
+      "called_by": [
+        "__init__@msopgen/interface/arg_parser.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "OpFileGenerator@msopgen/interface/op_file_generator.py": {
+      "defined_at": 32,
+      "calls": [
+        "_create_op_file@msopgen/interface/op_file_generator.py",
+        "OpFileAiCore@msopgen/interface/op_file_aicore.py",
+        "OpFileAiCpu@msopgen/interface/op_file_aicpu.py",
+        "OpFileVectorCore@msopgen/interface/op_file_vectorcore.py",
+        "OpFileMindSporeAiCore@msopgen/interface/op_file_mindspore_aicore.py"
+      ],
+      "called_by": [
+        "_do_gen_cmd@msopgen/msopgen.py"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "OpFileCompile@msopgen/interface/op_file_compile.py": {
+      "defined_at": 37,
+      "calls": [
+        "compile@msopgen/interface/op_file_compile.py",
+        "check_project_invalid@msopgen/interface/op_file_compile.py",
+        "_execute_command@msopgen/interface/op_file_compile.py",
+        "_replace_build_content@msopgen/interface/op_file_compile.py"
+      ],
+      "called_by": [
+        "_do_compile_cmd@msopgen/msopgen.py"
+      ],
+      "receives_external_input": false,
+      "risk": "Critical"
+    },
+    "_execute_command@msopgen/interface/op_file_compile.py": {
+      "defined_at": 73,
+      "calls": [
+        "subprocess.Popen"
+      ],
+      "called_by": [
+        "compile@msopgen/interface/op_file_compile.py"
+      ],
+      "receives_external_input": false,
+      "risk": "Critical"
+    },
+    "read_json_file@msopgen/interface/utils.py": {
+      "defined_at": 95,
+      "calls": [
+        "json_load@msopgen/interface/utils.py",
+        "open"
+      ],
+      "called_by": [
+        "_parse_json_to_info@msopgen/interface/op_info_ir_json.py",
+        "CheckFromConfig.get_trans_value@msopgen/interface/utils.py",
+        "_update_cmake_config_cpp@msopgen/interface/op_file_aicore.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "check_path_is_valid@msopgen/interface/utils.py": {
+      "defined_at": 392,
+      "calls": [
+        "islink@msopgen/interface/utils.py",
+        "check_path_pattern_valid@msopgen/interface/utils.py",
+        "check_path_length_valid@msopgen/interface/utils.py"
+      ],
+      "called_by": [
+        "_check_input_path@msopgen/interface/arg_parser.py",
+        "_check_output_path@msopgen/interface/arg_parser.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "write_files@msopgen/interface/utils.py": {
+      "defined_at": 557,
+      "calls": [
+        "do_write_file@msopgen/interface/utils.py",
+        "os.fdopen",
+        "os.open"
+      ],
+      "called_by": [
+        "_generate_ir_h@msopgen/interface/op_file.py",
+        "_generate_ir_cpp@msopgen/interface/op_file.py",
+        "_generate_py_impl@msopgen/interface/op_file_aicore.py",
+        "_generate_cpp_impl@msopgen/interface/op_file_aicore.py"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "copy_template@msopgen/interface/utils.py": {
+      "defined_at": 442,
+      "calls": [
+        "copy_src_to_dst@msopgen/interface/utils.py",
+        "copytree",
+        "copy2"
+      ],
+      "called_by": [
+        "_generate_project@msopgen/interface/op_file.py"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "Simulator.run@msopgen/simulator/simulator.py": {
+      "defined_at": 260,
+      "calls": [
+        "Args@msopgen/simulator/simulator.py",
+        "Task.run@msopgen/simulator/simulator.py",
+        "MixCoreTask.run@msopgen/simulator/simulator.py"
+      ],
+      "called_by": [
+        "_msopgen_task@msopgen/msopgen.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "_execute_objdump@msopgen/simulator/parse_objdump.py": {
+      "defined_at": 71,
+      "calls": [
+        "subprocess.check_output",
+        "_executable2obj@msopgen/simulator/parse_objdump.py",
+        "check_execute_file@msopgen/interface/utils.py"
+      ],
+      "called_by": [
+        "_parse_output@msopgen/simulator/parse_objdump.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "main@build.py": {
+      "defined_at": 120,
+      "calls": [
+        "BuildManager.run@build.py",
+        "DependencyManager.run@download_dependencies.py",
+        "_execute_command@build.py"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "_execute_command@build.py": {
+      "defined_at": 67,
+      "calls": [
+        "subprocess.run"
+      ],
+      "called_by": [
+        "BuildManager.run@build.py"
+      ],
+      "receives_external_input": false,
+      "risk": "Critical"
+    },
+    "main@download_dependencies.py": {
+      "defined_at": 145,
+      "calls": [
+        "DependencyManager.run@download_dependencies.py",
+        "_exec_shell_cmd@download_dependencies.py",
+        "proc_submodule@download_dependencies.py",
+        "proc_artifact@download_dependencies.py"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "_exec_shell_cmd@download_dependencies.py": {
+      "defined_at": 51,
+      "calls": [
+        "subprocess.run"
+      ],
+      "called_by": [
+        "DependencyManager.run@download_dependencies.py",
+        "proc_submodule@download_dependencies.py",
+        "_download_submodule_recursively@download_dependencies.py"
+      ],
+      "receives_external_input": false,
+      "risk": "Critical"
+    },
+    "main@tools/msopst/scripts/msopst.py": {
+      "defined_at": 240,
+      "calls": [
+        "MsopstArgParser@tools/msopst/st/interface/arg_parser.py",
+        "_generate_run_cmd_op_project@tools/msopst/scripts/msopst.py",
+        "_runner_and_compare@tools/msopst/scripts/msopst.py",
+        "_generate_testcase@tools/msopst/scripts/msopst.py",
+        "_gen_ascendc_test_cmd@tools/msopst/scripts/msopst.py"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "_generate_run_cmd_op_project@tools/msopst/scripts/msopst.py": {
+      "defined_at": 59,
+      "calls": [
+        "CaseDesign@tools/msopst/st/interface/case_design.py",
+        "DataGenerator@tools/msopst/st/interface/data_generator.py",
+        "AclOpGenerator@tools/msopst/st/interface/acl_op_generator.py",
+        "MsOpGenerator@tools/msopst/st/interface/ms_op_generator.py",
+        "PtOpGenerator@tools/msopst/st/interface/pt_op_generator.py"
+      ],
+      "called_by": [
+        "main@tools/msopst/scripts/msopst.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "_function_call@tools/msopst/st/interface/model_parser.py": {
+      "defined_at": 49,
+      "calls": [
+        "_get_framework_type@tools/msopst/st/interface/model_parser.py",
+        "importlib.import_module",
+        "getattr"
+      ],
+      "called_by": [
+        "get_model_nodes@tools/msopst/st/interface/model_parser.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "_get_tensors_and_func@tools/msopst/st/interface/data_generator.py": {
+      "defined_at": 389,
+      "calls": [
+        "importlib.import_module",
+        "getattr",
+        "_get_expect_result_tensors@tools/msopst/st/interface/data_generator.py"
+      ],
+      "called_by": [
+        "_generate_expect_data@tools/msopst/st/interface/data_generator.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "load_json_file@tools/msopst/st/interface/utils.py": {
+      "defined_at": 596,
+      "calls": [
+        "json_load@tools/msopst/st/interface/utils.py",
+        "open"
+      ],
+      "called_by": [
+        "CaseDesign@tools/msopst/st/interface/case_design.py",
+        "_gen_build_convert_run@tools/msopst/scripts/msopst.py",
+        "_function_call@tools/msopst/st/interface/model_parser.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "execute_command@tools/msopst/st/interface/utils.py": {
+      "defined_at": 751,
+      "calls": [
+        "subprocess.Popen"
+      ],
+      "called_by": [
+        "AclOpRunner.run@tools/msopst/st/interface/acl_op_runner.py",
+        "AtcTransformOm.transform_acl_json_to_om@tools/msopst/st/interface/atc_transform_om.py"
+      ],
+      "receives_external_input": false,
+      "risk": "High"
+    },
+    "_read_config_file@tools/msopst/st/interface/advance_ini_parser.py": {
+      "defined_at": 323,
+      "calls": [
+        "open",
+        "RawConfigParser.read_file"
+      ],
+      "called_by": [
+        "get_advance_args_option@tools/msopst/st/interface/advance_ini_parser.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "get_advance_args_option@tools/msopst/st/interface/advance_ini_parser.py": {
+      "defined_at": 97,
+      "calls": [
+        "_read_config_file@tools/msopst/st/interface/advance_ini_parser.py",
+        "_init_gen_flag@tools/msopst/st/interface/advance_ini_parser.py",
+        "_init_run_flag@tools/msopst/st/interface/advance_ini_parser.py",
+        "_init_atc_advance_cmd@tools/msopst/st/interface/advance_ini_parser.py",
+        "_check_atc_args_valid@tools/msopst/st/interface/advance_ini_parser.py"
+      ],
+      "called_by": [
+        "_gen_build_convert_run@tools/msopst/scripts/msopst.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "sys.argv@msopgen/msopgen.py:55",
+      "path": [
+        "ArgParser.__init__@msopgen/interface/arg_parser.py:36",
+        "_check_input_path@msopgen/interface/arg_parser.py:235",
+        "check_path_is_valid@msopgen/interface/utils.py:392"
+      ],
+      "sink": "read_json_file@msopgen/interface/utils.py:102",
+      "sink_type": "file_operation"
+    },
+    {
+      "source": "sys.argv@msopgen/msopgen.py:55",
+      "path": [
+        "ArgParser.__init__@msopgen/interface/arg_parser.py:36",
+        "_check_output_path@msopgen/interface/arg_parser.py:219",
+        "make_dirs@msopgen/interface/utils.py:516"
+      ],
+      "sink": "write_files@msopgen/interface/utils.py:553",
+      "sink_type": "file_operation"
+    },
+    {
+      "source": "read_json_file@msopgen/interface/utils.py:102",
+      "path": [
+        "_parse_json_to_info@msopgen/interface/op_info_ir_json.py:92",
+        "_read_json_data@msopgen/interface/op_info_ir_json.py:182"
+      ],
+      "sink": "json.load@msopgen/interface/utils.py:85",
+      "sink_type": "deserialization"
+    },
+    {
+      "source": "argument.input_path@msopgen/interface/op_file_compile.py:42",
+      "path": [
+        "compile@msopgen/interface/op_file_compile.py:87",
+        "_execute_command@msopgen/interface/op_file_compile.py:73"
+      ],
+      "sink": "subprocess.Popen@msopgen/interface/op_file_compile.py:75",
+      "sink_type": "command_execution"
+    },
+    {
+      "source": "args.relocatable_file@msopgen/simulator/simulator.py:39",
+      "path": [
+        "Task.parse_reloc@msopgen/simulator/simulator.py:224",
+        "RelocParser._execute_objdump@msopgen/simulator/parse_objdump.py:71"
+      ],
+      "sink": "subprocess.check_output@msopgen/simulator/parse_objdump.py:93",
+      "sink_type": "command_execution"
+    },
+    {
+      "source": "sys.argv@build.py:57",
+      "path": [
+        "BuildManager.run@build.py:89",
+        "_execute_command@build.py:67"
+      ],
+      "sink": "subprocess.run@build.py:69",
+      "sink_type": "command_execution"
+    },
+    {
+      "source": "dependencies.json@download_dependencies.py:47",
+      "path": [
+        "DependencyManager.run@download_dependencies.py:128",
+        "_exec_shell_cmd@download_dependencies.py:51"
+      ],
+      "sink": "subprocess.run@download_dependencies.py:55",
+      "sink_type": "command_execution"
+    },
+    {
+      "source": "sys.argv@tools/msopst/scripts/msopst.py:55",
+      "path": [
+        "MsopstArgParser.__init__@tools/msopst/st/interface/arg_parser.py:37",
+        "_check_file_valid@tools/msopst/st/interface/arg_parser.py:155",
+        "load_json_file@tools/msopst/st/interface/utils.py:596"
+      ],
+      "sink": "open@tools/msopst/st/interface/utils.py:604",
+      "sink_type": "file_operation"
+    },
+    {
+      "source": "args.model_path@tools/msopst/st/interface/model_parser.py:50",
+      "path": [
+        "_get_framework_type@tools/msopst/st/interface/model_parser.py:32",
+        "_function_call@tools/msopst/st/interface/model_parser.py:49"
+      ],
+      "sink": "importlib.import_module@tools/msopst/st/interface/model_parser.py:54",
+      "sink_type": "code_execution"
+    },
+    {
+      "source": "case.calc_expect_func_file@tools/msopst/st/interface/data_generator.py:390",
+      "path": [
+        "_get_tensors_and_func@tools/msopst/st/interface/data_generator.py:389",
+        "importlib.import_module@tools/msopst/st/interface/data_generator.py:397"
+      ],
+      "sink": "getattr@tools/msopst/st/interface/data_generator.py:398",
+      "sink_type": "code_execution"
+    },
+    {
+      "source": "args.config_file@tools/msopst/st/interface/arg_parser.py:207",
+      "path": [
+        "_gen_build_convert_run@tools/msopst/scripts/msopst.py:175",
+        "AdvanceIniParser@tools/msopst/st/interface/advance_ini_parser.py:68",
+        "_read_config_file@tools/msopst/st/interface/advance_ini_parser.py:323"
+      ],
+      "sink": "open@tools/msopst/st/interface/advance_ini_parser.py:324",
+      "sink_type": "file_operation"
+    },
+    {
+      "source": "atc_advance_args@tools/msopst/st/interface/advance_ini_parser.py:251",
+      "path": [
+        "_init_atc_advance_cmd@tools/msopst/st/interface/advance_ini_parser.py:238",
+        "get_atc_advance_cmd@tools/msopst/st/interface/advance_ini_parser.py:147"
+      ],
+      "sink": "execute_command@tools/msopst/st/interface/utils.py:751",
+      "sink_type": "command_execution"
+    }
+  ]
+}

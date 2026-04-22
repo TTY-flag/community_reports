@@ -1,0 +1,335 @@
+{
+  "project_name": "MindStudio-Ops-Tuner",
+  "scan_time": "2026-04-21T10:30:00Z",
+  "lsp_available": true,
+  "total_files": 39,
+  "total_lines": 6402,
+  "project_profile": {
+    "project_type": "cli_tool",
+    "deployment_model": "本地执行的 CLI 工具，用于华为 Ascend NPU 设备上的算子 Tiling 参数性能测试和调优。用户通过命令行参数指定矩阵维度（m/n/k）、设备 ID、输出文件路径等，工具批量运行算子并将性能数据输出到 CSV 文件。",
+    "trust_boundaries": [
+      {
+        "boundary": "命令行参数接口",
+        "trusted_side": "应用程序内部逻辑",
+        "untrusted_side": "本地用户（可能为非特权用户）",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "文件系统输出接口",
+        "trusted_side": "应用程序输出逻辑",
+        "untrusted_side": "用户指定的输出路径（可能被其他用户写入或包含敏感路径）",
+        "risk": "High"
+      },
+      {
+        "boundary": "环境变量接口",
+        "trusted_side": "应用程序配置逻辑",
+        "untrusted_side": "本地环境变量（ASCEND_RT_VISIBLE_DEVICES）",
+        "risk": "Low"
+      },
+      {
+        "boundary": "设备驱动接口",
+        "trusted_side": "应用程序",
+        "untrusted_side": "Ascend NPU 设备驱动（prof_drv_start, prof_channel_read 等外部函数）",
+        "risk": "Medium"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "tuner_core",
+      "path": "tuner/src",
+      "language": "c_cpp",
+      "components": [
+        "main.cpp",
+        "catlass_tuner.cpp",
+        "command_line_parser.cpp",
+        "device_memory_manager.cpp",
+        "gemm_op_config.cpp",
+        "library_helper.cpp",
+        "metric.cpp",
+        "metrics.cpp",
+        "op_config.cpp",
+        "op_launcher.cpp",
+        "profiler.cpp"
+      ]
+    },
+    {
+      "name": "tuner_headers",
+      "path": "tuner/include",
+      "language": "c_cpp",
+      "components": [
+        "catlass_tuner.h",
+        "command_line_parser.h",
+        "device_memory_manager.h",
+        "gemm_op_config.h",
+        "library_helper.h",
+        "log.h",
+        "m_t_var.h",
+        "metric.h",
+        "metrics.h",
+        "op_config.h",
+        "op_launcher.h",
+        "profiler.h"
+      ]
+    },
+    {
+      "name": "dfx_kernel",
+      "path": "tuner/dfx_kernel",
+      "language": "c_cpp",
+      "components": [
+        "clear_l2_cache.cpp"
+      ]
+    },
+    {
+      "name": "library_core",
+      "path": "library/src",
+      "language": "c_cpp",
+      "components": [
+        "manifest.cpp",
+        "gemm_operation.h",
+        "library_utils.h"
+      ]
+    },
+    {
+      "name": "library_headers",
+      "path": "library/include",
+      "language": "c_cpp",
+      "components": [
+        "catlass/library/manifest.h",
+        "catlass/library/operation.h"
+      ]
+    },
+    {
+      "name": "code_generator",
+      "path": "library/scripts",
+      "language": "python",
+      "components": [
+        "code_generator.py",
+        "gemm_operation.py",
+        "library.py",
+        "manifest.py",
+        "search_space.py",
+        "search_space_config.py",
+        "utils.py"
+      ]
+    },
+    {
+      "name": "build_scripts",
+      "path": ".",
+      "language": "python",
+      "components": [
+        "build.py",
+        "download_dependencies.py"
+      ]
+    }
+  ],
+  "files": [
+    {
+      "path": "tuner/src/main.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "tuner_core",
+      "lines": 32,
+      "priority": 1,
+      "description": "程序入口点，解析命令行参数并启动 tuner"
+    },
+    {
+      "path": "tuner/src/metrics.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "tuner_core",
+      "lines": 292,
+      "priority": 1,
+      "description": "文件输出路径处理，包含路径安全检查、软链接检测、权限验证，涉及文件系统操作"
+    },
+    {
+      "path": "tuner/src/command_line_parser.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "tuner_core",
+      "lines": 255,
+      "priority": 2,
+      "description": "命令行参数解析，包含字符串到数值的转换、溢出检查"
+    },
+    {
+      "path": "tuner/src/profiler.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "tuner_core",
+      "lines": 413,
+      "priority": 2,
+      "description": "设备性能采集，调用外部驱动函数（prof_drv_start, prof_channel_read），读取环境变量 ASCEND_RT_VISIBLE_DEVICES"
+    },
+    {
+      "path": "tuner/src/device_memory_manager.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "tuner_core",
+      "lines": 294,
+      "priority": 3,
+      "description": "设备内存管理，包含 aclrtMalloc、aclrtMemcpyAsync 等设备 API 调用，内存边界检查"
+    },
+    {
+      "path": "tuner/src/catlass_tuner.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "tuner_core",
+      "lines": 227,
+      "priority": 3,
+      "description": "主调优逻辑，协调设备初始化、算子运行、性能数据收集"
+    },
+    {
+      "path": "tuner/src/gemm_op_config.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "tuner_core",
+      "lines": 349,
+      "priority": 4,
+      "description": "GEMM 算子配置，包含 SafeMul 安全乘法检查、设备内存参数计算"
+    },
+    {
+      "path": "tuner/src/library_helper.cpp",
+      "language": "c_cpp",
+      "risk": "Low",
+      "module": "tuner_core",
+      "lines": 211,
+      "priority": 5,
+      "description": "库辅助函数，数据类型和布局转换"
+    },
+    {
+      "path": "tuner/src/op_launcher.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "tuner_core",
+      "lines": 71,
+      "priority": 4,
+      "description": "算子启动器，调用算子运行接口"
+    },
+    {
+      "path": "tuner/src/op_config.cpp",
+      "language": "c_cpp",
+      "risk": "Low",
+      "module": "tuner_core",
+      "lines": 115,
+      "priority": 5,
+      "description": "算子配置基类"
+    },
+    {
+      "path": "tuner/src/metric.cpp",
+      "language": "c_cpp",
+      "risk": "Low",
+      "module": "tuner_core",
+      "lines": 138,
+      "priority": 5,
+      "description": "单个度量数据结构"
+    },
+    {
+      "path": "download_dependencies.py",
+      "language": "python",
+      "risk": "High",
+      "module": "build_scripts",
+      "lines": 163,
+      "priority": 2,
+      "description": "依赖下载脚本，执行 git submodule、curl、tar 等外部命令"
+    },
+    {
+      "path": "build.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "build_scripts",
+      "lines": 97,
+      "priority": 3,
+      "description": "构建脚本，执行 cmake、make 等外部命令"
+    },
+    {
+      "path": "library/scripts/code_generator.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "code_generator",
+      "lines": 63,
+      "priority": 5,
+      "description": "算子代码生成器入口"
+    },
+    {
+      "path": "library/scripts/search_space.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "code_generator",
+      "lines": 620,
+      "priority": 5,
+      "description": "搜索空间配置，定义算子 Tiling 参数范围"
+    },
+    {
+      "path": "library/scripts/gemm_operation.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "code_generator",
+      "lines": 677,
+      "priority": 5,
+      "description": "GEMM 算子实例化代码生成模板"
+    },
+    {
+      "path": "library/scripts/manifest.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "code_generator",
+      "lines": 189,
+      "priority": 5,
+      "description": "算子注册和代码生成协调"
+    },
+    {
+      "path": "library/scripts/library.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "code_generator",
+      "lines": 130,
+      "priority": 5,
+      "description": "枚举类型定义（DataType、LayoutType）"
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "tuner/src/main.cpp",
+      "line": 21,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "CLI 工具入口点，本地用户通过命令行参数（argv）控制程序行为，参数包括矩阵维度（m/n/k）、设备 ID、输出文件路径、算子过滤条件等",
+      "description": "程序主入口，接收并解析命令行参数"
+    },
+    {
+      "file": "tuner/src/profiler.cpp",
+      "line": 399,
+      "function": "ProfileDataHandler::SetDeviceId",
+      "type": "env",
+      "trust_level": "semi_trusted",
+      "justification": "读取环境变量 ASCEND_RT_VISIBLE_DEVICES 进行设备 ID 映射，环境变量由系统管理员或部署脚本设置，非普通用户直接控制",
+      "description": "设备可见性配置，通过环境变量控制设备访问"
+    },
+    {
+      "file": "tuner/src/metrics.cpp",
+      "line": 196,
+      "function": "Metrics::SetOutputPath",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "用户通过 --output 参数指定 CSV 文件输出路径，路径可能包含敏感目录（如 /etc、/root）或软链接，代码包含路径安全检查逻辑",
+      "description": "性能数据输出路径处理，包含路径规范化、软链接检测、权限验证"
+    },
+    {
+      "file": "tuner/src/command_line_parser.cpp",
+      "line": 165,
+      "function": "CommandLineParser::Parse",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "命令行参数解析入口，处理 --key=value 格式的参数，参数值直接传入程序逻辑",
+      "description": "解析 argc/argv 为键值对映射"
+    }
+  ],
+  "attack_surfaces": [
+    "命令行参数注入：用户可控的参数包括 m/n/k（矩阵维度）、output（文件路径）、device（设备 ID）、kernels（算子过滤）、A/B/C（张量类型）",
+    "文件路径操作：用户指定的输出路径可能触发路径遍历、软链接攻击、权限提升",
+    "设备驱动接口：调用外部 C 函数 prof_drv_start、prof_channel_read、prof_stop、halGetDeviceInfo",
+    "环境变量读取：ASCEND_RT_VISIBLE_DEVICES 设备可见性配置",
+    "构建脚本命令执行：download_dependencies.py 执行 git submodule、curl、tar 命令，build.py 执行 cmake、make 命令"
+  ]
+}

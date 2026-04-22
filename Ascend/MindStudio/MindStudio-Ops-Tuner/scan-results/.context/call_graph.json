@@ -1,0 +1,417 @@
+{
+  "functions": {
+    "main@tuner/src/main.cpp": {
+      "defined_at": 21,
+      "calls": [
+        "CommandLineParser::Parse@tuner/src/command_line_parser.cpp",
+        "CommandLineParser::Help@tuner/src/command_line_parser.cpp",
+        "CommandLineParser::PrintHelp@tuner/src/command_line_parser.cpp",
+        "CatlassTuner::CatlassTuner@tuner/src/catlass_tuner.cpp",
+        "CatlassTuner::Run@tuner/src/catlass_tuner.cpp"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "程序主入口，接收命令行参数 argv"
+    },
+    "CommandLineParser::Parse@tuner/src/command_line_parser.cpp": {
+      "defined_at": 165,
+      "calls": [
+        "CommandLineParser::Trim@tuner/src/command_line_parser.cpp",
+        "CommandLineParser::ReplaceInvalidChars@tuner/src/command_line_parser.cpp",
+        "LOGW@tuner/include/log.h"
+      ],
+      "called_by": [
+        "main@tuner/src/main.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "解析命令行参数为键值对，参数值来自 argv"
+    },
+    "CommandLineParser::Get@tuner/src/command_line_parser.cpp": {
+      "defined_at": 25,
+      "calls": [
+        "CommandLineParser::FindKey@tuner/src/command_line_parser.cpp",
+        "CommandLineParser::IsDigitFormat@tuner/src/command_line_parser.cpp",
+        "std::stoll",
+        "std::stoull",
+        "std::stod",
+        "std::stof"
+      ],
+      "called_by": [
+        "CatlassTuner::CatlassTuner@tuner/src/catlass_tuner.cpp",
+        "GemmOpConfig::InitConfig@tuner/src/gemm_op_config.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "从解析结果中获取参数值，进行类型转换和溢出检查"
+    },
+    "CatlassTuner::CatlassTuner@tuner/src/catlass_tuner.cpp": {
+      "defined_at": 26,
+      "calls": [
+        "CommandLineParser::HasKey@tuner/src/command_line_parser.cpp",
+        "CommandLineParser::Get@tuner/src/command_line_parser.cpp",
+        "Metrics::SetDeviceId@tuner/src/metrics.cpp",
+        "Metrics::SetOutputPath@tuner/src/metrics.cpp",
+        "ProfileDataHandler::SetDeviceId@tuner/src/profiler.cpp",
+        "ProfileDataHandler::Init@tuner/src/profiler.cpp",
+        "DeviceMemoryManager::Initialize@tuner/src/device_memory_manager.cpp",
+        "DeviceMemoryManager::InitCacheClear@tuner/src/device_memory_manager.cpp"
+      ],
+      "called_by": [
+        "main@tuner/src/main.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "Tuner 初始化，解析 device、output 参数并设置设备"
+    },
+    "CatlassTuner::Run@tuner/src/catlass_tuner.cpp": {
+      "defined_at": 92,
+      "calls": [
+        "Manifest::Initialize@library/src/manifest.cpp",
+        "CatlassTuner::InitOperators@tuner/src/catlass_tuner.cpp",
+        "CommandLineParser::PrintUnusedKeys@tuner/src/command_line_parser.cpp",
+        "CatlassTuner::RunOp@tuner/src/catlass_tuner.cpp",
+        "CatlassTuner::UpdateMetrics@tuner/src/catlass_tuner.cpp",
+        "CatlassTuner::Synchronize@tuner/src/catlass_tuner.cpp",
+        "Metrics::Dump@tuner/src/metrics.cpp"
+      ],
+      "called_by": [
+        "main@tuner/src/main.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "High",
+      "description": "主运行循环，初始化算子并执行性能测试"
+    },
+    "CatlassTuner::InitOperators@tuner/src/catlass_tuner.cpp": {
+      "defined_at": 63,
+      "calls": [
+        "CommandLineParser::HasKey@tuner/src/command_line_parser.cpp",
+        "CommandLineParser::Get@tuner/src/command_line_parser.cpp",
+        "Manifest::GetOperations@library/src/manifest.cpp",
+        "OpConfigPool::Register@tuner/src/op_config.cpp"
+      ],
+      "called_by": [
+        "CatlassTuner::Run@tuner/src/catlass_tuner.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "初始化算子池，解析 kernels 参数进行算子过滤"
+    },
+    "Metrics::SetOutputPath@tuner/src/metrics.cpp": {
+      "defined_at": 196,
+      "calls": [
+        "StandardizePath@tuner/src/metrics.cpp",
+        "IsExist@tuner/src/metrics.cpp",
+        "IsSoftLink@tuner/src/metrics.cpp",
+        "IsSafePath@tuner/src/metrics.cpp",
+        "CheckInvalidChar@tuner/src/metrics.cpp",
+        "MkdirRecursively@tuner/src/metrics.cpp",
+        "LOGI@tuner/include/log.h"
+      ],
+      "called_by": [
+        "CatlassTuner::CatlassTuner@tuner/src/catlass_tuner.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "设置输出文件路径，包含路径安全检查"
+    },
+    "Metrics::Dump@tuner/src/metrics.cpp": {
+      "defined_at": 243,
+      "calls": [
+        "Metrics::GetHead@tuner/src/metrics.cpp",
+        "Metrics::PrintTop10@tuner/src/metrics.cpp",
+        "std::ofstream::open",
+        "chmod",
+        "LOGI@tuner/include/log.h"
+      ],
+      "called_by": [
+        "CatlassTuner::Run@tuner/src/catlass_tuner.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "High",
+      "description": "输出性能数据到 CSV 文件"
+    },
+    "IsSafePath@tuner/src/metrics.cpp": {
+      "defined_at": 137,
+      "calls": [
+        "GetLastExistPath@tuner/src/metrics.cpp",
+        "CheckPermission@tuner/src/metrics.cpp"
+      ],
+      "called_by": [
+        "Metrics::SetOutputPath@tuner/src/metrics.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "路径安全检查，验证路径权限"
+    },
+    "CheckPermission@tuner/src/metrics.cpp": {
+      "defined_at": 100,
+      "calls": [
+        "IsRootUser@tuner/src/metrics.cpp",
+        "stat",
+        "LOGE@tuner/include/log.h",
+        "LOGW@tuner/include/log.h"
+      ],
+      "called_by": [
+        "IsSafePath@tuner/src/metrics.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "检查路径权限，验证用户读写权限"
+    },
+    "MkdirRecursively@tuner/src/metrics.cpp": {
+      "defined_at": 146,
+      "calls": [
+        "IsExist@tuner/src/metrics.cpp",
+        "std::filesystem::create_directory",
+        "chmod"
+      ],
+      "called_by": [
+        "Metrics::SetOutputPath@tuner/src/metrics.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "递归创建目录，设置权限"
+    },
+    "ProfileDataHandler::SetDeviceId@tuner/src/profiler.cpp": {
+      "defined_at": 395,
+      "calls": [
+        "getenv",
+        "rtGetVisibleDeviceIdByLogicDeviceId",
+        "Profiler::SetDeviceId@tuner/src/profiler.cpp",
+        "LOGE@tuner/include/log.h"
+      ],
+      "called_by": [
+        "CatlassTuner::CatlassTuner@tuner/src/catlass_tuner.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "设备 ID 映射，读取环境变量 ASCEND_RT_VISIBLE_DEVICES"
+    },
+    "Profiler::Start@tuner/src/profiler.cpp": {
+      "defined_at": 180,
+      "calls": [
+        "GetStarsTask@tuner/src/profiler.cpp",
+        "prof_drv_start",
+        "Profiler::CreateReadThread@tuner/src/profiler.cpp",
+        "LOGE@tuner/include/log.h"
+      ],
+      "called_by": [
+        "ProfileDataHandler::Init@tuner/src/profiler.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "High",
+      "description": "启动性能采集，调用外部驱动函数 prof_drv_start"
+    },
+    "Profiler::CreateReadThread@tuner/src/profiler.cpp": {
+      "defined_at": 239,
+      "calls": [
+        "prof_channel_poll",
+        "prof_channel_read"
+      ],
+      "called_by": [
+        "Profiler::Start@tuner/src/profiler.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "High",
+      "description": "创建数据读取线程，调用外部驱动函数 prof_channel_poll、prof_channel_read"
+    },
+    "DeviceMemoryManager::Initialize@tuner/src/device_memory_manager.cpp": {
+      "defined_at": 96,
+      "calls": [
+        "aclInit",
+        "aclrtSetDevice",
+        "aclrtCreateStream",
+        "LOGI@tuner/include/log.h",
+        "LOGE@tuner/include/log.h"
+      ],
+      "called_by": [
+        "CatlassTuner::CatlassTuner@tuner/src/catlass_tuner.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "High",
+      "description": "设备初始化，调用 ACL 运行时 API"
+    },
+    "DeviceMemoryManager::FillDeviceData@tuner/src/device_memory_manager.cpp": {
+      "defined_at": 272,
+      "calls": [
+        "aclrtMemcpyAsync",
+        "aclrtSynchronizeStream",
+        "LOGE@tuner/include/log.h"
+      ],
+      "called_by": [
+        "GroupedGemmOpConfig::GenerateInput@tuner/src/gemm_op_config.cpp",
+        "GroupedSliceMGemmOpConfig::InitArgument@tuner/src/gemm_op_config.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "填充设备数据，进行内存边界检查和异步拷贝"
+    },
+    "GemmOpConfig::InitConfig@tuner/src/gemm_op_config.cpp": {
+      "defined_at": 47,
+      "calls": [
+        "CommandLineParser::HasKey@tuner/src/command_line_parser.cpp",
+        "CommandLineParser::Get@tuner/src/command_line_parser.cpp",
+        "GemmOpConfig::GetTensorConfig@tuner/src/gemm_op_config.cpp"
+      ],
+      "called_by": [
+        "BasicGemmOpConfig::InitConfig@tuner/src/gemm_op_config.cpp",
+        "GroupedGemmOpConfig::InitConfig@tuner/src/gemm_op_config.cpp",
+        "GroupedSliceMGemmOpConfig::InitConfig@tuner/src/gemm_op_config.cpp",
+        "OptimizedGemmOpConfig::InitConfig@tuner/src/gemm_op_config.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "GEMM 配置初始化，解析 m/n/k 参数"
+    },
+    "BasicGemmOpConfig::InitArgument@tuner/src/gemm_op_config.cpp": {
+      "defined_at": 92,
+      "calls": [
+        "SafeMul<uint32_t>@tuner/src/op_config.cpp",
+        "SafeMul<size_t>@tuner/src/op_config.cpp",
+        "LibraryHelper::GetDataTypeSize@tuner/src/library_helper.cpp",
+        "DeviceMemoryManager::MallocDeviceMemory@tuner/src/device_memory_manager.cpp"
+      ],
+      "called_by": [
+        "OpLauncher::Init@tuner/src/op_launcher.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "初始化算子参数，进行内存大小安全检查"
+    },
+    "OpLauncher::Init@tuner/src/op_launcher.cpp": {
+      "defined_at": 44,
+      "calls": [
+        "OpConfig::InitArgument@tuner/src/op_config.cpp",
+        "Operation::CanImplement",
+        "Operation::GetWorkspaceSize",
+        "DeviceMemoryManager::MallocWorkspace@tuner/src/device_memory_manager.cpp",
+        "Operation::Initialize"
+      ],
+      "called_by": [
+        "CatlassTuner::RunOp@tuner/src/catlass_tuner.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "算子启动器初始化"
+    },
+    "DependencyManager::run@download_dependencies.py": {
+      "defined_at": 128,
+      "calls": [
+        "DependencyManager::proc_submodule@download_dependencies.py",
+        "DependencyManager::proc_artifact@download_dependencies.py"
+      ],
+      "called_by": [
+        "BuildManager::run@build.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "依赖下载流程，执行 git submodule、curl、tar 命令"
+    },
+    "DependencyManager::_exec_shell_cmd@download_dependencies.py": {
+      "defined_at": 51,
+      "calls": [
+        "subprocess.run"
+      ],
+      "called_by": [
+        "DependencyManager::proc_submodule@download_dependencies.py",
+        "DependencyManager::proc_artifact@download_dependencies.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "执行外部 shell 命令"
+    },
+    "BuildManager::run@build.py": {
+      "defined_at": 63,
+      "calls": [
+        "DependencyManager::run@download_dependencies.py",
+        "BuildManager::_execute_command@build.py"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "构建流程，执行 cmake、make 命令"
+    },
+    "Manifest::generate_code@library/scripts/manifest.py": {
+      "defined_at": 134,
+      "calls": [
+        "os.mkdir",
+        "shutil.rmtree",
+        "GemmOperationGenerator::gen@library/scripts/gemm_operation.py"
+      ],
+      "called_by": [
+        "code_generator::main@library/scripts/code_generator.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "生成算子代码，创建目录并写入文件"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "argv@tuner/src/main.cpp:21",
+      "path": [
+        "CommandLineParser::Parse@tuner/src/command_line_parser.cpp:165",
+        "CommandLineParser::Get@tuner/src/command_line_parser.cpp:25",
+        "CatlassTuner::CatlassTuner@tuner/src/catlass_tuner.cpp:26"
+      ],
+      "sink": "Metrics::SetOutputPath@tuner/src/metrics.cpp:196",
+      "sink_type": "file_operation",
+      "description": "命令行参数 output 传递到文件路径处理函数"
+    },
+    {
+      "source": "argv@tuner/src/main.cpp:21",
+      "path": [
+        "CommandLineParser::Parse@tuner/src/command_line_parser.cpp:165",
+        "CommandLineParser::Get@tuner/src/command_line_parser.cpp:25",
+        "GemmOpConfig::InitConfig@tuner/src/gemm_op_config.cpp:47",
+        "BasicGemmOpConfig::InitArgument@tuner/src/gemm_op_config.cpp:92"
+      ],
+      "sink": "DeviceMemoryManager::FillDeviceData@tuner/src/device_memory_manager.cpp:272",
+      "sink_type": "memory_operation",
+      "description": "命令行参数 m/n/k 传递到设备内存分配函数"
+    },
+    {
+      "source": "getenv@tuner/src/profiler.cpp:399",
+      "path": [
+        "ProfileDataHandler::SetDeviceId@tuner/src/profiler.cpp:395",
+        "rtGetVisibleDeviceIdByLogicDeviceId@tuner/src/profiler.cpp:401"
+      ],
+      "sink": "deviceId_@tuner/src/profiler.cpp:408",
+      "sink_type": "device_control",
+      "description": "环境变量 ASCEND_RT_VISIBLE_DEVICES 传递到设备 ID 映射"
+    },
+    {
+      "source": "metrics_@tuner/src/metrics.cpp:181",
+      "path": [
+        "Metrics::Dump@tuner/src/metrics.cpp:243",
+        "std::ofstream::open@tuner/src/metrics.cpp:257",
+        "chmod@tuner/src/metrics.cpp:258"
+      ],
+      "sink": "outputPath_@tuner/src/metrics.cpp:222",
+      "sink_type": "file_operation",
+      "description": "性能数据写入用户指定的 CSV 文件"
+    },
+    {
+      "source": "kernel argument@tuner/src/gemm_op_config.cpp:116",
+      "path": [
+        "DeviceMemoryManager::MallocArguments@tuner/src/device_memory_manager.cpp:64",
+        "aclrtMalloc@tuner/src/device_memory_manager.cpp:148"
+      ],
+      "sink": "workspace_@tuner/src/device_memory_manager.cpp:56",
+      "sink_type": "memory_operation",
+      "description": "算子参数传递到设备内存分配"
+    },
+    {
+      "source": "prof_channel_read@tuner/src/profiler.cpp:254",
+      "path": [
+        "Profiler::CreateReadThread@tuner/src/profiler.cpp:239",
+        "ProfileDataHandler::ProfileDataThread@tuner/src/profiler.cpp:270"
+      ],
+      "sink": "durations_@tuner/src/profiler.cpp:293",
+      "sink_type": "data_processing",
+      "description": "驱动数据传递到性能时间计算"
+    }
+  ]
+}

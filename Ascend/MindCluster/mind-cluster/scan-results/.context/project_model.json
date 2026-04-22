@@ -1,0 +1,48 @@
+{
+  "project_name": "mind-cluster",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/shenteng/MindCluster/mind-cluster",
+  "scan_scope": {
+    "components": ["ascend-docker-runtime", "mindio", "taskd"],
+    "languages": ["C", "C++", "Python"]
+  },
+  "modules": [
+    {
+      "name": "ascend-docker-runtime",
+      "path": "/component/ascend-docker-runtime",
+      "language": "C",
+      "risk_level": "High",
+      "description": "Docker runtime CLI for NPU device management",
+      "entry_points": ["main.c:Process()"],
+      "high_risk_functions": ["setns", "mount", "dlopen"]
+    },
+    {
+      "name": "mindio",
+      "path": "/component/mindio",
+      "language": "C++/Python",
+      "risk_level": "Medium",
+      "description": "IO module for checkpoint management and network communication",
+      "entry_points": ["acc_tcp_server.cpp:Create()", "acc_io.py:save/load"],
+      "high_risk_functions": ["SSL_CTX_new", "torch_save_helper"]
+    },
+    {
+      "name": "taskd",
+      "path": "/component/taskd",
+      "language": "Python",
+      "risk_level": "Medium",
+      "description": "Task management daemon for distributed training",
+      "entry_points": ["manager.py:init_taskd_manager()", "base_agent.py:handle_message()"],
+      "high_risk_functions": ["ctypes.CDLL", "json.dumps"]
+    }
+  ],
+  "entry_points": [
+    {"file": "/component/ascend-docker-runtime/cli/src/main.c", "function": "main", "type": "CLI"},
+    {"file": "/component/mindio/acp/python_whl/mindio_acp/mindio_acp/acc_io/acc_io.py", "function": "save/load", "type": "API"},
+    {"file": "/component/taskd/taskd/api/taskd_manager_api.py", "function": "init_taskd_manager", "type": "API"}
+  ],
+  "attack_surface": {
+    "network": ["TCP communication in mindio", "IPC server in memfs"],
+    "file_operations": ["Checkpoint save/load", "Mount operations in docker-runtime"],
+    "process_control": ["Task management", "Container namespace operations"],
+    "external_input": ["Command line arguments", "Network messages", "Configuration files"]
+  }
+}

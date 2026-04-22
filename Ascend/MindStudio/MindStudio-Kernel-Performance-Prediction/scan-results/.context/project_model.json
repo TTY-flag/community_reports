@@ -1,0 +1,407 @@
+{
+  "project_name": "MindStudio-Kernel-Performance-Prediction",
+  "project_type": "python_library_with_cpp_extension",
+  "description": "Ascend AI Operator Performance Prediction Tool (msKPP) - A performance simulation tool that predicts upper performance limits for operators based on input/output sizes, returning results in seconds without actual computation execution.",
+  "version": "0.0.0.dev0",
+  "language": ["Python", "C++"],
+  "build_system": ["CMake", "setuptools", "build.py"],
+  "entry_points": {
+    "python_api": {
+      "module": "mskpp",
+      "exports": [
+        "Tensor",
+        "Chip",
+        "Core",
+        "set_flag",
+        "wait_flag",
+        "VecScope",
+        "mmad",
+        "vadd",
+        "rv_vadd",
+        "rv_vsub",
+        "rv_vmax",
+        "rv_vmin",
+        "rv_vabsdif",
+        "rv_vadds",
+        "vadds",
+        "vmul",
+        "vmuls",
+        "vexp",
+        "vsub",
+        "vln",
+        "vmax",
+        "vector_dup",
+        "vbrcb",
+        "vconv",
+        "vdiv",
+        "vcadd",
+        "vtranspose",
+        "vcgmax",
+        "vmaxs",
+        "vrec",
+        "vrsqrt",
+        "vsel",
+        "vshl",
+        "vshr",
+        "vsqrt",
+        "vsubreluconv",
+        "vsubrelu",
+        "vcmax",
+        "vabs",
+        "vaddreluconv",
+        "vaddrelu",
+        "vand",
+        "vaxpy",
+        "vcgadd",
+        "vcgmin",
+        "vcmin",
+        "vcmp",
+        "vcmpv",
+        "vcmpvs",
+        "vcopy",
+        "vcpadd",
+        "vmin",
+        "vmins",
+        "vrelu",
+        "vnot",
+        "vmaddrelu",
+        "vmla",
+        "vreducev2",
+        "vreduce",
+        "vor",
+        "vmulconv",
+        "vgather",
+        "vgatherb",
+        "vlrelu",
+        "vmadd",
+        "vbitsort",
+        "vmrgsort",
+        "vconv_deq",
+        "vconv_vdeq"
+      ]
+    },
+    "build_scripts": [
+      "build.py",
+      "download_dependencies.py"
+    ],
+    "examples": [
+      "example/sample_vadd.py",
+      "example/sample_mmad.py",
+      "example/sample_sync.py"
+    ]
+  },
+  "attack_surface": {
+    "entry_points": [
+      {
+        "type": "python_api",
+        "description": "Python library API - User code imports mskpp and calls instruction APIs",
+        "location": "mskpp/__init__.py, mskpp/apis.py",
+        "risk_level": "medium",
+        "data_flow": "User Python code -> mskpp module -> C++ extension (_C.so) -> Task scheduling"
+      },
+      {
+        "type": "file_input",
+        "description": "Trace JSON output - Performance trace data written to files",
+        "location": "mskpp/core/trace.py",
+        "risk_level": "low",
+        "data_flow": "Trace.dump() -> JSON file output"
+      },
+      {
+        "type": "file_output",
+        "description": "CSV and visualization output - Metrics data output",
+        "location": "mskpp/core/metric/output_tool.py, mskpp/core/metric/visualization_tool.py",
+        "risk_level": "low",
+        "data_flow": "Performance metrics -> CSV/HTML/JSON output files"
+      },
+      {
+        "type": "dependency_download",
+        "description": "External dependency download via download_dependencies.py",
+        "location": "download_dependencies.py",
+        "risk_level": "high",
+        "data_flow": "HTTP download -> tar extraction -> file system write"
+      },
+      {
+        "type": "python_c_binding",
+        "description": "Python-C++ interface via C extension module",
+        "location": "csrc/interface/*.cpp",
+        "risk_level": "high",
+        "data_flow": "Python PyObject -> C++ native code -> Data processing"
+      }
+    ],
+    "data_sources": [
+      {
+        "type": "user_input",
+        "description": "Tensor parameters (mem_type, dtype, size, format)",
+        "location": "mskpp/core/tensor.py",
+        "validation": "Parameter validation in Tensor.param_check()"
+      },
+      {
+        "type": "user_input",
+        "description": "Chip configuration (chip type string)",
+        "location": "csrc/interface/init_arch_module.cpp",
+        "validation": "PyUnicode_AsUTF8AndSize for string extraction"
+      },
+      {
+        "type": "user_input",
+        "description": "Instruction parameters (granularity, instruction type)",
+        "location": "csrc/interface/init_profdata_module.cpp",
+        "validation": "PyArg_ParseTuple for argument parsing"
+      }
+    ],
+    "external_dependencies": [
+      {
+        "name": "plotly",
+        "version": ">=5.11.0",
+        "usage": "Data visualization",
+        "risk": "low - display only"
+      },
+      {
+        "name": "pandas",
+        "version": ">=1.0.0",
+        "usage": "Data analysis",
+        "risk": "low - computation only"
+      },
+      {
+        "name": "boost",
+        "version": "1.81.0",
+        "source": "https://mirrors.aliyun.com/blfs/conglomeration/boost/boost_1_81_0.tar.bz2",
+        "usage": "Testing framework",
+        "risk": "medium - downloaded from external source"
+      },
+      {
+        "name": "googletest",
+        "version": "1.12.1",
+        "source": "https://gitee.com/mirrors/googletest/repository/archive/release-1.12.1.tar.gz",
+        "usage": "Testing framework",
+        "risk": "medium - downloaded from external source"
+      }
+    ]
+  },
+  "modules": {
+    "python_modules": [
+      {
+        "name": "mskpp.core",
+        "path": "mskpp/core/",
+        "description": "Core module - tensor, chip, instructions, metrics",
+        "risk_level": "high",
+        "files": [
+          "__init__.py",
+          "tensor.py",
+          "chip.py",
+          "aicore.py",
+          "prof_data.py",
+          "api_register.py",
+          "vec_scope.py",
+          "trace.py",
+          "computation_instruction.py",
+          "sync_instruction.py",
+          "memory_instruction.py",
+          "instruction_base.py",
+          "instr_task.py",
+          "tensor_checker.py"
+        ]
+      },
+      {
+        "name": "mskpp.core.metric",
+        "path": "mskpp/core/metric/",
+        "description": "Performance metrics module",
+        "risk_level": "medium",
+        "files": [
+          "__init__.py",
+          "metrics.py",
+          "cycle_metrics.py",
+          "mem_metrics.py",
+          "cal_metrics.py",
+          "prof.py",
+          "metrics_summary.py",
+          "file_system.py",
+          "output_tool.py",
+          "visualization_tool.py"
+        ]
+      },
+      {
+        "name": "mskpp.core.common",
+        "path": "mskpp/core/common/",
+        "description": "Common utilities - checker, registries, singleton",
+        "risk_level": "low",
+        "files": [
+          "__init__.py",
+          "checker.py",
+          "registries.py",
+          "singleton.py"
+        ]
+      },
+      {
+        "name": "mskpp.intrisic_api",
+        "path": "mskpp/intrisic_api/",
+        "description": "Intrinsic API - instruction inference and registration",
+        "risk_level": "medium",
+        "files": [
+          "__init__.py",
+          "infer_invoke.py",
+          "instr_register.py",
+          "instr_strategy.py"
+        ]
+      },
+      {
+        "name": "mskpp.prof_data",
+        "path": "mskpp/prof_data/",
+        "description": "Performance data models",
+        "risk_level": "low",
+        "files": [
+          "__init__.py",
+          "mmad_prof.py",
+          "mov_prof.py",
+          "vector_unary_instr_prof.py",
+          "vector_binary_instr_prof.py"
+        ]
+      },
+      {
+        "name": "mskpp.utils",
+        "path": "mskpp/utils/",
+        "description": "Utility functions - logger, safe_check, launcher_utils",
+        "risk_level": "medium",
+        "files": [
+          "__init__.py",
+          "logger.py",
+          "safe_check.py",
+          "launcher_utils.py",
+          "autotune_utils.py"
+        ]
+      }
+    ],
+    "cpp_modules": [
+      {
+        "name": "csrc.interface",
+        "path": "csrc/interface/",
+        "description": "Python-C++ binding interface",
+        "risk_level": "high",
+        "files": [
+          "init_module.h",
+          "init_mskpp_c_module.cpp",
+          "init_arch_module.cpp",
+          "init_profdata_module.cpp",
+          "init_schedule_module.cpp"
+        ]
+      },
+      {
+        "name": "csrc.core.arch",
+        "path": "csrc/core/arch/",
+        "description": "Architecture information module",
+        "risk_level": "medium",
+        "files": [
+          "arch_info.h",
+          "arch_info.cpp"
+        ]
+      },
+      {
+        "name": "csrc.core.task_schedule",
+        "path": "csrc/core/task_schedule/",
+        "description": "Task scheduling and pipeline management",
+        "risk_level": "high",
+        "files": [
+          "task_schedule.h",
+          "task_schedule.cpp",
+          "raw_task.h",
+          "raw_task.cpp",
+          "pipeline.h",
+          "pipeline.cpp",
+          "task_generator.h",
+          "task_generator.cpp"
+        ]
+      },
+      {
+        "name": "csrc.prof_data",
+        "path": "csrc/prof_data/",
+        "description": "Performance data processing",
+        "risk_level": "medium",
+        "files": [
+          "data_adapter.h",
+          "data_adapter.cpp",
+          "data_model_define.h",
+          "data_model_define.cpp",
+          "linearInterpolate.h",
+          "linearInterpolate.cpp",
+          "resource910b.h",
+          "resource910b.cpp"
+        ]
+      },
+      {
+        "name": "csrc.core",
+        "path": "csrc/core/",
+        "description": "Core C++ utilities - singleton",
+        "risk_level": "low",
+        "files": [
+          "singleton.h"
+        ]
+      }
+    ]
+  },
+  "high_risk_areas": [
+    {
+      "area": "python_c_binding",
+      "files": [
+        "csrc/interface/init_arch_module.cpp",
+        "csrc/interface/init_profdata_module.cpp",
+        "csrc/interface/init_schedule_module.cpp"
+      ],
+      "reason": "Python-C++ binding code with PyObject manipulation - potential for type confusion, memory safety issues"
+    },
+    {
+      "area": "external_download",
+      "files": [
+        "download_dependencies.py"
+      ],
+      "reason": "Downloads external packages via HTTP and extracts archives - potential for supply chain attacks, malicious packages"
+    },
+    {
+      "area": "file_operations",
+      "files": [
+        "mskpp/core/trace.py",
+        "mskpp/core/metric/output_tool.py",
+        "mskpp/core/metric/file_system.py"
+      ],
+      "reason": "File I/O operations - potential for path traversal, insufficient permission checks"
+    },
+    {
+      "area": "user_input_validation",
+      "files": [
+        "mskpp/core/tensor.py",
+        "mskpp/core/common/checker.py"
+      ],
+      "reason": "User input handling for tensor parameters - potential for insufficient validation leading to buffer overflows or integer overflow"
+    },
+    {
+      "area": "string_handling",
+      "files": [
+        "csrc/interface/init_arch_module.cpp",
+        "csrc/interface/init_profdata_module.cpp"
+      ],
+      "reason": "C++ string handling with PyUnicode_AsUTF8AndSize - potential for null pointer dereference, buffer overflow"
+    }
+  ],
+  "excluded_directories": [
+    "test/",
+    "thirdparty/",
+    "example/",
+    "docs/"
+  ],
+  "security_features": {
+    "file_permission_checks": {
+      "location": "mskpp/utils/safe_check.py, mskpp/core/metric/file_system.py",
+      "description": "Checks file ownership, permissions, symbolic links"
+    },
+    "input_validation": {
+      "location": "mskpp/core/common/checker.py",
+      "description": "Validates mem_type, dtype, format, shape parameters"
+    },
+    "compiler_flags": {
+      "location": "CMakeLists.txt",
+      "description": "Uses security flags: -fstack-protector-all, -D_FORTIFY_SOURCE=2, -ftrapv, -fstack-check, -Wl,-z,relro, -Wl,-z,now, -Wl,-z,noexecstack"
+    },
+    "file_write_protection": {
+      "location": "mskpp/core/trace.py, mskpp/core/metric/output_tool.py",
+      "description": "Uses os.fdopen with secure permissions (S_IWUSR | S_IRUSR)"
+    }
+  }
+}

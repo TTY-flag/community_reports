@@ -1,0 +1,465 @@
+{
+  "project_name": "ascend-deployer",
+  "scan_time": "2025-04-21T06:15:00Z",
+  "lsp_available": true,
+  "total_files": 131,
+  "total_lines": 19927,
+  "project_profile": {
+    "project_type": "cli_tool_python",
+    "deployment_model": "CLI工具在Linux服务器本地执行，通过Ansible进行远程主机部署，也支持大规模并行部署模式。通常由管理员在部署服务器上运行，管理多个远程NPU节点的软件安装和配置。",
+    "trust_boundaries": [
+      {
+        "boundary": "CLI Interface",
+        "trusted_side": "Application logic",
+        "untrusted_side": "User input (command arguments, configuration files)",
+        "risk": "High"
+      },
+      {
+        "boundary": "Network Interface (Download)",
+        "trusted_side": "Application logic",
+        "untrusted_side": "Remote HTTP/HTTPS servers",
+        "risk": "High"
+      },
+      {
+        "boundary": "SSH/Ansible Interface",
+        "trusted_side": "Local deployment controller",
+        "untrusted_side": "Remote NPU nodes",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "File System Interface",
+        "trusted_side": "Application logic",
+        "untrusted_side": "External files (ZIP/TAR packages, CSV/Excel config files)",
+        "risk": "High"
+      },
+      {
+        "boundary": "Inventory Configuration",
+        "trusted_side": "Ansible execution engine",
+        "untrusted_side": "User-provided inventory_file and CSV templates",
+        "risk": "Medium"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "entry_points",
+      "path": "ascend_deployer",
+      "language": "python",
+      "components": ["start_deploy.py", "jobs.py", "ascend_download.py", "large_scale_deployer.py", "trans_excel_to_inventory.py"]
+    },
+    {
+      "name": "downloader",
+      "path": "ascend_deployer/downloader",
+      "language": "python",
+      "components": ["downloader.py", "download_util.py", "rpm_downloader.py", "deb_downloader.py", "pip_downloader.py", "parallel_file_downloader.py"]
+    },
+    {
+      "name": "library",
+      "path": "ascend_deployer/library",
+      "language": "python",
+      "components": ["install_cann.py", "install_sys_pkg.py", "scp.py", "uncompress_resources.py", "process_npu.py"]
+    },
+    {
+      "name": "large_scale_deploy",
+      "path": "ascend_deployer/large_scale_deploy",
+      "language": "python",
+      "components": ["remote_deploy_task.py", "spread_tool.py", "network_tool.py"]
+    },
+    {
+      "name": "module_utils",
+      "path": "ascend_deployer/module_utils",
+      "language": "python",
+      "components": ["safe_file_handler.py", "inventory_file.py", "path_manager.py", "common_utils.py"]
+    },
+    {
+      "name": "ansible_plugin",
+      "path": "ascend_deployer/ansible_plugin",
+      "language": "python",
+      "components": ["deploy_info_output_plugin.py", "ansible_log.py"]
+    },
+    {
+      "name": "config_model",
+      "path": "ascend_deployer/large_scale_deploy/config_model",
+      "language": "python",
+      "components": ["inventory.py", "host.py", "base.py"]
+    },
+    {
+      "name": "scripts",
+      "path": "ascend_deployer/scripts",
+      "language": "python",
+      "components": ["nexus.py", "pkg_utils.py"]
+    }
+  ],
+  "files": [
+    {
+      "path": "ascend_deployer/start_deploy.py",
+      "language": "python",
+      "risk": "High",
+      "module": "entry_points",
+      "lines": 390,
+      "priority": 1
+    },
+    {
+      "path": "ascend_deployer/jobs.py",
+      "language": "python",
+      "risk": "Critical",
+      "module": "entry_points",
+      "lines": 842,
+      "priority": 1
+    },
+    {
+      "path": "ascend_deployer/utils.py",
+      "language": "python",
+      "risk": "Critical",
+      "module": "entry_points",
+      "lines": 404,
+      "priority": 1
+    },
+    {
+      "path": "ascend_deployer/downloader/download_util.py",
+      "language": "python",
+      "risk": "High",
+      "module": "downloader",
+      "lines": 622,
+      "priority": 2
+    },
+    {
+      "path": "ascend_deployer/downloader/downloader.py",
+      "language": "python",
+      "risk": "High",
+      "module": "downloader",
+      "lines": 309,
+      "priority": 2
+    },
+    {
+      "path": "ascend_deployer/library/scp.py",
+      "language": "python",
+      "risk": "Critical",
+      "module": "library",
+      "lines": 109,
+      "priority": 1
+    },
+    {
+      "path": "ascend_deployer/library/install_cann.py",
+      "language": "python",
+      "risk": "Critical",
+      "module": "library",
+      "lines": 527,
+      "priority": 1
+    },
+    {
+      "path": "ascend_deployer/library/install_sys_pkg.py",
+      "language": "python",
+      "risk": "Critical",
+      "module": "library",
+      "lines": 378,
+      "priority": 1
+    },
+    {
+      "path": "ascend_deployer/library/uncompress_resources.py",
+      "language": "python",
+      "risk": "High",
+      "module": "library",
+      "lines": 114,
+      "priority": 2
+    },
+    {
+      "path": "ascend_deployer/library/process_npu.py",
+      "language": "python",
+      "risk": "Critical",
+      "module": "library",
+      "lines": 326,
+      "priority": 1
+    },
+    {
+      "path": "ascend_deployer/large_scale_deploy/process/remote_deploy_task.py",
+      "language": "python",
+      "risk": "Critical",
+      "module": "large_scale_deploy",
+      "lines": 138,
+      "priority": 1
+    },
+    {
+      "path": "ascend_deployer/large_scale_deploy/tools/spread_tool.py",
+      "language": "python",
+      "risk": "Critical",
+      "module": "large_scale_deploy",
+      "lines": 540,
+      "priority": 1
+    },
+    {
+      "path": "ascend_deployer/large_scale_deploy/tools/network_tool.py",
+      "language": "python",
+      "risk": "High",
+      "module": "large_scale_deploy",
+      "lines": 44,
+      "priority": 2
+    },
+    {
+      "path": "ascend_deployer/module_utils/inventory_file.py",
+      "language": "python",
+      "risk": "High",
+      "module": "module_utils",
+      "lines": 295,
+      "priority": 2
+    },
+    {
+      "path": "ascend_deployer/module_utils/safe_file_handler.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "module_utils",
+      "lines": 330,
+      "priority": 3
+    },
+    {
+      "path": "ascend_deployer/module_utils/path_manager.py",
+      "language": "python",
+      "risk": "High",
+      "module": "module_utils",
+      "lines": 305,
+      "priority": 2
+    },
+    {
+      "path": "ascend_deployer/trans_excel_to_inventory.py",
+      "language": "python",
+      "risk": "High",
+      "module": "entry_points",
+      "lines": 508,
+      "priority": 2
+    },
+    {
+      "path": "ascend_deployer/large_scale_deploy/config_model/inventory.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "config_model",
+      "lines": 140,
+      "priority": 3
+    },
+    {
+      "path": "ascend_deployer/ansible_plugin/deploy_info_output_plugin.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "ansible_plugin",
+      "lines": 727,
+      "priority": 4
+    },
+    {
+      "path": "ascend_deployer/scripts/nexus.py",
+      "language": "python",
+      "risk": "High",
+      "module": "scripts",
+      "lines": 0,
+      "priority": 2
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "ascend_deployer/start_deploy.py",
+      "line": 379,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "CLI入口，接收用户命令行参数，包括--install、--upgrade、--check等参数，用户可控制安装包选择和部署行为",
+      "description": "CLI主入口，解析命令行参数并执行部署任务"
+    },
+    {
+      "file": "ascend_deployer/start_deploy.py",
+      "line": 123,
+      "function": "_process_args",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "处理用户输入的命令行参数，直接用于控制Ansible执行",
+      "description": "解析并处理CLI参数"
+    },
+    {
+      "file": "ascend_deployer/jobs.py",
+      "line": 185,
+      "function": "run_playbook",
+      "type": "cmdline",
+      "trust_level": "semi_trusted",
+      "justification": "通过Ansible playbook执行部署任务，tags参数来自用户CLI输入",
+      "description": "Ansible playbook执行入口"
+    },
+    {
+      "file": "ascend_deployer/trans_excel_to_inventory.py",
+      "line": 501,
+      "function": "run",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "解析用户提供的CSV/Excel文件，生成inventory配置，文件内容可包含IP地址、SSH凭证等敏感数据",
+      "description": "CSV/Excel转inventory配置入口"
+    },
+    {
+      "file": "ascend_deployer/trans_excel_to_inventory.py",
+      "line": 417,
+      "function": "get_table_info",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "读取用户CSV文件，解析为inventory配置数据",
+      "description": "CSV文件读取解析"
+    },
+    {
+      "file": "ascend_deployer/module_utils/inventory_file.py",
+      "line": 276,
+      "function": "parse",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "解析inventory_file配置文件，包含主机IP、SSH用户名密码等敏感信息",
+      "description": "Inventory配置文件解析入口"
+    },
+    {
+      "file": "ascend_deployer/module_utils/inventory_file.py",
+      "line": 50,
+      "function": "safe_eval",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "使用eval()执行表达式解析配置参数，虽有正则过滤但仍有潜在风险",
+      "description": "配置参数表达式解析（含eval）"
+    },
+    {
+      "file": "ascend_deployer/downloader/download_util.py",
+      "line": 305,
+      "function": "download",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "从远程HTTP/HTTPS服务器下载软件包，URL来自配置文件或用户输入",
+      "description": "远程文件下载入口"
+    },
+    {
+      "file": "ascend_deployer/downloader/download_util.py",
+      "line": 361,
+      "function": "urlopen",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "打开远程URL获取内容，用于下载元数据和软件包信息",
+      "description": "HTTP请求入口"
+    },
+    {
+      "file": "ascend_deployer/library/scp.py",
+      "line": 51,
+      "function": "run_scp",
+      "type": "network",
+      "trust_level": "semi_trusted",
+      "justification": "执行SCP命令复制文件到远程主机，主机IP、用户名、密码来自Ansible模块参数",
+      "description": "SCP文件传输入口"
+    },
+    {
+      "file": "ascend_deployer/large_scale_deploy/tools/spread_tool.py",
+      "line": 162,
+      "function": "run_ssh_cmd",
+      "type": "network",
+      "trust_level": "semi_trusted",
+      "justification": "通过SSH在远程主机执行命令，包含主机IP和密码信息",
+      "description": "SSH命令执行入口"
+    },
+    {
+      "file": "ascend_deployer/large_scale_deploy/tools/spread_tool.py",
+      "line": 174,
+      "function": "scp",
+      "type": "network",
+      "trust_level": "semi_trusted",
+      "justification": "执行SCP命令传输文件，包含主机认证信息",
+      "description": "SCP传输入口"
+    },
+    {
+      "file": "ascend_deployer/utils.py",
+      "line": 297,
+      "function": "run_cmd",
+      "type": "cmdline",
+      "trust_level": "semi_trusted",
+      "justification": "执行shell命令的核心函数，参数可来自用户输入或配置，支持shell=True模式",
+      "description": "通用命令执行函数（Popen）"
+    },
+    {
+      "file": "ascend_deployer/jobs.py",
+      "line": 594,
+      "function": "extract_zip",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "解压ZIP文件，文件来自下载的软件包或用户提供的资源包",
+      "description": "ZIP文件解压入口"
+    },
+    {
+      "file": "ascend_deployer/jobs.py",
+      "line": 614,
+      "function": "extract_tar",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "解压TAR文件，文件来自下载的软件包",
+      "description": "TAR文件解压入口"
+    },
+    {
+      "file": "ascend_deployer/library/uncompress_resources.py",
+      "line": 86,
+      "function": "run",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "解压资源包tar文件到目标目录，文件路径来自Ansible模块参数",
+      "description": "资源包解压入口"
+    },
+    {
+      "file": "ascend_deployer/library/install_cann.py",
+      "line": 432,
+      "function": "_run_cmd",
+      "type": "cmdline",
+      "trust_level": "semi_trusted",
+      "justification": "执行安装脚本的命令函数，脚本路径来自glob查找结果",
+      "description": "CANN安装命令执行入口"
+    },
+    {
+      "file": "ascend_deployer/library/install_sys_pkg.py",
+      "line": 291,
+      "function": "_run_cmd",
+      "type": "cmdline",
+      "trust_level": "semi_trusted",
+      "justification": "执行系统包安装命令（yum/apt），命令参数来自配置文件解析",
+      "description": "系统包安装命令执行入口"
+    },
+    {
+      "file": "ascend_deployer/library/process_npu.py",
+      "line": 92,
+      "function": "_run_command",
+      "type": "cmdline",
+      "trust_level": "semi_trusted",
+      "justification": "执行NPU驱动/固件安装命令，脚本路径来自glob查找",
+      "description": "NPU安装命令执行入口"
+    },
+    {
+      "file": "ascend_deployer/module_utils/safe_file_handler.py",
+      "line": 103,
+      "function": "safe_read",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "安全文件读取函数，读取用户配置文件或下载的文件",
+      "description": "文件读取入口"
+    },
+    {
+      "file": "ascend_deployer/module_utils/safe_file_handler.py",
+      "line": 140,
+      "function": "safe_write",
+      "type": "file",
+      "trust_level": "trusted_admin",
+      "justification": "安全文件写入函数，用于写入配置和日志文件",
+      "description": "文件写入入口"
+    },
+    {
+      "file": "ascend_deployer/large_scale_deployer.py",
+      "line": 1,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "大规模部署CLI入口，处理大量主机的并行部署",
+      "description": "大规模部署主入口"
+    }
+  ],
+  "attack_surfaces": [
+    "CLI Arguments: 用户通过命令行参数控制安装包选择、场景配置、升级操作等",
+    "Configuration Files: inventory_file, CSV/Excel模板文件包含主机IP、SSH凭证等敏感信息",
+    "Download URLs: 从远程服务器下载软件包，URL来自配置文件",
+    "Package Archives: ZIP/TAR软件包文件，包含安装脚本和二进制文件",
+    "SSH Connections: 通过Ansible SSH连接远程主机执行部署任务",
+    "Environment Variables: ASCEND_DEPLOYER_HOME, SSH_CLIENT等环境变量影响程序行为",
+    "Ansible Playbooks: 通过YAML playbook定义部署流程，可能包含用户定制内容",
+    "Excel/CSV Input Files: 用户提供的CSV模板文件，解析后生成inventory配置"
+  ]
+}

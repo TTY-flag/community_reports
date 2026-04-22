@@ -1,0 +1,536 @@
+{
+  "functions": {
+    "main@start_deploy.py": {
+      "defined_at": 379,
+      "calls": ["CLI.run@start_deploy.py", "logging.config.dictConfig@start_deploy.py"],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "CLI主入口，接收sys.argv参数"
+    },
+    "CLI.run@start_deploy.py": {
+      "defined_at": 361,
+      "calls": ["CLI._process_args@start_deploy.py", "CLI._check_args@start_deploy.py", "CLI._process_env@start_deploy.py", "CLI._prepare_job@start_deploy.py", "CLI._run_handler@start_deploy.py", "CLI._run_check@start_deploy.py", "CLI._run_test@start_deploy.py", "CLI._run_clean@start_deploy.py", "CLI._run_hccn@start_deploy.py"],
+      "called_by": ["main@start_deploy.py"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "CLI运行逻辑，处理用户命令"
+    },
+    "CLI._process_args@start_deploy.py": {
+      "defined_at": 123,
+      "calls": ["argparse.ArgumentParser.parse_args@start_deploy.py"],
+      "called_by": ["CLI.run@start_deploy.py"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "解析命令行参数"
+    },
+    "CLI._run_handler@start_deploy.py": {
+      "defined_at": 319,
+      "calls": ["jobs.process_install@jobs.py", "jobs.process_scene@jobs.py", "jobs.process_patch@jobs.py", "jobs.process_upgrade@jobs.py", "jobs.process_patch_rollback@jobs.py", "jobs.process_check@jobs.py", "jobs.get_localhost_ip@jobs.py", "jobs.ResourcePkg.handle_pkgs@jobs.py"],
+      "called_by": ["CLI.run@start_deploy.py"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "执行安装/升级/补丁处理"
+    },
+    "CLI._prepare_job@start_deploy.py": {
+      "defined_at": 251,
+      "calls": ["jobs.PrepareJob.run@jobs.py", "jobs.accept_eula@jobs.py"],
+      "called_by": ["CLI.run@start_deploy.py"],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "准备Ansible依赖环境"
+    },
+    "run_cmd@utils.py": {
+      "defined_at": 297,
+      "calls": ["subprocess.Popen@utils.py", "shlex.split@utils.py"],
+      "called_by": ["jobs.PrepareJob.pip_install@jobs.py", "jobs.PrepareJob.install_ansible@jobs.py", "jobs.AnsibleJob.run_playbook@jobs.py", "install_pkg@utils.py", "jobs.AnsibleJob.run_ansible@jobs.py", "jobs.ResourcePkg.verify_cms@jobs.py", "jobs.ResourcePkg.verify_hmac@jobs.py", "jobs.start_nexus@jobs.py"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "核心命令执行函数，使用Popen执行shell命令"
+    },
+    "install_pkg@utils.py": {
+      "defined_at": 335,
+      "calls": ["run_cmd@utils.py", "find_executable@utils.py"],
+      "called_by": ["jobs.PrepareJob.install_distutils@jobs.py", "jobs.PrepareJob.install_pip@jobs.py", "jobs.PrepareJob.install_ansible@jobs.py", "jobs.PrepareJob.install_basic_dependencies@jobs.py", "jobs.PrepareJob.install_selinux@jobs.py", "jobs.PrepareJob.install_openssl@jobs.py", "jobs.PrepareJob.install_haveged@jobs.py"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "安装系统包(rpm/dpkg)"
+    },
+    "AnsibleJob.run_playbook@jobs.py": {
+      "defined_at": 185,
+      "calls": ["run_cmd@utils.py", "AnsibleJob.build_args@jobs.py", "AnsibleJob.handle_python_env@jobs.py"],
+      "called_by": ["CLI._run_handler@start_deploy.py", "CLI._run_check@start_deploy.py", "CLI._run_test@start_deploy.py", "CLI._run_hccn@start_deploy.py"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "执行Ansible playbook，tags来自用户输入"
+    },
+    "AnsibleJob.build_args@jobs.py": {
+      "defined_at": 212,
+      "calls": ["AnsibleJob.get_inventory_file@jobs.py"],
+      "called_by": ["AnsibleJob.run_playbook@jobs.py"],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "构建ansible-playbook命令参数"
+    },
+    "ResourcePkg.handle_zip_pkg@jobs.py": {
+      "defined_at": 746,
+      "calls": ["ResourcePkg.extract@jobs.py", "ResourcePkg.verify_hmac@jobs.py", "ResourcePkg.handle_faultdiag_pkg@jobs.py"],
+      "called_by": ["ResourcePkg.extract_pkgs@jobs.py"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "处理ZIP包，验证签名并解压"
+    },
+    "ResourcePkg.extract@jobs.py": {
+      "defined_at": 623,
+      "calls": ["ResourcePkg.extract_zip@jobs.py", "ResourcePkg.extract_tar@jobs.py", "CompressedFileCheckUtils.check_compressed_file_valid@path_manager.py"],
+      "called_by": ["ResourcePkg.handle_zip_pkg@jobs.py", "ResourcePkg.handle_run_pkg@jobs.py"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "解压文件入口"
+    },
+    "ResourcePkg.extract_zip@jobs.py": {
+      "defined_at": 594,
+      "calls": ["ZipFile.extractall@jobs.py"],
+      "called_by": ["ResourcePkg.extract@jobs.py"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "ZIP文件解压"
+    },
+    "ResourcePkg.extract_tar@jobs.py": {
+      "defined_at": 614,
+      "calls": ["tarfile.open@jobs.py", "tarfile.extractall@jobs.py"],
+      "called_by": ["ResourcePkg.extract@jobs.py"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "TAR文件解压"
+    },
+    "ResourcePkg.verify_cms@jobs.py": {
+      "defined_at": 703,
+      "calls": ["ResourcePkg.verify_crl@jobs.py", "run_cmd@jobs.py"],
+      "called_by": ["ResourcePkg.verify_hmac@jobs.py"],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "验证CMS签名"
+    },
+    "ResourcePkg.verify_hmac@jobs.py": {
+      "defined_at": 712,
+      "calls": ["run_cmd@jobs.py", "ResourcePkg.verify_cms@jobs.py"],
+      "called_by": ["ResourcePkg.handle_zip_pkg@jobs.py"],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "验证HMAC签名"
+    },
+    "InventoryFile.parse@inventory_file.py": {
+      "defined_at": 276,
+      "calls": ["InventoryFile._parse_hosts@inventory_file.py", "InventoryFile._parse_vars@inventory_file.py", "InventoryFile._generate_parsed_inventory_file@inventory_file.py"],
+      "called_by": ["AnsibleJob.__init__@jobs.py"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "解析inventory_file配置"
+    },
+    "HostParams.generate_new_params_str_list@inventory_file.py": {
+      "defined_at": 158,
+      "calls": ["StrTool.safe_eval@inventory_file.py"],
+      "called_by": ["InventoryFile._parse_hosts@inventory_file.py"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "生成主机参数，使用safe_eval解析表达式"
+    },
+    "StrTool.safe_eval@inventory_file.py": {
+      "defined_at": 50,
+      "calls": ["eval@inventory_file.py"],
+      "called_by": ["HostParams.generate_new_params_str_list@inventory_file.py"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "使用eval()解析表达式，有正则过滤但存在风险"
+    },
+    "Scp.run_scp@scp.py": {
+      "defined_at": 51,
+      "calls": ["Scp._run_cmd@scp.py", "Scp._parse_src@scp.py", "Scp._parse_dest@scp.py"],
+      "called_by": ["main@scp.py"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "执行SCP命令传输文件"
+    },
+    "Scp._run_cmd@scp.py": {
+      "defined_at": 69,
+      "calls": ["subprocess.Popen@scp.py", "shlex.split@scp.py"],
+      "called_by": ["Scp.run_scp@scp.py"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "执行SCP shell命令"
+    },
+    "CANNInstaller.run@install_cann.py": {
+      "defined_at": 112,
+      "calls": ["CANNInstaller._get_install_script@install_cann.py", "CANNInstaller._install_pkg@install_cann.py", "CANNInstaller._upgrade_pkg@install_cann.py", "CANNInstaller._install_patch@install_cann.py", "CANNInstaller._patch_rollback@install_cann.py", "CANNInstaller.install_kernels@install_cann.py"],
+      "called_by": ["main@install_cann.py"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "CANN安装器主逻辑"
+    },
+    "CANNInstaller._run_cmd@install_cann.py": {
+      "defined_at": 432,
+      "calls": ["subprocess.Popen@install_cann.py", "shlex.split@install_cann.py"],
+      "called_by": ["CANNInstaller._install_pkg@install_cann.py", "CANNInstaller._upgrade_pkg@install_cann.py", "CANNInstaller._install_patch@install_cann.py", "CANNInstaller._patch_rollback@install_cann.py", "CANNInstaller.install_kernels@install_cann.py", "CANNInstaller._build_mpi_and_hccl_test@install_cann.py"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "执行安装脚本的命令"
+    },
+    "CANNInstaller._install_pkg@install_cann.py": {
+      "defined_at": 99,
+      "calls": ["CANNInstaller._run_cmd@install_cann.py", "CANNInstaller._retarget@install_cann.py", "CANNInstaller.pkg_installed@install_cann.py"],
+      "called_by": ["CANNInstaller.run@install_cann.py"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "执行CANN安装命令"
+    },
+    "SysInstaller.install_deb_pkgs@install_sys_pkg.py": {
+      "defined_at": 81,
+      "calls": ["SysInstaller._run_cmd@install_sys_pkg.py", "SysInstaller._get_pkgs_name@install_sys_pkg.py"],
+      "called_by": ["main@install_sys_pkg.py"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "执行apt安装命令"
+    },
+    "SysInstaller.install_rpm_pkgs@install_sys_pkg.py": {
+      "defined_at": 98,
+      "calls": ["SysInstaller._run_cmd@install_sys_pkg.py", "SysInstaller._get_pkgs_name@install_sys_pkg.py", "SysInstaller._install_kernel@install_sys_pkg.py", "SysInstaller._modify_conf@install_sys_pkg.py"],
+      "called_by": ["main@install_sys_pkg.py"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "执行yum安装命令"
+    },
+    "SysInstaller._run_cmd@install_sys_pkg.py": {
+      "defined_at": 291,
+      "calls": ["AnsibleModule.run_command@install_sys_pkg.py"],
+      "called_by": ["SysInstaller.install_deb_pkgs@install_sys_pkg.py", "SysInstaller.install_rpm_pkgs@install_sys_pkg.py", "SysInstaller.install_docker@install_sys_pkg.py"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "执行系统包安装命令"
+    },
+    "NpuInstallation.run@process_npu.py": {
+      "defined_at": 74,
+      "calls": ["NpuInstallation._process_npu@process_npu.py"],
+      "called_by": ["main@process_npu.py"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "NPU安装主逻辑"
+    },
+    "NpuInstallation._run_command@process_npu.py": {
+      "defined_at": 92,
+      "calls": ["AnsibleModule.run_command@process_npu.py", "shlex.split@process_npu.py"],
+      "called_by": ["NpuInstallation._do_install_npu@process_npu.py", "NpuInstallation._do_upgrade_npu@process_npu.py"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "执行NPU驱动/固件安装命令"
+    },
+    "NpuInstallation._do_install_npu@process_npu.py": {
+      "defined_at": 260,
+      "calls": ["NpuInstallation._run_command@process_npu.py", "NpuInstallation.check_os_compatibility@process_npu.py"],
+      "called_by": ["NpuInstallation._process_npu@process_npu.py"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "执行NPU驱动安装"
+    },
+    "DownloadUtil.download@download_util.py": {
+      "defined_at": 305,
+      "calls": ["DownloadUtil.download_with_retry@download_util.py", "os.makedirs@download_util.py"],
+      "called_by": ["DependencyDownload.collect_python_and_os_pkgs_info@downloader.py"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "从远程URL下载文件"
+    },
+    "DownloadUtil.download_with_retry@download_util.py": {
+      "defined_at": 340,
+      "calls": ["request.urlretrieve@download_util.py", "delete_if_exist@download_util.py", "ProxyUtil.build_proxy_handler@download_util.py"],
+      "called_by": ["DownloadUtil.download@download_util.py"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "带重试机制的下载函数"
+    },
+    "DownloadUtil.urlopen@download_util.py": {
+      "defined_at": 361,
+      "calls": ["request.urlopen@download_util.py", "ProxyUtil.build_proxy_handler@download_util.py"],
+      "called_by": ["rpm_downloader.get_repo_info@rpm_downloader.py", "deb_downloader.get_repo_info@deb_downloader.py"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "打开远程URL"
+    },
+    "run_ssh_cmd@spread_tool.py": {
+      "defined_at": 162,
+      "calls": ["run_cmd@spread_tool.py"],
+      "called_by": ["RemoteDeployTask._start_deploy@remote_deploy_task.py", "RemoteDeployTask._is_process_existed@remote_deploy_task.py", "SpreadManager._create_remote_dir@spread_tool.py", "SpreadManager._clear_remote_dir@spread_tool.py"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "通过SSH执行远程命令"
+    },
+    "run_cmd@spread_tool.py": {
+      "defined_at": 102,
+      "calls": ["subprocess.Popen@spread_tool.py", "shlex.split@spread_tool.py"],
+      "called_by": ["run_ssh_cmd@spread_tool.py", "scp@spread_tool.py", "SpreadManager._recover_dir@spread_tool.py", "SpreadManager._copy_to_tmp_dir@spread_tool.py", "SpreadManager._install_pkg_by_rpm@spread_tool.py", "SpreadManager._install_pkg_by_dpkg@spread_tool.py"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "本地命令执行函数"
+    },
+    "scp@spread_tool.py": {
+      "defined_at": 174,
+      "calls": ["run_cmd@spread_tool.py"],
+      "called_by": ["scp_upload@spread_tool.py", "scp_download@spread_tool.py"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "执行SCP命令"
+    },
+    "RemoteDeployTask.start@remote_deploy_task.py": {
+      "defined_at": 110,
+      "calls": ["RemoteDeployTask._start_deploy@remote_deploy_task.py", "RemoteDeployTask._send_inventory_file@remote_deploy_task.py", "RemoteDeployTask._collect_progress_json@remote_deploy_task.py", "run_ssh_cmd@spread_tool.py", "scp_download@spread_tool.py", "scp_upload@spread_tool.py"],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "远程部署任务主入口"
+    },
+    "UncompressResources.run@uncompress_resources.py": {
+      "defined_at": 86,
+      "calls": ["UncompressResources.install_basic_deps@uncompress_resources.py", "UncompressResources.prepare_dirs@uncompress_resources.py", "tarfile.open@uncompress_resources.py", "tarfile.extractall@uncompress_resources.py", "CompressedFileCheckUtils.check_compressed_file_valid@path_manager.py"],
+      "called_by": ["main@uncompress_resources.py"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "资源包解压主逻辑"
+    },
+    "UncompressResources.install_basic_deps@uncompress_resources.py": {
+      "defined_at": 54,
+      "calls": ["AnsibleModule.run_command@uncompress_resources.py"],
+      "called_by": ["UncompressResources.run@uncompress_resources.py"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "安装基础依赖包"
+    },
+    "SafeFileHandler.safe_read@safe_file_handler.py": {
+      "defined_at": 103,
+      "calls": ["SafeFileHandler.resolve_symlink@safe_file_handler.py", "SafeFileHandler.check_file_safety@safe_file_handler.py", "open@safe_file_handler.py"],
+      "called_by": ["get_localhost_ip@jobs.py", "accept_eula@jobs.py", "InventoryInfo.get_table_info@trans_excel_to_inventory.py", "ConfigUtil.__init__@download_util.py"],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "安全文件读取"
+    },
+    "SafeFileHandler.safe_write@safe_file_handler.py": {
+      "defined_at": 140,
+      "calls": ["SafeFileHandler.resolve_symlink@safe_file_handler.py", "os.makedirs@safe_file_handler.py", "open@safe_file_handler.py", "json.dump@safe_file_handler.py"],
+      "called_by": ["jobs.PrepareJob.update_env_file@jobs.py", "InventoryInfo.write_inventory@trans_excel_to_inventory.py", "SysInstaller.create_config_file@install_sys_pkg.py"],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "安全文件写入"
+    },
+    "CompressedFileCheckUtils.check_compressed_file_valid@path_manager.py": {
+      "defined_at": 288,
+      "calls": ["CompressedFileCheckUtils.check_tar_file_info@path_manager.py", "CompressedFileCheckUtils.check_zip_file_info@path_manager.py"],
+      "called_by": ["ResourcePkg.extract@jobs.py", "UncompressResources.run@uncompress_resources.py", "CANNInstaller._build_mpi_and_hccl_test@install_cann.py"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "验证压缩文件安全性"
+    },
+    "CompressedFileCheckUtils.check_tar_file_info@path_manager.py": {
+      "defined_at": 271,
+      "calls": ["CompressedFileCheckUtils.check_tar_file_symbolic_link@path_manager.py", "CompressedFileCheckUtils.check_package_inner_file_name@path_manager.py", "tarfile.open@path_manager.py"],
+      "called_by": ["CompressedFileCheckUtils.check_compressed_file_valid@path_manager.py"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "检查TAR文件安全性"
+    },
+    "CompressedFileCheckUtils.check_zip_file_info@path_manager.py": {
+      "defined_at": 257,
+      "calls": ["CompressedFileCheckUtils.check_zip_file_symbolic_link@path_manager.py", "CompressedFileCheckUtils.check_package_inner_file_name@path_manager.py", "zipfile.ZipFile@path_manager.py"],
+      "called_by": ["CompressedFileCheckUtils.check_compressed_file_valid@path_manager.py"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "检查ZIP文件安全性"
+    },
+    "InventoryInfo.get_table_info@trans_excel_to_inventory.py": {
+      "defined_at": 417,
+      "calls": ["SafeFileHandler.safe_read@safe_file_handler.py", "csv.reader@trans_excel_to_inventory.py"],
+      "called_by": ["InventoryInfo.run@trans_excel_to_inventory.py"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "读取CSV文件内容"
+    },
+    "InventoryInfo.run@trans_excel_to_inventory.py": {
+      "defined_at": 501,
+      "calls": ["InventoryInfo.get_table_info@trans_excel_to_inventory.py", "InventoryInfo.trans_to_inventory_info@trans_excel_to_inventory.py", "InventoryInfo.write_inventory@trans_excel_to_inventory.py"],
+      "called_by": ["main@trans_excel_to_inventory.py"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "CSV转inventory主逻辑"
+    },
+    "InventoryInfo.write_inventory@trans_excel_to_inventory.py": {
+      "defined_at": 465,
+      "calls": ["SafeFileHandler.safe_write@safe_file_handler.py"],
+      "called_by": ["InventoryInfo.run@trans_excel_to_inventory.py"],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "写入inventory文件"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "sys.argv@start_deploy.py:379",
+      "path": ["main@start_deploy.py:379", "CLI.run@start_deploy.py:361", "CLI._process_args@start_deploy.py:123", "CLI._run_handler@start_deploy.py:319", "AnsibleJob.run_playbook@jobs.py:185"],
+      "sink": "subprocess.Popen@utils.py:306",
+      "sink_type": "command_execution",
+      "risk": "Critical",
+      "description": "用户CLI参数 → Ansible playbook执行"
+    },
+    {
+      "source": "sys.argv@start_deploy.py:379",
+      "path": ["main@start_deploy.py:379", "CLI.run@start_deploy.py:361", "CLI._process_args@start_deploy.py:123", "CLI._run_handler@start_deploy.py:319", "jobs.ResourcePkg.handle_pkgs@jobs.py:826", "ResourcePkg.extract@jobs.py:623", "ResourcePkg.extract_zip@jobs.py:594"],
+      "sink": "ZipFile.extractall@jobs.py:601",
+      "sink_type": "file_extraction",
+      "risk": "High",
+      "description": "用户CLI参数 → ZIP文件解压"
+    },
+    {
+      "source": "inventory_file@inventory_file.py:276",
+      "path": ["InventoryFile.parse@inventory_file.py:276", "InventoryFile._parse_hosts@inventory_file.py:235", "HostParams.generate_new_params_str_list@inventory_file.py:158", "StrTool.safe_eval@inventory_file.py:50"],
+      "sink": "eval@inventory_file.py:56",
+      "sink_type": "code_execution",
+      "risk": "Critical",
+      "description": "Inventory配置文件 → eval()代码执行"
+    },
+    {
+      "source": "csv_file@trans_excel_to_inventory.py:417",
+      "path": ["InventoryInfo.get_table_info@trans_excel_to_inventory.py:417", "InventoryInfo.trans_to_inventory_info@trans_excel_to_inventory.py:447", "HccnHostInfo@trans_excel_to_inventory.py:81", "HccnHostInfo.get_host_info@trans_excel_to_inventory.py:116"],
+      "sink": "InventoryInfo.write_inventory@trans_excel_to_inventory.py:496",
+      "sink_type": "file_write",
+      "risk": "High",
+      "description": "CSV文件 → Inventory配置写入"
+    },
+    {
+      "source": "url@download_util.py:305",
+      "path": ["DownloadUtil.download@download_util.py:305", "DownloadUtil.download_with_retry@download_util.py:340", "request.urlretrieve@download_util.py:350"],
+      "sink": "file_write@download_util.py:350",
+      "sink_type": "network_to_file",
+      "risk": "High",
+      "description": "远程URL → 本地文件下载"
+    },
+    {
+      "source": "AnsibleModule.params@scp.py:39",
+      "path": ["Scp.__init__@scp.py:27", "Scp.run_scp@scp.py:51", "Scp._run_cmd@scp.py:69"],
+      "sink": "subprocess.Popen@scp.py:70",
+      "sink_type": "command_execution",
+      "risk": "Critical",
+      "description": "Ansible模块参数(IP/password) → SCP命令执行"
+    },
+    {
+      "source": "AnsibleModule.params@install_cann.py:58",
+      "path": ["CANNInstaller.run@install_cann.py:112", "CANNInstaller._install_pkg@install_cann.py:99", "CANNInstaller._run_cmd@install_cann.py:432"],
+      "sink": "subprocess.Popen@install_cann.py:433",
+      "sink_type": "command_execution",
+      "risk": "Critical",
+      "description": "Ansible参数(resources_dir) → 安装脚本执行"
+    },
+    {
+      "source": "AnsibleModule.params@install_sys_pkg.py:357",
+      "path": ["SysInstaller.install_rpm_pkgs@install_sys_pkg.py:98", "SysInstaller._run_cmd@install_sys_pkg.py:291"],
+      "sink": "AnsibleModule.run_command@install_sys_pkg.py:292",
+      "sink_type": "command_execution",
+      "risk": "Critical",
+      "description": "Ansible参数(nexus_url) → yum/apt命令执行"
+    },
+    {
+      "source": "AnsibleModule.params@process_npu.py:37",
+      "path": ["NpuInstallation._process_npu@process_npu.py:109", "NpuInstallation._do_install_npu@process_npu.py:260", "NpuInstallation._run_command@process_npu.py:92"],
+      "sink": "AnsibleModule.run_command@process_npu.py:94",
+      "sink_type": "command_execution",
+      "risk": "Critical",
+      "description": "Ansible参数(resource_dir) → NPU驱动安装执行"
+    },
+    {
+      "source": "ConnHostInfo.password@spread_tool.py:163",
+      "path": ["run_ssh_cmd@spread_tool.py:162"],
+      "sink": "subprocess.Popen@spread_tool.py:105",
+      "sink_type": "command_execution",
+      "risk": "Critical",
+      "description": "SSH密码 → sshpass命令执行"
+    },
+    {
+      "source": "tar_file@uncompress_resources.py:92",
+      "path": ["UncompressResources.run@uncompress_resources.py:86", "CompressedFileCheckUtils.check_compressed_file_valid@path_manager.py:288"],
+      "sink": "tarfile.extractall@uncompress_resources.py:108",
+      "sink_type": "file_extraction",
+      "risk": "High",
+      "description": "TAR资源包 → 文件解压"
+    }
+  ],
+  "high_risk_functions": [
+    {
+      "name": "run_cmd@utils.py",
+      "line": 297,
+      "risk": "Critical",
+      "reason": "使用Popen执行shell命令，参数可来自用户输入或配置文件"
+    },
+    {
+      "name": "StrTool.safe_eval@inventory_file.py",
+      "line": 50,
+      "risk": "Critical",
+      "reason": "使用eval()执行表达式，虽有正则过滤但存在代码注入风险"
+    },
+    {
+      "name": "_run_cmd@scp.py",
+      "line": 69,
+      "risk": "Critical",
+      "reason": "直接执行SCP命令，包含IP地址和密码参数"
+    },
+    {
+      "name": "_run_cmd@install_cann.py",
+      "line": 432,
+      "risk": "Critical",
+      "reason": "执行安装脚本，脚本路径来自glob查找结果"
+    },
+    {
+      "name": "_run_cmd@install_sys_pkg.py",
+      "line": 291,
+      "risk": "Critical",
+      "reason": "执行yum/apt命令安装系统包"
+    },
+    {
+      "name": "_run_command@process_npu.py",
+      "line": 92,
+      "risk": "Critical",
+      "reason": "执行NPU驱动/固件安装命令"
+    },
+    {
+      "name": "run_ssh_cmd@spread_tool.py",
+      "line": 162,
+      "risk": "Critical",
+      "reason": "通过SSH执行远程命令，包含主机认证信息"
+    },
+    {
+      "name": "run_cmd@spread_tool.py",
+      "line": 102,
+      "risk": "Critical",
+      "reason": "执行本地shell命令"
+    },
+    {
+      "name": "extract_zip@jobs.py",
+      "line": 594,
+      "risk": "High",
+      "reason": "解压ZIP文件，文件来自下载的软件包"
+    },
+    {
+      "name": "extract_tar@jobs.py",
+      "line": 614,
+      "risk": "High",
+      "reason": "解压TAR文件，文件来自下载的软件包"
+    },
+    {
+      "name": "download_with_retry@download_util.py",
+      "line": 340,
+      "risk": "High",
+      "reason": "从远程URL下载文件到本地"
+    },
+    {
+      "name": "urlopen@download_util.py",
+      "line": 361,
+      "risk": "High",
+      "reason": "打开远程URL获取内容"
+    }
+  ]
+}

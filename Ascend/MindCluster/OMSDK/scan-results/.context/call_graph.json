@@ -1,0 +1,690 @@
+{
+  "functions": [
+    {
+      "id": "F-001",
+      "name": "rf_upgrade_service_actions",
+      "file": "upgrade_service_view.py",
+      "line": 67,
+      "module": "upgrade_service",
+      "type": "entry_point",
+      "signature": "POST /redfish/v1/UpdateService",
+      "calls": ["F-002", "F-003", "F-004"],
+      "called_by": [],
+      "security_relevant": true
+    },
+    {
+      "id": "F-002",
+      "name": "LibRESTfulAdapter.lib_restful_interface",
+      "file": "lib_restful_adapter.py",
+      "line": 70,
+      "module": "lib_restful_adapter",
+      "type": "adapter",
+      "signature": "lib_restful_interface(service_name, method, data_dict)",
+      "calls": ["F-003"],
+      "called_by": ["F-001", "F-005", "F-006"],
+      "security_relevant": true
+    },
+    {
+      "id": "F-003",
+      "name": "ast.literal_eval",
+      "file": "lib_restful_adapter.py",
+      "line": 88,
+      "module": "lib_restful_adapter",
+      "type": "builtin",
+      "signature": "literal_eval(string)",
+      "calls": [],
+      "called_by": ["F-002"],
+      "security_relevant": true,
+      "vulnerability_type": "code_injection"
+    },
+    {
+      "id": "F-004",
+      "name": "shutil.move",
+      "file": "upgrade_service_view.py",
+      "line": 114,
+      "module": "upgrade_service",
+      "type": "builtin",
+      "signature": "move(src, dst)",
+      "calls": [],
+      "called_by": ["F-001"],
+      "security_relevant": true,
+      "vulnerability_type": "path_traversal"
+    },
+    {
+      "id": "F-005",
+      "name": "rf_import_custom_certificate",
+      "file": "security_service_views.py",
+      "line": 98,
+      "module": "security_service",
+      "type": "entry_point",
+      "signature": "POST /redfish/v1/Systems/1/SecurityService/HttpsCert",
+      "calls": ["F-002", "F-006"],
+      "called_by": [],
+      "security_relevant": true
+    },
+    {
+      "id": "F-006",
+      "name": "UserManager.get_all_info",
+      "file": "user_manager.py",
+      "line": 50,
+      "module": "user_manager",
+      "type": "service",
+      "signature": "get_all_info(recv_conf_dict)",
+      "calls": [],
+      "called_by": ["F-001", "F-005", "F-007", "F-008"],
+      "security_relevant": true
+    },
+    {
+      "id": "F-007",
+      "name": "rf_modify_system_https_cert_alarm_time",
+      "file": "security_service_views.py",
+      "line": 396,
+      "module": "security_service",
+      "type": "entry_point",
+      "signature": "PATCH /redfish/v1/Systems/1/SecurityService/CertAlarmTime",
+      "calls": ["F-002", "F-006"],
+      "called_by": [],
+      "security_relevant": true
+    },
+    {
+      "id": "F-008",
+      "name": "rf_import_system_puny_dict",
+      "file": "security_service_views.py",
+      "line": 175,
+      "module": "security_service",
+      "type": "entry_point",
+      "signature": "POST /redfish/v1/Systems/1/SecurityService/PunyDict",
+      "calls": ["F-002", "F-006", "F-009"],
+      "called_by": [],
+      "security_relevant": true
+    },
+    {
+      "id": "F-009",
+      "name": "os.rename",
+      "file": "security_service_views.py",
+      "line": 228,
+      "module": "security_service",
+      "type": "builtin",
+      "signature": "rename(old, new)",
+      "calls": [],
+      "called_by": ["F-008"],
+      "security_relevant": true,
+      "vulnerability_type": "path_traversal"
+    },
+    {
+      "id": "F-010",
+      "name": "FDMessageHandler.handle_msg_from_fd_by_mqtt",
+      "file": "fd_msg_handlers.py",
+      "line": 83,
+      "module": "fd_msg_process",
+      "type": "handler",
+      "signature": "handle_msg_from_fd_by_mqtt(msg: FdMsgData)",
+      "calls": ["F-011", "F-012", "F-013"],
+      "called_by": [],
+      "security_relevant": true
+    },
+    {
+      "id": "F-011",
+      "name": "MidwareRoute.view_functions",
+      "file": "midware_route.py",
+      "line": 30,
+      "module": "fd_msg_process",
+      "type": "router",
+      "signature": "view_functions[topic](payload)",
+      "calls": [],
+      "called_by": ["F-010"],
+      "security_relevant": true
+    },
+    {
+      "id": "F-012",
+      "name": "WsClientMgr.send_msg",
+      "file": "ws_client_mgr.py",
+      "line": 50,
+      "module": "wsclient",
+      "type": "client",
+      "signature": "send_msg(msg_obj)",
+      "calls": [],
+      "called_by": ["F-010"],
+      "security_relevant": true
+    },
+    {
+      "id": "F-013",
+      "name": "json.loads",
+      "file": "fd_msg_handlers.py",
+      "line": 163,
+      "module": "fd_msg_process",
+      "type": "builtin",
+      "signature": "loads(payload)",
+      "calls": [],
+      "called_by": ["F-010"],
+      "security_relevant": false
+    },
+    {
+      "id": "F-014",
+      "name": "alarm_report",
+      "file": "alarm_process.c",
+      "line": 283,
+      "module": "alarm_process",
+      "type": "entry_point",
+      "signature": "int alarm_report(const unsigned char *info)",
+      "calls": ["F-015", "F-016", "F-017"],
+      "called_by": [],
+      "security_relevant": true
+    },
+    {
+      "id": "F-015",
+      "name": "search_item_by_info",
+      "file": "alarm_process.c",
+      "line": 169,
+      "module": "alarm_process",
+      "type": "helper",
+      "signature": "ALARM_LV1_STRU *search_item_by_info(ALARM_MSG_FAULT_INFO *, int)",
+      "calls": [],
+      "called_by": ["F-014"],
+      "security_relevant": false
+    },
+    {
+      "id": "F-016",
+      "name": "fault_record_to_file",
+      "file": "alarm_process.c",
+      "line": 126,
+      "module": "alarm_process",
+      "type": "output",
+      "signature": "int fault_record_to_file(unsigned int *, int *)",
+      "calls": ["F-018"],
+      "called_by": ["F-014"],
+      "security_relevant": true
+    },
+    {
+      "id": "F-017",
+      "name": "pthread_mutex_lock",
+      "file": "alarm_process.c",
+      "line": 305,
+      "module": "alarm_process",
+      "type": "builtin",
+      "signature": "pthread_mutex_lock(&mutex)",
+      "calls": [],
+      "called_by": ["F-014"],
+      "security_relevant": false
+    },
+    {
+      "id": "F-018",
+      "name": "write_buff_to_file",
+      "file": "alarm_process.c",
+      "line": 47,
+      "module": "alarm_process",
+      "type": "output",
+      "signature": "int write_buff_to_file(const char *, size_t, unsigned int)",
+      "calls": ["F-019"],
+      "called_by": ["F-016"],
+      "security_relevant": true
+    },
+    {
+      "id": "F-019",
+      "name": "safety_fopen",
+      "file": "file_checker.c",
+      "line": 30,
+      "module": "common",
+      "type": "wrapper",
+      "signature": "FILE *safety_fopen(const char *path, const char *mode)",
+      "calls": [],
+      "called_by": ["F-018", "F-020", "F-021", "F-022"],
+      "security_relevant": true
+    },
+    {
+      "id": "F-020",
+      "name": "cert_getcertinfo",
+      "file": "certproc.c",
+      "line": 563,
+      "module": "certmanage",
+      "type": "entry_point",
+      "signature": "signed long cert_getcertinfo(const char *certinfo_file, ...)",
+      "calls": ["F-021", "F-022"],
+      "called_by": [],
+      "security_relevant": true
+    },
+    {
+      "id": "F-021",
+      "name": "cert_readcertfile",
+      "file": "certproc.c",
+      "line": 455,
+      "module": "certmanage",
+      "type": "helper",
+      "signature": "X509 *cert_readcertfile(const char *certinfo_file)",
+      "calls": ["F-019"],
+      "called_by": ["F-020"],
+      "security_relevant": true
+    },
+    {
+      "id": "F-022",
+      "name": "PEM_read_X509",
+      "file": "certproc.c",
+      "line": 463,
+      "module": "certmanage",
+      "type": "openssl",
+      "signature": "X509 *PEM_read_X509(FILE *, NULL, NULL, NULL)",
+      "calls": [],
+      "called_by": ["F-021"],
+      "security_relevant": true,
+      "vulnerability_type": "certificate_handling"
+    },
+    {
+      "id": "F-023",
+      "name": "execute_check_cmd",
+      "file": "extend_alarm.c",
+      "line": 121,
+      "module": "extend_alarm",
+      "type": "helper",
+      "signature": "void *execute_check_cmd(void *cmd)",
+      "calls": ["F-024"],
+      "called_by": ["F-025"],
+      "security_relevant": true,
+      "vulnerability_type": "command_injection"
+    },
+    {
+      "id": "F-024",
+      "name": "system",
+      "file": "extend_alarm.c",
+      "line": 123,
+      "module": "extend_alarm",
+      "type": "builtin",
+      "signature": "int system(const char *command)",
+      "calls": [],
+      "called_by": ["F-023"],
+      "security_relevant": true,
+      "vulnerability_type": "command_injection"
+    },
+    {
+      "id": "F-025",
+      "name": "execute_hard_disk_block_check_cmd",
+      "file": "extend_alarm.c",
+      "line": 127,
+      "module": "extend_alarm",
+      "type": "helper",
+      "signature": "void execute_hard_disk_block_check_cmd(unsigned short fault_id)",
+      "calls": ["F-023"],
+      "called_by": ["F-026"],
+      "security_relevant": true
+    },
+    {
+      "id": "F-026",
+      "name": "extend_storage_block_check_thread",
+      "file": "extend_alarm.c",
+      "line": 179,
+      "module": "extend_alarm",
+      "type": "thread",
+      "signature": "void *extend_storage_block_check_thread()",
+      "calls": ["F-025"],
+      "called_by": [],
+      "security_relevant": true
+    },
+    {
+      "id": "F-027",
+      "name": "fault_get_block_mem_dev",
+      "file": "extend_alarm.c",
+      "line": 385,
+      "module": "extend_alarm",
+      "type": "helper",
+      "signature": "int fault_get_block_mem_dev(void)",
+      "calls": ["F-024", "F-028"],
+      "called_by": ["F-029"],
+      "security_relevant": true
+    },
+    {
+      "id": "F-028",
+      "name": "get_block_dev_info",
+      "file": "extend_alarm.c",
+      "line": 351,
+      "module": "extend_alarm",
+      "type": "helper",
+      "signature": "int get_block_dev_info(const char *, const char *, char *, int)",
+      "calls": ["F-019"],
+      "called_by": ["F-027"],
+      "security_relevant": false
+    },
+    {
+      "id": "F-029",
+      "name": "extend_alarm_check_thread",
+      "file": "extend_alarm.c",
+      "line": 429,
+      "module": "extend_alarm",
+      "type": "thread",
+      "signature": "void *extend_alarm_check_thread(void *)",
+      "calls": ["F-027"],
+      "called_by": [],
+      "security_relevant": true
+    },
+    {
+      "id": "F-030",
+      "name": "fault_get_space_full_info",
+      "file": "check_space.c",
+      "line": 46,
+      "module": "fault_check",
+      "type": "helper",
+      "signature": "void fault_get_space_full_info(void)",
+      "calls": ["F-024", "F-019"],
+      "called_by": ["F-031"],
+      "security_relevant": true,
+      "vulnerability_type": "command_injection"
+    },
+    {
+      "id": "F-031",
+      "name": "fault_check_space_full",
+      "file": "check_space.c",
+      "line": 107,
+      "module": "fault_check",
+      "type": "entry_point",
+      "signature": "int fault_check_space_full(unsigned int, unsigned int, unsigned short *)",
+      "calls": ["F-030"],
+      "called_by": ["F-032"],
+      "security_relevant": true
+    },
+    {
+      "id": "F-032",
+      "name": "fault_check_task_process",
+      "file": "fault_check.c",
+      "line": 547,
+      "module": "fault_check",
+      "type": "thread",
+      "signature": "void fault_check_task_process(void)",
+      "calls": ["F-031"],
+      "called_by": ["F-033"],
+      "security_relevant": true
+    },
+    {
+      "id": "F-033",
+      "name": "fault_manage_check_thread",
+      "file": "fault_check.c",
+      "line": 585,
+      "module": "fault_check",
+      "type": "thread",
+      "signature": "void *fault_manage_check_thread(void *)",
+      "calls": ["F-032"],
+      "called_by": [],
+      "security_relevant": true
+    },
+    {
+      "id": "F-034",
+      "name": "Server.receive_socket_message",
+      "file": "ibma_server.py",
+      "line": 105,
+      "module": "bin",
+      "type": "handler",
+      "signature": "receive_socket_message(sock)",
+      "calls": [],
+      "called_by": ["F-035"],
+      "security_relevant": true,
+      "vulnerability_type": "buffer_overflow"
+    },
+    {
+      "id": "F-035",
+      "name": "Server.deal_request",
+      "file": "ibma_server.py",
+      "line": 137,
+      "module": "bin",
+      "type": "handler",
+      "signature": "deal_request(socket_request, function)",
+      "calls": ["F-034"],
+      "called_by": [],
+      "security_relevant": true
+    },
+    {
+      "id": "F-036",
+      "name": "ExecCmd.exec_cmd_get_output",
+      "file": "exec_cmd.py",
+      "line": 30,
+      "module": "common.utils",
+      "type": "utility",
+      "signature": "exec_cmd_get_output(cmd, ...)",
+      "calls": ["F-037"],
+      "called_by": [],
+      "security_relevant": true
+    },
+    {
+      "id": "F-037",
+      "name": "subprocess.run",
+      "file": "exec_cmd.py",
+      "line": 42,
+      "module": "common.utils",
+      "type": "builtin",
+      "signature": "subprocess.run(cmd, shell=False)",
+      "calls": [],
+      "called_by": ["F-036"],
+      "security_relevant": true,
+      "vulnerability_type": "command_execution"
+    },
+    {
+      "id": "F-038",
+      "name": "check_file_path_valid",
+      "file": "file_checker.c",
+      "line": 50,
+      "module": "common",
+      "type": "validator",
+      "signature": "int check_file_path_valid(const char *path)",
+      "calls": [],
+      "called_by": ["F-019", "F-039", "F-040"],
+      "security_relevant": true
+    },
+    {
+      "id": "F-039",
+      "name": "ens_proc_args",
+      "file": "ens.c",
+      "line": 22,
+      "module": "ens",
+      "type": "entry_point",
+      "signature": "int ens_proc_args(int argc, char *argv[])",
+      "calls": ["F-038"],
+      "called_by": ["F-040"],
+      "security_relevant": true
+    },
+    {
+      "id": "F-040",
+      "name": "ens_work",
+      "file": "ens.c",
+      "line": 137,
+      "module": "ens",
+      "type": "main",
+      "signature": "int ens_work(int argc, char *argv[])",
+      "calls": ["F-039", "F-038"],
+      "called_by": [],
+      "security_relevant": true
+    },
+    {
+      "id": "F-041",
+      "name": "devm_start",
+      "file": "devm.c",
+      "line": 101,
+      "module": "devm",
+      "type": "entry_point",
+      "signature": "int devm_start(void)",
+      "calls": ["F-042"],
+      "called_by": [],
+      "security_relevant": true
+    },
+    {
+      "id": "F-042",
+      "name": "subscribe_alarm_event",
+      "file": "alarm_process.c",
+      "line": 261,
+      "module": "alarm_process",
+      "type": "subscription",
+      "signature": "int subscribe_alarm_event(PROCESS_ALARM_EVENT_FUNC)",
+      "calls": [],
+      "called_by": ["F-041"],
+      "security_relevant": false
+    }
+  ],
+  "data_flows": [
+    {
+      "id": "DF-001",
+      "source": {
+        "type": "web_route",
+        "entry_point": "EP-002",
+        "description": "HTTP POST request with firmware package upload"
+      },
+      "sink": {
+        "function": "F-024",
+        "description": "System command execution for upgrade"
+      },
+      "intermediates": ["F-001", "F-002", "F-003", "F-004"],
+      "taint_types": ["user_input", "file_content"],
+      "has_sanitization": true,
+      "sanitization_points": [
+        "param_checker.UpdateServiceChecker",
+        "check_file_path_valid for upload directory"
+      ],
+      "risk_level": "high"
+    },
+    {
+      "id": "DF-002",
+      "source": {
+        "type": "web_route",
+        "entry_point": "EP-003",
+        "description": "HTTP POST request with certificate upload"
+      },
+      "sink": {
+        "function": "F-022",
+        "description": "PEM_read_X509 parses certificate content"
+      },
+      "intermediates": ["F-005", "F-002", "F-020", "F-021"],
+      "taint_types": ["user_input", "file_content"],
+      "has_sanitization": true,
+      "sanitization_points": [
+        "ImportServerCertificateChecker",
+        "cert file size check (MAX_CERTFILE_SIZE)",
+        "check_cert_security for symlink validation"
+      ],
+      "risk_level": "high"
+    },
+    {
+      "id": "DF-003",
+      "source": {
+        "type": "file",
+        "entry_point": "EP-012",
+        "description": "/run/formated_hw.info hardware config"
+      },
+      "sink": {
+        "function": "F-024",
+        "description": "system() call with device name from config"
+      },
+      "intermediates": ["F-027", "F-028", "F-025", "F-023"],
+      "taint_types": ["file_content", "device_name"],
+      "has_sanitization": true,
+      "sanitization_points": [
+        "safety_fopen wrapper",
+        "sprintf_s with fixed template 'smartctl -H %s'"
+      ],
+      "risk_level": "medium"
+    },
+    {
+      "id": "DF-004",
+      "source": {
+        "type": "file",
+        "description": "Config file content from trusted source"
+      },
+      "sink": {
+        "function": "F-024",
+        "description": "system() in check_space.c for df command"
+      },
+      "intermediates": ["F-030", "F-031", "F-032", "F-033"],
+      "taint_types": ["trusted_input"],
+      "has_sanitization": true,
+      "sanitization_points": [
+        "Fixed paths in g_fault_space_full_info config",
+        "sprintf_s with fixed template"
+      ],
+      "risk_level": "low"
+    },
+    {
+      "id": "DF-005",
+      "source": {
+        "type": "rpc",
+        "entry_point": "EP-008",
+        "description": "Unix Domain Socket message from RedfishServer"
+      },
+      "sink": {
+        "function": "F-034",
+        "description": "Socket receive up to 1MB"
+      },
+      "intermediates": [],
+      "taint_types": ["trusted_input"],
+      "has_sanitization": true,
+      "sanitization_points": [
+        "SSL/TLS authentication",
+        "maxDataLen limit",
+        ";;over; delimiter check"
+      ],
+      "risk_level": "low"
+    },
+    {
+      "id": "DF-006",
+      "source": {
+        "type": "rpc",
+        "entry_point": "EP-009",
+        "description": "WebSocket message from FusionDirector"
+      },
+      "sink": {
+        "function": "F-013",
+        "description": "json.loads on WebSocket payload"
+      },
+      "intermediates": ["F-010", "F-011"],
+      "taint_types": ["trusted_input"],
+      "has_sanitization": false,
+      "sanitization_points": [],
+      "risk_level": "medium"
+    },
+    {
+      "id": "DF-007",
+      "source": {
+        "type": "web_route",
+        "entry_point": "EP-007",
+        "description": "HTTP PATCH request with NIC config"
+      },
+      "sink": {
+        "function": "F-037",
+        "description": "subprocess.run for network config"
+      },
+      "intermediates": [],
+      "taint_types": ["user_input", "network_config"],
+      "has_sanitization": true,
+      "sanitization_points": [
+        "shell=False prevents shell expansion",
+        "shlex.split for safe parsing"
+      ],
+      "risk_level": "medium"
+    },
+    {
+      "id": "DF-008",
+      "source": {
+        "type": "web_route",
+        "entry_point": "EP-006",
+        "description": "HTTP POST/PATCH for NFS mount"
+      },
+      "sink": {
+        "function": "F-037",
+        "description": "subprocess.run for mount command"
+      },
+      "intermediates": [],
+      "taint_types": ["user_input", "nfs_server_address"],
+      "has_sanitization": true,
+      "sanitization_points": [
+        "shell=False",
+        "IP/domain validation"
+      ],
+      "risk_level": "medium"
+    }
+  ],
+  "call_graph_metadata": {
+    "generated_by": "architecture_agent",
+    "timestamp": "2026-04-21T00:00:00Z",
+    "language_versions": {
+      "python": "3.x",
+      "c": "C99",
+      "cpp": "C++11"
+    },
+    "analysis_depth": 3,
+    "total_functions": 42,
+    "total_data_flows": 8,
+    "security_relevant_functions": 35
+  }
+}

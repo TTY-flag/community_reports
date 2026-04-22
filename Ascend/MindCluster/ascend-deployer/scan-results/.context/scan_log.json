@@ -1,0 +1,88 @@
+{
+  "scan_id": "scan_20260421_ascend-deployer",
+  "start_time": "2026-04-21T06:15:00Z",
+  "end_time": "2026-04-21T06:40:00Z",
+  "duration_seconds": 1500,
+  "project_name": "ascend-deployer",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/shenteng/MindCluster/ascend-deployer",
+  "status": "success",
+  "agents": [
+    {
+      "name": "architecture",
+      "phase": "architecture",
+      "start_time": "2026-04-21T06:05:00Z",
+      "end_time": "2026-04-21T06:16:00Z",
+      "duration_seconds": 660,
+      "status": "success",
+      "output_files": [
+        "scan-results/.context/project_model.json",
+        "scan-results/.context/call_graph.json",
+        "scan-results/threat_analysis_report.md"
+      ],
+      "summary": "识别了9个关键模块、5个高风险模块、4个主要攻击面。发现eval()代码执行风险、命令注入风险、SSH密码明文传输风险。"
+    },
+    {
+      "name": "dataflow-scanner",
+      "phase": "vulnerability_scan",
+      "start_time": "2026-04-21T06:17:00Z",
+      "end_time": "2026-04-21T06:23:00Z",
+      "duration_seconds": 360,
+      "status": "success",
+      "item_count": 8,
+      "summary": "发现8个数据流漏洞：eval()代码注入(Critical)、SSH命令注入(Critical)、SCP命令注入(Critical)、shell=True命令注入(High)、uncompress shell=True(Medium)、3个跨模块漏洞。"
+    },
+    {
+      "name": "security-auditor",
+      "phase": "vulnerability_scan",
+      "start_time": "2026-04-21T06:17:00Z",
+      "end_time": "2026-04-21T06:21:00Z",
+      "duration_seconds": 240,
+      "status": "success",
+      "item_count": 10,
+      "summary": "发现10个安全逻辑漏洞：命令注入(CWE-78)、凭证泄露(CWE-522)、代码注入风险(CWE-94)、路径遍历(CWE-22)、日志泄露(CWE-532)。已排除CWE-295(TLS证书验证)。"
+    },
+    {
+      "name": "verification",
+      "phase": "verification",
+      "start_time": "2026-04-21T06:25:00Z",
+      "end_time": "2026-04-21T06:35:00Z",
+      "duration_seconds": 600,
+      "status": "success",
+      "item_count": 18,
+      "summary": "验证18个候选漏洞：9个LIKELY(SSH参数注入、凭证泄露)、5个POSSIBLE(eval风险、Zip Slip)、4个FALSE_POSITIVE(白名单缓解)。无CONFIRMED漏洞。"
+    },
+    {
+      "name": "reporter",
+      "phase": "report",
+      "start_time": "2026-04-21T06:38:00Z",
+      "end_time": "2026-04-21T06:40:00Z",
+      "duration_seconds": 120,
+      "status": "success",
+      "output_files": [
+        "scan-results/report_confirmed.md",
+        "scan-results/report_unconfirmed.md"
+      ],
+      "summary": "生成2份报告：report_confirmed.md(0个CONFIRMED)、report_unconfirmed.md(14个LIKELY/POSSIBLE)。"
+    }
+  ],
+  "summary": {
+    "total_files": 131,
+    "total_code_lines": 25620,
+    "language": "Python",
+    "candidates_found": 18,
+    "verified_likely": 9,
+    "verified_possible": 5,
+    "verified_false_positive": 4,
+    "verified_confirmed": 0,
+    "severity_high": 7,
+    "severity_medium": 7,
+    "severity_low": 4,
+    "top_vulnerabilities": [
+      "VULN-SEC-CRED-001: Credential exposure via SSHPASS env var (High)",
+      "VULN-SEC-CRED-002: Credential exposure in JSON files (High)",
+      "VULN-DF-CROSS-001: Cross-module SSH command injection (High)",
+      "VULN-DF-PY-002/003: SSH/SCP argument injection (High)",
+      "VULN-SEC-LOG-001: Log information disclosure (Medium)"
+    ]
+  }
+}

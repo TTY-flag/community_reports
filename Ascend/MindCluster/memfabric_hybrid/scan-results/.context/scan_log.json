@@ -1,0 +1,102 @@
+{
+  "scan_id": "scan_20260421_memfabric_hybrid",
+  "start_time": "2026-04-21T06:04:00Z",
+  "end_time": "2026-04-21T07:05:00Z",
+  "duration_seconds": 3660,
+  "project_name": "memfabric_hybrid",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/shenteng/MindCluster/memfabric_hybrid",
+  "status": "success",
+  "agents": [
+    {
+      "name": "architecture",
+      "start_time": "2026-04-21T06:05:00Z",
+      "end_time": "2026-04-21T06:16:00Z",
+      "duration_seconds": 651,
+      "status": "success",
+      "outputs": [
+        "project_model.json",
+        "call_graph.json",
+        "threat_analysis_report.md"
+      ],
+      "summary": "识别15个入口点、12个高风险区域、9个污点流"
+    },
+    {
+      "name": "dataflow-scanner",
+      "start_time": "2026-04-21T06:17:00Z",
+      "end_time": "2026-04-21T06:21:00Z",
+      "duration_seconds": 240,
+      "status": "success",
+      "outputs": [
+        "scan.db (9 vulnerabilities)"
+      ],
+      "summary": "发现9个数据流漏洞（内存安全、注入、库加载）"
+    },
+    {
+      "name": "security-auditor",
+      "start_time": "2026-04-21T06:17:00Z",
+      "end_time": "2026-04-21T06:21:00Z",
+      "duration_seconds": 240,
+      "status": "success",
+      "outputs": [
+        "scan.db (5 vulnerabilities)"
+      ],
+      "summary": "发现5个安全逻辑漏洞（动态库注入CWE-426）"
+    },
+    {
+      "name": "verification",
+      "start_time": "2026-04-21T06:22:00Z",
+      "end_time": "2026-04-21T06:55:00Z",
+      "duration_seconds": 1980,
+      "status": "success",
+      "outputs": [
+        "scan.db (verified 12 vulnerabilities)"
+      ],
+      "summary": "去重14->12，验证结果：LIKELY 9, POSSIBLE 1, FALSE_POSITIVE 2"
+    },
+    {
+      "name": "details-analyzer",
+      "start_time": null,
+      "end_time": null,
+      "duration_seconds": 0,
+      "status": "skipped",
+      "outputs": [],
+      "summary": "无CONFIRMED漏洞，跳过深度分析"
+    },
+    {
+      "name": "reporter",
+      "start_time": "2026-04-21T06:56:00Z",
+      "end_time": "2026-04-21T07:05:00Z",
+      "duration_seconds": 540,
+      "status": "success",
+      "outputs": [
+        "report_confirmed.md",
+        "report_unconfirmed.md"
+      ],
+      "summary": "生成两份报告，Top 5深度分析，修复建议矩阵"
+    }
+  ],
+  "summary": {
+    "total_vulnerabilities": 12,
+    "confirmed": 0,
+    "likely": 9,
+    "possible": 1,
+    "false_positive": 2,
+    "high_severity": 8,
+    "medium_severity": 2,
+    "low_severity": 2,
+    "modules_affected": [
+      "smem",
+      "hybm",
+      "hybm/under_api",
+      "acc_links",
+      "smem/config_store/backend"
+    ],
+    "cwe_types": [
+      "CWE-426 (Untrusted Search Path)",
+      "CWE-787 (Out-of-bounds Write)",
+      "CWE-94 (Code Injection)",
+      "CWE-190 (Integer Overflow)",
+      "CWE-829 (Inclusion from Untrusted Sphere)"
+    ]
+  }
+}

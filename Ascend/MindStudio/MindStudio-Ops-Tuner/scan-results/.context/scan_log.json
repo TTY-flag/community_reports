@@ -1,0 +1,93 @@
+{
+  "scan_id": "cce1d1c5-1bef-4ca3-8f94-4d1684a064bb",
+  "start_time": "2026-04-21T09:32:29.910887Z",
+  "end_time": "2026-04-21T10:25:25.693355Z",
+  "duration_seconds": 3176,
+  "status": "success",
+  "project_name": "MindStudio-Ops-Tuner",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/shenteng/MindStudio/MindStudio-Ops-Tuner",
+  "agents": [
+    {
+      "name": "architecture",
+      "status": "success",
+      "start_time": "2026-04-21T09:32:30Z",
+      "end_time": "2026-04-21T09:39:26Z",
+      "duration_seconds": 416,
+      "output_files": [
+        "scan-results/.context/project_model.json",
+        "scan-results/.context/call_graph.json",
+        "scan-results/threat_analysis_report.md"
+      ]
+    },
+    {
+      "name": "dataflow-scanner",
+      "status": "success",
+      "start_time": "2026-04-21T09:39:30Z",
+      "end_time": "2026-04-21T10:08:56Z",
+      "duration_seconds": 1766,
+      "item_count": 44,
+      "modules_scanned": ["tuner_core", "build_scripts", "library_core", "code_generator", "tuner_headers", "dfx_kernel"]
+    },
+    {
+      "name": "security-auditor",
+      "status": "success",
+      "start_time": "2026-04-21T09:39:30Z",
+      "end_time": "2026-04-21T10:42:41Z",
+      "duration_seconds": 191,
+      "item_count": 54,
+      "modules_scanned": ["tuner_core", "build_scripts", "library_core", "code_generator", "tuner_headers", "dfx_kernel", "library_headers"]
+    },
+    {
+      "name": "verification",
+      "status": "success",
+      "start_time": "2026-04-21T10:42:45Z",
+      "end_time": "2026-04-21T10:45:48Z",
+      "duration_seconds": 183,
+      "item_count": 41,
+      "summary": {
+        "candidates": 44,
+        "verified": 41,
+        "confirmed": 2,
+        "likely": 18,
+        "possible": 24,
+        "false_positive": 3
+      }
+    },
+    {
+      "name": "details-analyzer",
+      "status": "success",
+      "start_time": "2026-04-21T10:45:50Z",
+      "end_time": "2026-04-21T10:55:00Z",
+      "duration_seconds": 550,
+      "item_count": 2,
+      "output_files": [
+        "scan-results/details/VULN-CODEGEN-TAINT-001.md",
+        "scan-results/details/VULN-CODEGEN-TAINT-002.md"
+      ]
+    },
+    {
+      "name": "reporter",
+      "status": "success",
+      "start_time": "2026-04-21T10:55:05Z",
+      "end_time": "2026-04-21T10:25:25Z",
+      "duration_seconds": 540,
+      "output_files": [
+        "scan-results/report_confirmed.md",
+        "scan-results/report_unconfirmed.md"
+      ]
+    }
+  ],
+  "summary": {
+    "total_vulnerabilities": 44,
+    "confirmed": 2,
+    "likely": 18,
+    "possible": 24,
+    "false_positive": 3,
+    "critical": 2,
+    "high": 8,
+    "medium": 10,
+    "low": 22,
+    "modules_scanned": 7,
+    "scan_mode": "自主分析模式"
+  }
+}

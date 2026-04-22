@@ -1,0 +1,309 @@
+{
+  "functions": {
+    "cli@run.py": {
+      "defined_at": 46,
+      "calls": ["main@app.py"],
+      "called_by": [],
+      "receives_external_input": false,
+      "risk": "Low"
+    },
+    "main@app.py": {
+      "defined_at": 23,
+      "calls": ["dispatch_legacy_command@legacy.py", "create_session_parser@legacy.py", "create_legacy_parser@legacy.py"],
+      "called_by": ["cli@run.py"],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "dispatch_legacy_command@legacy.py": {
+      "defined_at": 199,
+      "calls": ["_handle_chat@legacy.py", "_handle_config@legacy.py", "_handle_web@legacy.py"],
+      "called_by": ["main@app.py"],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "_handle_chat@legacy.py": {
+      "defined_at": 220,
+      "calls": ["create_graph@initializer.py"],
+      "called_by": ["dispatch_legacy_command@legacy.py"],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "_handle_web@legacy.py": {
+      "defined_at": 297,
+      "calls": ["launch_langgraph_dev_server@launcher.py"],
+      "called_by": ["dispatch_legacy_command@legacy.py"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "launch_langgraph_dev_server@launcher.py": {
+      "defined_at": 172,
+      "calls": ["_spawn_api_server_process@launcher.py", "_spawn_ui_server_process@launcher.py", "_spawn_process@launcher.py"],
+      "called_by": ["_handle_web@legacy.py"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "_spawn_process@launcher.py": {
+      "defined_at": 320,
+      "calls": ["subprocess.Popen"],
+      "called_by": ["launch_langgraph_dev_server@launcher.py"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "dispatch@bash.py": {
+      "defined_at": 17,
+      "calls": ["execute_bash_command@bash.py"],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "execute_bash_command@bash.py": {
+      "defined_at": 104,
+      "calls": ["asyncio.create_subprocess_exec"],
+      "called_by": ["dispatch@bash.py", "_get_files@file.py", "_get_directories@file.py", "resolve@image.py"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "_get_files@file.py": {
+      "defined_at": 22,
+      "calls": ["execute_bash_command@bash.py"],
+      "called_by": ["complete@file.py"],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "_get_directories@file.py": {
+      "defined_at": 44,
+      "calls": ["execute_bash_command@bash.py"],
+      "called_by": ["complete@file.py"],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "tools@mcp/client.py": {
+      "defined_at": 60,
+      "calls": ["MultiServerMCPClient.get_tools", "_build_connections@mcp/client.py"],
+      "called_by": ["create@agents/factory.py"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "_build_connection@mcp/client.py": {
+      "defined_at": 130,
+      "calls": [],
+      "called_by": ["tools@mcp/client.py"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "_build_connections@mcp/client.py": {
+      "defined_at": 117,
+      "calls": ["_build_connection@mcp/client.py"],
+      "called_by": ["tools@mcp/client.py"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "web_search@web_search.py": {
+      "defined_at": 122,
+      "calls": ["_search_results_with_provider@web_search.py"],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "_search_results_with_provider@web_search.py": {
+      "defined_at": 169,
+      "calls": ["_search_with_tavily@web_search.py", "_fetch_duckduckgo_html@web_search.py"],
+      "called_by": ["web_search@web_search.py"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "_search_with_tavily@web_search.py": {
+      "defined_at": 200,
+      "calls": ["httpx.AsyncClient.post"],
+      "called_by": ["_search_results_with_provider@web_search.py"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "_fetch_duckduckgo_html@web_search.py": {
+      "defined_at": 249,
+      "calls": ["httpx.AsyncClient.get"],
+      "called_by": ["_search_results_with_provider@web_search.py"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "create@agents/factory.py": {
+      "defined_at": 90,
+      "calls": ["tools@mcp/client.py", "_build_composite_backend@agents/factory.py", "create@llms/factory.py"],
+      "called_by": ["create_graph@initializer.py"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "_build_composite_backend@agents/factory.py": {
+      "defined_at": 518,
+      "calls": ["LocalShellBackend", "FilesystemBackend", "CompositeBackend"],
+      "called_by": ["create@agents/factory.py"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "create_graph@initializer.py": {
+      "defined_at": 118,
+      "calls": ["create@agents/factory.py", "create@mcp/factory.py", "load_skills@skills/factory.py"],
+      "called_by": ["_handle_chat@legacy.py", "load_web_graph@runtime.py"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "load_skills@skills/factory.py": {
+      "defined_at": 69,
+      "calls": ["_load_skill_file@skills/factory.py"],
+      "called_by": ["create_graph@initializer.py"],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "_load_skill_file@skills/factory.py": {
+      "defined_at": 113,
+      "calls": ["yaml.safe_load", "skill_file.read_text"],
+      "called_by": ["load_skills@skills/factory.py"],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "from_json@mcp.py": {
+      "defined_at": 92,
+      "calls": ["render_templates@render.py", "json.loads"],
+      "called_by": ["load_mcp@registry.py"],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "load_llms@registry.py": {
+      "defined_at": 74,
+      "calls": ["from_yaml@llm.py"],
+      "called_by": ["get_registry@initializer.py"],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "from_yaml@llm.py": {
+      "defined_at": 131,
+      "calls": ["_load_single_file@utils.py", "_load_dir_items@utils.py"],
+      "called_by": ["load_llms@registry.py"],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "get_skill@catalog/skills.py": {
+      "defined_at": 122,
+      "calls": ["path.read_text"],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "fetch_skills@catalog/skills.py": {
+      "defined_at": 85,
+      "calls": ["_fallback_skill_catalog@catalog/skills.py"],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Low"
+    },
+    "create@llms/factory.py": {
+      "defined_at": 20,
+      "calls": ["init_chat_model"],
+      "called_by": ["create@agents/factory.py"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "create@mcp/factory.py": {
+      "defined_at": 20,
+      "calls": ["MCPClient"],
+      "called_by": ["create_graph@initializer.py"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "wrap_tool_with_timeout@tools/factory.py": {
+      "defined_at": 91,
+      "calls": ["StructuredTool.from_function"],
+      "called_by": ["tools@mcp/client.py", "create@agents/factory.py"],
+      "receives_external_input": false,
+      "risk": "Low"
+    },
+    "load_web_graph@runtime.py": {
+      "defined_at": 104,
+      "calls": ["create_web_graph@runtime.py", "_run_graph_creation_sync@runtime.py"],
+      "called_by": ["graph@graph.py"],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "graph@graph.py": {
+      "defined_at": 24,
+      "calls": ["load_web_graph@runtime.py"],
+      "called_by": [],
+      "receives_external_input": false,
+      "risk": "Low"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "sys.argv@run.py:25",
+      "path": ["cli@run.py:46", "main@app.py:23", "dispatch_legacy_command@legacy.py:199"],
+      "sink": "create_legacy_parser@legacy.py:47",
+      "sink_type": "cmdline_parser"
+    },
+    {
+      "source": "command@bash.py:17",
+      "path": ["dispatch@bash.py:17"],
+      "sink": "execute_bash_command@bash.py:114",
+      "sink_type": "subprocess_exec"
+    },
+    {
+      "source": "pattern@file.py:26",
+      "path": ["_get_files@file.py:22"],
+      "sink": "execute_bash_command@bash.py:114",
+      "sink_type": "subprocess_exec"
+    },
+    {
+      "source": "mcp_server_config@mcp/client.py:130",
+      "path": ["_build_connection@mcp/client.py:130"],
+      "sink": "MultiServerMCPClient@mcp/client.py:70",
+      "sink_type": "external_tool_loader"
+    },
+    {
+      "source": "query@web_search.py:122",
+      "path": ["web_search@web_search.py:122", "_search_results_with_provider@web_search.py:169"],
+      "sink": "httpx.AsyncClient.get@web_search.py:256",
+      "sink_type": "http_request"
+    },
+    {
+      "source": "api_key@web_search.py:176",
+      "path": ["_search_with_tavily@web_search.py:200"],
+      "sink": "httpx.AsyncClient.post@web_search.py:227",
+      "sink_type": "http_request"
+    },
+    {
+      "source": "skill_file@skills/factory.py:82",
+      "path": ["_load_skill_file@skills/factory.py:113"],
+      "sink": "yaml.safe_load@skills/factory.py:124",
+      "sink_type": "yaml_parse"
+    },
+    {
+      "source": "config_path@mcp.py:105",
+      "path": ["from_json@mcp.py:92"],
+      "sink": "json.loads@mcp.py:108",
+      "sink_type": "json_parse"
+    },
+    {
+      "source": "llm_config@llm.py:131",
+      "path": ["from_yaml@llm.py:131", "_load_single_file@utils.py:118"],
+      "sink": "yaml.safe_load@utils.py",
+      "sink_type": "yaml_parse"
+    },
+    {
+      "source": "skill_path@catalog/skills.py:142",
+      "path": ["get_skill@catalog/skills.py:122"],
+      "sink": "path.read_text@catalog/skills.py:147",
+      "sink_type": "file_read"
+    },
+    {
+      "source": "agent_config@initializer.py:118",
+      "path": ["create_graph@initializer.py:118", "create@agents/factory.py:90"],
+      "sink": "LocalShellBackend@agents/factory.py:519",
+      "sink_type": "shell_backend"
+    },
+    {
+      "source": "graph_config@launcher.py:172",
+      "path": ["launch_langgraph_dev_server@launcher.py:172", "_spawn_process@launcher.py:320"],
+      "sink": "subprocess.Popen@launcher.py:328",
+      "sink_type": "subprocess_spawn"
+    }
+  ]
+}

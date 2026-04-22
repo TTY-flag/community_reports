@@ -1,0 +1,438 @@
+{
+  "project_name": "MindStudio-Ops-Generator",
+  "scan_time": "2026-04-21T04:30:00Z",
+  "lsp_available": false,
+  "total_files": 112,
+  "total_lines": 35000,
+  "project_profile": {
+    "project_type": "cli_tool_python",
+    "deployment_model": "Python CLI 工具，在开发者本地环境执行，用于生成华为 Ascend NPU 算子代码和测试框架。主要作为开发辅助工具使用，不涉及网络服务或远程数据接收。",
+    "trust_boundaries": [
+      {
+        "boundary": "CLI Interface",
+        "trusted_side": "Application logic",
+        "untrusted_side": "User command line arguments and input files",
+        "risk": "High"
+      },
+      {
+        "boundary": "File System",
+        "trusted_side": "Application generated output",
+        "untrusted_side": "User-provided input files (JSON, Excel, INI, Model files)",
+        "risk": "High"
+      },
+      {
+        "boundary": "External Process",
+        "trusted_side": "Application subprocess calls",
+        "untrusted_side": "Build tools (bash, cmake, python) and system utilities",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Dynamic Module Loading",
+        "trusted_side": "Application importlib calls",
+        "untrusted_side": "User-provided Python modules (calc_expect_func_file)",
+        "risk": "Critical"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "msopgen",
+      "path": "msopgen",
+      "language": "python",
+      "components": [
+        "msopgen.py",
+        "interface/arg_parser.py",
+        "interface/op_file_generator.py",
+        "interface/op_file_compile.py",
+        "interface/op_info_parser.py",
+        "interface/op_info_ir_json.py",
+        "interface/utils.py",
+        "interface/op_file.py",
+        "interface/op_file_aicore.py",
+        "interface/op_file_aicpu.py",
+        "interface/op_file_vectorcore.py",
+        "interface/const_manager.py"
+      ]
+    },
+    {
+      "name": "msopgen-simulator",
+      "path": "msopgen/simulator",
+      "language": "python",
+      "components": [
+        "simulator.py",
+        "parse_dump.py",
+        "parse_objdump.py",
+        "parse_first_pc.py",
+        "sim_dump_parser.py",
+        "instr_dump_parser.py",
+        "reg_dump_parser.py",
+        "icache_dump_parser.py",
+        "trace.py",
+        "statistics.py"
+      ]
+    },
+    {
+      "name": "msopgen-config",
+      "path": "msopgen/config",
+      "language": "python",
+      "components": [
+        "transform.json"
+      ]
+    },
+    {
+      "name": "msopst",
+      "path": "tools/msopst",
+      "language": "python",
+      "components": [
+        "scripts/msopst.py",
+        "st/interface/arg_parser.py",
+        "st/interface/case_design.py",
+        "st/interface/data_generator.py",
+        "st/interface/model_parser.py",
+        "st/interface/advance_ini_parser.py",
+        "st/interface/acl_op_generator.py",
+        "st/interface/acl_op_runner.py",
+        "st/interface/utils.py",
+        "st/interface/case_generator.py",
+        "st/interface/ms_op_generator.py",
+        "st/interface/pt_op_generator.py",
+        "st/interface/result_comparer.py"
+      ]
+    },
+    {
+      "name": "root-scripts",
+      "path": ".",
+      "language": "python",
+      "components": [
+        "build.py",
+        "setup.py",
+        "download_dependencies.py"
+      ]
+    }
+  ],
+  "files": [
+    {
+      "path": "msopgen/msopgen.py",
+      "language": "python",
+      "risk": "High",
+      "module": "msopgen",
+      "lines": 74,
+      "priority": 1
+    },
+    {
+      "path": "msopgen/interface/arg_parser.py",
+      "language": "python",
+      "risk": "High",
+      "module": "msopgen",
+      "lines": 322,
+      "priority": 1
+    },
+    {
+      "path": "msopgen/interface/op_file_compile.py",
+      "language": "python",
+      "risk": "Critical",
+      "module": "msopgen",
+      "lines": 255,
+      "priority": 1
+    },
+    {
+      "path": "msopgen/interface/op_info_parser.py",
+      "language": "python",
+      "risk": "High",
+      "module": "msopgen",
+      "lines": 72,
+      "priority": 1
+    },
+    {
+      "path": "msopgen/interface/op_info_ir_json.py",
+      "language": "python",
+      "risk": "High",
+      "module": "msopgen",
+      "lines": 430,
+      "priority": 2
+    },
+    {
+      "path": "msopgen/interface/utils.py",
+      "language": "python",
+      "risk": "High",
+      "module": "msopgen",
+      "lines": 687,
+      "priority": 1
+    },
+    {
+      "path": "msopgen/interface/op_file.py",
+      "language": "python",
+      "risk": "High",
+      "module": "msopgen",
+      "lines": 321,
+      "priority": 2
+    },
+    {
+      "path": "msopgen/interface/op_file_aicore.py",
+      "language": "python",
+      "risk": "High",
+      "module": "msopgen",
+      "lines": 518,
+      "priority": 2
+    },
+    {
+      "path": "msopgen/simulator/simulator.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "msopgen-simulator",
+      "lines": 273,
+      "priority": 3
+    },
+    {
+      "path": "msopgen/simulator/parse_objdump.py",
+      "language": "python",
+      "risk": "Critical",
+      "module": "msopgen-simulator",
+      "lines": 131,
+      "priority": 1
+    },
+    {
+      "path": "msopgen/simulator/parse_dump.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "msopgen-simulator",
+      "lines": 150,
+      "priority": 3
+    },
+    {
+      "path": "build.py",
+      "language": "python",
+      "risk": "Critical",
+      "module": "root-scripts",
+      "lines": 125,
+      "priority": 1
+    },
+    {
+      "path": "download_dependencies.py",
+      "language": "python",
+      "risk": "Critical",
+      "module": "root-scripts",
+      "lines": 163,
+      "priority": 1
+    },
+    {
+      "path": "setup.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "root-scripts",
+      "lines": 92,
+      "priority": 3
+    },
+    {
+      "path": "tools/msopst/scripts/msopst.py",
+      "language": "python",
+      "risk": "High",
+      "module": "msopst",
+      "lines": 278,
+      "priority": 1
+    },
+    {
+      "path": "tools/msopst/st/interface/arg_parser.py",
+      "language": "python",
+      "risk": "High",
+      "module": "msopst",
+      "lines": 267,
+      "priority": 1
+    },
+    {
+      "path": "tools/msopst/st/interface/case_design.py",
+      "language": "python",
+      "risk": "High",
+      "module": "msopst",
+      "lines": 139,
+      "priority": 2
+    },
+    {
+      "path": "tools/msopst/st/interface/data_generator.py",
+      "language": "python",
+      "risk": "Critical",
+      "module": "msopst",
+      "lines": 441,
+      "priority": 1
+    },
+    {
+      "path": "tools/msopst/st/interface/model_parser.py",
+      "language": "python",
+      "risk": "Critical",
+      "module": "msopst",
+      "lines": 83,
+      "priority": 1
+    },
+    {
+      "path": "tools/msopst/st/interface/advance_ini_parser.py",
+      "language": "python",
+      "risk": "High",
+      "module": "msopst",
+      "lines": 327,
+      "priority": 2
+    },
+    {
+      "path": "tools/msopst/st/interface/acl_op_runner.py",
+      "language": "python",
+      "risk": "High",
+      "module": "msopst",
+      "lines": 200,
+      "priority": 2
+    },
+    {
+      "path": "tools/msopst/st/interface/utils.py",
+      "language": "python",
+      "risk": "High",
+      "module": "msopst",
+      "lines": 1009,
+      "priority": 1
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "msopgen/msopgen.py",
+      "line": 58,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "CLI 入口点，接收用户命令行参数，包括输入文件路径、框架类型、计算单元等参数",
+      "description": "msopgen 主入口函数，解析命令行参数并执行算子生成、编译或模拟任务"
+    },
+    {
+      "file": "msopgen/interface/arg_parser.py",
+      "line": 36,
+      "function": "__init__",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "解析所有 CLI 参数，包括输入文件路径 (-i)、输出路径 (-out)、框架类型 (-f) 等",
+      "description": "ArgParser 类构造函数，解析并验证所有命令行参数"
+    },
+    {
+      "file": "msopgen/interface/utils.py",
+      "line": 95,
+      "function": "read_json_file",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "读取用户提供的 JSON 文件内容，文件内容完全由用户控制",
+      "description": "读取 JSON 文件并解析为 Python 对象"
+    },
+    {
+      "file": "msopgen/interface/op_info_ir_json.py",
+      "line": 92,
+      "function": "_parse_json_to_info",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "解析用户提供的 IR JSON 文件，提取算子定义信息",
+      "description": "解析 IR JSON 模板文件，提取算子输入输出描述和属性"
+    },
+    {
+      "file": "msopgen/interface/op_file_compile.py",
+      "line": 73,
+      "function": "_execute_command",
+      "type": "cmdline",
+      "trust_level": "semi_trusted",
+      "justification": "执行构建脚本 (build.sh)，脚本路径由用户项目路径决定，可能被篡改",
+      "description": "通过 subprocess.Popen 执行构建命令"
+    },
+    {
+      "file": "msopgen/simulator/parse_objdump.py",
+      "line": 71,
+      "function": "_execute_objdump",
+      "type": "cmdline",
+      "trust_level": "semi_trusted",
+      "justification": "执行 llvm-objdump 命令，命令参数来自用户提供的 relocatable_file 路径",
+      "description": "执行 llvm-objdump 反汇编命令，解析可执行文件"
+    },
+    {
+      "file": "build.py",
+      "line": 67,
+      "function": "_execute_command",
+      "type": "cmdline",
+      "trust_level": "semi_trusted",
+      "justification": "执行构建命令 (setup.py, run_test.py)，命令来自内部逻辑但 cwd 和参数可能受用户影响",
+      "description": "执行构建和测试命令"
+    },
+    {
+      "file": "download_dependencies.py",
+      "line": 51,
+      "function": "_exec_shell_cmd",
+      "type": "cmdline",
+      "trust_level": "semi_trusted",
+      "justification": "执行 git 命令和 curl 下载，参数来自 dependencies.json 配置",
+      "description": "执行 shell 命令进行依赖下载和管理"
+    },
+    {
+      "file": "tools/msopst/scripts/msopst.py",
+      "line": 240,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "msopst CLI 入口，接收用户命令和输入文件路径",
+      "description": "msopst 主入口函数，处理 create、run、ascendc_test 命令"
+    },
+    {
+      "file": "tools/msopst/st/interface/model_parser.py",
+      "line": 49,
+      "function": "_function_call",
+      "type": "rpc",
+      "trust_level": "untrusted_local",
+      "justification": "使用 importlib.import_module 动态导入用户提供的模型解析模块",
+      "description": "动态导入并调用框架特定的模型解析函数"
+    },
+    {
+      "file": "tools/msopst/st/interface/data_generator.py",
+      "line": 389,
+      "function": "_get_tensors_and_func",
+      "type": "rpc",
+      "trust_level": "untrusted_local",
+      "justification": "使用 importlib.import_module 动态导入用户提供的期望函数模块 (calc_expect_func_file)",
+      "description": "动态导入并执行用户提供的期望结果计算函数"
+    },
+    {
+      "file": "tools/msopst/st/interface/advance_ini_parser.py",
+      "line": 323,
+      "function": "_read_config_file",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "读取用户提供的 INI 配置文件 (msopst.ini)",
+      "description": "读取并解析 INI 配置文件"
+    },
+    {
+      "file": "tools/msopst/st/interface/utils.py",
+      "line": 596,
+      "function": "load_json_file",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "读取用户提供的 JSON 文件（测试用例定义）",
+      "description": "读取并解析 JSON 测试用例文件"
+    },
+    {
+      "file": "tools/msopst/st/interface/utils.py",
+      "line": 751,
+      "function": "execute_command",
+      "type": "cmdline",
+      "trust_level": "semi_trusted",
+      "justification": "执行外部命令，命令参数来自内部逻辑",
+      "description": "执行外部命令进行测试运行"
+    },
+    {
+      "file": "msopgen/interface/utils.py",
+      "line": 442,
+      "function": "copy_template",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "从源目录复制模板文件到目标目录，目标路径由用户参数决定",
+      "description": "复制模板文件到输出目录"
+    }
+  ],
+  "attack_surfaces": [
+    "CLI 参数注入: 用户通过命令行参数控制输入文件路径、框架类型、输出路径等",
+    "JSON 文件解析: 用户提供的 JSON 文件（IR 模板、测试用例）可能包含恶意数据",
+    "INI 配置解析: msopst.ini 配置文件可能被篡改",
+    "路径遍历: 输入/输出文件路径验证存在绕过风险",
+    "命令执行: subprocess 调用 build.sh、llvm-objdump 等工具",
+    "动态模块加载: importlib.import_module 加载用户提供的 Python 模块",
+    "文件写入: 生成的代码文件可能覆盖重要系统文件",
+    "Symlink 攻击: 路径处理函数可能被 symlink 攻击绕过"
+  ]
+}

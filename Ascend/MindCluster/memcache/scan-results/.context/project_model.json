@@ -1,0 +1,470 @@
+{
+  "project_name": "memcache",
+  "scan_time": "2026-04-21T06:30:00Z",
+  "lsp_available": true,
+  "total_files": 100,
+  "total_lines": 22041,
+  "project_profile": {
+    "project_type": "network_service",
+    "deployment_model": "Linux server daemon process with Python client bindings. Deployed in Kubernetes clusters with HA leader election support. Runs on port configurable via URL (e.g., 0.0.0.0:8080). Supports RDMA/RDMA-TCP/Shared Memory protocols.",
+    "trust_boundaries": [
+      {
+        "boundary": "Network Interface",
+        "trusted_side": "Meta Service Application",
+        "untrusted_side": "Remote Cache Clients",
+        "risk": "Critical"
+      },
+      {
+        "boundary": "HTTP Management Interface",
+        "trusted_side": "Meta Service Application",
+        "untrusted_side": "Management/Admin Users",
+        "risk": "High"
+      },
+      {
+        "boundary": "Kubernetes API",
+        "trusted_side": "Meta Service (Leader Election)",
+        "untrusted_side": "Kubernetes Control Plane",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Python Bindings Interface",
+        "trusted_side": "Python Application Code",
+        "untrusted_side": "User-provided Data/Keys",
+        "risk": "High"
+      },
+      {
+        "boundary": "Configuration File",
+        "trusted_side": "Application Logic",
+        "untrusted_side": "Configuration File Content",
+        "risk": "Medium"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "net",
+      "path": "src/memcache/csrc/net",
+      "language": "c_cpp",
+      "components": ["mmc_net_engine.h", "mmc_net_engine.cpp", "mmc_net_common.h", "mmc_net_link_map.h"]
+    },
+    {
+      "name": "meta_service",
+      "path": "src/memcache/csrc/meta_service",
+      "language": "c_cpp",
+      "components": ["mmc_meta_service.cpp", "mmc_meta_service.h", "mmc_meta_net_server.cpp", "mmc_meta_net_server.h", "mmc_http_server.cpp", "mmc_http_server.h", "mmc_meta_manager.cpp", "mmc_meta_manager.h", "mmc_meta_mgr_proxy.cpp", "mmc_meta_mgr_proxy.h", "mmc_meta_service_process.cpp", "mmc_meta_service_process.h", "mmc_meta_backup_mgr_default.cpp", "mmc_meta_backup_mgr_default.h"]
+    },
+    {
+      "name": "client",
+      "path": "src/memcache/csrc/client",
+      "language": "c_cpp",
+      "components": ["mmc_client.cpp", "mmc_client.h", "mmc_client_default.h"]
+    },
+    {
+      "name": "python_wrapper",
+      "path": "src/memcache/csrc/python_wrapper",
+      "language": "c_cpp",
+      "components": ["pymmc.cpp", "pymmc.h", "mmc_helper.h"]
+    },
+    {
+      "name": "proto",
+      "path": "src/memcache/csrc/proto",
+      "language": "c_cpp",
+      "components": ["mmc_msg_packer.h", "mmc_msg_base.h", "mmc_msg_client_meta.h", "mmc_msg_client_meta.cpp"]
+    },
+    {
+      "name": "under_api",
+      "path": "src/memcache/csrc/under_api",
+      "language": "c_cpp",
+      "components": ["ubs_io/mmc_ubs_io_proxy.cpp", "ubs_io/mmc_ubs_io_proxy.h", "ubs_io/dl_dfc_api.cpp", "ubs_io/dl_dfc_api.h", "mf_smem/*"]
+    },
+    {
+      "name": "local_service",
+      "path": "src/memcache/csrc/local_service",
+      "language": "c_cpp",
+      "components": ["mmc_local_service_default.cpp", "mmc_local_service_default.h", "mmc_bm_proxy.cpp", "mmc_bm_proxy.h"]
+    },
+    {
+      "name": "entities",
+      "path": "src/memcache/csrc/entities",
+      "language": "c_cpp",
+      "components": ["mmc_mem_blob.h", "mmc_mem_obj_meta.h"]
+    },
+    {
+      "name": "common",
+      "path": "src/memcache/csrc/common",
+      "language": "c_cpp",
+      "components": ["mmc_logger.h", "mmc_types.h", "mmc_ref.h", "mmc_lock.h", "mmc_thread_pool.h", "mmc_env.cpp", "mmc_env.h", "mmc_ip_validator.h"]
+    },
+    {
+      "name": "daemon",
+      "path": "src/memcache/csrc/daemon",
+      "language": "c_cpp",
+      "components": ["mmc_daemon.cpp"]
+    },
+    {
+      "name": "config",
+      "path": "src/memcache/csrc/config",
+      "language": "c_cpp",
+      "components": ["mmc_configuration.cpp", "mmc_configuration.h", "mmc_config_validator.h", "mmc_kv_parser.cpp", "mmc_kv_parser.h"]
+    },
+    {
+      "name": "ha",
+      "path": "src/memcache/csrc/ha",
+      "language": "mixed",
+      "components": ["mmc_leader_election.cpp", "mmc_leader_election.h", "mmc_leader.cpp"]
+    },
+    {
+      "name": "python",
+      "path": "src/memcache/python/memcache_hybrid",
+      "language": "python",
+      "components": ["__init__.py", "meta_service_leader_election.py"]
+    },
+    {
+      "name": "log",
+      "path": "src/memcache/csrc/log",
+      "language": "c_cpp",
+      "components": ["mmc_logger.cpp"]
+    }
+  ],
+  "files": [
+    {
+      "path": "src/memcache/csrc/meta_service/mmc_http_server.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "meta_service",
+      "lines": 191,
+      "priority": 1
+    },
+    {
+      "path": "src/memcache/csrc/meta_service/mmc_meta_net_server.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "meta_service",
+      "lines": 395,
+      "priority": 1
+    },
+    {
+      "path": "src/memcache/csrc/python_wrapper/pymmc.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "python_wrapper",
+      "lines": 860,
+      "priority": 1
+    },
+    {
+      "path": "src/memcache/csrc/proto/mmc_msg_packer.h",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "proto",
+      "lines": 199,
+      "priority": 2
+    },
+    {
+      "path": "src/memcache/csrc/meta_service/mmc_meta_service_process.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "meta_service",
+      "lines": 346,
+      "priority": 2
+    },
+    {
+      "path": "src/memcache/csrc/config/mmc_configuration.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "config",
+      "lines": 725,
+      "priority": 2
+    },
+    {
+      "path": "src/memcache/csrc/mmc_client.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "client",
+      "lines": 361,
+      "priority": 2
+    },
+    {
+      "path": "src/memcache/csrc/ha/mmc_leader_election.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "ha",
+      "lines": 201,
+      "priority": 3
+    },
+    {
+      "path": "src/memcache/python/memcache_hybrid/meta_service_leader_election.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "python",
+      "lines": 320,
+      "priority": 3
+    },
+    {
+      "path": "src/memcache/csrc/meta_service/mmc_meta_manager.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "meta_service",
+      "lines": 608,
+      "priority": 2
+    },
+    {
+      "path": "src/memcache/csrc/mmcache_store.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "client",
+      "lines": 922,
+      "priority": 2
+    },
+    {
+      "path": "src/memcache/csrc/under_api/ubs_io/mmc_ubs_io_proxy.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "under_api",
+      "lines": 293,
+      "priority": 3
+    },
+    {
+      "path": "src/memcache/csrc/local_service/mmc_local_service_default.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "local_service",
+      "lines": 273,
+      "priority": 3
+    },
+    {
+      "path": "src/memcache/csrc/proto/mmc_msg_client_meta.h",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "proto",
+      "lines": 901,
+      "priority": 2
+    },
+    {
+      "path": "src/memcache/csrc/net/mmc_net_engine.h",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "net",
+      "lines": 389,
+      "priority": 2
+    },
+    {
+      "path": "src/memcache/csrc/daemon/mmc_daemon.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "daemon",
+      "lines": 20,
+      "priority": 3
+    },
+    {
+      "path": "src/memcache/csrc/common/mmc_ip_validator.h",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "common",
+      "lines": 300,
+      "priority": 3
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "src/memcache/csrc/daemon/mmc_daemon.cpp",
+      "line": 17,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "trusted_admin",
+      "justification": "Daemon process entry point, started by system administrator or Kubernetes",
+      "description": "Main entry point for meta service daemon process"
+    },
+    {
+      "file": "src/memcache/csrc/meta_service/mmc_http_server.cpp",
+      "line": 47,
+      "function": "RegisterHealthCheckEndpoint",
+      "type": "web_route",
+      "trust_level": "untrusted_network",
+      "justification": "HTTP endpoint /health accessible without authentication",
+      "description": "Health check HTTP endpoint - no authentication required"
+    },
+    {
+      "file": "src/memcache/csrc/meta_service/mmc_http_server.cpp",
+      "line": 55,
+      "function": "RegisterDataManagementEndpoints",
+      "type": "web_route",
+      "trust_level": "untrusted_network",
+      "justification": "HTTP endpoints /get_all_keys, /query_key accessible without authentication",
+      "description": "Data management HTTP endpoints - expose cache metadata"
+    },
+    {
+      "file": "src/memcache/csrc/meta_service/mmc_http_server.cpp",
+      "line": 116,
+      "function": "RegisterSegmentManagementEndpoints",
+      "type": "web_route",
+      "trust_level": "untrusted_network",
+      "justification": "HTTP endpoint /get_all_segments accessible without authentication",
+      "description": "Segment management HTTP endpoint - expose memory segment info"
+    },
+    {
+      "file": "src/memcache/csrc/meta_service/mmc_http_server.cpp",
+      "line": 133,
+      "function": "RegisterMetricsEndpoint",
+      "type": "web_route",
+      "trust_level": "untrusted_network",
+      "justification": "HTTP endpoints /metrics, /metrics/summary, /metrics/ptracer accessible without authentication",
+      "description": "Metrics HTTP endpoints - expose Prometheus metrics"
+    },
+    {
+      "file": "src/memcache/csrc/meta_service/mmc_meta_net_server.cpp",
+      "line": 50,
+      "function": "HandleAlloc",
+      "type": "rpc",
+      "trust_level": "untrusted_network",
+      "justification": "RPC handler for allocation requests from remote clients",
+      "description": "RPC handler for AllocRequest - allocates memory objects"
+    },
+    {
+      "file": "src/memcache/csrc/meta_service/mmc_meta_net_server.cpp",
+      "line": 97,
+      "function": "HandleBmRegister",
+      "type": "rpc",
+      "trust_level": "untrusted_network",
+      "justification": "RPC handler for buffer manager registration from remote clients",
+      "description": "RPC handler for BmRegisterRequest - registers buffer managers"
+    },
+    {
+      "file": "src/memcache/csrc/meta_service/mmc_meta_net_server.cpp",
+      "line": 113,
+      "function": "HandleBmUnregister",
+      "type": "rpc",
+      "trust_level": "untrusted_network",
+      "justification": "RPC handler for buffer manager unregistration from remote clients",
+      "description": "RPC handler for BmUnregisterRequest - unregisters buffer managers"
+    },
+    {
+      "file": "src/memcache/csrc/meta_service/mmc_meta_net_server.cpp",
+      "line": 134,
+      "function": "HandlePing",
+      "type": "rpc",
+      "trust_level": "untrusted_network",
+      "justification": "RPC handler for ping requests from remote clients",
+      "description": "RPC handler for PingMsg - network heartbeat"
+    },
+    {
+      "file": "src/memcache/csrc/meta_service/mmc_meta_net_server.cpp",
+      "line": 243,
+      "function": "HandleGet",
+      "type": "rpc",
+      "trust_level": "untrusted_network",
+      "justification": "RPC handler for get requests from remote clients",
+      "description": "RPC handler for GetRequest - retrieves cached objects"
+    },
+    {
+      "file": "src/memcache/csrc/meta_service/mmc_meta_net_server.cpp",
+      "line": 167,
+      "function": "HandleAlloc",
+      "type": "rpc",
+      "trust_level": "untrusted_network",
+      "justification": "RPC handler for allocation requests - processes client key_ input",
+      "description": "RPC handler receiving key_ string from network"
+    },
+    {
+      "file": "src/memcache/csrc/meta_service/mmc_meta_net_server.cpp",
+      "line": 258,
+      "function": "HandleBatchGet",
+      "type": "rpc",
+      "trust_level": "untrusted_network",
+      "justification": "RPC handler for batch get requests from remote clients",
+      "description": "RPC handler for BatchGetRequest - batch retrieve cached objects"
+    },
+    {
+      "file": "src/memcache/csrc/meta_service/mmc_meta_net_server.cpp",
+      "line": 274,
+      "function": "HandleRemove",
+      "type": "rpc",
+      "trust_level": "untrusted_network",
+      "justification": "RPC handler for remove requests from remote clients",
+      "description": "RPC handler for RemoveRequest - removes cached objects"
+    },
+    {
+      "file": "src/memcache/csrc/meta_service/mmc_meta_net_server.cpp",
+      "line": 305,
+      "function": "HandleRemoveAll",
+      "type": "rpc",
+      "trust_level": "untrusted_network",
+      "justification": "RPC handler for remove all requests - dangerous operation",
+      "description": "RPC handler for RemoveAllRequest - removes ALL cached objects"
+    },
+    {
+      "file": "src/memcache/csrc/python_wrapper/pymmc.cpp",
+      "line": 611,
+      "function": "MetaService::setup",
+      "type": "decorator",
+      "trust_level": "semi_trusted",
+      "justification": "Python binding for setting up meta service configuration",
+      "description": "Python API entry point for meta service configuration"
+    },
+    {
+      "file": "src/memcache/csrc/python_wrapper/pymmc.cpp",
+      "line": 623,
+      "function": "DistributedObjectStore::setup",
+      "type": "decorator",
+      "trust_level": "semi_trusted",
+      "justification": "Python binding for client setup - accepts user configuration",
+      "description": "Python API entry point for client configuration"
+    },
+    {
+      "file": "src/memcache/csrc/python_wrapper/pymmc.cpp",
+      "line": 791,
+      "function": "put",
+      "type": "decorator",
+      "trust_level": "semi_trusted",
+      "justification": "Python binding for put operation - accepts user key and buffer",
+      "description": "Python API for storing objects with user-provided keys"
+    },
+    {
+      "file": "src/memcache/csrc/python_wrapper/pymmc.cpp",
+      "line": 825,
+      "function": "get",
+      "type": "decorator",
+      "trust_level": "semi_trusted",
+      "justification": "Python binding for get operation - accepts user key",
+      "description": "Python API for retrieving objects with user-provided keys"
+    },
+    {
+      "file": "src/memcache/csrc/python_wrapper/pymmc.cpp",
+      "line": 641,
+      "function": "register_buffer",
+      "type": "decorator",
+      "trust_level": "semi_trusted",
+      "justification": "Python binding accepts raw memory pointer from user",
+      "description": "Python API accepting uintptr_t for memory buffer registration"
+    },
+    {
+      "file": "src/memcache/csrc/config/mmc_configuration.cpp",
+      "line": 119,
+      "function": "LoadFromFile",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "Loads configuration from file path - file content affects runtime behavior",
+      "description": "Configuration file parsing entry point"
+    },
+    {
+      "file": "src/memcache/python/memcache_hybrid/meta_service_leader_election.py",
+      "line": 113,
+      "function": "update_lease",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "Kubernetes API call for leader election lease update",
+      "description": "Kubernetes lease update for HA leader election"
+    }
+  ],
+  "attack_surfaces": [
+    "HTTP Management Endpoints: /health, /get_all_keys, /query_key, /get_all_segments, /metrics, /metrics/summary, /metrics/ptracer - No authentication visible",
+    "Network RPC Protocol: Multiple RPC handlers (Alloc, Get, Remove, RemoveAll, BmRegister) accept serialized data from remote clients",
+    "Protocol Deserialization: NetMsgUnpacker deserializes network data including strings, vectors, maps - potential for deserialization vulnerabilities",
+    "Python Bindings Memory Operations: register_buffer, get_into, put_from accept uintptr_t (raw memory pointers) from Python code",
+    "Configuration File Parsing: KVParser reads key-value pairs from configuration files without apparent sanitization",
+    "TLS Path Handling: ValidatePathNotSymlink checks TLS certificate paths - potential symlink attacks if validation fails",
+    "Key Handling: User-provided keys flow through entire system (up to 256 chars limit, but no content validation)",
+    "Leader Election Kubernetes API: Python code interacts with Kubernetes API without apparent credential validation",
+    "Dynamic Library Loading: DlDfcApi::LoadLibrary() loads external library for UBS IO operations",
+    "Memory Pool Operations: Global allocator handles memory allocation/deallocation based on remote requests"
+  ]
+}

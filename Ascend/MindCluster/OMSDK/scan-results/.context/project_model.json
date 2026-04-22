@@ -1,0 +1,469 @@
+{
+  "project_name": "OMSDK",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/shenteng/MindCluster/OMSDK",
+  "project_profile": {
+    "project_type": "network_service",
+    "description": "Huawei OM SDK - Edge Management System with RESTful Northbound Interface. Provides hardware management, software upgrades, network configuration, storage management, user authentication, and system monitoring for edge computing devices.",
+    "language_composition": {
+      "python": {
+        "file_count": 629,
+        "percentage": 92
+      },
+      "c_cpp": {
+        "file_count": 53,
+        "percentage": 8
+      }
+    },
+    "deployment_environment": "edge_device",
+    "network_exposure": "high",
+    "authentication_required": true,
+    "data_sensitivity": "medium"
+  },
+  "modules": [
+    {
+      "name": "RedfishServer",
+      "path": "src/om/platform/MindXOM_SDK/src/app/sys/RedfishServer",
+      "language": "python",
+      "description": "RESTful API server implementing Redfish standard for northbound interface",
+      "entry_point_count": 25,
+      "risk_level": "high",
+      "dependencies": ["system_service", "upgrade_service", "account_service", "session_service", "fd_msg_process"]
+    },
+    {
+      "name": "system_service",
+      "path": "src/om/platform/MindXOM_SDK/src/app/sys/RedfishServer/system_service",
+      "language": "python",
+      "description": "System management service including NIC, storage, NTP, security configuration",
+      "entry_point_count": 15,
+      "risk_level": "high",
+      "dependencies": ["lib/Linux/systems", "fd_msg_process"]
+    },
+    {
+      "name": "upgrade_service",
+      "path": "src/om/platform/MindXOM_SDK/src/app/sys/RedfishServer/upgrade_service",
+      "language": "python",
+      "description": "Firmware and software upgrade service handling package uploads",
+      "entry_point_count": 5,
+      "risk_level": "critical",
+      "dependencies": ["lib/Linux/upgrade"]
+    },
+    {
+      "name": "fd_msg_process",
+      "path": "src/om/platform/MindXOM_SDK/src/app/sys/RedfishServer/fd_msg_process",
+      "language": "python",
+      "description": "FusionDirector message processing via WebSocket communication",
+      "entry_point_count": 12,
+      "risk_level": "high",
+      "dependencies": ["wsclient", "mef_msg_process"]
+    },
+    {
+      "name": "ens",
+      "path": "src/om/platform/MindXOM_SDK/src/cpp/ens",
+      "language": "c",
+      "description": "Event Notification System daemon - framework for module lifecycle management",
+      "entry_point_count": 0,
+      "risk_level": "medium",
+      "dependencies": []
+    },
+    {
+      "name": "alarm_process",
+      "path": "src/om/platform/MindXOM_SDK/src/cpp/alarm_process",
+      "language": "c",
+      "description": "Alarm/fault processing module - receives and records fault information",
+      "entry_point_count": 2,
+      "risk_level": "medium",
+      "dependencies": ["ens"]
+    },
+    {
+      "name": "certmanage",
+      "path": "src/om/platform/MindXOM_SDK/src/cpp/certmanage",
+      "language": "c",
+      "description": "Certificate management - handles SSL certificates and CSR generation",
+      "entry_point_count": 5,
+      "risk_level": "high",
+      "dependencies": ["file_checker"]
+    },
+    {
+      "name": "fault_check",
+      "path": "src/om/platform/MindXOM_SDK/src/cpp/fault_check",
+      "language": "c",
+      "description": "Fault detection module - checks disk space, mount status, certificate validity",
+      "entry_point_count": 0,
+      "risk_level": "high",
+      "dependencies": ["alarm_process", "certmanage"]
+    },
+    {
+      "name": "extend_alarm",
+      "path": "src/om/platform/MindXOM_SDK/src/cpp/extend_alarm",
+      "language": "c",
+      "description": "Extended alarm checking - disk health, temperature, NPU status monitoring",
+      "entry_point_count": 0,
+      "risk_level": "critical",
+      "dependencies": ["alarm_process"]
+    },
+    {
+      "name": "devm",
+      "path": "src/om/platform/MindXOM_SDK/src/cpp/devm",
+      "language": "c",
+      "description": "Device management - handles alarm subscription and device attribute setting",
+      "entry_point_count": 0,
+      "risk_level": "medium",
+      "dependencies": ["ens", "file_checker"]
+    },
+    {
+      "name": "security_service",
+      "path": "src/om/platform/MindXOM_SDK/src/app/sys/lib/Linux/systems/security_service",
+      "language": "python",
+      "description": "Security service for certificate import, login rules, weak dictionary management",
+      "entry_point_count": 8,
+      "risk_level": "high",
+      "dependencies": ["certproc"]
+    },
+    {
+      "name": "lib_restful_adapter",
+      "path": "src/om/platform/MindXOM_SDK/src/app/sys/RedfishServer",
+      "language": "python",
+      "description": "RESTful adapter library - bridges Flask views to backend services",
+      "entry_point_count": 0,
+      "risk_level": "medium",
+      "dependencies": []
+    }
+  ],
+  "entry_points": [
+    {
+      "id": "EP-001",
+      "type": "web_route",
+      "path": "/redfish/v1/Systems",
+      "method": "GET,POST,PATCH,DELETE",
+      "handler": "systems_blueprint.py",
+      "module": "RedfishServer",
+      "trust_level": "untrusted_network",
+      "justification": "Public RESTful API endpoint accessible via HTTPS from external network. Requires token authentication but accepts untrusted user input via request body and parameters."
+    },
+    {
+      "id": "EP-002",
+      "type": "web_route",
+      "path": "/redfish/v1/UpdateService",
+      "method": "POST",
+      "handler": "upgrade_service_view.py:rf_upgrade_service_actions",
+      "module": "upgrade_service",
+      "trust_level": "untrusted_network",
+      "justification": "Handles firmware upgrade package upload. Accepts user-uploaded ZIP files that are processed for system upgrade - critical attack vector."
+    },
+    {
+      "id": "EP-003",
+      "type": "web_route",
+      "path": "/redfish/v1/Systems/1/SecurityService/HttpsCert",
+      "method": "POST",
+      "handler": "security_service_views.py:rf_import_custom_certificate",
+      "module": "security_service",
+      "trust_level": "untrusted_network",
+      "justification": "Accepts user-uploaded SSL certificates. Certificate files are processed without full validation - potential for certificate-based attacks."
+    },
+    {
+      "id": "EP-004",
+      "type": "web_route",
+      "path": "/redfish/v1/AccountService/Accounts",
+      "method": "POST,PATCH,DELETE",
+      "handler": "account_views.py",
+      "module": "account_service",
+      "trust_level": "untrusted_network",
+      "justification": "User account management endpoint. Handles password changes and user creation - authentication bypass risk."
+    },
+    {
+      "id": "EP-005",
+      "type": "web_route",
+      "path": "/redfish/v1/SessionService",
+      "method": "POST",
+      "handler": "session_views.py",
+      "module": "session_service",
+      "trust_level": "untrusted_network",
+      "justification": "Session creation endpoint. Accepts username/password for authentication - credential exposure risk."
+    },
+    {
+      "id": "EP-006",
+      "type": "web_route",
+      "path": "/redfish/v1/Systems/1/Storage",
+      "method": "GET,POST,PATCH",
+      "handler": "nfs_views.py, partitions_views.py",
+      "module": "system_service",
+      "trust_level": "untrusted_network",
+      "justification": "NFS mount and partition management. NFS server addresses come from user input - potential for NFS-based attacks."
+    },
+    {
+      "id": "EP-007",
+      "type": "web_route",
+      "path": "/redfish/v1/Systems/1/NetworkInterfaces",
+      "method": "GET,PATCH",
+      "handler": "nic_views.py",
+      "module": "system_service",
+      "trust_level": "untrusted_network",
+      "justification": "Network interface configuration. IP addresses, DNS settings from user input."
+    },
+    {
+      "id": "EP-008",
+      "type": "rpc",
+      "path": "Unix Domain Socket: /run/ibma_server.sock",
+      "handler": "ibma_server.py",
+      "module": "bin",
+      "trust_level": "trusted_local",
+      "justification": "Local IPC between RedfishServer and Monitor process via Unix Domain Socket with SSL. Uses mutual TLS authentication."
+    },
+    {
+      "id": "EP-009",
+      "type": "rpc",
+      "path": "WebSocket: FusionDirector connection",
+      "handler": "fd_msg_handlers.py",
+      "module": "fd_msg_process",
+      "trust_level": "trusted_network",
+      "justification": "WebSocket connection to FusionDirector for centralized management. Requires certificate-based authentication."
+    },
+    {
+      "id": "EP-010",
+      "type": "rpc",
+      "path": "ENS interface: alarm_report",
+      "handler": "alarm_process.c:alarm_report",
+      "module": "alarm_process",
+      "trust_level": "trusted_local",
+      "justification": "Internal IPC via ENS framework. Fault data passed through shared interface."
+    },
+    {
+      "id": "EP-011",
+      "type": "file",
+      "path": "/home/data/config/tmp/*.pem",
+      "handler": "certproc.c",
+      "module": "certmanage",
+      "trust_level": "trusted_local",
+      "justification": "Certificate file input. Files written by security_service after upload validation."
+    },
+    {
+      "id": "EP-012",
+      "type": "file",
+      "path": "/run/formated_hw.info",
+      "handler": "extend_alarm.c:init_extend_storage_config",
+      "module": "extend_alarm",
+      "trust_level": "trusted_local",
+      "justification": "Hardware configuration file. Generated by system, parsed for storage device detection."
+    },
+    {
+      "id": "EP-013",
+      "type": "file",
+      "path": "/run/all_active_alarm",
+      "handler": "alarm_process.c:write_buff_to_file",
+      "module": "alarm_process",
+      "trust_level": "trusted_local",
+      "justification": "Alarm status file written by system."
+    },
+    {
+      "id": "EP-014",
+      "type": "file",
+      "path": "UploadConstants.ZIP_UPLOAD_DIR",
+      "handler": "upgrade_service_view.py",
+      "module": "upgrade_service",
+      "trust_level": "untrusted_local",
+      "justification": "Uploaded firmware packages stored here. User-controlled file content processed for system upgrade."
+    },
+    {
+      "id": "EP-015",
+      "type": "file",
+      "path": "UploadConstants.CERT_UPLOAD_DIR",
+      "handler": "security_service_views.py",
+      "module": "security_service",
+      "trust_level": "untrusted_local",
+      "justification": "Uploaded certificate files. User-controlled PEM/PFX content."
+    }
+  ],
+  "attack_surfaces": [
+    {
+      "id": "AS-001",
+      "type": "web_api",
+      "description": "RESTful API endpoints exposed on HTTPS port",
+      "entry_points": ["EP-001", "EP-002", "EP-003", "EP-004", "EP-005", "EP-006", "EP-007"],
+      "risk_factors": [
+        "Untrusted user input via JSON request bodies",
+        "File upload handling (certificates, firmware packages)",
+        "Authentication bypass potential",
+        "Injection vulnerabilities in backend processing"
+      ],
+      "mitigations": [
+        "Token-based authentication required",
+        "Parameter validation with param_checker classes",
+        "File path validation with file_checker module",
+        "Password verification for sensitive operations"
+      ]
+    },
+    {
+      "id": "AS-002",
+      "type": "file_upload",
+      "description": "Multiple file upload endpoints for certificates, configs, firmware",
+      "entry_points": ["EP-002", "EP-003", "EP-014", "EP-015"],
+      "risk_factors": [
+        "Malicious file content in uploads",
+        "Path traversal in file names",
+        "Archive extraction vulnerabilities",
+        "Certificate chain manipulation"
+      ],
+      "mitigations": [
+        "Upload mark file mechanism",
+        "File size limits (10KB for certs)",
+        "safety_fopen for secure file operations",
+        "Certificate validity checking"
+      ]
+    },
+    {
+      "id": "AS-003",
+      "type": "command_execution",
+      "description": "System command execution in C modules",
+      "entry_points": ["EP-010", "EP-012"],
+      "risk_factors": [
+        "system() calls in extend_alarm.c (line 123, 397)",
+        "system() calls in check_space.c (line 74)",
+        "Command injection if device names contain special characters",
+        "subprocess.Popen with shell=False (mitigated)"
+      ],
+      "mitigations": [
+        "Command strings built from trusted config",
+        "sprintf_s for safe string formatting",
+        "shell=False in Python subprocess calls"
+      ]
+    },
+    {
+      "id": "AS-004",
+      "type": "ipc",
+      "description": "Unix Domain Socket and WebSocket communication",
+      "entry_points": ["EP-008", "EP-009"],
+      "risk_factors": [
+        "Message format parsing vulnerabilities",
+        "JSON parsing errors",
+        "Buffer overflow in socket receive"
+      ],
+      "mitigations": [
+        "SSL/TLS on UDS with mutual authentication",
+        "Message length limits (maxDataLen=1MB)",
+        ";;over; delimiter for message boundaries"
+      ]
+    },
+    {
+      "id": "AS-005",
+      "type": "configuration_injection",
+      "description": "Configuration file parsing without full validation",
+      "entry_points": ["EP-006", "EP-007", "EP-011", "EP-012"],
+      "risk_factors": [
+        "ast.literal_eval usage (ntp.py, lib_restful_adapter.py)",
+        "NFS server address from user input",
+        "DNS/IP address injection",
+        "Certificate field manipulation"
+      ],
+      "mitigations": [
+        "Parameter checkers for network configs",
+        "IP address validation",
+        "Certificate chain validation with OpenSSL"
+      ]
+    }
+  ],
+  "security_sensitive_functions": [
+    {
+      "file": "extend_alarm.c",
+      "function": "execute_check_cmd",
+      "line": 121,
+      "description": "Execute system command via system() - potential command injection",
+      "sink_type": "command_execution"
+    },
+    {
+      "file": "extend_alarm.c",
+      "function": "fault_get_block_mem_dev",
+      "line": 397,
+      "description": "system() call for disk enumeration - uses fixed command template",
+      "sink_type": "command_execution"
+    },
+    {
+      "file": "check_space.c",
+      "function": "fault_get_space_full_info",
+      "line": 74,
+      "description": "system() call for disk space check - path from trusted config",
+      "sink_type": "command_execution"
+    },
+    {
+      "file": "check_extend_alarm.c",
+      "function": "get_usb_hub_alarm",
+      "line": 301,
+      "description": "system() call for USB hub check",
+      "sink_type": "command_execution"
+    },
+    {
+      "file": "lib_restful_adapter.py",
+      "function": "LibRESTfulAdapter",
+      "line": 88,
+      "description": "ast.literal_eval on backend response - potential code injection",
+      "sink_type": "code_execution"
+    },
+    {
+      "file": "ntp.py",
+      "function": "get_ntp_config",
+      "line": 134,
+      "description": "ast.literal_eval on config file content",
+      "sink_type": "code_execution"
+    },
+    {
+      "file": "upgrade_service_view.py",
+      "function": "rf_upgrade_service_actions",
+      "line": 104,
+      "description": "Processes uploaded firmware package ZIP file",
+      "sink_type": "file_handling"
+    },
+    {
+      "file": "security_service_views.py",
+      "function": "rf_import_custom_certificate",
+      "line": 110,
+      "description": "Imports user-provided SSL certificate",
+      "sink_type": "file_handling"
+    },
+    {
+      "file": "certproc.c",
+      "function": "cert_getcertinfo",
+      "line": 563,
+      "description": "Parses certificate file with OpenSSL - handles untrusted certificate content",
+      "sink_type": "file_handling"
+    },
+    {
+      "file": "ibma_server.py",
+      "function": "receive_socket_message",
+      "line": 105,
+      "description": "Receives data from socket up to 1MB - potential buffer overflow",
+      "sink_type": "buffer_handling"
+    },
+    {
+      "file": "alarm_process.c",
+      "function": "alarm_report",
+      "line": 283,
+      "description": "Processes alarm data from external source - uses memcpy_s",
+      "sink_type": "buffer_handling"
+    }
+  ],
+  "trust_boundaries": [
+    {
+      "id": "TB-001",
+      "description": "External network to Flask application",
+      "components": ["External Client", "HTTPS Server", "Flask Blueprints"],
+      "data_flow": "HTTP request -> authentication -> request handler -> backend service"
+    },
+    {
+      "id": "TB-002",
+      "description": "Flask application to backend library via LibRESTfulAdapter",
+      "components": ["Flask Views", "LibRESTfulAdapter", "Backend Libraries"],
+      "data_flow": "JSON request -> LibRESTfulAdapter -> lib/Linux modules -> system calls"
+    },
+    {
+      "id": "TB-003",
+      "description": "Python modules to C/C++ daemon via ENS framework",
+      "components": ["Python Services", "ENS Daemon", "C Modules"],
+      "data_flow": "Interface export/import -> function calls -> fault/alarm processing"
+    },
+    {
+      "id": "TB-004",
+      "description": "OM SDK to FusionDirector via WebSocket",
+      "components": ["fd_msg_process", "WsClientMgr", "FusionDirector"],
+      "data_flow": "WebSocket messages -> fd_msg_handlers -> backend processing"
+    }
+  ]
+}

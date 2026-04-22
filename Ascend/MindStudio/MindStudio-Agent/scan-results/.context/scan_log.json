@@ -1,0 +1,94 @@
+{
+  "scan_id": "scan_msagent_20260421",
+  "start_time": "2026-04-21T04:30:00Z",
+  "end_time": "2026-04-21T05:25:00Z",
+  "duration_seconds": 3300,
+  "project_name": "msagent",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/shenteng/MindStudio/msagent",
+  "status": "completed",
+  "agents": [
+    {
+      "name": "architecture",
+      "start_time": "2026-04-21T04:35:00Z",
+      "end_time": "2026-04-21T04:42:08Z",
+      "duration_seconds": 428,
+      "status": "success",
+      "outputs": [
+        "project_model.json",
+        "call_graph.json",
+        "threat_analysis_report.md"
+      ],
+      "error": null
+    },
+    {
+      "name": "dataflow-scanner",
+      "start_time": "2026-04-21T04:42:10Z",
+      "end_time": "2026-04-21T04:46:58Z",
+      "duration_seconds": 288,
+      "status": "success",
+      "outputs": [
+        "scan.db"
+      ],
+      "item_count": 90,
+      "error": null
+    },
+    {
+      "name": "security-auditor",
+      "start_time": "2026-04-21T04:42:10Z",
+      "end_time": "2026-04-21T04:59:02Z",
+      "duration_seconds": 1012,
+      "status": "success",
+      "outputs": [
+        "scan.db"
+      ],
+      "item_count": 95,
+      "error": null
+    },
+    {
+      "name": "verification",
+      "start_time": "2026-04-21T04:59:05Z",
+      "end_time": "2026-04-21T05:07:08Z",
+      "duration_seconds": 483,
+      "status": "success",
+      "outputs": [
+        "scan.db"
+      ],
+      "error": null
+    },
+    {
+      "name": "details-analyzer",
+      "start_time": "2026-04-21T05:07:10Z",
+      "end_time": "2026-04-21T05:11:29Z",
+      "duration_seconds": 259,
+      "status": "success",
+      "outputs": [],
+      "error": null
+    },
+    {
+      "name": "reporter",
+      "start_time": "2026-04-21T05:11:30Z",
+      "end_time": "2026-04-21T05:18:26Z",
+      "duration_seconds": 416,
+      "status": "success",
+      "outputs": [
+        "report_confirmed.md",
+        "report_unconfirmed.md"
+      ],
+      "error": null
+    }
+  ],
+  "summary": {
+    "project_type": "cli_tool_python",
+    "total_files_scanned": 114,
+    "total_lines": 8749,
+    "candidates_found": 94,
+    "confirmed_vulnerabilities": 13,
+    "false_positives": 13,
+    "likely_vulnerabilities": 27,
+    "possible_vulnerabilities": 37,
+    "lsp_available": false,
+    "critical_count": 10,
+    "high_count": 2,
+    "medium_count": 1
+  }
+}

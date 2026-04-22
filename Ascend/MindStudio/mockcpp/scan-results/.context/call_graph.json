@@ -1,0 +1,483 @@
+{
+  "functions": {
+    "CodeModifier::modify@UnixCodeModifier.cpp:31": {
+      "defined_at": 31,
+      "calls": [
+        "getpagesize@<unistd.h>",
+        "mprotect@<sys/mman.h>",
+        "memcpy@<string.h>"
+      ],
+      "called_by": [
+        "JmpOnlyApiHookImpl::changeCode@JmpOnlyApiHook.cpp:68"
+      ],
+      "receives_external_input": false,
+      "risk": "Critical",
+      "description": "修改内存页权限和代码段内容"
+    },
+    "CodeModifier::modify@WinCodeModifier.cpp:24": {
+      "defined_at": 24,
+      "calls": [
+        "VirtualProtect@<Windows.h>",
+        "WriteProcessMemory@<Windows.h>",
+        "GetCurrentProcess@<Windows.h>"
+      ],
+      "called_by": [
+        "JmpOnlyApiHookImpl::changeCode@JmpOnlyApiHook.cpp:68"
+      ],
+      "receives_external_input": false,
+      "risk": "Critical",
+      "description": "Windows 平台修改内存权限和代码段"
+    },
+    "JmpCode::JmpCode@JmpCode.cpp:55": {
+      "defined_at": 55,
+      "calls": [
+        "memcpy@<string.h>",
+        "SET_JMP_CODE@JmpCodeArch.h"
+      ],
+      "called_by": [
+        "JmpOnlyApiHookImpl::JmpOnlyApiHookImpl@JmpOnlyApiHook.cpp:30"
+      ],
+      "receives_external_input": false,
+      "risk": "High",
+      "description": "生成跳转机器码"
+    },
+    "JmpOnlyApiHookImpl::startHook@JmpOnlyApiHook.cpp:54": {
+      "defined_at": 54,
+      "calls": [
+        "JmpOnlyApiHookImpl::saveOriginalCode@JmpOnlyApiHook.cpp:47",
+        "JmpOnlyApiHookImpl::changeCode@JmpOnlyApiHook.cpp:68"
+      ],
+      "called_by": [
+        "JmpOnlyApiHookImpl::JmpOnlyApiHookImpl@JmpOnlyApiHook.cpp:30"
+      ],
+      "receives_external_input": false,
+      "risk": "Critical",
+      "description": "启动 API Hook，修改目标函数入口"
+    },
+    "JmpOnlyApiHookImpl::stopHook@JmpOnlyApiHook.cpp:61": {
+      "defined_at": 61,
+      "calls": [
+        "JmpOnlyApiHookImpl::changeCode@JmpOnlyApiHook.cpp:68",
+        "delete[]@<stdlib>"
+      ],
+      "called_by": [
+        "JmpOnlyApiHookImpl::~JmpOnlyApiHookImpl@JmpOnlyApiHook.cpp:41"
+      ],
+      "receives_external_input": false,
+      "risk": "High",
+      "description": "停止 Hook，恢复原始代码"
+    },
+    "JmpOnlyApiHookImpl::changeCode@JmpOnlyApiHook.cpp:68": {
+      "defined_at": 68,
+      "calls": [
+        "CodeModifier::modify@UnixCodeModifier.cpp:31",
+        "CodeModifier::modify@WinCodeModifier.cpp:24"
+      ],
+      "called_by": [
+        "JmpOnlyApiHookImpl::startHook@JmpOnlyApiHook.cpp:54",
+        "JmpOnlyApiHookImpl::stopHook@JmpOnlyApiHook.cpp:61"
+      ],
+      "receives_external_input": false,
+      "risk": "Critical",
+      "description": "调用 CodeModifier 修改代码"
+    },
+    "ApiHook::ApiHook@ApiHook.cpp:42": {
+      "defined_at": 42,
+      "calls": [
+        "new ApiHookImpl@ApiHook.cpp:45",
+        "JmpOnlyApiHook::JmpOnlyApiHook@JmpOnlyApiHook.cpp:80"
+      ],
+      "called_by": [
+        "ApiHookGenerator::appyApiHook@<header>",
+        "HookMockObjectImpl::addMethod@HookMockObject.cpp:70"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "API Hook 构造函数，接收函数指针参数"
+    },
+    "VirtualTableImpl::VirtualTableImpl@VirtualTable.cpp:185": {
+      "defined_at": 185,
+      "calls": [
+        "new FakeObject@VirtualTable.cpp:204",
+        "createVtbls@VirtualTableUtils.cpp:43",
+        "initializeVtbls@VirtualTableUtils.cpp:79",
+        "VirtualTableImpl::validateNumberOfVptr@VirtualTable.cpp:78"
+      ],
+      "called_by": [
+        "VirtualTable::VirtualTable@VirtualTable.cpp:234"
+      ],
+      "receives_external_input": false,
+      "risk": "High",
+      "description": "创建虚函数表对象"
+    },
+    "VirtualTableImpl::~VirtualTableImpl@VirtualTable.cpp:219": {
+      "defined_at": 219,
+      "calls": [
+        "delete fakeObject@VirtualTable.cpp:223",
+        "freeVtbls@VirtualTableUtils.cpp:50"
+      ],
+      "called_by": [],
+      "receives_external_input": false,
+      "risk": "High",
+      "description": "销毁虚函数表"
+    },
+    "VirtualTable::addMethod@VirtualTable.cpp:259": {
+      "defined_at": 259,
+      "calls": [
+        "VirtualTableImpl::validateIndexOfVtbl@VirtualTable.cpp:99",
+        "VirtualTableImpl::validateIndexOfVptr@VirtualTable.cpp:119"
+      ],
+      "called_by": [
+        "MockObjectBaseImpl::createMethod@MockObjectBase.cpp:93"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "向虚函数表添加方法，接收函数地址参数"
+    },
+    "createVtbls@VirtualTableUtils.cpp:43": {
+      "defined_at": 43,
+      "calls": [
+        "new void*[]@VirtualTableUtils.cpp:45",
+        "memset@<string.h>"
+      ],
+      "called_by": [
+        "VirtualTableImpl::VirtualTableImpl@VirtualTable.cpp:185"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "创建虚函数表数组"
+    },
+    "initializeVtbls@VirtualTableUtils.cpp:79": {
+      "defined_at": 79,
+      "calls": [],
+      "called_by": [
+        "VirtualTableImpl::VirtualTableImpl@VirtualTable.cpp:185"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "初始化虚函数表，设置 RTTI 信息"
+    },
+    "MockObjectBaseImpl::getMethod@MockObjectBase.cpp:111": {
+      "defined_at": 111,
+      "calls": [
+        "ChainableMockMethodIndexKey::ChainableMockMethodIndexKey@<header>",
+        "ChainableMockMethodContainer::getMethod@ChainableMockMethodContainer.cpp:190",
+        "MockObjectBaseImpl::createMethod@MockObjectBase.cpp:93"
+      ],
+      "called_by": [
+        "MockObjectBase::createInvocationMockerBuilderGetter@MockObjectBase.cpp:155"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "获取或创建 Mock 方法"
+    },
+    "MockObjectBaseImpl::createMethod@MockObjectBase.cpp:93": {
+      "defined_at": 93,
+      "calls": [
+        "new ChainableMockMethodIndexKey@MockObjectBase.cpp:99",
+        "new ChainableMockMethodCore@MockObjectBase.cpp:101",
+        "ChainableMockMethodContainer::addMethod@ChainableMockMethodContainer.cpp:198",
+        "VirtualTable::addMethod@VirtualTable.cpp:259"
+      ],
+      "called_by": [
+        "MockObjectBaseImpl::getMethod@MockObjectBase.cpp:111"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "创建 Mock 方法并添加到虚函数表"
+    },
+    "HookMockObjectImpl::getMethod@HookMockObject.cpp:83": {
+      "defined_at": 83,
+      "calls": [
+        "HookMockObjectImpl::getMethod@HookMockObject.cpp:100",
+        "HookMockObjectImpl::addMethod@HookMockObject.cpp:70"
+      ],
+      "called_by": [
+        "HookMockObject::method@HookMockObject.cpp:122"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "获取 Hook Mock 方法，接收 API 函数指针"
+    },
+    "HookMockObjectImpl::addMethod@HookMockObject.cpp:70": {
+      "defined_at": 70,
+      "calls": [
+        "new ApiHookKey@HookMockObject.cpp:75",
+        "new ChainableMockMethodCore@HookMockObject.cpp:76",
+        "ChainableMockMethodContainer::addMethod@ChainableMockMethodContainer.cpp:198"
+      ],
+      "called_by": [
+        "HookMockObjectImpl::getMethod@HookMockObject.cpp:83"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "添加 Hook Mock 方法"
+    },
+    "HookMockObject::getInvokable@HookMockObject.cpp:131": {
+      "defined_at": 131,
+      "calls": [
+        "HookMockObjectImpl::getMethod@HookMockObject.cpp:100"
+      ],
+      "called_by": [
+        "HookMockObjectApiHookHolder@<header>"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "获取可调用对象，接收 API 地址"
+    },
+    "ChainableMockMethodCore::invoke@ChainableMockMethodCore.cpp:149": {
+      "defined_at": 149,
+      "calls": [
+        "Invocation::Invocation@Invocation.cpp:86",
+        "ChainableMockMethodCoreImpl::invoke@ChainableMockMethodCore.cpp:107"
+      ],
+      "called_by": [
+        "DelegatedMethod@<generated>"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "调用 Mock 方法，接收参数列表"
+    },
+    "ChainableMockMethodCoreImpl::invoke@ChainableMockMethodCore.cpp:107": {
+      "defined_at": 107,
+      "calls": [
+        "InvocationMockerSet::invoke@InvocationMockerSet.cpp",
+        "MOCKCPP_FAIL@<header>"
+      ],
+      "called_by": [
+        "ChainableMockMethodCore::invoke@ChainableMockMethodCore.cpp:149"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "内部调用实现"
+    },
+    "ChainableMockMethodContainer::reset@ChainableMockMethodContainer.cpp:218": {
+      "defined_at": 218,
+      "calls": [
+        "ChainableMockMethodContainerImpl::reset@ChainableMockMethodContainer.cpp:86"
+      ],
+      "called_by": [
+        "HookMockObject::reset@HookMockObject.cpp:142",
+        "MockObjectBase::reset@MockObjectBase.cpp:193"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "重置 Mock 方法容器"
+    },
+    "ChainableMockMethodContainerImpl::reset@ChainableMockMethodContainer.cpp:86": {
+      "defined_at": 86,
+      "calls": [
+        "resetMethod@ChainableMockMethodContainer.cpp:71",
+        "delete@<stdlib>",
+        "methods.clear@<list>"
+      ],
+      "called_by": [
+        "ChainableMockMethodContainer::reset@ChainableMockMethodContainer.cpp:218"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "释放所有 Mock 方法"
+    },
+    "any_cast<T>@AnyCast.cpp": {
+      "defined_at": 147,
+      "calls": [
+        "scope_check_any_cast<T>@AnyCast.cpp:121",
+        "type_any_cast<T>@AnyCast.cpp:25",
+        "__any_cast@<header>"
+      ],
+      "called_by": [
+        "Result@Result.cpp",
+        "AnyCast<T>@<header>"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "类型转换函数，接收 Any 类型参数"
+    },
+    "scope_check_any_cast<T>@AnyCast.cpp:121": {
+      "defined_at": 121,
+      "calls": [
+        "type_any_cast<T>@AnyCast.cpp:25",
+        "std::numeric_limits<T>::max@<limits>",
+        "std::numeric_limits<T>::min@<limits>"
+      ],
+      "called_by": [
+        "any_cast<T>@AnyCast.cpp:147"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "范围检查类型转换"
+    },
+    "ChainingMockHelper::once@ChainingMockHelper.cpp:46": {
+      "defined_at": 46,
+      "calls": [
+        "new InvokedOnce@ChainingMockHelper.cpp:46"
+      ],
+      "called_by": [
+        "user code via header"
+      ],
+      "receives_external_input": false,
+      "risk": "Low",
+      "description": "创建一次性调用 Matcher"
+    },
+    "ChainingMockHelper::returnValue@ChainingMockHelper.cpp:97": {
+      "defined_at": 97,
+      "calls": [
+        "new TypelessStubAdapter@ChainingMockHelper.cpp:97",
+        "new ReturnStub@ChainingMockHelper.cpp:97"
+      ],
+      "called_by": [
+        "user code via MOCK_METHOD().will()"
+      ],
+      "receives_external_input": true,
+      "risk": "Low",
+      "description": "创建返回值 Stub，接收返回值参数"
+    },
+    "generate_vtbl_related_files.py::main@generate_vtbl_related_files.py:90": {
+      "defined_at": 90,
+      "calls": [
+        "getOpt@get_long_opt.py:31",
+        "generateDelegatedMethodGetDef@generate_vtbl_related_files.py:69",
+        "generateDestructorAddrGetterDef@generate_vtbl_related_files.py:31"
+      ],
+      "called_by": [
+        "__main__@<python runtime>"
+      ],
+      "receives_external_input": true,
+      "risk": "Low",
+      "description": "Python 代码生成脚本主函数，接收命令行参数"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "HookMockObject::method@api@<user>",
+      "path": [
+        "HookMockObjectImpl::getMethod@HookMockObject.cpp:83",
+        "HookMockObjectImpl::addMethod@HookMockObject.cpp:70",
+        "new ApiHookKey@HookMockObject.cpp:75"
+      ],
+      "sink": "ApiHookKey::api@HookMockObject.cpp:75",
+      "sink_type": "function_pointer",
+      "description": "用户提供的 API 函数地址传递到 ApiHookKey 存储"
+    },
+    {
+      "source": "ApiHook::ApiHook@api@<user>",
+      "path": [
+        "JmpOnlyApiHookImpl::JmpOnlyApiHookImpl@JmpOnlyApiHook.cpp:30",
+        "JmpCode::JmpCode@JmpCode.cpp:55",
+        "memcpy@JmpCode.cpp:33"
+      ],
+      "sink": "JmpCodeImpl::m_code@JmpCode.cpp:51",
+      "sink_type": "memory_operation",
+      "description": "API 地址用于生成跳转机器码"
+    },
+    {
+      "source": "JmpCode::getCodeData@JmpCode.cpp:67",
+      "path": [
+        "JmpOnlyApiHookImpl::startHook@JmpOnlyApiHook.cpp:54",
+        "JmpOnlyApiHookImpl::changeCode@JmpOnlyApiHook.cpp:68",
+        "CodeModifier::modify@UnixCodeModifier.cpp:31"
+      ],
+      "sink": "memcpy@UnixCodeModifier.cpp:39",
+      "sink_type": "memory_operation",
+      "description": "跳转机器码写入目标函数地址处"
+    },
+    {
+      "source": "VirtualProtect@dest@WinCodeModifier.cpp:30",
+      "path": [
+        "CodeModifier::modify@WinCodeModifier.cpp:24",
+        "WriteProcessMemory@WinCodeModifier.cpp:32"
+      ],
+      "sink": "dest@WinCodeModifier.cpp:30",
+      "sink_type": "memory_operation",
+      "description": "Windows 平台：修改内存权限后写入代码"
+    },
+    {
+      "source": "MockObjectBase::createInvocationMockerBuilderGetter@addr@<user>",
+      "path": [
+        "MockObjectBaseImpl::createMethod@MockObjectBase.cpp:93",
+        "VirtualTable::addMethod@VirtualTable.cpp:259"
+      ],
+      "sink": "vtbl[getRealVtblIndex]@VirtualTable.cpp:264",
+      "sink_type": "function_pointer",
+      "description": "用户提供的 Mock 方法地址写入虚函数表"
+    },
+    {
+      "source": "ChainableMockMethodCore::invoke@p1..p12@<user>",
+      "path": [
+        "Invocation::Invocation@Invocation.cpp:86",
+        "ChainableMockMethodCoreImpl::invoke@ChainableMockMethodCore.cpp:107",
+        "InvocationMockerSet::invoke@InvocationMockerSet.cpp"
+      ],
+      "sink": "Stub::invoke@<stub>",
+      "sink_type": "function_call",
+      "description": "用户调用 Mock 方法的参数传递到 Stub 处理"
+    },
+    {
+      "source": "any_cast@AnyBase*@<caller>",
+      "path": [
+        "scope_check_any_cast@AnyCast.cpp:121",
+        "std::numeric_limits<T>::max@AnyCast.cpp:130"
+      ],
+      "sink": "return (T*)ul@AnyCast.cpp:132",
+      "sink_type": "type_cast",
+      "description": "Any 类型转换中的范围检查"
+    },
+    {
+      "source": "generate_vtbl_related_files.py::argv@<command_line>",
+      "path": [
+        "getOpt@get_long_opt.py:31",
+        "int(a)@generate_vtbl_related_files.py:103"
+      ],
+      "sink": "maxInheritance@generate_vtbl_related_files.py:94",
+      "sink_type": "variable",
+      "description": "命令行参数解析并转换为整数"
+    }
+  ],
+  "critical_paths": [
+    {
+      "description": "API Hook 代码注入路径",
+      "path": [
+        "HookMockObject::method(api_addr)",
+        "ApiHook::ApiHook(api_addr, stub_addr)",
+        "JmpOnlyApiHookImpl::startHook()",
+        "JmpOnlyApiHookImpl::changeCode(jmp_code)",
+        "CodeModifier::modify(api_addr, jmp_code)",
+        "mprotect()/VirtualProtect() + memcpy()/WriteProcessMemory()"
+      ],
+      "risk": "Critical",
+      "vulnerability_types": [
+        "code_injection",
+        "memory_corruption",
+        "privilege_escalation"
+      ]
+    },
+    {
+      "description": "Virtual Table 函数指针注入路径",
+      "path": [
+        "MockObjectBase::createInvocationMockerBuilderGetter(method_addr)",
+        "MockObjectBaseImpl::createMethod(method_addr)",
+        "VirtualTable::addMethod(method_addr)",
+        "vtbl[index] = method_addr"
+      ],
+      "risk": "High",
+      "vulnerability_types": [
+        "function_pointer_manipulation",
+        "type_confusion"
+      ]
+    },
+    {
+      "description": "类型转换溢出路径",
+      "path": [
+        "any_cast<T>(AnyBase*)",
+        "scope_check_any_cast<T>()",
+        "numeric_limits<T>::max()",
+        "return (T*)ul"
+      ],
+      "risk": "Medium",
+      "vulnerability_types": [
+        "integer_overflow",
+        "type_confusion"
+      ]
+    }
+  ]
+}

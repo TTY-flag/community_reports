@@ -1,0 +1,652 @@
+{
+  "project_name": "MindStudio-Kernel-Performance-Prediction",
+  "language": ["Python", "C++"],
+  "module_dependencies": {
+    "python_modules": {
+      "mskpp.__init__": {
+        "file": "mskpp/__init__.py",
+        "imports": [
+          "mskpp.apis",
+          "mskpp.core",
+          "mskl"
+        ],
+        "exports": [
+          "Tensor",
+          "Chip",
+          "Core",
+          "set_flag",
+          "wait_flag",
+          "VecScope",
+          "mmad",
+          "vadd",
+          "vadds",
+          "vmul",
+          "vmuls",
+          "vexp",
+          "vsub",
+          "vln",
+          "vmax",
+          "vector_dup",
+          "vbrcb",
+          "vconv",
+          "vdiv",
+          "vcadd",
+          "vtranspose",
+          "vcgmax",
+          "vmaxs",
+          "vrec",
+          "vrsqrt",
+          "vsel",
+          "vshl",
+          "vshr",
+          "vsqrt",
+          "vsubreluconv",
+          "vsubrelu",
+          "vcmax",
+          "vabs",
+          "vaddreluconv",
+          "vaddrelu",
+          "vand",
+          "vaxpy",
+          "vcgadd",
+          "vcgmin",
+          "vcmin",
+          "vcmp",
+          "vcmpv",
+          "vcmpvs",
+          "vcopy",
+          "vcpadd",
+          "vmin",
+          "vmins",
+          "vrelu",
+          "vnot",
+          "vmaddrelu",
+          "vmla",
+          "vreducev2",
+          "vreduce",
+          "vor",
+          "vmulconv",
+          "vgather",
+          "vgatherb",
+          "vlrelu",
+          "vmadd",
+          "vbitsort",
+          "vmrgsort",
+          "vconv_deq",
+          "vconv_vdeq"
+        ]
+      },
+      "mskpp.apis": {
+        "file": "mskpp/apis.py",
+        "imports": [
+          "mskpp.core.InstrApiRegister"
+        ],
+        "calls": [
+          "InstrApiRegister.get"
+        ]
+      },
+      "mskpp.core.__init__": {
+        "file": "mskpp/core/__init__.py",
+        "imports": [
+          "mskpp._C.arch",
+          "mskpp.core.tensor",
+          "mskpp.core.chip",
+          "mskpp.core.prof_data",
+          "mskpp.core.computation_instruction",
+          "mskpp.core.sync_instruction",
+          "mskpp.core.api_register",
+          "mskpp.core.aicore",
+          "mskpp.core.vec_scope"
+        ]
+      },
+      "mskpp.core.tensor": {
+        "file": "mskpp/core/tensor.py",
+        "imports": [
+          "functools.reduce",
+          "mskpp.core.memory_instruction",
+          "mskpp.core.common.checker"
+        ],
+        "calls": [
+          "checker.is_mem_type_valid",
+          "checker.is_dtype_valid",
+          "checker.is_shape_valid",
+          "checker.is_format_valid",
+          "checker.is_required_type",
+          "checker.is_int_type",
+          "MemoryInstruction"
+        ]
+      },
+      "mskpp.core.trace": {
+        "file": "mskpp/core/trace.py",
+        "imports": [
+          "os",
+          "json",
+          "collections.defaultdict",
+          "mskpp._C.arch",
+          "mskpp.utils.logger",
+          "mskpp.core.common.singleton.Singleton",
+          "mskpp.core.common.checker",
+          "mskpp.core.metric.output_tool",
+          "mskpp.core.aicore.core_type_list",
+          "mskpp.core.vec_scope.SimdVf"
+        ],
+        "calls": [
+          "arch.cal_duration",
+          "checker.check_path_exists",
+          "os.fdopen",
+          "os.open",
+          "json.dumps",
+          "logger.info"
+        ]
+      },
+      "mskpp.core.computation_instruction": {
+        "file": "mskpp/core/computation_instruction.py",
+        "imports": [
+          "mskpp.core.instruction_base",
+          "mskpp.core.common.checker",
+          "mskpp.core.tensor",
+          "mskpp.core.vec_scope",
+          "mskpp.core.aicore"
+        ],
+        "calls": [
+          "checker.is_required_type",
+          "Tensor.is_complete",
+          "ProfDataRegister.get",
+          "task_schedule.Schedule().add_task"
+        ]
+      },
+      "mskpp.core.prof_data": {
+        "file": "mskpp/core/prof_data.py",
+        "imports": [
+          "os",
+          "abc",
+          "mskpp.core.common.registries.BaseRegistry"
+        ]
+      },
+      "mskpp.core.api_register": {
+        "file": "mskpp/core/api_register.py",
+        "imports": [
+          "os",
+          "mskpp.core.common.registries.BaseRegistry",
+          "mskpp.intrisic_api.infer_invoke",
+          "mskpp.intrisic_api.instr_register",
+          "mskpp.intrisic_api.instr_strategy"
+        ]
+      },
+      "mskpp.core.common.checker": {
+        "file": "mskpp/core/common/checker.py",
+        "imports": [
+          "re",
+          "os"
+        ],
+        "functions": [
+          "is_required_type",
+          "is_int_type",
+          "is_mem_type_valid",
+          "is_dtype_valid",
+          "is_shape_valid",
+          "is_format_valid",
+          "is_gm_type_valid",
+          "check_convert_long_size",
+          "check_name_valid",
+          "check_output_path",
+          "check_path_exists"
+        ]
+      },
+      "mskpp.core.metric.file_system": {
+        "file": "mskpp/core/metric/file_system.py",
+        "imports": [
+          "os",
+          "re",
+          "sys",
+          "stat",
+          "mskpp.utils.logger"
+        ],
+        "functions": [
+          "FileChecker.check_input_file",
+          "FileChecker.check_output_file",
+          "FileChecker.is_string_char_valid",
+          "FileChecker.is_soft_link_recusively",
+          "FileChecker.path_len_check_valid",
+          "FileChecker.check_path_permission",
+          "FileChecker.check_file_size_valid",
+          "FileChecker.check_group_others_w_permission"
+        ]
+      },
+      "mskpp.core.metric.output_tool": {
+        "file": "mskpp/core/metric/output_tool.py",
+        "imports": [
+          "os",
+          "stat",
+          "sys",
+          "csv"
+        ],
+        "calls": [
+          "os.fdopen",
+          "os.open",
+          "csv.writer"
+        ]
+      },
+      "mskpp.core.metric.visualization_tool": {
+        "file": "mskpp/core/metric/visualization_tool.py",
+        "imports": [
+          "os",
+          "plotly",
+          "plotly.graph_objs",
+          "mskpp.utils.logger",
+          "mskpp.core.metric.output_tool"
+        ],
+        "calls": [
+          "os.chmod",
+          "plotly.offline.plot"
+        ]
+      },
+      "mskpp.intrisic_api.infer_invoke": {
+        "file": "mskpp/intrisic_api/infer_invoke.py",
+        "imports": [
+          "abc",
+          "mskpp.core.computation_instruction",
+          "mskpp.intrisic_api.instr_strategy",
+          "mskpp.core.tensor_checker"
+        ]
+      },
+      "mskpp.utils.safe_check": {
+        "file": "mskpp/utils/safe_check.py",
+        "imports": [
+          "os",
+          "stat"
+        ],
+        "functions": [
+          "check_input_file",
+          "check_path_owner_consistent",
+          "check_group_others_w_permission",
+          "check_variable_type",
+          "check_exist"
+        ]
+      },
+      "download_dependencies": {
+        "file": "download_dependencies.py",
+        "imports": [
+          "argparse",
+          "hashlib",
+          "json",
+          "logging",
+          "shutil",
+          "subprocess",
+          "sys",
+          "tempfile",
+          "pathlib.Path"
+        ],
+        "calls": [
+          "subprocess.run",
+          "hashlib.sha256",
+          "shutil.rmtree",
+          "shutil.move",
+          "shutil.unpack_archive"
+        ]
+      },
+      "build": {
+        "file": "build.py",
+        "imports": [
+          "argparse",
+          "logging",
+          "multiprocessing",
+          "os",
+          "subprocess",
+          "sys",
+          "pathlib.Path"
+        ],
+        "calls": [
+          "subprocess.run",
+          "download_dependencies.DependencyManager"
+        ]
+      }
+    },
+    "cpp_modules": {
+      "csrc.interface.init_mskpp_c_module": {
+        "file": "csrc/interface/init_mskpp_c_module.cpp",
+        "includes": [
+          "map",
+          "string",
+          "init_module.h"
+        ],
+        "exports": [
+          "PyInit__C",
+          "InitArchInfoModule",
+          "InitProfdataModule",
+          "InitTaskScheduleModule"
+        ]
+      },
+      "csrc.interface.init_arch_module": {
+        "file": "csrc/interface/init_arch_module.cpp",
+        "includes": [
+          "map",
+          "../core/arch/arch_info.h",
+          "init_module.h"
+        ],
+        "calls": [
+          "ArchInfo::instance()->GetChipType",
+          "ArchInfo::instance()->SetChipType",
+          "ArchInfo::instance()->GetFreq",
+          "ArchInfo::instance()->IsMteIdValid",
+          "ArchInfo::instance()->GetCacheHitRatio",
+          "ArchInfo::instance()->SetCacheHitRatio",
+          "GetPipeByIO",
+          "GetDataTypeSizeOf"
+        ],
+        "py_functions": [
+          "MSKPP_ARCH_Get",
+          "MSKPP_ARCH_Set",
+          "MSKPP_ARCH_CalTimeByCycle",
+          "MSKPP_ARCH_IsMteValid",
+          "MSKPP_ARCH_GetCacheHitRatio",
+          "MSKPP_ARCH_SetCacheHitRatio",
+          "MSKPP_ARCH_GetPipeByIO",
+          "MSKPP_ARCH_GetSizeOf"
+        ]
+      },
+      "csrc.interface.init_profdata_module": {
+        "file": "csrc/interface/init_profdata_module.cpp",
+        "includes": [
+          "map",
+          "init_module.h",
+          "../prof_data/data_model_define.h"
+        ],
+        "calls": [
+          "MovFactory::instance()->Create",
+          "MmadFactory::instance()->Create",
+          "VecFactory::instance()->Create",
+          "MovClass::Get",
+          "MmadClass::Get",
+          "VecClass::Get",
+          "MovClass::GetPeak",
+          "MovClass::GetRepeat"
+        ],
+        "macros": [
+          "MOV_DATA_REGISTER",
+          "MMAD_DATA_REGISTER",
+          "VEC_DATA_REGISTER"
+        ]
+      },
+      "csrc.interface.init_schedule_module": {
+        "file": "csrc/interface/init_schedule_module.cpp",
+        "includes": [
+          "init_module.h",
+          "../core/task_schedule/task_schedule.h"
+        ],
+        "calls": [
+          "TaskSchedule::instance()->Clear",
+          "TaskSchedule::instance()->SetDebugMode",
+          "TaskSchedule::instance()->GetDebugMode",
+          "TaskSchedule::instance()->AddTask",
+          "TaskSchedule::instance()->Run",
+          "RawTask::CheckPyObj"
+        ]
+      },
+      "csrc.core.arch.arch_info": {
+        "file": "csrc/core/arch/arch_info.cpp",
+        "includes": [
+          "vector",
+          "string",
+          "map",
+          "set",
+          "algorithm",
+          "singleton.h"
+        ],
+        "exports": [
+          "GetMemoryTypeEnumByName",
+          "TheoreticalBandwidth",
+          "GetDataTypeSizeOf",
+          "GetPipeByIO",
+          "IsSupportType",
+          "IsSupportFormat"
+        ]
+      },
+      "csrc.core.task_schedule.task_schedule": {
+        "file": "csrc/core/task_schedule/task_schedule.cpp",
+        "includes": [
+          "singleton.h",
+          "raw_task.h",
+          "pipeline.h",
+          "task_generator.h"
+        ],
+        "calls": [
+          "RawTask::Run",
+          "RawTask::IsReady",
+          "RawTask::GetCostTime",
+          "Pipeline::AddTask",
+          "TaskGenerator::Generate"
+        ]
+      },
+      "csrc.core.task_schedule.raw_task": {
+        "file": "csrc/core/task_schedule/raw_task.cpp",
+        "includes": [
+          "string",
+          "Python.h"
+        ],
+        "calls": [
+          "PyObject_GetAttrString",
+          "PyLong_AsLongLong",
+          "PyCallable_Check",
+          "PyObject_CallObject",
+          "PyUnicode_AsUTF8AndSize"
+        ]
+      },
+      "csrc.prof_data.data_adapter": {
+        "file": "csrc/prof_data/data_adapter.cpp",
+        "includes": [
+          "data_adapter.h",
+          "linearInterpolate.h"
+        ],
+        "calls": [
+          "GetMovTypeData",
+          "GetMmadTypeData",
+          "GetVecTypeData",
+          "GetMovRepeatTypeData",
+          "LinearInterpolate",
+          "TheoreticalBandwidth",
+          "GetDataTypeSizeOf"
+        ]
+      }
+    },
+    "cross_language_calls": {
+      "python_to_cpp": [
+        {
+          "python_module": "mskpp._C.arch",
+          "cpp_module": "csrc.interface.init_arch_module",
+          "functions": [
+            "arch.get",
+            "arch.set",
+            "arch.cal_duration",
+            "arch.mte_is_valid",
+            "arch.get_cache_hit_ratio",
+            "arch.set_cache_hit_ratio",
+            "arch.get_pipe_by_io",
+            "arch.get_size_of"
+          ]
+        },
+        {
+          "python_module": "mskpp._C.prof_data",
+          "cpp_module": "csrc.interface.init_profdata_module",
+          "functions": [
+            "prof_data.MMAD.get",
+            "prof_data.MOV.get",
+            "prof_data.MOV.get_peak",
+            "prof_data.MOV.get_repeat",
+            "prof_data.VADD.get",
+            "prof_data.VCONV.get",
+            "prof_data.VMUL.get",
+            "prof_data.VEXP.get",
+            "prof_data.VDIV.get",
+            "prof_data.VLN.get",
+            "prof_data.VMAX.get",
+            "prof_data.VMIN.get",
+            "prof_data.VSQRT.get",
+            "prof_data.VRSQRT.get",
+            "prof_data.VREC.get",
+            "prof_data.VSEL.get",
+            "prof_data.VSHL.get",
+            "prof_data.VSHR.get",
+            "prof_data.VABS.get",
+            "prof_data.VADDRELU.get",
+            "prof_data.VADDRELUCONV.get",
+            "prof_data.VSUBRELU.get",
+            "prof_data.VSUBRELUCONV.get",
+            "prof_data.VAND.get",
+            "prof_data.VOR.get",
+            "prof_data.VNOT.get",
+            "prof_data.VRELU.get",
+            "prof_data.VBRCB.get",
+            "prof_data.VCADD.get",
+            "prof_data.VCGADD.get",
+            "prof_data.VCGMAX.get",
+            "prof_data.VCGMIN.get",
+            "prof_data.VCMAX.get",
+            "prof_data.VCMIN.get",
+            "prof_data.VCMP.get",
+            "prof_data.VCMPV.get",
+            "prof_data.VCMPVS.get",
+            "prof_data.VCOPY.get",
+            "prof_data.VCPADD.get",
+            "prof_data.VAXPY.get",
+            "prof_data.VMADD.get",
+            "prof_data.VMADDRELU.get",
+            "prof_data.VMLA.get",
+            "prof_data.VGATHER.get",
+            "prof_data.VGATHERB.get",
+            "prof_data.VLRELU.get",
+            "prof_data.VMRGSORT.get",
+            "prof_data.VBITSORT.get",
+            "prof_data.VECTORDUP.get",
+            "prof_data.VREDUCE.get",
+            "prof_data.VREDUCEV2.get",
+            "prof_data.VMULCONV.get",
+            "prof_data.VCONVDEQ.get",
+            "prof_data.VCONVVDEQ.get",
+            "prof_data.VMAXS.get",
+            "prof_data.VMINS.get",
+            "prof_data.VADDS.get",
+            "prof_data.VMULS.get"
+          ]
+        },
+        {
+          "python_module": "mskpp._C.task_schedule",
+          "cpp_module": "csrc.interface.init_schedule_module",
+          "functions": [
+            "task_schedule.Schedule.clean",
+            "task_schedule.Schedule.set_debug_mode",
+            "task_schedule.Schedule.get_debug_mode",
+            "task_schedule.Schedule.add_task",
+            "task_schedule.Schedule.run"
+          ]
+        }
+      ]
+    },
+    "data_flow_paths": [
+      {
+        "name": "user_api_to_task_schedule",
+        "description": "User calls instruction API -> Instruction object created -> Task scheduled -> C++ scheduling",
+        "path": [
+          "mskpp/apis.py:InstrApiRegister.get()",
+          "mskpp/intrisic_api/instr_register.py:InstrRegister.register()",
+          "mskpp/core/computation_instruction.py:ComputationInstruction.__init__()",
+          "mskpp/core/instr_task.py:InstrTask",
+          "mskpp/_C/task_schedule:Schedule.add_task()",
+          "csrc/interface/init_schedule_module.cpp:MSKPP_SCHEDULE_AddTask()",
+          "csrc/core/task_schedule/task_schedule.cpp:TaskSchedule::AddTask()",
+          "csrc/core/task_schedule/raw_task.cpp:RawTask::Run()"
+        ]
+      },
+      {
+        "name": "tensor_creation_to_memory_instruction",
+        "description": "User creates Tensor -> Memory instruction created -> Performance data lookup",
+        "path": [
+          "mskpp/core/tensor.py:Tensor.__init__()",
+          "mskpp/core/tensor.py:Tensor.load()",
+          "mskpp/core/memory_instruction.py:MemoryInstruction",
+          "mskpp/_C/prof_data:MOV.get()",
+          "csrc/interface/init_profdata_module.cpp:MSKPP_PROFDATA_MOVRegister()",
+          "csrc/prof_data/data_adapter.cpp:MovClass::Get()",
+          "csrc/prof_data/resource910b.cpp:GetMovTypeData()"
+        ]
+      },
+      {
+        "name": "trace_output",
+        "description": "Performance trace data collected and written to JSON file",
+        "path": [
+          "mskpp/core/trace.py:Trace.add_event()",
+          "mskpp/core/trace.py:Trace.dump()",
+          "mskpp/core/trace.py:os.fdopen(os.open(...))",
+          "json.dumps(trace_obj)"
+        ]
+      },
+      {
+        "name": "dependency_download",
+        "description": "External dependency download via HTTP",
+        "path": [
+          "build.py:BuildManager.run()",
+          "download_dependencies.py:DependencyManager.run()",
+          "download_dependencies.py:DependencyManager.proc_artifact()",
+          "subprocess.run(['curl', '-Lfk', ...])",
+          "tar -xf <archive>",
+          "shutil.move(source, target)"
+        ]
+      }
+    ],
+    "critical_interfaces": [
+      {
+        "interface": "PyArg_ParseTuple",
+        "files": [
+          "csrc/interface/init_profdata_module.cpp"
+        ],
+        "description": "Python argument parsing - extracts user input from PyObject",
+        "risk": "Type confusion, argument mismatch"
+      },
+      {
+        "interface": "PyUnicode_AsUTF8AndSize",
+        "files": [
+          "csrc/interface/init_arch_module.cpp",
+          "csrc/core/task_schedule/raw_task.cpp"
+        ],
+        "description": "Python string extraction - converts PyObject to C string",
+        "risk": "Null pointer dereference, buffer overflow"
+      },
+      {
+        "interface": "PyLong_AsLongLong",
+        "files": [
+          "csrc/interface/init_arch_module.cpp",
+          "csrc/interface/init_schedule_module.cpp",
+          "csrc/core/task_schedule/raw_task.cpp"
+        ],
+        "description": "Python integer extraction - converts PyObject to C long",
+        "risk": "Integer overflow, type confusion"
+      },
+      {
+        "interface": "PyObject_CallObject",
+        "files": [
+          "csrc/core/task_schedule/raw_task.cpp"
+        ],
+        "description": "Python object method invocation - calls Python method from C++",
+        "risk": "Null pointer dereference, arbitrary code execution"
+      },
+      {
+        "interface": "os.fdopen/os.open",
+        "files": [
+          "mskpp/core/trace.py",
+          "mskpp/core/metric/output_tool.py"
+        ],
+        "description": "Secure file open with explicit permissions",
+        "risk": "Path traversal if path not validated"
+      },
+      {
+        "interface": "subprocess.run",
+        "files": [
+          "download_dependencies.py",
+          "build.py"
+        ],
+        "description": "External command execution",
+        "risk": "Command injection if arguments not sanitized"
+      }
+    ]
+  }
+}

@@ -1,0 +1,452 @@
+{
+  "project_name": "mindstudio-agent (msagent)",
+  "scan_time": "2026-04-21T00:00:00Z",
+  "lsp_available": true,
+  "total_files": 114,
+  "total_lines": 8749,
+  "project_profile": {
+    "project_type": "cli_tool_python",
+    "deployment_model": "Python CLI 工具，本地执行；可选 Web UI 模式通过 LangGraph API 服务器提供 HTTP 接口 (127.0.0.1:2024)",
+    "trust_boundaries": [
+      {
+        "boundary": "CLI User Input",
+        "trusted_side": "Application logic",
+        "untrusted_side": "Local user (command line arguments, stdin)",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Web API Interface",
+        "trusted_side": "LangGraph API server",
+        "untrusted_side": "Remote HTTP clients (127.0.0.1:2024)",
+        "risk": "High"
+      },
+      {
+        "boundary": "MCP Tool Server",
+        "trusted_side": "MCP client",
+        "untrusted_side": "External MCP tool servers (stdio/sse/http/websocket)",
+        "risk": "Critical"
+      },
+      {
+        "boundary": "LLM API Provider",
+        "trusted_side": "LLM factory",
+        "untrusted_side": "External LLM API endpoints (OpenAI/Anthropic/Google)",
+        "risk": "High"
+      },
+      {
+        "boundary": "Web Search Provider",
+        "trusted_side": "web_search tool",
+        "untrusted_side": "DuckDuckGo/Tavily search APIs",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Configuration Files",
+        "trusted_side": "Config loader",
+        "untrusted_side": "User-provided YAML/JSON config files",
+        "risk": "Medium"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "cli",
+      "path": "src/msagent/cli",
+      "language": "python",
+      "components": ["bootstrap", "handlers", "dispatchers", "resolvers", "completers", "ui", "theme", "builders", "core"]
+    },
+    {
+      "name": "web",
+      "path": "src/msagent/web",
+      "language": "python",
+      "components": ["launcher.py", "runtime.py", "graph.py", "ui.py"]
+    },
+    {
+      "name": "mcp",
+      "path": "src/msagent/mcp",
+      "language": "python",
+      "components": ["client.py", "factory.py"]
+    },
+    {
+      "name": "tools",
+      "path": "src/msagent/tools",
+      "language": "python",
+      "components": ["factory.py", "web_search.py", "catalog", "internal"]
+    },
+    {
+      "name": "configs",
+      "path": "src/msagent/configs",
+      "language": "python",
+      "components": ["mcp.py", "llm.py", "agent.py", "sandbox.py", "approval.py", "registry.py", "utils.py"]
+    },
+    {
+      "name": "agents",
+      "path": "src/msagent/agents",
+      "language": "python",
+      "components": ["factory.py", "context.py", "state.py", "local_context.py"]
+    },
+    {
+      "name": "llms",
+      "path": "src/msagent/llms",
+      "language": "python",
+      "components": ["factory.py"]
+    },
+    {
+      "name": "utils",
+      "path": "src/msagent/utils",
+      "language": "python",
+      "components": ["bash.py", "path.py", "render.py", "image.py", "offload.py", "compression.py", "cost.py", "matching.py", "patterns.py", "version.py"]
+    },
+    {
+      "name": "middlewares",
+      "path": "src/msagent/middlewares",
+      "language": "python",
+      "components": ["approval.py", "tool_result_eviction.py", "token_cost.py"]
+    },
+    {
+      "name": "core",
+      "path": "src/msagent/core",
+      "language": "python",
+      "components": ["constants.py", "logging.py", "settings.py"]
+    },
+    {
+      "name": "sandboxes",
+      "path": "src/msagent/sandboxes",
+      "language": "python",
+      "components": ["__init__.py"]
+    },
+    {
+      "name": "skills",
+      "path": "src/msagent/skills",
+      "language": "python",
+      "components": ["factory.py"]
+    },
+    {
+      "name": "testing",
+      "path": "src/msagent/testing",
+      "language": "python",
+      "components": ["fake_graph.py"]
+    }
+  ],
+  "files": [
+    {
+      "path": "src/msagent/mcp/client.py",
+      "language": "python",
+      "risk": "Critical",
+      "module": "mcp",
+      "lines": 197,
+      "priority": 1
+    },
+    {
+      "path": "src/msagent/mcp/factory.py",
+      "language": "python",
+      "risk": "Critical",
+      "module": "mcp",
+      "lines": 85,
+      "priority": 2
+    },
+    {
+      "path": "src/msagent/utils/bash.py",
+      "language": "python",
+      "risk": "Critical",
+      "module": "utils",
+      "lines": 149,
+      "priority": 3
+    },
+    {
+      "path": "src/msagent/cli/handlers/bash.py",
+      "language": "python",
+      "risk": "Critical",
+      "module": "cli",
+      "lines": 46,
+      "priority": 4
+    },
+    {
+      "path": "src/msagent/web/launcher.py",
+      "language": "python",
+      "risk": "High",
+      "module": "web",
+      "lines": 491,
+      "priority": 5
+    },
+    {
+      "path": "src/msagent/tools/web_search.py",
+      "language": "python",
+      "risk": "High",
+      "module": "tools",
+      "lines": 327,
+      "priority": 6
+    },
+    {
+      "path": "src/msagent/agents/factory.py",
+      "language": "python",
+      "risk": "High",
+      "module": "agents",
+      "lines": 598,
+      "priority": 7
+    },
+    {
+      "path": "src/msagent/cli/bootstrap/initializer.py",
+      "language": "python",
+      "risk": "High",
+      "module": "cli",
+      "lines": 333,
+      "priority": 8
+    },
+    {
+      "path": "src/msagent/configs/mcp.py",
+      "language": "python",
+      "risk": "High",
+      "module": "configs",
+      "lines": 128,
+      "priority": 9
+    },
+    {
+      "path": "src/msagent/skills/factory.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "skills",
+      "lines": 141,
+      "priority": 10
+    },
+    {
+      "path": "src/msagent/tools/factory.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "tools",
+      "lines": 174,
+      "priority": 11
+    },
+    {
+      "path": "src/msagent/cli/resolvers/file.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "cli",
+      "lines": 127,
+      "priority": 12
+    },
+    {
+      "path": "src/msagent/cli/resolvers/image.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "cli",
+      "lines": 95,
+      "priority": 13
+    },
+    {
+      "path": "src/msagent/configs/registry.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "configs",
+      "lines": 200,
+      "priority": 14
+    },
+    {
+      "path": "src/msagent/configs/agent.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "configs",
+      "lines": 350,
+      "priority": 15
+    },
+    {
+      "path": "src/msagent/configs/llm.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "configs",
+      "lines": 175,
+      "priority": 16
+    },
+    {
+      "path": "src/msagent/configs/approval.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "configs",
+      "lines": 180,
+      "priority": 17
+    },
+    {
+      "path": "src/msagent/configs/sandbox.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "configs",
+      "lines": 163,
+      "priority": 18
+    },
+    {
+      "path": "src/msagent/tools/catalog/skills.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "tools",
+      "lines": 149,
+      "priority": 19
+    },
+    {
+      "path": "src/msagent/tools/catalog/tools.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "tools",
+      "lines": 100,
+      "priority": 20
+    },
+    {
+      "path": "src/msagent/middlewares/approval.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "middlewares",
+      "lines": 46,
+      "priority": 21
+    },
+    {
+      "path": "src/msagent/web/runtime.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "web",
+      "lines": 167,
+      "priority": 22
+    },
+    {
+      "path": "src/msagent/core/settings.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "core",
+      "lines": 110,
+      "priority": 23
+    },
+    {
+      "path": "src/msagent/sandboxes/__init__.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "sandboxes",
+      "lines": 28,
+      "priority": 24
+    },
+    {
+      "path": "run.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "root",
+      "lines": 31,
+      "priority": 25
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "run.py",
+      "line": 30,
+      "function": "cli",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "CLI 主入口点，用户通过命令行参数和交互式输入控制程序行为",
+      "description": "CLI 入口，解析命令行参数并启动会话"
+    },
+    {
+      "file": "src/msagent/web/launcher.py",
+      "line": 172,
+      "function": "launch_langgraph_dev_server",
+      "type": "network",
+      "trust_level": "semi_trusted",
+      "justification": "Web API 服务器入口，绑定 127.0.0.1:2024，仅本地可达但 HTTP 客户端可发送任意请求",
+      "description": "启动 LangGraph API 服务器，提供 HTTP 接口"
+    },
+    {
+      "file": "src/msagent/cli/handlers/bash.py",
+      "line": 17,
+      "function": "dispatch",
+      "type": "stdin",
+      "trust_level": "untrusted_local",
+      "justification": "直接执行用户输入的 bash 命令，命令内容完全由用户控制",
+      "description": "Bash 命令执行处理，用户可执行任意 shell 命令"
+    },
+    {
+      "file": "src/msagent/mcp/client.py",
+      "line": 60,
+      "function": "tools",
+      "type": "rpc",
+      "trust_level": "untrusted_network",
+      "justification": "MCP 客户端从外部服务器加载工具，外部服务器可能是不可信来源",
+      "description": "从 MCP 服务器加载工具列表，支持 stdio/sse/http/websocket 传输"
+    },
+    {
+      "file": "src/msagent/tools/web_search.py",
+      "line": 122,
+      "function": "web_search",
+      "type": "web_route",
+      "trust_level": "semi_trusted",
+      "justification": "发送 HTTP 请求到外部搜索 API (DuckDuckGo/Tavily)，用户可控制搜索关键词",
+      "description": "Web 搜索工具，向外部 API 发送请求"
+    },
+    {
+      "file": "src/msagent/cli/bootstrap/legacy.py",
+      "line": 47,
+      "function": "create_legacy_parser",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "argparse 参数解析，用户可控制命令行参数",
+      "description": "CLI 参数解析器，处理 config/chat/web 子命令"
+    },
+    {
+      "file": "src/msagent/configs/mcp.py",
+      "line": 92,
+      "function": "from_json",
+      "type": "file",
+      "trust_level": "trusted_admin",
+      "justification": "从配置文件加载 MCP 服务器配置，配置文件由管理员/用户编辑",
+      "description": "从 JSON 文件加载 MCP 配置"
+    },
+    {
+      "file": "src/msagent/configs/registry.py",
+      "line": 50,
+      "function": "load_all",
+      "type": "file",
+      "trust_level": "trusted_admin",
+      "justification": "加载所有配置文件，配置由用户/管理员控制",
+      "description": "配置注册表，加载 LLM/Agent/MCP/Sandbox 配置"
+    },
+    {
+      "file": "src/msagent/skills/factory.py",
+      "line": 69,
+      "function": "load_skills",
+      "type": "file",
+      "trust_level": "trusted_admin",
+      "justification": "从目录加载 Skills 定义文件 (SKILL.md)，文件内容由用户/管理员控制",
+      "description": "Skills 加载器，读取 SKILL.md 文件"
+    },
+    {
+      "file": "src/msagent/tools/catalog/skills.py",
+      "line": 122,
+      "function": "get_skill",
+      "type": "file",
+      "trust_level": "trusted_admin",
+      "justification": "读取 Skill 文件内容，文件路径来自已加载的 Skills 目录",
+      "description": "读取指定 Skill 的 SKILL.md 内容"
+    },
+    {
+      "file": "src/msagent/cli/resolvers/file.py",
+      "line": 22,
+      "function": "_get_files",
+      "type": "cmdline",
+      "trust_level": "semi_trusted",
+      "justification": "执行 shell 命令列出文件，使用 shlex.quote 处理 pattern 参数",
+      "description": "文件补全解析器，执行 git/fd 命令"
+    },
+    {
+      "file": "src/msagent/llms/factory.py",
+      "line": 20,
+      "function": "create",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "创建 LLM 客户端连接外部 API 服务器",
+      "description": "LLM 工厂，创建 OpenAI/Anthropic/Google LLM 客户端"
+    }
+  ],
+  "attack_surfaces": [
+    "CLI 命令行参数: 用户可控制所有子命令和参数",
+    "交互式会话输入: 用户在 CLI 会话中输入文本和命令",
+    "Bash 模式: 用户可直接执行任意 shell 命令",
+    "Web API HTTP 请求: 127.0.0.1:2024 接收 HTTP 请求",
+    "MCP 工具服务器连接: stdio/sse/http/websocket 连接外部工具服务器",
+    "配置文件解析: YAML/JSON 配置文件加载",
+    "LLM API 调用: 发送请求到外部 LLM 服务",
+    "Web 搜索请求: 发送 HTTP 请求到 DuckDuckGo/Tavily",
+    "Skills 文件加载: 从目录读取 SKILL.md 文件"
+  ]
+}

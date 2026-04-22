@@ -1,0 +1,502 @@
+{
+  "project_name": "mockcpp",
+  "scan_time": "2026-04-21T06:10:00Z",
+  "lsp_available": false,
+  "total_files": 249,
+  "total_lines": 17273,
+  "project_profile": {
+    "project_type": "library",
+    "deployment_model": "作为单元测试框架的依赖库被集成到用户的测试项目中，运行在开发者本地环境或 CI/CD 流程中",
+    "trust_boundaries": [
+      {
+        "boundary": "Library API Boundary",
+        "trusted_side": "User Test Code",
+        "untrusted_side": "Library Internal Implementation",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Code Modification Boundary",
+        "trusted_side": "Mock Framework",
+        "untrusted_side": "Target Process Memory/Code Segment",
+        "risk": "Critical"
+      },
+      {
+        "boundary": "Function Pointer Boundary",
+        "trusted_side": "Virtual Table Operations",
+        "untrusted_side": "External Function Addresses",
+        "risk": "High"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "api_hook",
+      "path": "src/",
+      "language": "c_cpp",
+      "components": [
+        "ApiHook.cpp",
+        "JmpCode.cpp",
+        "JmpOnlyApiHook.cpp",
+        "UnixCodeModifier.cpp",
+        "WinCodeModifier.cpp",
+        "JmpCodeArch.h",
+        "JmpCodeX86.h",
+        "JmpCodeX64.h",
+        "DummyApiHook.cpp"
+      ],
+      "risk_level": "Critical",
+      "description": "API Hook 系统实现，涉及运行时代码修改和内存权限操作"
+    },
+    {
+      "name": "virtual_table",
+      "path": "src/",
+      "language": "c_cpp",
+      "components": [
+        "VirtualTable.cpp",
+        "VirtualTableUtils.cpp",
+        "InterfaceInfo.cpp"
+      ],
+      "risk_level": "High",
+      "description": "虚函数表操作，用于 Mock Object 的动态方法绑定"
+    },
+    {
+      "name": "mock_object_core",
+      "path": "src/",
+      "language": "c_cpp",
+      "components": [
+        "MockObjectBase.cpp",
+        "HookMockObject.cpp",
+        "ChainableMockObjectBase.cpp",
+        "ChainableMockObject.cpp",
+        "ChainableMockMethodCore.cpp",
+        "ChainableMockMethodContainer.cpp"
+      ],
+      "risk_level": "High",
+      "description": "Mock Object 核心实现，管理对象生命周期和方法调用"
+    },
+    {
+      "name": "invocation_mocker",
+      "path": "src/",
+      "language": "c_cpp",
+      "components": [
+        "InvocationMocker.cpp",
+        "InvocationMockerSet.cpp",
+        "Invocation.cpp",
+        "InvocationId.cpp",
+        "InvocationMockBuilderGetter.cpp"
+      ],
+      "risk_level": "Medium",
+      "description": "调用 Mocker 系统，处理方法调用和返回值"
+    },
+    {
+      "name": "stub_system",
+      "path": "src/",
+      "language": "c_cpp",
+      "components": [
+        "StubContainer.cpp",
+        "DefaultStub.cpp",
+        "ReturnStub.cpp",
+        "RepeatStub.cpp",
+        "DieStub.cpp",
+        "ThenStub.cpp",
+        "WillStub.cpp",
+        "IgnoreReturnStub.cpp",
+        "ProcStub.cpp"
+      ],
+      "risk_level": "Medium",
+      "description": "Stub 实现系统，定义 Mock 方法的返回行为"
+    },
+    {
+      "name": "matcher_system",
+      "path": "src/",
+      "language": "c_cpp",
+      "components": [
+        "AfterMatcher.cpp",
+        "BeforeMatcher.cpp",
+        "CallerMatcher.cpp",
+        "DefaultMatcher.cpp",
+        "ExpectsMatcher.cpp",
+        "InvocationTimesMatcher.cpp",
+        "InvokedAtLeast.cpp",
+        "InvokedAtMost.cpp",
+        "InvokedExactly.cpp",
+        "InvokedOnce.cpp",
+        "InvokedTimesMatcher.cpp",
+        "PendingMatcher.cpp",
+        "StubsMatcher.cpp",
+        "TestFailureMatcher.cpp"
+      ],
+      "risk_level": "Low",
+      "description": "Matcher 系统，用于匹配调用条件"
+    },
+    {
+      "name": "constraint_system",
+      "path": "src/",
+      "language": "c_cpp",
+      "components": [
+        "ConstraintSet.cpp",
+        "DecoratedConstraint.cpp",
+        "StringConstraint.cpp",
+        "IsAnythingHelper.cpp",
+        "IsStringContains.cpp",
+        "IsStringEndWith.cpp",
+        "IsStringStartWith.cpp"
+      ],
+      "risk_level": "Low",
+      "description": "约束系统，用于参数匹配"
+    },
+    {
+      "name": "type_system",
+      "path": "src/",
+      "language": "c_cpp",
+      "components": [
+        "Any.cpp",
+        "AnyBase.cpp",
+        "AnyCast.cpp",
+        "RefAny.cpp",
+        "Result.cpp",
+        "TypeString.cpp",
+        "TypelessConstraintAdapter.cpp",
+        "TypelessStubAdapter.cpp"
+      ],
+      "risk_level": "Medium",
+      "description": "类型系统，包括 Any 类型和类型转换"
+    },
+    {
+      "name": "output_handling",
+      "path": "src/",
+      "language": "c_cpp",
+      "components": [
+        "OutBound.cpp",
+        "OutBoundPointer.cpp",
+        "ReturnObjectList.cpp"
+      ],
+      "risk_level": "Medium",
+      "description": "输出参数处理"
+    },
+    {
+      "name": "result_handler",
+      "path": "src/",
+      "language": "c_cpp",
+      "components": [
+        "IgnoreResultHandler.cpp",
+        "IgnoreResultHandlerFactory.cpp",
+        "MismatchResultHandler.cpp",
+        "MismatchResultHandlerFactory.cpp",
+        "NormalResultHandler.cpp",
+        "NormalResultHandlerFactory.cpp",
+        "VoidResultHandler.cpp",
+        "VoidResultHandlerFactory.cpp"
+      ],
+      "risk_level": "Low",
+      "description": "结果处理器工厂"
+    },
+    {
+      "name": "assertion",
+      "path": "src/",
+      "language": "c_cpp",
+      "components": [
+        "AssertionFailedError.cpp",
+        "Asserter.cpp",
+        "Exception.cpp"
+      ],
+      "risk_level": "Low",
+      "description": "断言和异常处理"
+    },
+    {
+      "name": "helper",
+      "path": "src/",
+      "language": "c_cpp",
+      "components": [
+        "ChainingMockHelper.cpp",
+        "Formatter.cpp",
+        "GlobalMockObject.cpp",
+        "IdentityBuilder.cpp",
+        "Ignore.cpp",
+        "MethodIndiceChecker.cpp",
+        "SimpleInvocationRecorder.cpp"
+      ],
+      "risk_level": "Low",
+      "description": "辅助功能"
+    },
+    {
+      "name": "delegated_method",
+      "path": "src/",
+      "language": "c_cpp",
+      "components": [
+        "DelegatedMethodGetter.cpp",
+        "ChainableMockMethodIndexKey.cpp",
+        "ChainableMockMethodNameKey.cpp"
+      ],
+      "risk_level": "Medium",
+      "description": "委托方法获取"
+    },
+    {
+      "name": "key_system",
+      "path": "src/",
+      "language": "c_cpp",
+      "components": [
+        "ApiHookKey.cpp"
+      ],
+      "risk_level": "Medium",
+      "description": "API Hook 键管理"
+    },
+    {
+      "name": "python_generator",
+      "path": "src/",
+      "language": "python",
+      "components": [
+        "generate_vtbl_related_files.py",
+        "generate_arg_related_files.py",
+        "get_long_opt.py"
+      ],
+      "risk_level": "Low",
+      "description": "Python 代码生成脚本，用于构建时生成模板代码"
+    },
+    {
+      "name": "headers",
+      "path": "include/mockcpp/",
+      "language": "c_cpp",
+      "components": [
+        "mockcpp.h",
+        "ApiHook.h",
+        "CodeModifier.h",
+        "VirtualTable.h",
+        "HookMockObject.h",
+        "MockObjectBase.h",
+        "ChainableMockMethodCore.h",
+        "InvocationMocker.h",
+        "Stub.h",
+        "ChainingMockHelper.h",
+        "JmpCode.h",
+        "ApiHookGenerator.h",
+        "ProcStub.h",
+        "Formatter.h",
+        "GnuMethodInfoReader.h",
+        "types/Any.h",
+        "types/AnyCast.h"
+      ],
+      "risk_level": "High",
+      "description": "公共 API 头文件，定义库的对外接口"
+    }
+  ],
+  "files": [
+    {
+      "path": "src/UnixCodeModifier.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "api_hook",
+      "lines": 65,
+      "priority": 1,
+      "reason": "使用 mprotect 修改内存页权限，使用 memcpy 修改代码段，可能导致代码注入或内存破坏"
+    },
+    {
+      "path": "src/WinCodeModifier.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "api_hook",
+      "lines": 40,
+      "priority": 2,
+      "reason": "使用 VirtualProtect 和 WriteProcessMemory 修改代码段，Windows 平台高风险操作"
+    },
+    {
+      "path": "src/JmpCode.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "api_hook",
+      "lines": 81,
+      "priority": 3,
+      "reason": "生成跳转机器码，用于代码注入"
+    },
+    {
+      "path": "src/JmpOnlyApiHook.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "api_hook",
+      "lines": 96,
+      "priority": 4,
+      "reason": "实现 API Hook，直接修改目标函数的入口代码"
+    },
+    {
+      "path": "src/ApiHook.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "api_hook",
+      "lines": 58,
+      "priority": 5,
+      "reason": "API Hook 入口，创建和管理代码修改"
+    },
+    {
+      "path": "src/VirtualTable.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "virtual_table",
+      "lines": 383,
+      "priority": 6,
+      "reason": "操作虚函数表，涉及函数指针操作和对象布局"
+    },
+    {
+      "path": "src/VirtualTableUtils.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "virtual_table",
+      "lines": 110,
+      "priority": 7,
+      "reason": "创建和初始化虚函数表，涉及 RTTI 和内存操作"
+    },
+    {
+      "path": "src/MockObjectBase.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "mock_object_core",
+      "lines": 210,
+      "priority": 8,
+      "reason": "Mock Object 基类实现，管理对象生命周期和虚函数表"
+    },
+    {
+      "path": "src/HookMockObject.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "mock_object_core",
+      "lines": 151,
+      "priority": 9,
+      "reason": "Hook Mock Object 实现，结合 API Hook 和 Mock Object"
+    },
+    {
+      "path": "src/ChainableMockMethodCore.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "mock_object_core",
+      "lines": 212,
+      "priority": 10,
+      "reason": "Mock 方法核心实现，处理调用和返回值"
+    },
+    {
+      "path": "src/AnyCast.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "type_system",
+      "lines": 202,
+      "priority": 11,
+      "reason": "类型转换实现，涉及整数范围检查"
+    },
+    {
+      "path": "src/ChainingMockHelper.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "helper",
+      "lines": 3553,
+      "priority": 12,
+      "reason": "链式 Mock 辅助函数，大量使用 new 和对象创建"
+    },
+    {
+      "path": "src/DummyApiHook.cpp",
+      "language": "c_cpp",
+      "risk": "Low",
+      "module": "api_hook",
+      "lines": 55,
+      "priority": 13,
+      "reason": "空 Api Hook 实现，用于不支持的平台"
+    },
+    {
+      "path": "src/generate_vtbl_related_files.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "python_generator",
+      "lines": 128,
+      "priority": 14,
+      "reason": "构建时代码生成脚本，运行在构建环境"
+    },
+    {
+      "path": "src/generate_arg_related_files.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "python_generator",
+      "lines": 84,
+      "priority": 15,
+      "reason": "构建时代码生成脚本"
+    },
+    {
+      "path": "src/get_long_opt.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "python_generator",
+      "lines": 40,
+      "priority": 16,
+      "reason": "命令行参数解析辅助"
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "include/mockcpp/mockcpp.h",
+      "line": 1,
+      "function": "MOCK_METHOD",
+      "type": "decorator",
+      "trust_level": "semi_trusted",
+      "justification": "用户测试代码调用 MOCK_METHOD 宏创建 Mock 方法，输入来自测试开发者，具有开发权限",
+      "description": "Mock 方法创建宏入口"
+    },
+    {
+      "file": "include/mockcpp/HookMockObject.h",
+      "line": 39,
+      "function": "invoke",
+      "type": "decorator",
+      "trust_level": "semi_trusted",
+      "justification": "用户调用 invoke() 设置 API Hook，传入的函数指针由开发者提供，具有开发权限",
+      "description": "API Hook 创建入口"
+    },
+    {
+      "file": "src/UnixCodeModifier.cpp",
+      "line": 31,
+      "function": "CodeModifier::modify",
+      "type": "internal",
+      "trust_level": "internal",
+      "justification": "内部函数，由 ApiHook 系统调用，不直接对外暴露",
+      "description": "代码段修改内部函数"
+    },
+    {
+      "file": "src/WinCodeModifier.cpp",
+      "line": 24,
+      "function": "CodeModifier::modify",
+      "type": "internal",
+      "trust_level": "internal",
+      "justification": "内部函数，由 ApiHook 系统调用，不直接对外暴露",
+      "description": "Windows 平台代码段修改内部函数"
+    },
+    {
+      "file": "src/JmpOnlyApiHook.cpp",
+      "line": 54,
+      "function": "startHook",
+      "type": "internal",
+      "trust_level": "internal",
+      "justification": "内部函数，由 ApiHook 构造函数调用",
+      "description": "启动 Hook，修改目标函数入口代码"
+    },
+    {
+      "file": "include/mockcpp/ApiHookGenerator.h",
+      "line": 39,
+      "function": "appyApiHook",
+      "type": "decorator",
+      "trust_level": "semi_trusted",
+      "justification": "模板函数，由用户代码调用设置 Hook，函数地址参数由开发者提供",
+      "description": "应用 API Hook 的模板函数入口"
+    },
+    {
+      "file": "include/mockcpp/ProcStub.h",
+      "line": 65,
+      "function": "PROC_STUB",
+      "type": "decorator",
+      "trust_level": "semi_trusted",
+      "justification": "宏定义，创建函数指针 Stub，参数由开发者提供",
+      "description": "函数 Stub 创建宏入口"
+    }
+  ],
+  "attack_surfaces": [
+    "API Hook 代码修改: UnixCodeModifier::modify() 使用 mprotect+mmemcpy 修改代码段权限和内容",
+    "API Hook 代码修改: WinCodeModifier::modify() 使用 VirtualProtect+WriteProcessMemory 修改代码段",
+    "Virtual Table 操作: VirtualTable 创建和操作虚函数表，修改函数指针",
+    "Mock Object 生命周期: MockObjectBase 管理对象创建和删除",
+    "Type Casting: AnyCast 模板实现涉及整数范围检查",
+    "Python 脚本输入: generate_vtbl_related_files.py 接收命令行参数并生成代码"
+  ]
+}

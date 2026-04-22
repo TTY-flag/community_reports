@@ -1,0 +1,202 @@
+{
+  "functions": {
+    "Start@component/clusterd/pkg/interface/grpc/grpc_init.go": {
+      "defined_at": 72,
+      "calls": [
+        "recover.NewFaultRecoverService@component/clusterd/pkg/application/recover",
+        "publicfault.NewPubFaultService@component/clusterd/pkg/application/publicfault",
+        "profiling.NewSwitchManager@component/clusterd/pkg/application/profiling",
+        "config.NewBusinessConfigServer@component/clusterd/pkg/application/config",
+        "fault.NewFaultServer@component/clusterd/pkg/application/fault",
+        "jobinfo.NewJobServer@component/clusterd/pkg/application/jobinfo",
+        "net.Listen@go/net",
+        "limiter.LimitListener@component/ascend-common/common-utils/limiter",
+        "grpc.NewServer@go/grpc",
+        "grpcServer.Serve@go/grpc"
+      ],
+      "called_by": ["main@component/clusterd/main.go"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "gRPC server listening on POD_IP, handles fault management, recovery, profiling APIs from cluster"
+    },
+    "DoPrestartHook@component/ascend-docker-runtime/hook/process/process.go": {
+      "defined_at": 337,
+      "calls": [
+        "getContainerConfig@component/ascend-docker-runtime/hook/process/process.go",
+        "parseMounts@component/ascend-docker-runtime/hook/process/process.go",
+        "readConfigsOfDir@component/ascend-docker-runtime/hook/process/process.go",
+        "parseRuntimeOptions@component/ascend-docker-runtime/hook/process/process.go",
+        "parseSoftLinkMode@component/ascend-docker-runtime/hook/process/process.go",
+        "mindxcheckutils.RealFileChecker@component/ascend-docker-runtime/mindxcheckutils",
+        "syscall.Exec@go/syscall"
+      ],
+      "called_by": ["main@component/ascend-docker-runtime/hook/main.go"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "Container prestart hook that reads environment variables and executes CLI tool - process injection risk"
+    },
+    "serve@component/ascend-device-plugin/pkg/server/server.go": {
+      "defined_at": 89,
+      "calls": [
+        "createNetListener@component/ascend-device-plugin/pkg/server/server.go",
+        "grpc.NewServer@go/grpc",
+        "v1beta1.RegisterDevicePluginServer@k8s/kubelet",
+        "grpcServer.Serve@go/grpc"
+      ],
+      "called_by": ["Start@component/ascend-device-plugin/pkg/server/server.go"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "Unix socket gRPC server for Kubernetes device plugin API - kubelet interface"
+    },
+    "register@component/ascend-device-plugin/pkg/server/server.go": {
+      "defined_at": 119,
+      "calls": [
+        "common.VerifyPathAndPermission@component/ascend-device-plugin/pkg/common",
+        "grpc.Dial@go/grpc",
+        "net.DialTimeout@go/net",
+        "v1beta1.NewRegistrationClient@k8s/kubelet",
+        "client.Register@k8s/kubelet"
+      ],
+      "called_by": ["Start@component/ascend-device-plugin/pkg/server/server.go"],
+      "receives_external_input": false,
+      "risk": "High",
+      "description": "Registers device plugin with kubelet via Unix socket"
+    },
+    "Start@component/mindio/tft/src/csrc/acc_links/security/acc_tcp_ssl_helper.cpp": {
+      "defined_at": 41,
+      "calls": [
+        "InitTlsPath@component/mindio/tft/src/csrc/acc_links/security/acc_tcp_ssl_helper.cpp",
+        "ReadCheckCertParams@component/mindio/tft/src/csrc/acc_links/security/acc_tcp_ssl_helper.cpp",
+        "StartCheckCertExpired@component/mindio/tft/src/csrc/acc_links/security/acc_tcp_ssl_helper.cpp",
+        "InitSSL@component/mindio/tft/src/csrc/acc_links/security/acc_tcp_ssl_helper.cpp",
+        "OpenSslApiWrapper::OpensslInitSsl@component/mindio/tft/src/csrc/acc_links/under_api/openssl",
+        "OpenSslApiWrapper::SslCtxCtrl@component/mindio/tft/src/csrc/acc_links/under_api/openssl",
+        "OpenSslApiWrapper::SslCtxSetCipherSuites@component/mindio/tft/src/csrc/acc_links/under_api/openssl",
+        "LoadCaCert@component/mindio/tft/src/csrc/acc_links/security/acc_tcp_ssl_helper.cpp"
+      ],
+      "called_by": ["AccTcpServer::Start@component/mindio/tft/src/csrc/acc_links"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "SSL/TLS initialization with certificate handling - crypto operations"
+    },
+    "InitWorker@component/taskd/taskd/go/backend_api.go": {
+      "defined_at": 76,
+      "calls": [
+        "signal.Notify@go/os/signal",
+        "utils.InitHwLog@component/taskd/common/utils",
+        "worker.InitMonitor@component/taskd/framework_backend/worker",
+        "worker.InitNetwork@component/taskd/framework_backend/worker"
+      ],
+      "called_by": ["Python CGO wrapper"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "CGO exported function called by Python - initializes worker with network and monitoring"
+    },
+    "encrypt@component/ascend-faultdiag/toolkit_src/ascend_fd_tk/core/crypto/crypto.py": {
+      "defined_at": 45,
+      "calls": [
+        "_generate_random_component@component/ascend-faultdiag/toolkit_src/ascend_fd_tk/core/crypto/crypto.py",
+        "_combine_keys@component/ascend-faultdiag/toolkit_src/ascend_fd_tk/core/crypto/crypto.py",
+        "Cipher@cryptography.hazmat.primitives.ciphers",
+        "base64.b64encode@python/base64"
+      ],
+      "called_by": ["RootKeyCrypto.encrypt_with_salt@component/ascend-faultdiag/toolkit_src/ascend_fd_tk/core/crypto/crypto.py"],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "AES-GCM encryption with PBKDF2 key derivation - cryptographic operations"
+    },
+    "main@component/npu-exporter/cmd/npu-exporter/main.go": {
+      "defined_at": 1,
+      "calls": [
+        "prometheus_collector@component/npu-exporter/platforms/prom",
+        "npuCollector@component/npu-exporter/collector",
+        "http.ListenAndServe@go/http"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "Prometheus exporter main entry - HTTP metrics endpoint"
+    },
+    "readMountConfig@component/ascend-docker-runtime/hook/process/process.go": {
+      "defined_at": 239,
+      "calls": [
+        "filepath.Abs@go/path/filepath",
+        "mindxcheckutils.RealFileChecker@component/ascend-docker-runtime/mindxcheckutils",
+        "os.Stat@go/os",
+        "os.Open@go/os",
+        "bufio.NewScanner@go/bufio"
+      ],
+      "called_by": ["readConfigsOfDir@component/ascend-docker-runtime/hook/process/process.go"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "Reads mount configuration files - file I/O with path traversal risk"
+    },
+    "getContainerConfig@component/ascend-docker-runtime/hook/process/process.go": {
+      "defined_at": 187,
+      "calls": [
+        "json.NewDecoder@go/encoding/json",
+        "mindxcheckutils.RealFileChecker@component/ascend-docker-runtime/mindxcheckutils",
+        "parseOciSpecFile@component/ascend-docker-runtime/hook/process/process.go"
+      ],
+      "called_by": ["DoPrestartHook@component/ascend-docker-runtime/hook/process/process.go"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "Parses container state from stdin (JSON) - external input from container runtime"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "stdin@component/ascend-docker-runtime/hook/process/process.go:60",
+      "path": [
+        "json.NewDecoder@component/ascend-docker-runtime/hook/process/process.go:189",
+        "getContainerConfig@component/ascend-docker-runtime/hook/process/process.go:187",
+        "DoPrestartHook@component/ascend-docker-runtime/hook/process/process.go:337",
+        "parseMounts@component/ascend-docker-runtime/hook/process/process.go:97",
+        "readConfigsOfDir@component/ascend-docker-runtime/hook/process/process.go:296",
+        "readMountConfig@component/ascend-docker-runtime/hook/process/process.go:239"
+      ],
+      "sink": "syscall.Exec@component/ascend-docker-runtime/hook/process/process.go:388",
+      "sink_type": "process_execution",
+      "description": "Container state from stdin flows through parsing to process execution"
+    },
+    {
+      "source": "POD_IP@component/clusterd/pkg/interface/grpc/grpc_init.go:79",
+      "path": [
+        "isIPValid@component/clusterd/pkg/interface/grpc/grpc_init.go:50",
+        "net.Listen@component/clusterd/pkg/interface/grpc/grpc_init.go:90",
+        "grpcServer.Serve@component/clusterd/pkg/interface/grpc/grpc_init.go:110"
+      ],
+      "sink": "grpcServer.Serve@component/clusterd/pkg/interface/grpc/grpc_init.go:110",
+      "sink_type": "network_listener",
+      "description": "Environment variable POD_IP determines gRPC server bind address"
+    },
+    {
+      "source": "container.Env@component/ascend-docker-runtime/hook/process/process.go:216",
+      "path": [
+        "getValueByKey@component/ascend-docker-runtime/hook/process/process.go:222",
+        "parseRuntimeOptions@component/ascend-docker-runtime/hook/process/process.go:126",
+        "getArgs@component/ascend-docker-runtime/hook/process/process.go:322",
+        "syscall.Exec@component/ascend-docker-runtime/hook/process/process.go:388"
+      ],
+      "sink": "syscall.Exec@component/ascend-docker-runtime/hook/process/process.go:388",
+      "sink_type": "process_execution",
+      "description": "Environment variable ASCEND_RUNTIME_OPTIONS flows to CLI execution arguments"
+    },
+    {
+      "source": "config.json@component/ascend-docker-runtime/hook/process/process.go:195",
+      "path": [
+        "parseOciSpecFile@component/ascend-docker-runtime/hook/process/process.go:164",
+        "getContainerConfig@component/ascend-docker-runtime/hook/process/process.go:187"
+      ],
+      "sink": "ociSpec.Process.Env@component/ascend-docker-runtime/hook/process/process.go:216",
+      "sink_type": "environment_variables",
+      "description": "OCI spec file parsed to extract container environment variables"
+    }
+  ],
+  "metadata": {
+    "generated_at": "2026-04-21T06:10:00Z",
+    "lsp_available": false,
+    "analysis_method": "grep-based static analysis",
+    "project_type": "kubernetes_operators_and_python_tools"
+  }
+}

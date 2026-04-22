@@ -1,0 +1,697 @@
+{
+  "project_info": {
+    "name": "memfabric_hybrid",
+    "version": "1.0",
+    "type": "C/C++ + Python mixed project",
+    "description": "Huawei MindCluster memory pooling software - DRAM/HBM hybrid pooling with RDMA, SDMA, and shared memory interfaces",
+    "license": "Mulan PSL v2",
+    "vendor": "Huawei Technologies Co., Ltd.",
+    "hardware_platforms": [
+      "Atlas 200T A2 Box16",
+      "Atlas 800I A2/A3",
+      "Atlas 800T A2/A3",
+      "Atlas 900 A3 SuperPoD"
+    ],
+    "software_dependencies": [
+      "CANN 8.1.RC1+",
+      "Ascend HDK 24.1.RC2+",
+      "LingQu Computing Network 1.5.0",
+      "OpenSSL 1.1+",
+      "etcd v3"
+    ]
+  },
+  "statistics": {
+    "total_source_files": 284,
+    "c_cpp_files": 274,
+    "python_files": 10,
+    "go_files": 1,
+    "header_files": 120,
+    "modules": 4
+  },
+  "modules": {
+    "hybm": {
+      "path": "src/hybm",
+      "description": "Hybrid Big Memory module - Global Memory Management, Data Operation, Transport Management",
+      "language": "C++",
+      "sub_modules": {
+        "common": {
+          "files": [
+            "hybm_common_include.h",
+            "hybm_define.h",
+            "hybm_functions.h",
+            "hybm_logger.h",
+            "hybm_networks_common.cpp",
+            "hybm_rbtree_range_pool.cpp",
+            "hybm_space_allocator.h",
+            "hybm_types.h",
+            "hybm_version.h"
+          ]
+        },
+        "driver": {
+          "description": "Device driver and userspace communication",
+          "files": [
+            "userspace/devmm_ioctl.cpp",
+            "userspace/devmm_svm_gva.cpp",
+            "userspace/devmm_define.h",
+            "version/hybm_gva_version.cpp",
+            "npu_direct_rdma/npu_direct_rdma.c"
+          ],
+          "risk_level": "HIGH",
+          "reason": "Direct kernel driver interaction via ioctl, potential for privilege escalation"
+        },
+        "transport": {
+          "description": "RDMA and network transport management",
+          "sub_modules": {
+            "device": {
+              "files": [
+                "device_rdma_transport_manager.cpp",
+                "device_rdma_helper.cpp",
+                "device_qp_manager.cpp",
+                "bipartite_ranks_qp_manager.cpp",
+                "fixed_ranks_qp_manager.cpp",
+                "joinable_ranks_qp_manager.cpp"
+              ],
+              "risk_level": "HIGH",
+              "reason": "RDMA operations with remote memory access, QP management"
+            },
+            "host": {
+              "files": [
+                "host_hcom_transport_manager.cpp",
+                "host_hcom_helper.cpp",
+                "host_hcom_reconnector.cpp"
+              ],
+              "risk_level": "HIGH",
+              "reason": "Host RDMA transport, network communication"
+            },
+            "compose": {
+              "files": ["compose_transport_manager.cpp"],
+              "risk_level": "MEDIUM"
+            }
+          }
+        },
+        "data_operation": {
+          "description": "Data copy operations - RDMA, SDMA, SHM, MTE",
+          "sub_modules": {
+            "host": {
+              "files": [
+                "hybm_data_op_host_rdma.cpp",
+                "hybm_data_op_host_shm.cpp",
+                "hybm_data_op_device_rdma.cpp",
+                "hybm_data_op_sdma.cpp",
+                "hybm_compose_data_op.cpp"
+              ],
+              "risk_level": "HIGH",
+              "reason": "Remote memory read/write operations, potential data leakage"
+            }
+          }
+        },
+        "mm": {
+          "description": "Memory management - segments, VA manager",
+          "files": [
+            "hybm_mem_segment.cpp",
+            "hybm_va_manager.cpp",
+            "hybm_host_shm_segment.cpp",
+            "hybm_dev_legacy_segment.cpp",
+            "hybm_vmm_based_segment.cpp",
+            "hybm_conn_based_segment.cpp"
+          ],
+          "risk_level": "HIGH",
+          "reason": "Memory mapping and segment management, potential memory corruption"
+        },
+        "entity": {
+          "files": ["hybm_entity_default.cpp", "hybm_entity_factory.cpp", "hybm_entity_tag_info.cpp"]
+        },
+        "ts_engine": {
+          "description": "Stream and task engine",
+          "files": ["hybm_stream.cpp", "hybm_stream_manager.cpp", "hybm_stream_notify.cpp"]
+        },
+        "under_api": {
+          "description": "Dynamic library APIs - ACL, HAL, HCCL, HCCP, HCOM",
+          "files": [
+            "dl_acl_api.cpp",
+            "dl_hal_api.cpp",
+            "dl_hccl_api.cpp",
+            "dl_hccp_api.cpp",
+            "dl_hcom_api.cpp",
+            "dl_cuda_api.cpp",
+            "dl_api.cpp"
+          ],
+          "risk_level": "HIGH",
+          "reason": "Dynamic library loading, potential DLL/SO injection"
+        }
+      }
+    },
+    "smem": {
+      "path": "src/smem",
+      "description": "Shared Memory module - semantic interfaces, config store, network engine",
+      "language": "C++",
+      "sub_modules": {
+        "config_store": {
+          "description": "Configuration storage - TCP, etcd, local memory backends",
+          "sub_modules": {
+            "tcp_store": {
+              "files": [
+                "smem_tcp_config_store.cpp",
+                "smem_tcp_config_store_server.cpp",
+                "smem_message_packer.cpp"
+              ],
+              "risk_level": "HIGH",
+              "reason": "TCP server with message handling, potential injection attacks"
+            },
+            "backend": {
+              "files": [
+                "smem_etcd_store_backend.cpp",
+                "smem_local_memory_backend.cpp",
+                "smem_external_backend.cpp",
+                "dl_etcd_api.cpp"
+              ],
+              "risk_level": "MEDIUM",
+              "reason": "External backend connections, etcd client"
+            },
+            "ha": {
+              "files": ["smem_ha_config_store.cpp", "network_endpoint_util.cpp"],
+              "risk_level": "MEDIUM"
+            }
+          }
+        },
+        "net": {
+          "description": "Network group engine for distributed coordination",
+          "files": ["smem_net_common.cpp", "smem_net_group_engine.cpp"],
+          "risk_level": "HIGH",
+          "reason": "Group barrier, allgather operations, distributed coordination"
+        },
+        "smem_shm": {
+          "description": "Shared memory operations",
+          "files": ["smem_shm.cpp", "smem_shm_entry.cpp", "smem_shm_entry_manager.cpp"],
+          "risk_level": "HIGH",
+          "reason": "Shared memory IPC, potential memory disclosure"
+        },
+        "smem_bm": {
+          "description": "Big memory operations",
+          "files": ["smem_bm.cpp", "smem_bm_entry.cpp", "smem_bm_entry_manager.cpp"],
+          "risk_level": "HIGH"
+        },
+        "smem_trans": {
+          "description": "Transfer operations",
+          "files": ["smem_trans.cpp", "smem_trans_entry.cpp"],
+          "risk_level": "MEDIUM"
+        },
+        "python_wrapper": {
+          "description": "Python bindings for memfabric_hybrid",
+          "files": [
+            "memfabric_hybrid/pymf_hybrid.cpp",
+            "mk_transfer_adapter/csrc/pytransfer.cpp"
+          ],
+          "risk_level": "HIGH",
+          "reason": "Python API with decrypt handler callback, potential callback injection"
+        }
+      }
+    },
+    "acc_links": {
+      "path": "src/acc_links",
+      "description": "Accelerator Links - TCP server, SSL/TLS helper, internal communication",
+      "language": "C++",
+      "sub_modules": {
+        "tcp_server": {
+          "files": [
+            "acc_tcp_server_default.cpp",
+            "acc_tcp_listener.cpp",
+            "acc_tcp_worker.cpp"
+          ],
+          "risk_level": "HIGH",
+          "reason": "TCP server accepting external connections, handshake validation"
+        },
+        "security": {
+          "files": ["acc_tcp_ssl_helper.cpp"],
+          "risk_level": "HIGH",
+          "reason": "SSL/TLS certificate handling, private key decryption"
+        },
+        "common": {
+          "files": ["acc_common_util.cpp", "acc_file_validator.cpp"],
+          "risk_level": "MEDIUM"
+        },
+        "under_api": {
+          "files": [
+            "openssl/openssl_api_dl.cpp",
+            "openssl/openssl_api_wrapper.h"
+          ],
+          "risk_level": "HIGH",
+          "reason": "OpenSSL dynamic library loading"
+        }
+      }
+    },
+    "util": {
+      "path": "src/util",
+      "description": "Utility functions - logging, file ops, fault injection",
+      "language": "C++",
+      "sub_modules": {
+        "csrc": {
+          "files": [
+            "mf_file_util.h",
+            "mf_env_util.h",
+            "mf_fault_injection_point.cpp",
+            "mf_ipv4_validator.h",
+            "mf_str_util.h",
+            "mf_net.h",
+            "mf_out_logger.h"
+          ],
+          "risk_level": "MEDIUM"
+        },
+        "etcd_client": {
+          "files": ["etcd_store_backend/etcd_client_v3.go"],
+          "language": "Go",
+          "risk_level": "MEDIUM"
+        }
+      }
+    }
+  },
+  "entry_points": {
+    "network_interfaces": [
+      {
+        "name": "TCP Config Store Server",
+        "file": "src/smem/csrc/config_store/tcp_store/smem_tcp_config_store_server.cpp",
+        "function": "AccStoreServer::Startup",
+        "port": "dynamic (configured)",
+        "protocol": "TCP with optional TLS 1.3",
+        "data_flow": "IN/OUT",
+        "description": "Receives configuration commands (SET/GET/ADD/APPEND/CAS/WRITE) from client ranks",
+        "risk_level": "HIGH",
+        "attack_vectors": [
+          "Message injection via malformed SmemMessage",
+          "Key/value injection",
+          "Denial of service via excessive requests",
+          "TLS certificate spoofing"
+        ]
+      },
+      {
+        "name": "TCP Accelerator Link Server",
+        "file": "src/acc_links/csrc/acc_tcp_server_default.cpp",
+        "function": "AccTcpServerDefault::Start",
+        "port": "dynamic (configured)",
+        "protocol": "TCP with TLS 1.3",
+        "data_flow": "IN/OUT",
+        "description": "Accepts connections from peer ranks, performs magic/version validation",
+        "risk_level": "HIGH",
+        "attack_vectors": [
+          "Connection hijacking",
+          "Magic/version spoofing",
+          "SSL certificate manipulation",
+          "Man-in-the-middle attacks"
+        ]
+      },
+      {
+        "name": "RDMA Device Transport",
+        "file": "src/hybm/csrc/transport/device/device_rdma_transport_manager.cpp",
+        "function": "RdmaTransportManager::OpenDevice",
+        "protocol": "RDMA over RoCE/UB",
+        "data_flow": "IN/OUT",
+        "description": "Remote direct memory access for cross-node data transfer",
+        "risk_level": "HIGH",
+        "attack_vectors": [
+          "Unauthorized memory region registration",
+          "QP hijacking",
+          "Remote memory read/write without authorization",
+          "RDMA packet injection"
+        ]
+      },
+      {
+        "name": "Host RDMA Transport",
+        "file": "src/hybm/csrc/transport/host/host_hcom_transport_manager.cpp",
+        "function": "HcomTransportManager::OpenDevice",
+        "protocol": "Host RDMA",
+        "data_flow": "IN/OUT",
+        "risk_level": "HIGH",
+        "attack_vectors": [
+          "Memory region manipulation",
+          "Unauthorized remote memory access"
+        ]
+      },
+      {
+        "name": "etcd Backend",
+        "file": "src/smem/csrc/config_store/backend/smem_etcd_store_backend.cpp",
+        "function": "SmemEtcdStoreBackend::Initialize",
+        "protocol": "etcd v3 API",
+        "data_flow": "IN/OUT",
+        "description": "Distributed configuration storage backend",
+        "risk_level": "MEDIUM",
+        "attack_vectors": [
+          "etcd server spoofing",
+          "Key injection",
+          "Lock acquisition attacks"
+        ]
+      }
+    ],
+    "ipc_interfaces": [
+      {
+        "name": "Shared Memory",
+        "file": "src/smem/csrc/smem_shm/smem_shm.cpp",
+        "function": "smem_shm_create",
+        "type": "POSIX shared memory",
+        "data_flow": "IN/OUT",
+        "description": "Cross-process shared memory with GVA addressing",
+        "risk_level": "HIGH",
+        "attack_vectors": [
+          "Shared memory race conditions",
+          "Memory disclosure via GVA",
+          "Use-after-free",
+          "Double-free"
+        ]
+      },
+      {
+        "name": "Device IOCTL",
+        "file": "src/hybm/csrc/driver/userspace/devmm_ioctl.cpp",
+        "function": "HybmMapShareMemory",
+        "type": "ioctl to kernel driver",
+        "data_flow": "IN/OUT",
+        "description": "Userspace to kernel communication for SVM memory operations",
+        "risk_level": "HIGH",
+        "attack_vectors": [
+          "Ioctl parameter manipulation",
+          "Kernel memory corruption",
+          "Privilege escalation via driver"
+        ]
+      },
+      {
+        "name": "Memory Region Registration",
+        "file": "src/hybm/csrc/transport/device/device_rdma_transport_manager.cpp",
+        "function": "RdmaTransportManager::RegisterMemoryRegion",
+        "type": "RDMA MR registration",
+        "data_flow": "IN",
+        "description": "Register memory regions for RDMA access",
+        "risk_level": "HIGH",
+        "attack_vectors": [
+          "Unauthorized memory registration",
+          "Memory region overlap",
+          "Size manipulation"
+        ]
+      }
+    ],
+    "api_interfaces": [
+      {
+        "name": "C API - smem_bm",
+        "file": "src/smem/include/host/smem_bm.h",
+        "functions": [
+          "smem_bm_init",
+          "smem_bm_create",
+          "smem_bm_copy",
+          "smem_bm_copy_batch",
+          "smem_bm_join",
+          "smem_bm_leave",
+          "smem_bm_register_user_mem"
+        ],
+        "description": "Big Memory C API",
+        "risk_level": "HIGH",
+        "attack_vectors": [
+          "Parameter injection",
+          "Memory address manipulation",
+          "Copy size overflow"
+        ]
+      },
+      {
+        "name": "C API - smem_shm",
+        "file": "src/smem/include/host/smem_shm.h",
+        "functions": [
+          "smem_shm_init",
+          "smem_shm_create",
+          "smem_shm_control_barrier",
+          "smem_shm_control_allgather"
+        ],
+        "description": "Shared Memory C API",
+        "risk_level": "HIGH"
+      },
+      {
+        "name": "Python API - pymf_hybrid",
+        "file": "src/smem/csrc/python_wrapper/memfabric_hybrid/pymf_hybrid.cpp",
+        "functions": [
+          "initialize",
+          "create",
+          "copy_data",
+          "copy_data_batch",
+          "set_conf_store_tls_key",
+          "set_extern_logger"
+        ],
+        "description": "Python bindings for memfabric_hybrid",
+        "risk_level": "HIGH",
+        "attack_vectors": [
+          "Python callback injection",
+          "Decrypt handler manipulation",
+          "Memory address passing from Python"
+        ]
+      }
+    ],
+    "configuration_interfaces": [
+      {
+        "name": "TLS Configuration",
+        "file": "src/acc_links/csrc/security/acc_tcp_ssl_helper.cpp",
+        "function": "AccTcpSslHelper::InitTlsPath",
+        "description": "TLS certificate and private key configuration",
+        "risk_level": "HIGH",
+        "attack_vectors": [
+          "Certificate path manipulation",
+          "Private key theft",
+          "CRL bypass"
+        ]
+      },
+      {
+        "name": "Environment Variables",
+        "files": [
+          "src/util/csrc/mf_env_util.h",
+          "src/hybm/csrc/security/acc_tcp_ssl_helper.cpp"
+        ],
+        "variables": [
+          "HYBM_RDMA_SWAP_SPACE_SIZE",
+          "ACCLINK_CHECK_PERIOD_HOURS",
+          "ACCLINK_CERT_CHECK_AHEAD_DAYS"
+        ],
+        "risk_level": "MEDIUM",
+        "attack_vectors": [
+          "Environment variable manipulation",
+          "Size limit bypass"
+        ]
+      }
+    ],
+    "dynamic_library_interfaces": [
+      {
+        "name": "OpenSSL Dynamic Loading",
+        "file": "src/acc_links/csrc/under_api/openssl/openssl_api_dl.cpp",
+        "function": "OpenSslApiWrapper::Load",
+        "description": "Dynamic loading of OpenSSL functions",
+        "risk_level": "HIGH",
+        "attack_vectors": [
+          "Library path injection",
+          "Symbol hijacking",
+          "SO/DLL replacement"
+        ]
+      },
+      {
+        "name": "ACL API Loading",
+        "file": "src/hybm/csrc/under_api/dl_acl_api.cpp",
+        "function": "DlAclApi::LoadLibrary",
+        "description": "Ascend Computing Library dynamic loading",
+        "risk_level": "HIGH",
+        "attack_vectors": [
+          "Library injection",
+          "API function replacement"
+        ]
+      },
+      {
+        "name": "HCCP API Loading",
+        "file": "src/hybm/csrc/under_api/dl_hccp_api.cpp",
+        "function": "DlHccpApi::LoadLibrary",
+        "description": "HCCP RDMA API dynamic loading",
+        "risk_level": "HIGH"
+      },
+      {
+        "name": "etcd API Loading",
+        "file": "src/smem/csrc/config_store/backend/dl_etcd_api.cpp",
+        "function": "EtcdApi::LoadLibrary",
+        "description": "etcd client library dynamic loading",
+        "risk_level": "HIGH"
+      }
+    ]
+  },
+  "attack_surface_summary": {
+    "total_entry_points": 15,
+    "high_risk_count": 12,
+    "medium_risk_count": 3,
+    "categories": {
+      "network": 5,
+      "ipc": 3,
+      "api": 3,
+      "configuration": 2,
+      "dynamic_library": 4
+    }
+  },
+  "high_risk_areas": [
+    {
+      "area": "RDMA Remote Memory Access",
+      "files": [
+        "src/hybm/csrc/transport/device/device_rdma_transport_manager.cpp",
+        "src/hybm/csrc/data_operation/host/hybm_data_op_host_rdma.cpp",
+        "src/hybm/csrc/data_operation/host/hybm_data_op_device_rdma.cpp"
+      ],
+      "vulnerability_types": [
+        "CWE-119: Buffer Overflow",
+        "CWE-125: Out-of-bounds Read",
+        "CWE-787: Out-of-bounds Write",
+        "CWE-20: Improper Input Validation"
+      ],
+      "description": "Remote memory read/write operations without sufficient bounds checking"
+    },
+    {
+      "area": "TCP Message Handling",
+      "files": [
+        "src/smem/csrc/config_store/tcp_store/smem_tcp_config_store_server.cpp",
+        "src/smem/csrc/config_store/tcp_store/smem_message_packer.cpp",
+        "src/acc_links/csrc/acc_tcp_server_default.cpp"
+      ],
+      "vulnerability_types": [
+        "CWE-20: Improper Input Validation",
+        "CWE-787: Out-of-bounds Write",
+        "CWE-502: Deserialization of Untrusted Data",
+        "CWE-400: Resource Exhaustion"
+      ],
+      "description": "Message unpacking and handling without sufficient validation"
+    },
+    {
+      "area": "SSL/TLS Certificate Handling",
+      "files": [
+        "src/acc_links/csrc/security/acc_tcp_ssl_helper.cpp",
+        "src/acc_links/csrc/under_api/openssl/openssl_api_dl.cpp"
+      ],
+      "vulnerability_types": [
+        "CWE-295: Improper Certificate Validation",
+        "CWE-326: Inadequate Encryption Strength",
+        "CWE-327: Broken Cryptographic Algorithm"
+      ],
+      "description": "Certificate validation and private key handling"
+    },
+    {
+      "area": "Shared Memory Operations",
+      "files": [
+        "src/smem/csrc/smem_shm/smem_shm.cpp",
+        "src/smem/csrc/smem_bm/smem_bm.cpp",
+        "src/hybm/csrc/mm/hybm_mem_segment.cpp"
+      ],
+      "vulnerability_types": [
+        "CWE-119: Buffer Overflow",
+        "CWE-416: Use-after-free",
+        "CWE-415: Double-free",
+        "CWE-662: Improper Synchronization"
+      ],
+      "description": "Shared memory IPC with potential race conditions"
+    },
+    {
+      "area": "Dynamic Library Loading",
+      "files": [
+        "src/hybm/csrc/under_api/dl_acl_api.cpp",
+        "src/hybm/csrc/under_api/dl_hccp_api.cpp",
+        "src/acc_links/csrc/under_api/openssl/openssl_api_dl.cpp",
+        "src/smem/csrc/config_store/backend/dl_etcd_api.cpp"
+      ],
+      "vulnerability_types": [
+        "CWE-114: Process Control",
+        "CWE-829: Inclusion of Functionality from Untrusted Control Sphere",
+        "CWE-426: Untrusted Search Path"
+      ],
+      "description": "Dynamic library loading with potential path injection"
+    },
+    {
+      "area": "Python Callback Injection",
+      "files": [
+        "src/smem/csrc/python_wrapper/memfabric_hybrid/pymf_hybrid.cpp"
+      ],
+      "vulnerability_types": [
+        "CWE-94: Code Injection",
+        "CWE-20: Improper Input Validation"
+      ],
+      "description": "Python decrypt handler callback for TLS private key"
+    }
+  ],
+  "data_flow_patterns": [
+    {
+      "pattern": "Remote Memory Read",
+      "source": "Remote Host/Device Memory (via GVA)",
+      "sink": "Local Host/Device Memory",
+      "transport": "RDMA/SDMA/MTE",
+      "files": [
+        "src/hybm/csrc/data_operation/host/hybm_data_op_host_rdma.cpp",
+        "src/hybm/csrc/data_operation/host/hybm_data_op_sdma.cpp"
+      ]
+    },
+    {
+      "pattern": "Remote Memory Write",
+      "source": "Local Host/Device Memory",
+      "sink": "Remote Host/Device Memory (via GVA)",
+      "transport": "RDMA/SDMA/MTE",
+      "files": [
+        "src/hybm/csrc/data_operation/host/hybm_data_op_host_rdma.cpp",
+        "src/hybm/csrc/data_operation/host/hybm_data_op_sdma.cpp"
+      ]
+    },
+    {
+      "pattern": "Configuration Message Exchange",
+      "source": "TCP Client",
+      "sink": "TCP Config Store Server",
+      "transport": "TCP with optional TLS",
+      "files": [
+        "src/smem/csrc/config_store/tcp_store/smem_tcp_config_store_server.cpp",
+        "src/smem/csrc/config_store/tcp_store/smem_tcp_config_store.cpp"
+      ]
+    },
+    {
+      "pattern": "Certificate Loading",
+      "source": "Certificate Files (CA, Server, Private Key)",
+      "sink": "SSL_CTX",
+      "transport": "File I/O",
+      "files": [
+        "src/acc_links/csrc/security/acc_tcp_ssl_helper.cpp"
+      ]
+    }
+  ],
+  "trust_boundaries": [
+    {
+      "boundary": "Network - External",
+      "description": "TCP connections from external ranks, RDMA connections from remote nodes",
+      "crosses": [
+        "TCP Config Store Server",
+        "TCP Accelerator Link Server",
+        "RDMA Transport Managers"
+      ]
+    },
+    {
+      "boundary": "IPC - Shared Memory",
+      "description": "Shared memory segments accessible by multiple processes",
+      "crosses": [
+        "smem_shm operations",
+        "Memory segment management"
+      ]
+    },
+    {
+      "boundary": "Kernel - Userspace",
+      "description": "ioctl interface to kernel driver",
+      "crosses": [
+        "devmm_ioctl.cpp",
+        "npu_direct_rdma.c"
+      ]
+    },
+    {
+      "boundary": "Python - C++",
+      "description": "Python bindings crossing into native code",
+      "crosses": [
+        "pymf_hybrid.cpp",
+        "pytransfer.cpp"
+      ]
+    },
+    {
+      "boundary": "Dynamic Library - Native",
+      "description": "Dynamic library loading crossing trust boundary",
+      "crosses": [
+        "dl_acl_api.cpp",
+        "dl_hccp_api.cpp",
+        "openssl_api_dl.cpp",
+        "dl_etcd_api.cpp"
+      ]
+    }
+  ]
+}

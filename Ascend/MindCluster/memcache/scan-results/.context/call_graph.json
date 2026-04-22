@@ -1,0 +1,356 @@
+{
+  "functions": {
+    "main@mmc_daemon.cpp": {
+      "defined_at": 17,
+      "calls": ["MmcMetaServiceProcess::getInstance@mmc_meta_service_process.h", "MmcMetaServiceProcess::MainForExecutable@mmc_meta_service_process.cpp"],
+      "called_by": [],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "MmcMetaServiceProcess::MainForPython@mmc_meta_service_process.cpp": {
+      "defined_at": 56,
+      "calls": ["CheckIsRunning@mmc_meta_service_process.cpp", "LoadConfig@mmc_meta_service_process.cpp", "RegisterSignal@mmc_meta_service_process.cpp", "ptracer_init@ptracer.h", "InitLogger@mmc_meta_service_process.cpp", "MmcMetaService::Start@mmc_meta_service.cpp", "StartHttpServer@mmc_meta_service_process.cpp", "Exit@mmc_meta_service_process.cpp"],
+      "called_by": ["MainForExecutable@mmc_meta_service_process.cpp"],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "StartHttpServer@mmc_meta_service_process.cpp": {
+      "defined_at": 303,
+      "calls": ["ExtractIpPortFromUrl@mmc_meta_service_process.cpp", "MmcHttpServer::Start@mmc_http_server.cpp"],
+      "called_by": ["MainForPython@mmc_meta_service_process.cpp"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "MmcHttpServer::RegisterUrls@mmc_http_server.cpp": {
+      "defined_at": 37,
+      "calls": ["RegisterHealthCheckEndpoint@mmc_http_server.cpp", "RegisterDataManagementEndpoints@mmc_http_server.cpp", "RegisterSegmentManagementEndpoints@mmc_http_server.cpp", "RegisterMetricsEndpoint@mmc_http_server.cpp"],
+      "called_by": ["MmcHttpServer constructor@mmc_http_server.h"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "MmcHttpServer::RegisterDataManagementEndpoints@mmc_http_server.cpp": {
+      "defined_at": 53,
+      "calls": ["MmcMetaManager::GetAllKeys@mmc_meta_manager.cpp", "MmcMetaManager::Query@mmc_meta_manager.cpp", "MemObjQueryInfo::toJson@mmc_types.h"],
+      "called_by": ["RegisterUrls@mmc_http_server.cpp"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "MetaNetServer::HandleAlloc@mmc_meta_net_server.cpp": {
+      "defined_at": 167,
+      "calls": ["NetContext::GetRequest@mmc_net_engine.h", "MmcMetaMgrProxy::Alloc@mmc_meta_mgr_proxy.cpp", "NetContext::Reply@mmc_net_engine.h"],
+      "called_by": ["NetEngine request handler@mmc_net_engine.h"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "MetaNetServer::HandleGet@mmc_meta_net_server.cpp": {
+      "defined_at": 243,
+      "calls": ["NetContext::GetRequest@mmc_net_engine.h", "MmcMetaMgrProxy::Get@mmc_meta_mgr_proxy.cpp", "NetContext::Reply@mmc_net_engine.h"],
+      "called_by": ["NetEngine request handler@mmc_net_engine.h"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "MetaNetServer::HandleRemove@mmc_meta_net_server.cpp": {
+      "defined_at": 274,
+      "calls": ["NetContext::GetRequest@mmc_net_engine.h", "MmcMetaMgrProxy::Remove@mmc_meta_mgr_proxy.cpp", "NetContext::Reply@mmc_net_engine.h"],
+      "called_by": ["NetEngine request handler@mmc_net_engine.h"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "MetaNetServer::HandleRemoveAll@mmc_meta_net_server.cpp": {
+      "defined_at": 305,
+      "calls": ["NetContext::GetRequest@mmc_net_engine.h", "MmcMetaMgrProxy::RemoveAll@mmc_meta_mgr_proxy.cpp", "NetContext::Reply@mmc_net_engine.h"],
+      "called_by": ["NetEngine request handler@mmc_net_engine.h"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "MetaNetServer::HandleBmRegister@mmc_meta_net_server.cpp": {
+      "defined_at": 97,
+      "calls": ["NetContext::GetRequest@mmc_net_engine.h", "MmcMetaService::BmRegister@mmc_meta_service.cpp", "NetContext::Reply@mmc_net_engine.h"],
+      "called_by": ["NetEngine request handler@mmc_net_engine.h"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "MetaNetServer::HandlePing@mmc_meta_net_server.cpp": {
+      "defined_at": 134,
+      "calls": ["PingMsg::Deserialize@mmc_msg_client_meta.h", "PingMsg::Serialize@mmc_msg_client_meta.h", "NetContext::Reply@mmc_net_engine.h"],
+      "called_by": ["NetEngine request handler@mmc_net_engine.h"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "NetContext::GetRequest@mmc_net_engine.h": {
+      "defined_at": 100,
+      "calls": ["NetMsgUnpacker::Deserialize@mmc_msg_packer.h"],
+      "called_by": ["HandleAlloc@mmc_meta_net_server.cpp", "HandleGet@mmc_meta_net_server.cpp", "HandleRemove@mmc_meta_net_server.cpp"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "NetMsgUnpacker::Deserialize@mmc_msg_packer.h": {
+      "defined_at": 125,
+      "calls": ["std::istringstream::read@std"],
+      "called_by": ["NetContext::GetRequest@mmc_net_engine.h", "AllocRequest::Deserialize@mmc_msg_client_meta.h"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "MmcMetaMgrProxy::Alloc@mmc_meta_mgr_proxy.cpp": {
+      "defined_at": 17,
+      "calls": ["MmcMetaManager::CheckAndEvict@mmc_meta_manager.cpp", "MmcMetaManager::Alloc@mmc_meta_manager.cpp"],
+      "called_by": ["HandleAlloc@mmc_meta_net_server.cpp"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "MmcMetaManager::Alloc@mmc_meta_manager.cpp": {
+      "defined_at": 130,
+      "calls": ["MmcGlobalAllocator::Alloc@mmc_global_allocator.h", "MmcMemBlob::UpdateState@mmc_mem_blob.h", "MmcMetaContainer::Insert@mmc_meta_container.h"],
+      "called_by": ["MmcMetaMgrProxy::Alloc@mmc_meta_mgr_proxy.cpp"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "MmcMetaManager::Get@mmc_meta_manager.cpp": {
+      "defined_at": 25,
+      "calls": ["MmcMetaContainer::Get@mmc_meta_container.h", "MmcMetaContainer::Promote@mmc_meta_container.h", "MmcMemBlob::UpdateState@mmc_mem_blob.h"],
+      "called_by": ["MmcMetaMgrProxy::Get@mmc_meta_mgr_proxy.cpp"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "MmcMetaManager::Remove@mmc_meta_manager.cpp": {
+      "defined_at": 223,
+      "calls": ["MmcMetaContainer::Erase@mmc_meta_container.h", "MmcMemObjMeta::FreeBlobs@mmc_mem_obj_meta.h"],
+      "called_by": ["MmcMetaMgrProxy::Remove@mmc_meta_mgr_proxy.cpp"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "MmcMetaManager::RemoveAll@mmc_meta_manager.cpp": {
+      "defined_at": 238,
+      "calls": ["MmcMetaContainer::EraseAll@mmc_meta_container.h", "PushRemoveList@mmc_meta_manager.cpp"],
+      "called_by": ["MmcMetaMgrProxy::RemoveAll@mmc_meta_mgr_proxy.cpp"],
+      "receives_external_input": false,
+      "risk": "High"
+    },
+    "AllocRequest::Deserialize@mmc_msg_client_meta.h": {
+      "defined_at": 107,
+      "calls": ["NetMsgUnpacker::Deserialize@mmc_msg_packer.h", "AllocOptions::Deserialize@mmc_msg_client_meta.h"],
+      "called_by": ["NetContext::GetRequest@mmc_net_engine.h"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "NetMsgUnpacker::Deserialize(string)@mmc_msg_packer.h": {
+      "defined_at": 135,
+      "calls": ["std::istringstream::read@std", "std::string::resize@std"],
+      "called_by": ["AllocRequest::Deserialize@mmc_msg_client_meta.h", "GetRequest::Deserialize@mmc_msg_client_meta.h"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "Configuration::LoadFromFile@mmc_configuration.cpp": {
+      "defined_at": 119,
+      "calls": ["KVParser::FromFile@mmc_kv_parser.cpp", "SetWithTypeAutoConvert@mmc_configuration.cpp"],
+      "called_by": ["Setup@mmc_configuration.cpp", "LoadConfig@mmc_meta_service_process.cpp"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "KVParser::FromFile@mmc_kv_parser.cpp": {
+      "defined_at": 50,
+      "calls": ["std::ifstream::open@std", "ParseLine@mmc_kv_parser.cpp"],
+      "called_by": ["LoadFromFile@mmc_configuration.cpp"],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "MetaServiceLeaderElection::update_lease@meta_service_leader_election.py": {
+      "defined_at": 113,
+      "calls": ["coordination_v1.read_namespaced_lease@kubernetes", "coordination_v1.replace_namespaced_lease@kubernetes"],
+      "called_by": ["ElectionLoop@mmc_leader_election.cpp", "_renew_lease@meta_service_leader_election.py"],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "MetaServiceLeaderElection::check_leader_status@meta_service_leader_election.py": {
+      "defined_at": 142,
+      "calls": ["coordination_v1.read_namespaced_lease@kubernetes"],
+      "called_by": ["CheckLeaderStatus@mmc_leader_election.cpp"],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "MmcUbsIoProxy::Put@mmc_ubs_io_proxy.cpp": {
+      "defined_at": 61,
+      "calls": ["DlDfcApi::DfcPut@dl_dfc_api.h"],
+      "called_by": ["CopyBlob@mmc_local_service_default.cpp"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "MmcUbsIoProxy::Get@mmc_ubs_io_proxy.cpp": {
+      "defined_at": 74,
+      "calls": ["DlDfcApi::DfcGet@dl_dfc_api.h"],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "DlDfcApi::LoadLibrary@dl_dfc_api.cpp": {
+      "defined_at": 35,
+      "calls": ["dlopen@libc"],
+      "called_by": ["InitUbsIo@mmc_ubs_io_proxy.cpp"],
+      "receives_external_input": false,
+      "risk": "High"
+    },
+    "mmcc_put@mmc_client.cpp": {
+      "defined_at": 62,
+      "calls": ["MmcClientDefault::Put@mmc_client_default.h", "strlen@libc"],
+      "called_by": ["MmcacheStore::Put@mmcache_store.cpp", "MmcacheStore::PutFrom@mmcache_store.cpp"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "mmcc_get@mmc_client.cpp": {
+      "defined_at": 79,
+      "calls": ["MmcClientDefault::Get@mmc_client_default.h", "strlen@libc"],
+      "called_by": ["MmcacheStore::Get@mmcache_store.cpp", "MmcacheStore::GetInto@mmcache_store.cpp"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "mmcc_remove@mmc_client.cpp": {
+      "defined_at": 154,
+      "calls": ["MmcClientDefault::Remove@mmc_client_default.h", "strlen@libc"],
+      "called_by": ["MmcacheStore::Remove@mmcache_store.cpp"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "mmcc_batch_put@mmc_client.cpp": {
+      "defined_at": 313,
+      "calls": ["MmcClientDefault::BatchPut@mmc_client_default.h", "strlen@libc"],
+      "called_by": ["MmcacheStore::BatchPutFrom@mmcache_store.cpp"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "mmcc_batch_get@mmc_client.cpp": {
+      "defined_at": 278,
+      "calls": ["MmcClientDefault::BatchGet@mmc_client_default.h", "strlen@libc"],
+      "called_by": ["MmcacheStore::BatchGetInto@mmcache_store.cpp"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "MmcacheStore::register_buffer@pymmc.cpp": {
+      "defined_at": 641,
+      "calls": ["MmcacheStore::RegisterBuffer@mmcache_store.cpp"],
+      "called_by": ["Python user code"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "MmcacheStore::get_into@pymmc.cpp": {
+      "defined_at": 658,
+      "calls": ["MmcacheStore::GetInto@mmcache_store.cpp", "reinterpret_cast@cpp"],
+      "called_by": ["Python user code"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "MmcacheStore::put_from@pymmc.cpp": {
+      "defined_at": 727,
+      "calls": ["MmcacheStore::PutFrom@mmcache_store.cpp", "reinterpret_cast@cpp"],
+      "called_by": ["Python user code"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "MmcHttpServer::Get@mmc_http_server.cpp": {
+      "defined_at": 80,
+      "calls": ["req.params.find@httplib", "MmcMetaManager::Query@mmc_meta_manager.cpp"],
+      "called_by": ["httplib server"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "MmcMetaManager::Query@mmc_meta_manager.cpp": {
+      "defined_at": 389,
+      "calls": ["MmcMetaContainer::Get@mmc_meta_container.h", "MmcMemObjMeta::GetBlobsDesc@mmc_mem_obj_meta.h"],
+      "called_by": ["RegisterDataManagementEndpoints@mmc_http_server.cpp", "HandleQuery@mmc_meta_net_server.cpp"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "ValidatePathNotSymlink@mmc_configuration.cpp": {
+      "defined_at": 536,
+      "calls": ["lstat@libc", "S_ISLNK@libc"],
+      "called_by": ["ValidateTLSConfig@mmc_configuration.cpp"],
+      "receives_external_input": true,
+      "risk": "Medium"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "HTTP Request@mmc_http_server.cpp:80",
+      "path": ["RegisterDataManagementEndpoints@mmc_http_server.cpp:80", "MmcMetaManager::Query@mmc_meta_manager.cpp:389", "MmcMetaContainer::Get@mmc_meta_container.h"],
+      "sink": "MemObjQueryInfo::toJson@mmc_http_server.cpp:110",
+      "sink_type": "information_disclosure"
+    },
+    {
+      "source": "RPC Network Data@mmc_meta_net_server.cpp:167",
+      "path": ["NetContext::GetRequest@mmc_net_engine.h:100", "AllocRequest::Deserialize@mmc_msg_client_meta.h:107", "NetMsgUnpacker::Deserialize@mmc_msg_packer.h:135"],
+      "sink": "std::string::resize@mmc_msg_packer.h:139",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "RPC AllocRequest@mmc_meta_net_server.cpp:167",
+      "path": ["HandleAlloc@mmc_meta_net_server.cpp:167", "MmcMetaMgrProxy::Alloc@mmc_meta_mgr_proxy.cpp:17", "MmcMetaManager::Alloc@mmc_meta_manager.cpp:130", "MmcGlobalAllocator::Alloc@mmc_global_allocator.h"],
+      "sink": "Memory Allocation@mmc_global_allocator.h",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "RPC GetRequest@mmc_meta_net_server.cpp:243",
+      "path": ["HandleGet@mmc_meta_net_server.cpp:243", "MmcMetaMgrProxy::Get@mmc_meta_mgr_proxy.cpp:99", "MmcMetaManager::Get@mmc_meta_manager.cpp:25", "MmcMetaContainer::Get@mmc_meta_container.h"],
+      "sink": "Blob Address Return@mmc_meta_manager.cpp:55",
+      "sink_type": "information_disclosure"
+    },
+    {
+      "source": "RPC RemoveRequest@mmc_meta_net_server.cpp:274",
+      "path": ["HandleRemove@mmc_meta_net_server.cpp:274", "MmcMetaMgrProxy::Remove@mmc_meta_mgr_proxy.cpp", "MmcMetaManager::Remove@mmc_meta_manager.cpp:223", "MmcMetaContainer::Erase@mmc_meta_container.h"],
+      "sink": "MmcMemObjMeta::FreeBlobs@mmc_meta_manager.cpp:232",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "Python uintptr_t@pymmc.cpp:641",
+      "path": ["register_buffer@pymmc.cpp:641", "MmcacheStore::RegisterBuffer@mmcache_store.cpp:168", "mmcc_register_buffer@mmc_client.cpp:44"],
+      "sink": "reinterpret_cast<void*>@pymmc.cpp:643",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "Python buffer@pymmc.cpp:791",
+      "path": ["put@pymmc.cpp:791", "MmcacheStore::Put@mmcache_store.cpp:796", "mmcc_put@mmc_client.cpp:62", "MmcClientDefault::Put@mmc_client_default.h"],
+      "sink": "Memory Transfer@mmc_client_default.h",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "Python key@pymmc.cpp:825",
+      "path": ["get@pymmc.cpp:825", "MmcacheStore::Get@mmcache_store.cpp:842", "mmcc_query@mmc_client.cpp:93", "mmcc_get@mmc_client.cpp:79"],
+      "sink": "Memory Allocation@mmcache_store.cpp:856",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "Config File@mmc_configuration.cpp:119",
+      "path": ["LoadFromFile@mmc_configuration.cpp:119", "KVParser::FromFile@mmc_kv_parser.cpp", "ParseLine@mmc_kv_parser.cpp"],
+      "sink": "SetWithTypeAutoConvert@mmc_configuration.cpp:275",
+      "sink_type": "configuration"
+    },
+    {
+      "source": "Kubernetes API@meta_service_leader_election.py:113",
+      "path": ["update_lease@meta_service_leader_election.py:113", "coordination_v1.read_namespaced_lease@kubernetes", "coordination_v1.replace_namespaced_lease@kubernetes"],
+      "sink": "Leader Status Update@meta_service_leader_election.py:224",
+      "sink_type": "authorization"
+    },
+    {
+      "source": "RPC BmRegisterRequest@mmc_meta_net_server.cpp:97",
+      "path": ["HandleBmRegister@mmc_meta_net_server.cpp:97", "MmcMetaService::BmRegister@mmc_meta_service.cpp:81", "MmcMetaMgrProxy::Mount@mmc_meta_mgr_proxy.cpp"],
+      "sink": "MmcGlobalAllocator::Mount@mmc_meta_manager.cpp:258",
+      "sink_type": "resource_management"
+    },
+    {
+      "source": "RPC RemoveAllRequest@mmc_meta_net_server.cpp:305",
+      "path": ["HandleRemoveAll@mmc_meta_net_server.cpp:305", "MmcMetaMgrProxy::RemoveAll@mmc_meta_mgr_proxy.cpp", "MmcMetaManager::RemoveAll@mmc_meta_manager.cpp:238"],
+      "sink": "EraseAll@mmc_meta_container.h",
+      "sink_type": "data_destruction"
+    },
+    {
+      "source": "TLS Config Path@mmc_configuration.cpp:523",
+      "path": ["ValidateTLSConfig@mmc_configuration.cpp:523", "ValidatePathNotSymlink@mmc_configuration.cpp:536", "lstat@libc"],
+      "sink": "Symlink Check@mmc_configuration.cpp:623",
+      "sink_type": "file_operation"
+    },
+    {
+      "source": "UBS IO Put@mmc_ubs_io_proxy.cpp:61",
+      "path": ["MmcUbsIoProxy::Put@mmc_ubs_io_proxy.cpp:61", "DlDfcApi::DfcPut@dl_dfc_api.h"],
+      "sink": "External Library Call@dl_dfc_api.h",
+      "sink_type": "external_call"
+    }
+  ]
+}

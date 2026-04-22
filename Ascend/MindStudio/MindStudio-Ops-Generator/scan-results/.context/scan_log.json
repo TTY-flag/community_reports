@@ -1,0 +1,96 @@
+{
+  "scan_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "start_time": "2026-04-21T04:15:00.000Z",
+  "end_time": "2026-04-21T04:45:00.000Z",
+  "duration_seconds": 1800,
+  "project_name": "MindStudio-Ops-Generator",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/shenteng/MindStudio/MindStudio-Ops-Generator",
+  "status": "completed",
+  "agents": [
+    {
+      "name": "architecture",
+      "start_time": "2026-04-21T04:16:00.000Z",
+      "end_time": "2026-04-21T04:24:00.000Z",
+      "duration_seconds": 480,
+      "status": "success",
+      "outputs": [
+        "project_model.json",
+        "call_graph.json",
+        "threat_analysis_report.md"
+      ],
+      "error": null
+    },
+    {
+      "name": "dataflow-scanner",
+      "start_time": "2026-04-21T04:25:00.000Z",
+      "end_time": "2026-04-21T04:31:00.000Z",
+      "duration_seconds": 360,
+      "status": "success",
+      "outputs": [
+        "scan.db (candidate vulnerabilities)"
+      ],
+      "error": null
+    },
+    {
+      "name": "security-auditor",
+      "start_time": "2026-04-21T04:25:00.000Z",
+      "end_time": "2026-04-21T04:29:00.000Z",
+      "duration_seconds": 240,
+      "status": "success",
+      "outputs": [
+        "scan.db (candidate vulnerabilities)"
+      ],
+      "error": null
+    },
+    {
+      "name": "verification",
+      "start_time": "2026-04-21T04:31:00.000Z",
+      "end_time": "2026-04-21T04:36:00.000Z",
+      "duration_seconds": 300,
+      "status": "success",
+      "outputs": [
+        "scan.db (verified vulnerabilities)"
+      ],
+      "error": null
+    },
+    {
+      "name": "details-analyzer",
+      "start_time": "2026-04-21T04:36:00.000Z",
+      "end_time": "2026-04-21T04:40:00.000Z",
+      "duration_seconds": 240,
+      "status": "success",
+      "outputs": [
+        "details/VULN-DF-CODE-001.md",
+        "details/VULN-DF-PY-STI-001.md"
+      ],
+      "error": null
+    },
+    {
+      "name": "reporter",
+      "start_time": "2026-04-21T04:40:00.000Z",
+      "end_time": "2026-04-21T04:45:00.000Z",
+      "duration_seconds": 300,
+      "status": "success",
+      "outputs": [
+        "report_confirmed.md",
+        "report_unconfirmed.md"
+      ],
+      "error": null
+    }
+  ],
+  "summary": {
+    "project_type": "cli_tool_python",
+    "total_files_scanned": 99,
+    "total_lines": 35000,
+    "candidates_found": 33,
+    "confirmed_vulnerabilities": 2,
+    "likely_vulnerabilities": 8,
+    "possible_vulnerabilities": 11,
+    "false_positives": 12,
+    "lsp_available": false,
+    "critical_count": 1,
+    "high_count": 7,
+    "medium_count": 15,
+    "low_count": 8
+  }
+}
