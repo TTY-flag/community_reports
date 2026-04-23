@@ -1,108 +1,128 @@
 {
-  "scan_id": "scan_omnistream_20260419",
-  "start_time": "2026-04-19T21:52:00Z",
-  "end_time": "2026-04-19T23:27:00Z",
-  "duration_seconds": 5700,
-  "status": "success",
+  "scan_id": "scan_omnistream_20260422",
+  "start_time": "2026-04-22T23:32:00Z",
+  "end_time": "2026-04-23T00:29:00Z",
+  "duration_seconds": 3420,
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/kunpeng/boostkit/OmniRuntime/OmniStream",
   "project_name": "OmniStream",
-  "project_root": "/home/pwn20tty/Desktop/opencode_project/kunpeng/OmniStream",
-  "language_detection": {
-    "cpp": 1559,
-    "python": 0,
-    "project_type": "pure_cpp"
-  },
+  "language": "C++",
+  "status": "success",
   "agents": [
     {
       "name": "architecture",
-      "start_time": "2026-04-19T21:52:00Z",
-      "end_time": "2026-04-19T22:02:00Z",
-      "duration_seconds": 600,
+      "start_time": "2026-04-22T23:32:00Z",
+      "end_time": "2026-04-22T23:43:00Z",
+      "duration_seconds": 660,
       "status": "success",
       "output_files": [
         "scan-results/.context/project_model.json",
         "scan-results/.context/call_graph.json",
         "scan-results/threat_analysis_report.md"
       ],
-      "summary": "识别 17 个关键入口点、4 个高风险模块"
+      "summary": {
+        "total_files": 1587,
+        "total_lines": 84104,
+        "modules": 12,
+        "entry_points": 11,
+        "high_risk_files": 18
+      }
     },
     {
       "name": "dataflow-scanner",
-      "start_time": "2026-04-19T22:03:00Z",
-      "end_time": "2026-04-19T22:09:00Z",
-      "duration_seconds": 363,
+      "start_time": "2026-04-22T23:43:00Z",
+      "end_time": "2026-04-22T23:59:48Z",
+      "duration_seconds": 1008,
       "status": "success",
-      "item_count": 20,
-      "summary": "发现 20 个数据流漏洞"
+      "vulnerabilities_found": 23,
+      "summary": {
+        "critical": 10,
+        "high": 8,
+        "medium": 5,
+        "modules_scanned": ["jni", "connector_kafka", "runtime_io_network", "streaming_runtime_io", "core_serialization", "core_memory", "runtime_buffer", "table_sources"]
+      }
     },
     {
       "name": "security-auditor",
-      "start_time": "2026-04-19T22:03:00Z",
-      "end_time": "2026-04-19T22:09:30Z",
-      "duration_seconds": 393,
+      "start_time": "2026-04-22T23:43:00Z",
+      "end_time": "2026-04-22T24:01:02Z",
+      "duration_seconds": 1082,
       "status": "success",
-      "item_count": 10,
-      "summary": "发现 10 个安全漏洞"
+      "vulnerabilities_found": 15,
+      "summary": {
+        "json_parse_issues": 4,
+        "memory_management": 3,
+        "input_validation": 4,
+        "concurrency_safety": 1,
+        "dos_risk": 1,
+        "other": 2,
+        "modules_scanned": ["jni", "connector_kafka", "runtime_io_network", "streaming_runtime_io", "core_serialization", "table_sources"]
+      }
     },
     {
       "name": "verification",
-      "start_time": "2026-04-19T22:10:00Z",
-      "end_time": "2026-04-19T22:18:00Z",
-      "duration_seconds": 485,
+      "start_time": "2026-04-22T24:05:00Z",
+      "end_time": "2026-04-22T24:11:38Z",
+      "duration_seconds": 398,
       "status": "success",
-      "item_count": 30,
-      "summary": "验证完成：CONFIRMED 9, LIKELY 12, POSSIBLE 3, FALSE_POSITIVE 6"
+      "vulnerabilities_verified": 38,
+      "summary": {
+        "confirmed": 6,
+        "likely": 18,
+        "possible": 14,
+        "false_positive": 0
+      }
     },
     {
       "name": "details-analyzer",
-      "start_time": "2026-04-19T23:10:00Z",
-      "end_time": "2026-04-19T23:27:00Z",
-      "duration_seconds": 1020,
+      "start_time": "2026-04-22T24:13:00Z",
+      "end_time": "2026-04-22T24:20:44Z",
+      "duration_seconds": 464,
       "status": "success",
-      "item_count": 7,
       "output_files": [
-        "scan-results/details/VULN-DF-XMOD-002.md",
-        "scan-results/details/SEC-004.md",
-        "scan-results/details/SEC-009.md",
-        "scan-results/details/VULN-DF-JNI-001.md",
-        "scan-results/details/VULN-DF-JNI-002.md",
-        "scan-results/details/VULN-DF-JNI-003.md",
-        "scan-results/details/VULN-DF-NET-001.md"
+        "scan-results/details/VULN-SERIAL-001.md",
+        "scan-results/details/VULN-STREAM-001.md",
+        "scan-results/details/VULN-CROSS-001.md",
+        "scan-results/details/VULN-CROSS-004.md",
+        "scan-results/details/SEC-008.md",
+        "scan-results/details/SEC-010.md"
       ],
-      "summary": "完成7个CONFIRMED漏洞的中文深度分析报告（共2500行96KB）"
+      "summary": {
+        "confirmed_analyzed": 6,
+        "reports_generated": 6
+      }
     },
     {
       "name": "reporter",
-      "start_time": "2026-04-19T22:55:00Z",
-      "end_time": "2026-04-19T23:01:00Z",
-      "duration_seconds": 377,
+      "start_time": "2026-04-22T24:21:00Z",
+      "end_time": "2026-04-23T00:29:00Z",
+      "duration_seconds": 476,
       "status": "success",
       "output_files": [
         "scan-results/report_confirmed.md",
         "scan-results/report_unconfirmed.md"
       ],
-      "summary": "生成完整漏洞扫描报告"
+      "summary": {
+        "confirmed_report_size": "25KB",
+        "unconfirmed_report_size": "46KB"
+      }
     }
   ],
-  "phases": {
-    "phase_0_init": "completed",
-    "phase_1_structure": "completed",
-    "phase_2_architecture": "completed",
-    "phase_3_scan": "completed",
-    "phase_4_verification": "completed",
-    "phase_4_5_details": "completed",
-    "phase_5_report": "completed"
-  },
   "summary": {
-    "total_vulnerabilities": 30,
-    "confirmed": 9,
-    "likely": 12,
-    "possible": 3,
-    "false_positive": 6,
-    "critical": 3,
-    "high": 11,
-    "medium": 14,
-    "low": 2,
-    "detail_reports": 7,
-    "detail_reports_lines": 2500
+    "total_vulnerabilities": 38,
+    "confirmed": 6,
+    "likely": 18,
+    "possible": 14,
+    "critical": 5,
+    "high": 19,
+    "medium": 11,
+    "low": 3,
+    "top_modules": ["jni", "streaming_runtime_io", "table_sources", "cross_module"],
+    "top_cwe": ["CWE-502", "CWE-125", "CWE-20", "CWE-119"],
+    "recommendations": [
+      "JSON解析添加try-catch异常处理",
+      "网络数据大小/偏移验证",
+      "JNI jlong指针有效性检查",
+      "Kafka消息大小限制"
+    ]
   }
 }

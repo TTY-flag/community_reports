@@ -1,527 +1,409 @@
 {
   "functions": {
-    "Java_org_apache_flink_runtime_taskexecutor_TaskManagerRunner_initTMConfiguration@jni/init.cpp": {
+    "Java_org_apache_flink_runtime_taskexecutor_TaskManagerRunner_initTMConfiguration@cpp/jni/init.cpp": {
       "defined_at": 50,
       "calls": [
-        "Configuration::TM_CONFIG->setConfiguration@include/functions/Configuration.h"
+        "Configuration::TM_CONFIG->setConfiguration@cpp/include/functions/Configuration.h"
       ],
       "called_by": [],
       "receives_external_input": true,
       "risk": "Critical",
-      "description": "JNI 入口：接收 Java 端的配置字符串，解析 JSON 并设置 TaskManager 配置"
+      "description": "JNI 入口，接收 Java 配置 JSON 字符串并解析"
     },
-    "Java_com_huawei_omniruntime_flink_runtime_tasks_OmniStreamTask_createNativeStreamTask@jni/tasks/jni_OmniStreamTask.cpp": {
+    "Java_com_huawei_omniruntime_flink_runtime_tasks_OmniStreamTask_createNativeStreamTask@cpp/jni/tasks/jni_OmniStreamTask.cpp": {
       "defined_at": 18,
       "calls": [
-        "StreamTask::StreamTask@streaming/runtime/tasks/StreamTask.cpp",
-        "OmniTask::getRuntimeEnv@runtime/taskmanager/OmniTask.cpp"
+        "nlohmann::json::parse@cpp/jni/tasks/jni_OmniStreamTask.cpp",
+        "StreamTask::StreamTask@cpp/streaming/runtime/tasks/StreamTask.h"
       ],
       "called_by": [],
       "receives_external_input": true,
       "risk": "Critical",
-      "description": "JNI 入口：创建 Native StreamTask，接收 TDD JSON 配置和状态地址"
+      "description": "创建原生 StreamTask，解析 TDD JSON 字符串"
     },
-    "OmniTaskBridgeImpl2::CallMaterializeMetaData@jni/bridge/OmniTaskBridgeImpl2.cpp": {
+    "Java_com_huawei_omniruntime_flink_runtime_tasks_OmniStreamTask_createNativeOmniInputProcessor@cpp/jni/tasks/jni_OmniStreamTask.cpp": {
+      "defined_at": 42,
+      "calls": [
+        "nlohmann::json::parse@cpp/jni/tasks/jni_OmniStreamTask.cpp",
+        "StreamTask::createOmniInputProcessor@cpp/streaming/runtime/tasks/StreamTask.h"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "创建输入处理器，解析通道信息 JSON"
+    },
+    "Java_org_apache_flink_runtime_io_network_partition_consumer_OmniLocalInputChannel_sendMemorySegmentToNative@cpp/jni/io/jni_OmniLocalInputChannel.cpp": {
+      "defined_at": 38,
+      "calls": [
+        "OmniLocalInputChannel::notifyOriginalDataAvailable@cpp/runtime/partition/consumer/OmniLocalInputChannel.h"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "接收 Java 传递的内存段地址和数据参数"
+    },
+    "OmniTaskBridgeImpl2::CallMaterializeMetaData@cpp/jni/bridge/OmniTaskBridgeImpl2.cpp": {
       "defined_at": 391,
       "calls": [
-        "CheckpointOptions::ToJson@runtime/checkpoint/CheckpointOptions.h",
-        "GetStreamStateHandle@jni/bridge/OmniTaskBridgeImpl2.cpp",
-        "ConvertSnapshotResult@jni/bridge/OmniTaskBridgeImpl2.cpp"
+        "nlohmann::json::dump@cpp/jni/bridge/OmniTaskBridgeImpl2.cpp",
+        "env->NewStringUTF@cpp/jni/bridge/OmniTaskBridgeImpl2.cpp",
+        "env->CallObjectMethod@cpp/jni/bridge/OmniTaskBridgeImpl2.cpp"
       ],
       "called_by": [
-        "TaskStateManagerBridge::materializeMetaData@runtime/state/bridge/TaskStateManagerBridge.cpp"
+        "TaskStateManager::triggerCheckpoint@cpp/runtime/state/TaskStateManager.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "High",
+      "description": "调用 Java checkpoint 元数据持久化，涉及文件路径传递"
+    },
+    "OmniTaskBridgeImpl2::readMetaData@cpp/jni/bridge/OmniTaskBridgeImpl2.cpp": {
+      "defined_at": 819,
+      "calls": [
+        "env->NewStringUTF@cpp/jni/bridge/OmniTaskBridgeImpl2.cpp",
+        "env->CallObjectMethod@cpp/jni/bridge/OmniTaskBridgeImpl2.cpp",
+        "convertResult@cpp/jni/bridge/OmniTaskBridgeImpl2.cpp"
+      ],
+      "called_by": [
+        "RocksdbKeyedStateBackend::restore@cpp/runtime/state/RocksdbKeyedStateBackend.h"
       ],
       "receives_external_input": true,
       "risk": "High",
-      "description": "JNI 回调：将状态元数据序列化为 JSON 并调用 Java 方法上传状态快照"
+      "description": "读取 checkpoint 元数据，从 Java 端获取状态信息"
     },
-    "OmniTaskBridgeImpl2::readMetaData@jni/bridge/OmniTaskBridgeImpl2.cpp": {
-      "defined_at": 568,
+    "OmniTaskBridgeImpl2::CallDownloadFileToLocal@cpp/jni/bridge/OmniTaskBridgeImpl2.cpp": {
+      "defined_at": 730,
       "calls": [
-        "convertResult@jni/bridge/OmniTaskBridgeImpl2.cpp",
-        "TypeInfoFactory::createDataStreamTypeInfo@core/typeinfo/TypeInfoFactory.cpp"
+        "ConvertToJavaStreamStateHandle@cpp/jni/bridge/OmniTaskBridgeImpl2.cpp",
+        "ConvertPathStrToJavaPath@cpp/jni/bridge/OmniTaskBridgeImpl2.cpp",
+        "env->CallBooleanMethod@cpp/jni/bridge/OmniTaskBridgeImpl2.cpp"
       ],
       "called_by": [
-        "TaskStateManagerBridge::readMetaData@runtime/state/bridge/TaskStateManagerBridge.cpp"
+        "RocksdbKeyedStateBackend::restore@cpp/runtime/state/RocksdbKeyedStateBackend.h"
       ],
       "receives_external_input": true,
       "risk": "High",
-      "description": "JNI 回调：从 Java 端读取状态元数据并反序列化"
+      "description": "下载 checkpoint 文件到本地，涉及文件路径操作"
     },
-    "OmniTaskBridgeImpl2::getKeyGroupEntries@jni/bridge/OmniTaskBridgeImpl2.cpp": {
-      "defined_at": 635,
-      "calls": [
-        "jbyteArrayToVector@jni/bridge/OmniTaskBridgeImpl2.cpp",
-        "KeyGroupEntry::KeyGroupEntry@runtime/state/restore/KeyGroupEntry.h"
-      ],
-      "called_by": [
-        "StateRestoreOperation@runtime/state/restore/StateRestoreOperation.cpp"
-      ],
-      "receives_external_input": true,
-      "risk": "High",
-      "description": "JNI 回调：从 Java 端读取 KeyGroup 条目，涉及大量字节数组拷贝"
-    },
-    "KafkaSource::createReader@connector/kafka/source/KafkaSource.cpp": {
-      "defined_at": 36,
-      "calls": [
-        "DeserializationFactory::getDeserializationSchema@core/api/common/serialization/DeserializationFactory.cpp",
-        "KafkaRecordDeserializationSchema::valueOnly@connector/kafka/source/reader/deserializer/KafkaRecordDeserializationSchema.cpp",
-        "KafkaPartitionSplitReader::KafkaPartitionSplitReader@connector/kafka/source/reader/KafkaPartitionSplitReader.cpp",
-        "KafkaSourceReader::KafkaSourceReader@connector/kafka/source/reader/KafkaSourceReader.cpp"
-      ],
-      "called_by": [],
-      "receives_external_input": true,
-      "risk": "Critical",
-      "description": "Kafka Source 入口：创建 Kafka 消费者读取器，从 Kafka Broker 获取外部数据"
-    },
-    "RdKafkaConsumer::poll@connector/kafka/source/reader/RdKafkaConsumer.cpp": {
-      "defined_at": 55,
-      "calls": [
-        "RdKafka::KafkaConsumer::consumeBatch@third_party/rdkafka"
-      ],
-      "called_by": [
-        "KafkaPartitionSplitReader::fetch@connector/kafka/source/reader/KafkaPartitionSplitReader.cpp"
-      ],
-      "receives_external_input": true,
-      "risk": "Critical",
-      "description": "Kafka 消费者：从 Kafka Broker 消费批量消息，返回完全可控的远程数据"
-    },
-    "KafkaRecordEmitter::emitRecord@connector/kafka/source/reader/KafkaRecordEmitter.cpp": {
-      "defined_at": 1,
-      "calls": [
-        "KafkaRecordDeserializationSchema::deserialize@connector/kafka/source/reader/deserializer/KafkaRecordDeserializationSchema.cpp",
-        "SourceOutput::collect@streaming/api/operators/source/SourceOutput.h"
-      ],
-      "called_by": [
-        "KafkaSourceReader::pollNext@connector/kafka/source/reader/KafkaSourceReader.cpp"
-      ],
-      "receives_external_input": true,
-      "risk": "Critical",
-      "description": "Kafka 记录发射器：将 Kafka 消息反序列化并发送到下游算子"
-    },
-    "SpillingAdaptiveSpanningRecordDeserializer::setNextBuffer@runtime/io/network/api/serialization/SpillingAdaptiveSpanningRecordDeserializer.cpp": {
-      "defined_at": 68,
-      "calls": [
-        "SpanningWrapper::addNextChunkFromMemoryBuffer@runtime/io/network/api/serialization/SpanningWrapper.cpp",
-        "NonSpanningWrapper::initializeFromMemoryBuffer@runtime/io/network/api/serialization/NonSpanningWrapper.cpp"
-      ],
-      "called_by": [
-        "StreamTaskNetworkInput::processInput@streaming/runtime/io/StreamTaskNetworkInput.cpp"
-      ],
-      "receives_external_input": true,
-      "risk": "High",
-      "description": "网络反序列化器：设置来自远程 TaskManager 的网络缓冲区"
-    },
-    "SpillingAdaptiveSpanningRecordDeserializer::getNextRecord@runtime/io/network/api/serialization/SpillingAdaptiveSpanningRecordDeserializer.cpp": {
+    "KafkaSource::KafkaSource@cpp/connector/kafka/source/KafkaSource.cpp": {
       "defined_at": 15,
       "calls": [
-        "readNextRecord@runtime/io/network/api/serialization/SpillingAdaptiveSpanningRecordDeserializer.cpp",
-        "NonSpanningWrapper::readInto@runtime/io/network/api/serialization/NonSpanningWrapper.cpp",
-        "SpanningWrapper::getInputView@runtime/io/network/api/serialization/SpanningWrapper.cpp"
+        "nlohmann::json operator[]@cpp/connector/kafka/source/KafkaSource.cpp",
+        "ConsumerConfigUtil::GetConfig@cpp/connector/kafka/source/ConsumerConfigUtil.h",
+        "DeserializationFactory::getDeserializationSchema@cpp/core/api/common/serialization/DeserializationFactory.h"
       ],
       "called_by": [
-        "StreamTaskNetworkInput::processInput@streaming/runtime/io/StreamTaskNetworkInput.cpp"
+        "SourceOperatorStreamTask::init@cpp/streaming/runtime/tasks/StreamTask.h"
       ],
       "receives_external_input": true,
-      "risk": "High",
-      "description": "网络反序列化器：从网络缓冲区反序列化记录"
+      "risk": "Critical",
+      "description": "解析 Kafka 配置属性 JSON，创建反序列化器"
     },
-    "NonSpanningWrapper::readInt@runtime/io/network/api/serialization/NonSpanningWrapper.cpp": {
+    "RdKafkaConsumer::poll@cpp/connector/kafka/source/reader/RdKafkaConsumer.cpp": {
       "defined_at": 1,
       "calls": [
-        "memcpy_s@libboundscheck"
+        "RdKafka::KafkaConsumer::consume@cpp/connector/kafka/source/reader/RdKafkaConsumer.cpp",
+        "ConsumerRecords::addRecord@cpp/connector/kafka/source/reader/RdKafkaConsumer.h"
       ],
       "called_by": [
-        "SpillingAdaptiveSpanningRecordDeserializer::readNonSpanningRecord@runtime/io/network/api/serialization/SpillingAdaptiveSpanningRecordDeserializer.cpp"
+        "KafkaPartitionSplitReader::fetch@cpp/connector/kafka/source/reader/KafkaPartitionSplitReader.cpp"
       ],
       "receives_external_input": true,
-      "risk": "High",
-      "description": "非跨段包装器：从网络缓冲区读取整数（记录长度）"
+      "risk": "Critical",
+      "description": "从 Kafka Broker 消费消息，接收外部网络数据"
     },
-    "MemorySegment::put@core/memory/MemorySegment.cpp": {
-      "defined_at": 73,
-      "calls": [
-        "std::copy@stdlib"
-      ],
-      "called_by": [
-        "MemoryBufferBuilder::write@runtime/buffer/MemoryBufferBuilder.cpp",
-        "NetworkBuffer::write@runtime/buffer/NetworkBuffer.cpp"
-      ],
-      "receives_external_input": false,
-      "risk": "Medium",
-      "description": "内存段写入：向堆外内存写入数据，需检查边界"
-    },
-    "MemorySegment::get@core/memory/MemorySegment.cpp": {
-      "defined_at": 96,
-      "calls": [
-        "memcpy_s@libboundscheck"
-      ],
-      "called_by": [
-        "MemoryBufferConsumer::read@runtime/buffer/MemoryBufferConsumer.cpp",
-        "SpillingAdaptiveSpanningRecordDeserializer@runtime/io/network/api/serialization/SpillingAdaptiveSpanningRecordDeserializer.cpp"
-      ],
-      "receives_external_input": false,
-      "risk": "Medium",
-      "description": "内存段读取：从堆外内存读取数据"
-    },
-    "StreamTask::createOmniInputProcessor@streaming/runtime/tasks/StreamTask.cpp": {
+    "KafkaPartitionSplitReader::fetch@cpp/connector/kafka/source/reader/KafkaPartitionSplitReader.cpp": {
       "defined_at": 1,
       "calls": [
-        "StreamOneInputProcessor::StreamOneInputProcessor@streaming/runtime/io/StreamOneInputProcessor.cpp",
-        "StreamTaskNetworkInput::create@streaming/runtime/io/StreamTaskNetworkInput.cpp"
+        "RdKafkaConsumer::poll@cpp/connector/kafka/source/reader/RdKafkaConsumer.cpp"
       ],
       "called_by": [
-        "Java_com_huawei_omniruntime_flink_runtime_tasks_OmniStreamTask_createNativeOmniInputProcessor@jni/tasks/jni_OmniStreamTask.cpp"
+        "KafkaSourceFetcherManager::fetch@cpp/connector/kafka/source/reader/fetcher/KafkaSourceFetcherManager.h"
       ],
       "receives_external_input": true,
-      "risk": "High",
-      "description": "StreamTask 入口：创建输入处理器，接收来自 JNI 的通道配置"
+      "risk": "Critical",
+      "description": "Kafka 分区数据抓取，处理外部消息"
     },
-    "StreamTaskNetworkInput::processInput@streaming/runtime/io/StreamTaskNetworkInput.cpp": {
+    "KafkaRecordEmitter::emitRecord@cpp/connector/kafka/source/reader/KafkaRecordEmitter.cpp": {
       "defined_at": 1,
       "calls": [
-        "SpillingAdaptiveSpanningRecordDeserializer::setNextBuffer@runtime/io/network/api/serialization/SpillingAdaptiveSpanningRecordDeserializer.cpp",
-        "SpillingAdaptiveSpanningRecordDeserializer::getNextRecord@runtime/io/network/api/serialization/SpillingAdaptiveSpanningRecordDeserializer.cpp",
-        "OperatorChain::processElement@streaming/runtime/tasks/OperatorChain.cpp"
+        "KafkaRecordDeserializationSchema::deserialize@cpp/connector/kafka/source/reader/deserializer/KafkaRecordDeserializationSchema.h"
       ],
       "called_by": [
-        "StreamOneInputProcessor::processInput@streaming/runtime/io/StreamOneInputProcessor.cpp"
+        "KafkaSourceReader::emit@cpp/connector/kafka/source/reader/KafkaSourceReader.cpp"
       ],
       "receives_external_input": true,
-      "risk": "High",
-      "description": "网络输入处理：从网络缓冲区反序列化数据并传递给算子链"
+      "risk": "Critical",
+      "description": "处理 Kafka 消息反序列化"
     },
-    "OperatorChain::processElement@streaming/runtime/tasks/OperatorChain.cpp": {
-      "defined_at": 1,
-      "calls": [
-        "StreamOperator::processElement@streaming/api/operators/StreamOperator.cpp",
-        "ChainingOutput::collect@streaming/runtime/tasks/ChainingOutput.cpp"
-      ],
-      "called_by": [
-        "StreamTaskNetworkInput::processInput@streaming/runtime/io/StreamTaskNetworkInput.cpp"
-      ],
-      "receives_external_input": true,
-      "risk": "High",
-      "description": "算子链处理：将数据传递给算子链中的第一个算子"
-    },
-    "JsonRowDataDeserializationSchema::deserialize@core/api/common/serialization/JsonRowDataDeserializationSchema.cpp": {
-      "defined_at": 1,
-      "calls": [
-        "nlohmann::json::parse@nlohmann/json.hpp",
-        "RowData::setField@table/runtime/RowData.cpp"
-      ],
-      "called_by": [
-        "KafkaRecordEmitter::emitRecord@connector/kafka/source/reader/KafkaRecordEmitter.cpp"
-      ],
-      "receives_external_input": true,
-      "risk": "High",
-      "description": "JSON 反序列化：将 JSON 字符串反序列化为 RowData"
-    },
-    "RocksDBStateUploader::upload@runtime/state/rocksdb/RocksDBStateUploader.cpp": {
-      "defined_at": 1,
-      "calls": [
-        "FsCheckpointStreamFactory::createCheckpointStateOutputStream@runtime/state/filesystem/FsCheckpointStreamFactory.cpp",
-        "StreamStateHandle::write@runtime/state/StreamStateHandle.cpp"
-      ],
-      "called_by": [
-        "FullSnapshotAsyncWriter::write@runtime/state/FullSnapshotAsyncWriter.cpp"
-      ],
-      "receives_external_input": false,
-      "risk": "Medium",
-      "description": "RocksDB 状态上传：将本地 RocksDB 状态上传到外部存储"
-    },
-    "TaskStateManagerBridge::materializeMetaData@runtime/state/bridge/TaskStateManagerBridge.cpp": {
-      "defined_at": 1,
-      "calls": [
-        "OmniTaskBridgeImpl2::CallMaterializeMetaData@jni/bridge/OmniTaskBridgeImpl2.cpp"
-      ],
-      "called_by": [
-        "SubtaskCheckpointCoordinatorImpl::checkpointState@runtime/checkpoint/SubtaskCheckpointCoordinatorImpl.cpp"
-      ],
-      "receives_external_input": false,
-      "risk": "High",
-      "description": "状态管理桥接：将状态元数据传递给 JNI 层上传到 Java 端"
-    },
-    "FullSnapshotAsyncWriter::write@runtime/state/FullSnapshotAsyncWriter.cpp": {
-      "defined_at": 1,
-      "calls": [
-        "RocksDBStateUploader::upload@runtime/state/rocksdb/RocksDBStateUploader.cpp",
-        "TaskStateManagerBridge::materializeMetaData@runtime/state/bridge/TaskStateManagerBridge.cpp"
-      ],
-      "called_by": [
-        "SubtaskCheckpointCoordinatorImpl::checkpointState@runtime/checkpoint/SubtaskCheckpointCoordinatorImpl.cpp"
-      ],
-      "receives_external_input": false,
-      "risk": "Medium",
-      "description": "全量快照写入：协调 RocksDB 状态上传和元数据序列化"
-    },
-    "JstringToString@jni/bridge/OmniTaskBridgeImpl2.cpp": {
+    "OmniAbstractStreamTaskNetworkInput::emitNext@cpp/streaming/runtime/io/OmniAbstractStreamTaskNetworkInput.h": {
       "defined_at": 79,
       "calls": [
-        "JNIEnv::GetStringUTFChars@jni",
-        "JNIEnv::ReleaseStringUTFChars@jni"
+        "CheckpointedInputGate::pollNext@cpp/runtime/io/checkpointing/CheckpointedInputGate.h",
+        "OmniAbstractStreamTaskNetworkInput::processBufferOrEventOptForSQL@cpp/streaming/runtime/io/OmniAbstractStreamTaskNetworkInput.h",
+        "OmniAbstractStreamTaskNetworkInput::processForDataStream@cpp/streaming/runtime/io/OmniAbstractStreamTaskNetworkInput.h"
       ],
       "called_by": [
-        "CreateFileStateHandle@jni/bridge/OmniTaskBridgeImpl2.cpp",
-        "CreateRelativeFileStateHandle@jni/bridge/OmniTaskBridgeImpl2.cpp",
-        "CreateByteStreamStateHandle@jni/bridge/OmniTaskBridgeImpl2.cpp",
-        "OmniTaskBridgeImpl2::readMetaData@jni/bridge/OmniTaskBridgeImpl2.cpp"
+        "StreamTask::processInput@cpp/streaming/runtime/tasks/StreamTask.h"
       ],
       "receives_external_input": true,
-      "risk": "High",
-      "description": "JNI 字符串转换：将 Java 字符串转换为 C++ 字符串，涉及 UTF-8 编码"
+      "risk": "Critical",
+      "description": "网络输入处理核心，处理来自远程 TaskManager 的数据"
     },
-    "jbyteArrayToVector@jni/bridge/OmniTaskBridgeImpl2.cpp": {
-      "defined_at": 614,
+    "OmniAbstractStreamTaskNetworkInput::processBufferOrEventOptForSQL@cpp/streaming/runtime/io/OmniAbstractStreamTaskNetworkInput.h": {
+      "defined_at": 157,
       "calls": [
-        "JNIEnv::GetPrimitiveArrayCritical@jni",
-        "JNIEnv::ReleasePrimitiveArrayCritical@jni"
+        "ObjectBuffer::GetSize@cpp/runtime/buffer/ObjectBuffer.h",
+        "ObjectSegment::getObject@cpp/runtime/objectsegment/ObjectSegment.h",
+        "StreamRecord::getValue@cpp/streaming/runtime/streamrecord/StreamRecord.h",
+        "Buffer::RecycleBuffer@cpp/runtime/buffer/Buffer.h"
       ],
       "called_by": [
-        "OmniTaskBridgeImpl2::getKeyGroupEntries@jni/bridge/OmniTaskBridgeImpl2.cpp",
-        "CreateByteStreamStateHandle@jni/bridge/OmniTaskBridgeImpl2.cpp"
+        "OmniAbstractStreamTaskNetworkInput::emitNext@cpp/streaming/runtime/io/OmniAbstractStreamTaskNetworkInput.h"
       ],
       "receives_external_input": true,
-      "risk": "High",
-      "description": "JNI 字节数组转换：将 Java byte[] 转换为 C++ vector，直接拷贝原始字节"
+      "risk": "Critical",
+      "description": "处理 ObjectBuffer 数据，解析 StreamElement"
     },
-    "CreateByteStreamStateHandle@jni/bridge/OmniTaskBridgeImpl2.cpp": {
-      "defined_at": 227,
-      "calls": [
-        "JstringToString@jni/bridge/OmniTaskBridgeImpl2.cpp",
-        "jbyteArrayToVector@jni/bridge/OmniTaskBridgeImpl2.cpp",
-        "ByteStreamStateHandle::ByteStreamStateHandle@runtime/state/memory/ByteStreamStateHandle.cpp"
-      ],
-      "called_by": [
-        "GetStreamStateHandle@jni/bridge/OmniTaskBridgeImpl2.cpp"
-      ],
-      "receives_external_input": true,
-      "risk": "High",
-      "description": "创建字节流状态句柄：从 Java 端获取字节数组并创建 C++ 状态对象"
-    },
-    "LocalBufferPool::requestBuffer@runtime/buffer/LocalBufferPool.cpp": {
+    "SpillingAdaptiveSpanningRecordDeserializer::deserialize@cpp/runtime/io/network/api/serialization/SpillingAdaptiveSpanningRecordDeserializer.cpp": {
       "defined_at": 1,
       "calls": [
-        "MemorySegment::MemorySegment@core/memory/MemorySegment.cpp",
-        "NetworkBuffer::NetworkBuffer@runtime/buffer/NetworkBuffer.cpp"
+        "NonSpanningWrapper::deserialize@cpp/runtime/io/network/api/serialization/NonSpanningWrapper.h",
+        "SpanningWrapper::add@cpp/runtime/io/network/api/serialization/SpanningWrapper.h",
+        "MemorySegment::get@cpp/core/memory/MemorySegment.h"
       ],
       "called_by": [
-        "RecordWriter::write@runtime/io/network/api/writer/RecordWriter.cpp",
-        "MemoryBufferBuilder::MemoryBufferBuilder@runtime/buffer/MemoryBufferBuilder.cpp"
+        "AbstractStreamTaskNetworkInput::processInput@cpp/streaming/runtime/io/AbstractStreamTaskNetworkInput.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "反序列化网络数据缓冲区"
+    },
+    "EventSerializer::deserialize@cpp/runtime/io/network/api/serialization/EventSerializer.cpp": {
+      "defined_at": 1,
+      "calls": [
+        "MemorySegment::getInt@cpp/core/memory/MemorySegment.h",
+        "MemorySegment::getLong@cpp/core/memory/MemorySegment.h"
+      ],
+      "called_by": [
+        "AbstractStreamTaskNetworkInput::processEvent@cpp/streaming/runtime/io/AbstractStreamTaskNetworkInput.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "反序列化 checkpoint barrier 等事件"
+    },
+    "JsonRowDataDeserializationSchema::deserialize@cpp/core/api/common/serialization/JsonRowDataDeserializationSchema.h": {
+      "defined_at": 33,
+      "calls": [
+        "nlohmann::json::parse@cpp/core/api/common/serialization/JsonRowDataDeserializationSchema.h",
+        "VectorBatch::SetValueAt@cpp/table/data/vectorbatch/VectorBatch.h"
+      ],
+      "called_by": [
+        "KafkaRecordDeserializationSchema::deserialize@cpp/connector/kafka/source/reader/deserializer/KafkaRecordDeserializationSchema.h"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "解析 JSON 字节数据，填充 VectorBatch"
+    },
+    "CsvLookupFunction::open@cpp/table/sources/CsvTableSource.h": {
+      "defined_at": 108,
+      "calls": [
+        "std::ifstream::open@cpp/table/sources/CsvTableSource.h",
+        "std::getline@cpp/table/sources/CsvTableSource.h",
+        "std::stol@cpp/table/sources/CsvTableSource.h"
+      ],
+      "called_by": [
+        "TableFunctionOperator::open@cpp/core/operators/TableFunctionOperator.h"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "读取 CSV 文件并构建哈希表"
+    },
+    "MemorySegment::get@cpp/core/memory/MemorySegment.h": {
+      "defined_at": 37,
+      "calls": [],
+      "called_by": [
+        "SpillingAdaptiveSpanningRecordDeserializer::deserialize@cpp/runtime/io/network/api/serialization/SpillingAdaptiveSpanningRecordDeserializer.cpp",
+        "EventSerializer::deserialize@cpp/runtime/io/network/api/serialization/EventSerializer.cpp"
       ],
       "receives_external_input": false,
-      "risk": "Medium",
-      "description": "本地缓冲池：请求缓冲区，分配堆外内存"
+      "risk": "High",
+      "description": "内存段读取操作，底层内存访问"
     },
-    "RecordWriter::write@runtime/io/network/api/writer/RecordWriter.cpp": {
-      "defined_at": 1,
+    "MemorySegment::put@cpp/core/memory/MemorySegment.h": {
+      "defined_at": 41,
+      "calls": [],
+      "called_by": [
+        "NetworkBufferBuilder::write@cpp/runtime/buffer/MemoryBufferBuilder.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "High",
+      "description": "内存段写入操作，底层内存访问"
+    },
+    "NetworkBuffer::RecycleBuffer@cpp/runtime/buffer/NetworkBuffer.h": {
+      "defined_at": 63,
       "calls": [
-        "LocalBufferPool::requestBuffer@runtime/buffer/LocalBufferPool.cpp",
-        "MemorySegment::put@core/memory/MemorySegment.cpp",
-        "RecordSerializer::serialize@runtime/io/network/api/serialization/RecordSerializer.cpp"
+        "BufferRecycler::recycle@cpp/runtime/buffer/BufferRecycler.h"
       ],
       "called_by": [
-        "StreamTaskNetworkOutput::emit@streaming/runtime/io/StreamTaskNetworkOutput.cpp"
+        "OmniAbstractStreamTaskNetworkInput::processBufferOrEventOptForSQL@cpp/streaming/runtime/io/OmniAbstractStreamTaskNetworkInput.h"
       ],
-      "receives_external_input": true,
-      "risk": "Medium",
-      "description": "记录写入器：将记录序列化并写入网络缓冲区"
+      "receives_external_input": false,
+      "risk": "High",
+      "description": "网络缓冲区回收，涉及内存管理"
     },
-    "OmniCreditBasedSequenceNumberingViewReader::onBuffer@runtime/io/network/netty/OmniCreditBasedSequenceNumberingViewReader.cpp": {
+    "LocalMemoryBufferPool::requestBuffer@cpp/runtime/buffer/LocalMemoryBufferPool.cpp": {
       "defined_at": 1,
       "calls": [
-        "BufferConsumer::create@runtime/buffer/BufferConsumer.cpp",
-        "SpillingAdaptiveSpanningRecordDeserializer::setNextBuffer@runtime/io/network/api/serialization/SpillingAdaptiveSpanningRecordDeserializer.cpp"
+        "MemorySegment::MemorySegment@cpp/core/memory/MemorySegment.h",
+        "std::vector::push_back@cpp/runtime/buffer/LocalMemoryBufferPool.cpp"
       ],
       "called_by": [
-        "NettyClient::onBufferReceived@runtime/io/network/netty/NettyClient.cpp"
+        "OmniShuffleEnvironment::requestBuffer@cpp/runtime/io/network/OmniShuffleEnvironment.h"
+      ],
+      "receives_external_input": false,
+      "risk": "High",
+      "description": "内存缓冲池分配缓冲区"
+    },
+    "RocksdbKeyedStateBackend::restore@cpp/runtime/state/RocksdbKeyedStateBackend.h": {
+      "defined_at": 1,
+      "calls": [
+        "OmniTaskBridgeImpl2::readMetaData@cpp/jni/bridge/OmniTaskBridgeImpl2.cpp",
+        "OmniTaskBridgeImpl2::CallDownloadFileToLocal@cpp/jni/bridge/OmniTaskBridgeImpl2.cpp",
+        "RocksDB::Open@cpp/runtime/state/RocksdbKeyedStateBackend.h"
+      ],
+      "called_by": [
+        "TaskStateManager::restore@cpp/runtime/state/TaskStateManager.cpp"
       ],
       "receives_external_input": true,
       "risk": "High",
-      "description": "Netty 视图读取器：接收来自远程 TaskManager 的网络缓冲区"
+      "description": "从 checkpoint 恢复状态，涉及文件下载和数据库打开"
+    },
+    "TaskStateManager::triggerCheckpoint@cpp/runtime/state/TaskStateManager.cpp": {
+      "defined_at": 1,
+      "calls": [
+        "OmniTaskBridgeImpl2::CallMaterializeMetaData@cpp/jni/bridge/OmniTaskBridgeImpl2.cpp",
+        "OmniTaskBridgeImpl2::AcquireSavepointOutputStream@cpp/jni/bridge/OmniTaskBridgeImpl2.cpp",
+        "OmniTaskBridgeImpl2::WriteSavepointOutputStream@cpp/jni/bridge/OmniTaskBridgeImpl2.cpp"
+      ],
+      "called_by": [
+        "StreamTask::triggerCheckpoint@cpp/streaming/runtime/tasks/StreamTask.h"
+      ],
+      "receives_external_input": false,
+      "risk": "High",
+      "description": "触发 checkpoint，调用 Java 端持久化"
+    },
+    "OmniCreditBasedSequenceNumberingViewReader::getNextBuffer@cpp/runtime/io/network/netty/OmniCreditBasedSequenceNumberingViewReader.h": {
+      "defined_at": 1,
+      "calls": [
+        "NettyBufferPool::requestBuffer@cpp/runtime/io/network/netty/NettyBufferPool.h"
+      ],
+      "called_by": [
+        "Java_org_apache_flink_runtime_io_network_netty_OmniCreditBasedSequenceNumberingViewReader_getNextBuffer@cpp/jni/netty/jni_CreditBasedSequenceNumberingViewReader.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "High",
+      "description": "获取下一个网络缓冲区"
     }
   },
   "data_flows": [
     {
-      "source": "RdKafka::KafkaConsumer::consumeBatch@connector/kafka/source/reader/RdKafkaConsumer.cpp:57",
+      "source": "JNIEnv::GetStringUTFChars@cpp/jni/init.cpp:52",
       "path": [
-        "KafkaPartitionSplitReader::fetch@connector/kafka/source/reader/KafkaPartitionSplitReader.cpp",
-        "KafkaSourceReader::pollNext@connector/kafka/source/reader/KafkaSourceReader.cpp",
-        "KafkaRecordEmitter::emitRecord@connector/kafka/source/reader/KafkaRecordEmitter.cpp",
-        "KafkaRecordDeserializationSchema::deserialize@connector/kafka/source/reader/deserializer/KafkaRecordDeserializationSchema.cpp",
-        "JsonRowDataDeserializationSchema::deserialize@core/api/common/serialization/JsonRowDataDeserializationSchema.cpp",
-        "nlohmann::json::parse@core/api/common/serialization/JsonRowDataDeserializationSchema.cpp"
+        "nlohmann::json::parse@cpp/jni/init.cpp:53",
+        "Configuration::TM_CONFIG->setConfiguration@cpp/include/functions/Configuration.h"
       ],
-      "sink": "RowData::setField@table/runtime/RowData.cpp",
-      "sink_type": "deserialization",
-      "description": "Kafka 数据流：Kafka 消息 → 反序列化 → RowData"
+      "sink": "Configuration::setConfiguration@cpp/include/functions/Configuration.h",
+      "sink_type": "configuration_parsing",
+      "risk": "Critical",
+      "description": "JNI 配置字符串 -> JSON 解析 -> 配置存储"
     },
     {
-      "source": "Java_org_apache_flink_runtime_taskexecutor_TaskManagerRunner_initTMConfiguration@jni/init.cpp:52",
+      "source": "JNIEnv::GetStringUTFChars@cpp/jni/tasks/jni_OmniStreamTask.cpp:21",
       "path": [
-        "nlohmann::json::parse@jni/init.cpp:53",
-        "Configuration::TM_CONFIG->setConfiguration@include/functions/Configuration.h"
+        "nlohmann::json::parse@cpp/jni/tasks/jni_OmniStreamTask.cpp:27",
+        "StreamTask::StreamTask@cpp/streaming/runtime/tasks/StreamTask.h:34"
       ],
-      "sink": "Configuration::setConfiguration@include/functions/Configuration.h",
-      "sink_type": "configuration",
-      "description": "JNI 配置流：Java 配置 JSON → 解析 → C++ 配置对象"
+      "sink": "StreamTask constructor@cpp/streaming/runtime/tasks/StreamTask.h",
+      "sink_type": "task_creation",
+      "risk": "Critical",
+      "description": "JNI TDD 字符串 -> JSON 解析 -> StreamTask 创建"
     },
     {
-      "source": "Java_com_huawei_omniruntime_flink_runtime_tasks_OmniStreamTask_createNativeStreamTask@jni/tasks/jni_OmniStreamTask.cpp:21",
+      "source": "RdKafka::KafkaConsumer::consume@cpp/connector/kafka/source/reader/RdKafkaConsumer.cpp",
       "path": [
-        "nlohmann::json::parse@jni/tasks/jni_OmniStreamTask.cpp:27",
-        "StreamTask::StreamTask@streaming/runtime/tasks/StreamTask.cpp",
-        "StreamTask::createOmniInputProcessor@streaming/runtime/tasks/StreamTask.cpp",
-        "StreamOneInputProcessor::StreamOneInputProcessor@streaming/runtime/io/StreamOneInputProcessor.cpp",
-        "StreamTaskNetworkInput::StreamTaskNetworkInput@streaming/runtime/io/StreamTaskNetworkInput.cpp"
+        "ConsumerRecords::addRecord@cpp/connector/kafka/source/reader/RdKafkaConsumer.h",
+        "KafkaRecordEmitter::emitRecord@cpp/connector/kafka/source/reader/KafkaRecordEmitter.cpp",
+        "KafkaRecordDeserializationSchema::deserialize@cpp/connector/kafka/source/reader/deserializer/KafkaRecordDeserializationSchema.h"
       ],
-      "sink": "SpillingAdaptiveSpanningRecordDeserializer@runtime/io/network/api/serialization/SpillingAdaptiveSpanningRecordDeserializer.cpp",
-      "sink_type": "initialization",
-      "description": "JNI 任务创建流：Java TDD JSON → 解析 → StreamTask → 输入处理器"
+      "sink": "VectorBatch creation@cpp/table/data/vectorbatch/VectorBatch.h",
+      "sink_type": "data_processing",
+      "risk": "Critical",
+      "description": "Kafka 消息 -> 消息记录 -> 反序列化 -> VectorBatch"
     },
     {
-      "source": "OmniCreditBasedSequenceNumberingViewReader::onBuffer@runtime/io/network/netty/OmniCreditBasedSequenceNumberingViewReader.cpp",
+      "source": "CheckpointedInputGate::pollNext@cpp/runtime/io/checkpointing/CheckpointedInputGate.h",
       "path": [
-        "BufferConsumer::create@runtime/buffer/BufferConsumer.cpp",
-        "SpillingAdaptiveSpanningRecordDeserializer::setNextBuffer@runtime/io/network/api/serialization/SpillingAdaptiveSpanningRecordDeserializer.cpp:116",
-        "MemorySegment::getData@core/memory/MemorySegment.cpp:52",
-        "SpanningWrapper::addNextChunkFromMemoryBuffer@runtime/io/network/api/serialization/SpanningWrapper.cpp"
+        "OmniAbstractStreamTaskNetworkInput::emitNext@cpp/streaming/runtime/io/OmniAbstractStreamTaskNetworkInput.h:79",
+        "OmniAbstractStreamTaskNetworkInput::processBufferOrEventOptForSQL@cpp/streaming/runtime/io/OmniAbstractStreamTaskNetworkInput.h:157",
+        "ObjectSegment::getObject@cpp/runtime/objectsegment/ObjectSegment.h:175"
       ],
-      "sink": "SpillingAdaptiveSpanningRecordDeserializer::getNextRecord@runtime/io/network/api/serialization/SpillingAdaptiveSpanningRecordDeserializer.cpp:42",
-      "sink_type": "network_input",
-      "description": "网络数据流：远程 TaskManager 网络缓冲区 → 反序列化 → 记录对象"
+      "sink": "StreamRecord::getValue@cpp/streaming/runtime/streamrecord/StreamRecord.h",
+      "sink_type": "data_processing",
+      "risk": "Critical",
+      "description": "网络数据 -> 输入门 -> 缓冲区处理 -> StreamRecord"
     },
     {
-      "source": "OmniTaskBridgeImpl2::getKeyGroupEntries@jni/bridge/OmniTaskBridgeImpl2.cpp:664",
+      "source": "MemorySegment::get@cpp/core/memory/MemorySegment.h",
       "path": [
-        "JNIEnv::CallObjectMethod@jni/bridge/OmniTaskBridgeImpl2.cpp:671",
-        "jbyteArrayToVector@jni/bridge/OmniTaskBridgeImpl2.cpp:696",
-        "JNIEnv::GetPrimitiveArrayCritical@jni/bridge/OmniTaskBridgeImpl2.cpp:627",
-        "KeyGroupEntry::KeyGroupEntry@runtime/state/restore/KeyGroupEntry.h"
+        "SpillingAdaptiveSpanningRecordDeserializer::deserialize@cpp/runtime/io/network/api/serialization/SpillingAdaptiveSpanningRecordDeserializer.cpp"
       ],
-      "sink": "StateRestoreOperation::restoreKeyGroup@runtime/state/restore/StateRestoreOperation.cpp",
-      "sink_type": "state_restore",
-      "description": "状态恢复流：Java 状态快照 → JNI 字节数组 → KeyGroupEntry → 状态恢复"
+      "sink": "VectorBatch creation@cpp/table/data/vectorbatch/VectorBatch.h",
+      "sink_type": "memory_operation",
+      "risk": "High",
+      "description": "内存段数据 -> 反序列化 -> VectorBatch"
     },
     {
-      "source": "SpillingAdaptiveSpanningRecordDeserializer::getNextRecord@runtime/io/network/api/serialization/SpillingAdaptiveSpanningRecordDeserializer.cpp:56",
+      "source": "std::ifstream::getline@cpp/table/sources/CsvTableSource.h:139",
       "path": [
-        "NonSpanningWrapper::readInt@runtime/io/network/api/serialization/NonSpanningWrapper.cpp:56",
-        "NonSpanningWrapper::readInto@runtime/io/network/api/serialization/NonSpanningWrapper.cpp:61",
-        "IOReadableWritable::read@core/api/common/IOReadableWritable.h",
-        "StreamTaskNetworkInput::processInput@streaming/runtime/io/StreamTaskNetworkInput.cpp",
-        "OperatorChain::processElement@streaming/runtime/tasks/OperatorChain.cpp",
-        "StreamOperator::processElement@streaming/api/operators/StreamOperator.cpp"
+        "CsvStrConverterFunc@cpp/table/sources/CsvTableSource.h:45",
+        "Vector::SetValue@cpp/table/data/vectorbatch/Vector.h"
       ],
-      "sink": "ChainingOutput::collect@streaming/runtime/tasks/ChainingOutput.cpp",
-      "sink_type": "operator_chain",
-      "description": "输入处理流：网络反序列化记录 → 算子链处理 → 下游输出"
+      "sink": "emhash7::HashMap::insert@cpp/table/sources/CsvTableSource.h:158",
+      "sink_type": "data_processing",
+      "risk": "Medium",
+      "description": "CSV 文件行 -> 字符串解析 -> 哈希表插入"
     },
     {
-      "source": "OmniTaskBridgeImpl2::CallMaterializeMetaData@jni/bridge/OmniTaskBridgeImpl2.cpp:414",
+      "source": "nlohmann::json::parse@cpp/core/api/common/serialization/JsonRowDataDeserializationSchema.h:40",
       "path": [
-        "nlohmann::json::array@jni/bridge/OmniTaskBridgeImpl2.cpp:413",
-        "StateMetaInfoSnapshot::getName@runtime/state/metainfo/StateMetaInfoSnapshot.cpp",
-        "StateMetaInfoSnapshot::getSerializerJson@runtime/state/metainfo/StateMetaInfoSnapshot.cpp",
-        "nlohmann::json::dump@jni/bridge/OmniTaskBridgeImpl2.cpp:424",
-        "JNIEnv::NewStringUTF@jni/bridge/OmniTaskBridgeImpl2.cpp:466",
-        "JNIEnv::CallObjectMethod@jni/bridge/OmniTaskBridgeImpl2.cpp:469"
+        "JsonRowDataDeserializationSchema::setColValue@cpp/core/api/common/serialization/JsonRowDataDeserializationSchema.h:49"
       ],
-      "sink": "Java SnapshotResult@jni/bridge/OmniTaskBridgeImpl2.cpp:469",
-      "sink_type": "jni_output",
-      "description": "状态上传流：C++ 状态元数据 → JSON 序列化 → JNI 调用 → Java 状态快照"
+      "sink": "VectorBatch::SetValueAt@cpp/table/data/vectorbatch/VectorBatch.h",
+      "sink_type": "data_processing",
+      "risk": "High",
+      "description": "JSON 字节数据 -> 解析 -> VectorBatch 字段设置"
     },
     {
-      "source": "CreateByteStreamStateHandle@jni/bridge/OmniTaskBridgeImpl2.cpp:247",
+      "source": "OmniTaskBridgeImpl2::readMetaData@cpp/jni/bridge/OmniTaskBridgeImpl2.cpp:819",
       "path": [
-        "JNIEnv::CallObjectMethod@jni/bridge/OmniTaskBridgeImpl2.cpp:247",
-        "JNIEnv::GetArrayLength@jni/bridge/OmniTaskBridgeImpl2.cpp:263",
-        "JNIEnv::GetByteArrayElements@jni/bridge/OmniTaskBridgeImpl2.cpp:264",
-        "std::vector::assign@jni/bridge/OmniTaskBridgeImpl2.cpp:267",
-        "ByteStreamStateHandle::ByteStreamStateHandle@runtime/state/memory/ByteStreamStateHandle.cpp:277"
+        "convertResult@cpp/jni/bridge/OmniTaskBridgeImpl2.cpp:768",
+        "StateMetaInfoSnapshot::StateMetaInfoSnapshot@cpp/runtime/state/metainfo/StateMetaInfoSnapshot.h"
       ],
-      "sink": "SnapshotResult::WithLocalState@jni/bridge/OmniTaskBridgeImpl2.cpp:387",
-      "sink_type": "state_handle",
-      "description": "字节流状态流：Java byte[] → JNI 拷贝 → ByteStreamStateHandle → SnapshotResult"
-    }
-  ],
-  "cross_module_calls": [
-    {
-      "caller_module": "jni",
-      "caller_function": "Java_com_huawei_omniruntime_flink_runtime_tasks_OmniStreamTask_createNativeStreamTask",
-      "callee_module": "streaming_runtime_tasks",
-      "callee_function": "StreamTask::StreamTask",
-      "description": "JNI → StreamTask 创建"
+      "sink": "RocksdbKeyedStateBackend::restore@cpp/runtime/state/RocksdbKeyedStateBackend.h",
+      "sink_type": "state_restoration",
+      "risk": "High",
+      "description": "Java 元数据 -> JSON 解析 -> 状态恢复"
     },
     {
-      "caller_module": "jni",
-      "caller_function": "OmniTaskBridgeImpl2::CallMaterializeMetaData",
-      "callee_module": "runtime_state",
-      "callee_function": "CheckpointOptions::ToJson",
-      "description": "JNI → State Backend 状态元数据序列化"
-    },
-    {
-      "caller_module": "connector_kafka",
-      "caller_function": "KafkaSource::createReader",
-      "callee_module": "core_serialization",
-      "callee_function": "DeserializationFactory::getDeserializationSchema",
-      "description": "Kafka Source → Core 反序列化工厂"
-    },
-    {
-      "caller_module": "connector_kafka",
-      "caller_function": "KafkaRecordEmitter::emitRecord",
-      "callee_module": "streaming_runtime_tasks",
-      "callee_function": "SourceOutput::collect",
-      "description": "Kafka → StreamTask 数据发射"
-    },
-    {
-      "caller_module": "runtime_io_network",
-      "caller_function": "SpillingAdaptiveSpanningRecordDeserializer::setNextBuffer",
-      "callee_module": "runtime_buffer",
-      "callee_function": "MemorySegment::getData",
-      "description": "网络反序列化 → Buffer 内存获取"
-    },
-    {
-      "caller_module": "streaming_runtime_io",
-      "caller_function": "StreamTaskNetworkInput::processInput",
-      "callee_module": "runtime_io_network",
-      "callee_function": "SpillingAdaptiveSpanningRecordDeserializer::getNextRecord",
-      "description": "StreamTask → 网络反序列化"
-    },
-    {
-      "caller_module": "streaming_runtime_io",
-      "caller_function": "StreamTaskNetworkInput::processInput",
-      "callee_module": "streaming_runtime_tasks",
-      "callee_function": "OperatorChain::processElement",
-      "description": "StreamTask → 算子链处理"
-    },
-    {
-      "caller_module": "runtime_state",
-      "caller_function": "TaskStateManagerBridge::materializeMetaData",
-      "callee_module": "jni",
-      "callee_function": "OmniTaskBridgeImpl2::CallMaterializeMetaData",
-      "description": "State Backend → JNI 状态上传"
-    },
-    {
-      "caller_module": "runtime_state",
-      "caller_function": "RocksDBStateUploader::upload",
-      "callee_module": "runtime_state",
-      "callee_function": "FsCheckpointStreamFactory::createCheckpointStateOutputStream",
-      "description": "RocksDB → 外部存储上传"
-    },
-    {
-      "caller_module": "runtime_buffer",
-      "caller_function": "LocalBufferPool::requestBuffer",
-      "callee_module": "core_memory",
-      "callee_function": "MemorySegment::MemorySegment",
-      "description": "Buffer Pool → 内存段分配"
-    },
-    {
-      "caller_module": "runtime_io_network",
-      "caller_function": "RecordWriter::write",
-      "callee_module": "runtime_buffer",
-      "callee_function": "LocalBufferPool::requestBuffer",
-      "description": "网络写入 → Buffer Pool 请求"
+      "source": "OmniTaskBridgeImpl2::CallDownloadFileToLocal@cpp/jni/bridge/OmniTaskBridgeImpl2.cpp:730",
+      "path": [
+        "ConvertToJavaStreamStateHandle@cpp/jni/bridge/OmniTaskBridgeImpl2.cpp:713",
+        "ConvertPathStrToJavaPath@cpp/jni/bridge/OmniTaskBridgeImpl2.cpp:672"
+      ],
+      "sink": "env->CallBooleanMethod@cpp/jni/bridge/OmniTaskBridgeImpl2.cpp:758",
+      "sink_type": "jni_call",
+      "risk": "High",
+      "description": "C++ 文件路径 -> Java Path 转换 -> JNI 调用下载"
     }
   ]
 }

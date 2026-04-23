@@ -1,92 +1,118 @@
 {
-  "scan_id": "scan_20260419_234500",
-  "start_time": "2026-04-19T23:45:00Z",
-  "end_time": "2026-04-20T00:35:00Z",
-  "duration_seconds": 3000,
+  "scan_id": "scan_20260422_233200",
+  "start_time": "2026-04-22T23:32:00Z",
+  "end_time": "2026-04-23T00:15:00Z",
+  "duration_seconds": 2580,
   "project_name": "OmniStateStore",
-  "project_root": "/home/pwn20tty/Desktop/opencode_project/kunpeng/OmniStateStore",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/kunpeng/boostkit/OmniRuntime/OmniStateStore",
   "status": "success",
   "agents": [
     {
       "name": "architecture",
-      "start_time": "2026-04-19T23:45:05Z",
-      "end_time": "2026-04-20T00:13:30Z",
-      "duration_seconds": 1705,
+      "start_time": "2026-04-22T23:32:30Z",
+      "end_time": "2026-04-22T23:45:00Z",
+      "duration_seconds": 780,
       "status": "success",
       "output_files": [
-        "project_model.json",
-        "call_graph.json",
-        "threat_analysis_report.md"
-      ]
+        "scan-results/.context/project_model.json",
+        "scan-results/.context/call_graph.json",
+        "scan-results/threat_analysis_report.md"
+      ],
+      "summary": {
+        "total_files": 380,
+        "total_lines": 57205,
+        "attack_surfaces": 6,
+        "high_risk_modules": 6,
+        "vulnerability_candidates": 6
+      }
     },
     {
       "name": "dataflow-scanner",
-      "start_time": "2026-04-20T00:14:00Z",
-      "end_time": "2026-04-20T00:22:37Z",
-      "duration_seconds": 517,
+      "start_time": "2026-04-22T23:45:30Z",
+      "end_time": "2026-04-22T23:58:00Z",
+      "duration_seconds": 750,
       "status": "success",
-      "item_count": 26
+      "modules_scanned": 8,
+      "summary": {
+        "vulnerabilities_found": 13,
+        "critical": 2,
+        "high": 5,
+        "medium": 5,
+        "low": 1
+      }
     },
     {
       "name": "security-auditor",
-      "start_time": "2026-04-20T00:14:00Z",
-      "end_time": "2026-04-20T00:18:16Z",
-      "duration_seconds": 256,
+      "start_time": "2026-04-22T23:45:30Z",
+      "end_time": "2026-04-22T23:58:00Z",
+      "duration_seconds": 750,
       "status": "success",
-      "item_count": 10
+      "modules_scanned": 8,
+      "summary": {
+        "vulnerabilities_found": 8,
+        "critical": 0,
+        "high": 4,
+        "medium": 4,
+        "low": 0
+      }
     },
     {
       "name": "verification",
-      "start_time": "2026-04-20T00:23:00Z",
-      "end_time": "2026-04-20T00:28:58Z",
-      "duration_seconds": 358,
+      "start_time": "2026-04-22T23:58:30Z",
+      "end_time": "2026-04-23T00:03:00Z",
+      "duration_seconds": 270,
       "status": "success",
-      "item_count": 36
-    },
-    {
-      "name": "details-analyzer",
-      "status": "skipped",
-      "reason": "无 CONFIRMED 漏洞"
+      "summary": {
+        "total_verified": 21,
+        "likely": 16,
+        "possible": 5,
+        "confirmed": 0,
+        "false_positive": 0
+      }
     },
     {
       "name": "reporter",
-      "start_time": "2026-04-20T00:29:00Z",
-      "end_time": "2026-04-20T00:34:43Z",
-      "duration_seconds": 343,
+      "start_time": "2026-04-23T00:03:30Z",
+      "end_time": "2026-04-23T00:15:00Z",
+      "duration_seconds": 660,
       "status": "success",
       "output_files": [
-        "report_confirmed.md",
-        "report_unconfirmed.md"
+        "scan-results/report_confirmed.md",
+        "scan-results/report_unconfirmed.md"
       ]
     }
   ],
   "summary": {
-    "total_files": 380,
-    "total_lines": 57209,
-    "languages": ["C/C++"],
-    "mode": "autonomous",
-    "candidates": {
-      "total": 36,
-      "critical": 5,
-      "high": 16,
-      "medium": 13,
-      "low": 2
+    "total_vulnerabilities": 21,
+    "by_status": {
+      "LIKELY": 16,
+      "POSSIBLE": 5,
+      "CONFIRMED": 0,
+      "FALSE_POSITIVE": 0
     },
-    "verified": {
-      "total": 36,
-      "confirmed": 0,
-      "likely": 14,
-      "possible": 15,
-      "false_positive": 7
+    "by_severity": {
+      "critical": 2,
+      "high": 9,
+      "medium": 9,
+      "low": 1
     },
-    "output_files": [
-      "scan-results/.context/scan.db",
-      "scan-results/.context/project_model.json",
-      "scan-results/.context/call_graph.json",
-      "scan-results/.context/scan_log.json",
-      "scan-results/threat_analysis_report.md",
-      "scan-results/report_confirmed.md",
-      "scan-results/report_unconfirmed.md"
-    ]
+    "by_module": {
+      "slice_table": 4,
+      "jni": 4,
+      "snapshot": 3,
+      "lsm_store": 3,
+      "binary": 3,
+      "io": 2,
+      "compress": 1,
+      "blob_store": 1
+    },
+    "by_cwe": {
+      "CWE-120": 9,
+      "CWE-190": 8,
+      "CWE-191": 1,
+      "CWE-22": 1,
+      "CWE-843": 1
+    },
+    "avg_confidence": 64.5
   }
 }

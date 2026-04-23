@@ -1,54 +1,50 @@
 # 漏洞扫描报告 — 已确认漏洞
 
-**项目**: OmniStream  
-**扫描时间**: 2026-04-19T21:52:00+08:00  
+**项目**: OmniStream (Flink C++ Native Runtime)
+**扫描时间**: 2025-04-22T23:30:00Z
 **报告范围**: 仅包含 CONFIRMED 状态的漏洞
 
 ---
 
 ## 执行摘要
 
-### 扫描概述
+### 项目概述
 
-本次安全扫描针对 **OmniStream** 项目进行了全面的漏洞分析。OmniStream 是一个分布式流处理框架，作为 Apache Flink 的 C++ 本地执行引擎，通过 JNI 桥接 Java Flink Runtime 和 C++ Native TaskManager，处理来自 Kafka 等外部数据源的数据流。
+OmniStream 是 Apache Flink 的 C++ 原生运行时扩展，作为 TaskManager 的本地加速层，通过 JNI 与 Java Flink Runtime 交互，负责流处理任务的核心计算和数据传输。项目包含 1587 个 C++ 源文件，总计 84,104 行代码，部署在分布式集群环境中，处理来自 Kafka 集群和远程 TaskManager 的网络数据。
 
-扫描共发现 **30 个漏洞**，其中 **9 个已确认 (CONFIRMED)**，**12 个高疑似 (LIKELY)**，**3 个可能 (POSSIBLE)**，**6 个已排除为误报 (FALSE_POSITIVE)**。
+### 关键风险
 
-### 关键发现
+本次扫描发现 **6 个已确认漏洞**，其中 **5 个为 Critical 级别，1 个为 High 级别**。漏洞集中在以下核心攻击面：
 
-| 严重程度 | 数量 | 关键问题 |
-|----------|------|----------|
-| **Critical** | 3 | 远程代码执行、跨模块数据流漏洞 |
-| **High** | 6 | JNI 异常安全缺失、内存泄漏、反序列化漏洞 |
+| 攻击面 | 风险等级 | 漏洞数量 | 核心问题 |
+|--------|----------|----------|----------|
+| Network Interface | Critical | 3 | 网络数据大小未验证导致越界访问 |
+| Kafka Consumer | Critical | 2 | JSON 反序列化缺少异常处理 |
+| Cross-Module Data Flow | Critical+High | 2 | 跨模块数据传递缺少验证 |
 
-#### 最严重漏洞（需立即修复）
+**核心威胁场景**：
 
-1. **[VULN-DF-XMOD-002] Kafka 数据反序列化路径** (Critical, CWE-502)  
-   - **攻击路径**: Kafka Broker → RdKafkaConsumer::poll → JsonRowDataDeserializationSchema::deserialize → nlohmann::json::parse  
-   - **风险**: 来自不可信网络源的 Kafka 消息直接流向 JSON 反序列化，攻击者可发送恶意消息触发解析异常或注入恶意数据。
+1. **拒绝服务攻击 (DoS)** - 攻击者发送恶意 JSON 或构造网络数据包，触发解析异常或越界访问，导致 TaskManager 进程崩溃
+2. **信息泄露** - 越界读取可能暴露相邻内存区域的数据，包括堆管理 metadata 和其他对象的敏感信息
+3. **任务中断** - 单个 TaskManager 崩溃会影响整个 Flink Job，导致数据处理中断和状态不一致
 
-2. **[SEC-004] UDF 动态库加载代码执行** (Critical, CWE-94)  
-   - **攻击路径**: Java TaskDeploymentDescriptor JSON → config["udf_so"] → UDFLoader::LoadMapFunction → dlopen  
-   - **风险**: UDF 共享库路径来自配置 JSON，若 JobManager 或 TDD JSON 被篡改，可实现任意代码执行。
+### 整体建议
 
-3. **[SEC-009] 配置注入导致代码执行** (Critical, CWE-15)  
-   - **攻击路径**: Java JobManager → Operator Config → config["udf_so"] → dlopen  
-   - **风险**: 与 SEC-004 同源，多个算子（StreamMap、StreamCalc 等）均从配置加载 UDF 库。
+**优先级 P0 (立即修复)**：
 
-### 高危漏洞（需优先修复）
+- VULN-SERIAL-001 / SEC-010: JSON 反序列化异常处理 — 添加 try-catch 包裹所有 `nlohmann::json::parse()` 调用
+- VULN-STREAM-001 / SEC-008: 网络数据大小验证 — 在使用 `GetSize()/GetOffset()` 前验证是否超出 ObjectSegment 容量
 
-- **JNI 异常安全缺失**: 4 个 High 级别漏洞涉及 JSON 解析无 try-catch 保护，且 GetStringUTFChars 资源未正确释放，可能导致 JVM 崩溃和内存泄漏。
-- **网络缓冲区长度未验证**: VULN-DF-NET-001 中 readInt() 从网络缓冲区读取 32 位整数作为记录长度，恶意远程 TaskManager 可发送超大值导致内存分配问题。
+**优先级 P1 (短期修复)**：
 
-### 建议措施
+- VULN-CROSS-001: 跨模块反序列化链 — 在 JNI/KafkaSource/JsonRowDataDeserializationSchema 各层添加验证
+- VULN-CROSS-004: 跨模块缓冲区溢出 — 在网络数据反序列化后添加语义验证
 
-| 优先级 | 建议措施 |
-|--------|----------|
-| **P0 (立即)** | 修复 SEC-004/SEC-009，在 dlopen 前验证 UDF 库路径白名单 |
-| **P0 (立即)** | 修复 VULN-DF-XMOD-002，在 Kafka 消息反序列化前添加数据校验 |
-| **P1 (本周)** | 修复所有 JNI 异常安全问题，采用 Copy+Release+Parse 模式 |
-| **P1 (本周)** | 为网络缓冲区读取添加长度上限验证 |
-| **P2 (本月)** | 建立统一的安全编码规范和 RAII 包装类 |
+**架构改进建议**：
+
+1. 统一验证接口 — 定义 `validateOpDescriptionJSON()` 和 `validateNetworkBufferMetadata()` 等跨模块验证函数
+2. 边界隔离 — 在每个模块边界添加输入验证，避免信任链式传递
+3. 错误传播机制 — 验证失败时通过异常或错误码向上传播，而非静默忽略
 
 ---
 
@@ -58,32 +54,28 @@
 
 | 状态 | 数量 | 占比 |
 |------|------|------|
-| LIKELY | 12 | 40.0% |
-| CONFIRMED | 9 | 30.0% |
-| FALSE_POSITIVE | 6 | 20.0% |
-| POSSIBLE | 3 | 10.0% |
-| **总计** | **30** | 100% |
+| LIKELY | 18 | 47.4% |
+| POSSIBLE | 14 | 36.8% |
+| CONFIRMED | 6 | 15.8% |
+| **总计** | **38** | 100% |
 
 ### 1.2 严重性分布
 
 | 严重性 | 数量 | 占比 |
 |--------|------|------|
-| Critical | 3 | 33.3% |
-| High | 6 | 66.7% |
-| **有效漏洞总计** | **9** | - |
-| 误报 (FALSE_POSITIVE) | 6 | - |
+| Critical | 5 | 83.3% |
+| High | 1 | 16.7% |
+| **有效漏洞总计** | **6** | - |
+| 误报 (FALSE_POSITIVE) | 0 | - |
 
 ### 1.3 Top 10 关键漏洞
 
-1. **[VULN-DF-XMOD-002]** cross_module_data_flow_kafka_to_deserialization (Critical) - `cpp/connector/kafka/source/reader/RdKafkaConsumer.cpp:55` @ `Kafka_to_JSON_Deserialization` | 置信度: 85
-2. **[SEC-004]** Arbitrary Code Execution (Critical) - `cpp/core/udf/UDFLoader.h:131` @ `LoadUDFFunction` | 置信度: 75
-3. **[SEC-009]** Configuration Injection (Critical) - `cpp/streaming/api/operators/StreamMap.h:42` @ `StreamMap::loadUdf` | 置信度: 75
-4. **[VULN-DF-JNI-001]** deserialization_exception_unsafe (High) - `cpp/jni/init.cpp:50` @ `Java_org_apache_flink_runtime_taskexecutor_TaskManagerRunner_initTMConfiguration` | 置信度: 85
-5. **[VULN-DF-JNI-002]** deserialization_exception_unsafe (High) - `cpp/jni/tasks/jni_OmniStreamTask.cpp:18` @ `Java_com_huawei_omniruntime_flink_runtime_tasks_OmniStreamTask_createNativeStreamTask` | 置信度: 85
-6. **[VULN-DF-JNI-003]** deserialization_exception_unsafe (High) - `cpp/jni/tasks/jni_OmniStreamTask.cpp:42` @ `Java_com_huawei_omniruntime_flink_runtime_tasks_OmniStreamTask_createNativeOmniInputProcessor` | 置信度: 85
-7. **[SEC-001]** Memory Leak + Exception Safety (High) - `cpp/jni/init.cpp:52` @ `Java_org_apache_flink_runtime_taskexecutor_TaskManagerRunner_initTMConfiguration` | 置信度: 85
-8. **[SEC-002]** Exception Safety (High) - `cpp/jni/tasks/jni_OmniStreamTask.cpp:27` @ `Java_com_huawei_omniruntime_flink_runtime_tasks_OmniStreamTask_createNativeStreamTask` | 置信度: 85
-9. **[VULN-DF-NET-001]** buffer_read_unvalidated_length (High) - `cpp/runtime/io/network/api/serialization/NonSpanningWrapper.h:131` @ `NonSpanningWrapper::readInt` | 置信度: 80
+1. **[VULN-SERIAL-001]** Deserialization of Untrusted Data (Critical) - `cpp/core/api/common/serialization/JsonRowDataDeserializationSchema.h:40` @ `JsonRowDataDeserializationSchema::deserialize` | 置信度: 85
+2. **[VULN-STREAM-001]** Out-of-bounds Read (Critical) - `cpp/streaming/runtime/io/OmniAbstractStreamTaskNetworkInput.h:167` @ `OmniAbstractStreamTaskNetworkInput::processBufferOrEventOptForSQL` | 置信度: 85
+3. **[VULN-CROSS-001]** Cross-Module Deserialization Chain (Critical) - `cpp/connector/kafka/source/KafkaSource.cpp -> cpp/core/api/common/serialization/JsonRowDataDeserializationSchema.h:31` @ `KafkaSource::KafkaSource -> JsonRowDataDeserializationSchema::deserialize` | 置信度: 85
+4. **[SEC-008]** Improper Input Validation (Critical) - `cpp/streaming/runtime/io/OmniAbstractStreamTaskNetworkInput.h:157` @ `OmniAbstractStreamTaskNetworkInput::processBufferOrEventOptForSQL` | 置信度: 85
+5. **[SEC-010]** Improper Input Validation (Critical) - `cpp/core/api/common/serialization/JsonRowDataDeserializationSchema.h:33` @ `JsonRowDataDeserializationSchema::deserialize` | 置信度: 85
+6. **[VULN-CROSS-004]** Cross-Module Buffer Overflow (High) - `cpp/runtime/io/network/api/serialization/SpillingAdaptiveSpanningRecordDeserializer.cpp -> cpp/streaming/runtime/io/OmniAbstractStreamTaskNetworkInput.h:57` @ `SpillingAdaptiveSpanningRecordDeserializer::readNonSpanningRecord -> OmniAbstractStreamTaskNetworkInput::processBufferOrEventOptForSQL` | 置信度: 80
 
 ---
 
@@ -91,290 +83,261 @@
 
 | 入口点 | 类型 | 信任等级 | 可达性理由 | 说明 |
 |--------|------|----------|-----------|------|
-| `Java_com_huawei_omniruntime_flink_TNELLibrary_initialize@cpp/jni/init.cpp` | rpc | semi_trusted | JNI 初始化入口，由 Java Flink Runtime 调用，初始化共享内存 Metric Manager | JNI 初始化函数，设置共享内存监控 |
-| `Java_org_apache_flink_runtime_taskexecutor_TaskManagerRunner_initTMConfiguration@cpp/jni/init.cpp` | rpc | semi_trusted | JNI 配置入口，由 Java TaskManagerRunner 调用，接收 JSON 配置字符串 | 初始化 TaskManager 配置，解析 JSON 配置字符串 |
-| `Java_com_huawei_omniruntime_flink_runtime_tasks_OmniStreamTask_createNativeStreamTask@cpp/jni/tasks/jni_OmniStreamTask.cpp` | rpc | semi_trusted | JNI 任务创建入口，由 Java 调用，接收 TDD JSON 字符串创建 C++ StreamTask | 创建原生 StreamTask 对象，解析任务部署描述符 JSON |
-| `Java_com_huawei_omniruntime_flink_runtime_tasks_OmniStreamTask_createNativeOmniInputProcessor@cpp/jni/tasks/jni_OmniStreamTask.cpp` | rpc | semi_trusted | JNI 输入处理器创建入口，接收通道信息 JSON | 创建 OmniInputProcessor，处理输入通道配置 |
-| `OmniTaskBridgeImpl2::CallMaterializeMetaData@cpp/jni/bridge/OmniTaskBridgeImpl2.cpp` | rpc | semi_trusted | JNI 回调，将状态元数据序列化为 JSON 并上传到 Java 端 | 序列化状态元数据并调用 Java 方法 |
-| `OmniTaskBridgeImpl2::readMetaData@cpp/jni/bridge/OmniTaskBridgeImpl2.cpp` | rpc | semi_trusted | JNI 回调，从 Java 端读取状态元数据并反序列化 | 读取状态元数据 JSON 并解析 |
-| `OmniTaskBridgeImpl2::getKeyGroupEntries@cpp/jni/bridge/OmniTaskBridgeImpl2.cpp` | rpc | semi_trusted | JNI 回调，从 Java 端获取 KeyGroup 数据，处理字节数组数据 | 从 Java 流中读取 KeyGroup 数据 |
-| `KafkaSource::createReader@cpp/connector/kafka/source/KafkaSource.cpp` | network | untrusted_network | Kafka 数据源入口，创建 KafkaSourceReader 从 Kafka Broker 读取数据 | 创建 Kafka Source Reader，配置反序列化 Schema |
-| `RdKafkaConsumer::poll@cpp/connector/kafka/source/reader/RdKafkaConsumer.cpp` | network | untrusted_network | Kafka 数据接收入口，从 Kafka Broker 消费消息数据 | 从 Kafka 消费批量消息数据 |
-| `SpillingAdaptiveSpanningRecordDeserializer::setNextBuffer@cpp/runtime/io/network/api/serialization/SpillingAdaptiveSpanningRecordDeserializer.cpp` | network | untrusted_network | 网络数据反序列化入口，接收来自远程 TaskManager 的网络缓冲区数据 | 设置网络缓冲区并反序列化记录 |
-| `SpillingAdaptiveSpanningRecordDeserializer::SetNextBuffer@cpp/runtime/io/network/api/serialization/SpillingAdaptiveSpanningRecordDeserializer.cpp` | network | untrusted_network | 网络数据反序列化入口（V2），接收 ReadOnlySlicedNetworkBuffer | 设置网络缓冲区并反序列化记录（V2 版本） |
-| `StreamTaskNetworkInput::processInput@cpp/streaming/runtime/io/StreamTaskNetworkInput.cpp` | network | untrusted_network | 流处理网络输入入口，处理来自远程 TaskManager 的数据 | 处理网络输入数据 |
-| `JsonRowDataDeserializationSchema::deserialize@cpp/core/api/common/serialization/JsonRowDataDeserializationSchema.cpp` | network | untrusted_network | JSON 反序列化入口，解析来自 Kafka 或网络的数据 | 反序列化 JSON 数据为 RowData |
-| `MemorySegment::put@cpp/core/memory/MemorySegment.cpp` | internal | internal | 内存写入操作，接收外部数据写入堆外内存 | 向内存段写入数据 |
-| `MemorySegment::get@cpp/core/memory/MemorySegment.cpp` | internal | internal | 内存读取操作，从堆外内存读取数据 | 从内存段读取数据 |
-| `RocksDBStateDownloader::download@cpp/runtime/state/rocksdb/RocksDBStateDownloader.cpp` | file | semi_trusted | 状态恢复入口，从外部存储下载 RocksDB 状态快照 | 从外部存储下载状态数据 |
-| `RocksDBStateUploader::upload@cpp/runtime/state/rocksdb/RocksDBStateUploader.cpp` | file | semi_trusted | 状态快照入口，将 RocksDB 状态上传到外部存储 | 上传状态数据到外部存储 |
+| `Java_org_apache_flink_runtime_taskexecutor_TaskManagerRunner_initTMConfiguration@cpp/jni/init.cpp` | rpc | semi_trusted | JNI 调用入口，接收 Java 侧传递的配置 JSON 字符串，Java Flink Runtime 为半信任方（部署在集群环境） | 初始化 TaskManager 配置，接收并解析 JSON 配置字符串 |
+| `Java_com_huawei_omniruntime_flink_runtime_tasks_OmniStreamTask_createNativeStreamTask@cpp/jni/tasks/jni_OmniStreamTask.cpp` | rpc | semi_trusted | JNI 调用入口，接收 Java 传递的 TDD（TaskDeploymentDescriptor）JSON 字符串 | 创建原生 StreamTask 对象，解析任务描述 JSON |
+| `Java_com_huawei_omniruntime_flink_runtime_tasks_OmniStreamTask_createNativeOmniInputProcessor@cpp/jni/tasks/jni_OmniStreamTask.cpp` | rpc | semi_trusted | JNI 调用入口，接收输入通道信息 JSON 字符串 | 创建输入处理器，解析通道配置 JSON |
+| `Java_org_apache_flink_runtime_io_network_partition_consumer_OmniLocalInputChannel_sendMemorySegmentToNative@cpp/jni/io/jni_OmniLocalInputChannel.cpp` | rpc | semi_trusted | JNI 调用入口，接收 Java 传递的内存段地址和数据长度，直接操作共享内存 | 发送内存段数据到原生侧，传递内存地址和数据参数 |
+| `OmniTaskBridgeImpl2::CallMaterializeMetaData@cpp/jni/bridge/OmniTaskBridgeImpl2.cpp` | rpc | semi_trusted | 通过 JNI 回调 Java 方法，涉及 checkpoint 元数据和文件路径传递 | 调用 Java 端 checkpoint 元数据持久化 |
+| `RdKafkaConsumer::poll@cpp/connector/kafka/source/reader/RdKafkaConsumer.h` | network | untrusted_network | 从 Kafka Broker 消费消息，数据来源为外部网络集群 | Kafka 消息消费，接收外部 Kafka 数据 |
+| `KafkaSource::KafkaSource@cpp/connector/kafka/source/KafkaSource.cpp` | network | untrusted_network | 解析 Kafka 配置属性，配置来源于 JSON opDescription | Kafka 源初始化，解析配置并创建消费者 |
+| `OmniAbstractStreamTaskNetworkInput::emitNext@cpp/streaming/runtime/io/OmniAbstractStreamTaskNetworkInput.h` | network | untrusted_network | 处理来自其他 TaskManager 的网络数据，数据通过网络传输接收 | 网络输入数据处理，反序列化并分发数据 |
+| `SpillingAdaptiveSpanningRecordDeserializer::deserialize@cpp/runtime/io/network/api/serialization/SpillingAdaptiveSpanningRecordDeserializer.cpp` | network | untrusted_network | 反序列化网络数据缓冲区，数据来源为远程 TaskManager | 记录反序列化，处理网络数据缓冲区 |
+| `CsvLookupFunction::open@cpp/table/sources/CsvTableSource.h` | file | semi_trusted | 读取 CSV 文件，文件路径来自配置，数据内容可被外部修改 | CSV 文件读取和哈希表构建 |
+| `JsonRowDataDeserializationSchema::deserialize@cpp/core/api/common/serialization/JsonRowDataDeserializationSchema.h` | network | untrusted_network | 解析 JSON 数据，数据来源为 Kafka 消息或网络数据 | JSON 数据反序列化，将字节流转换为 VectorBatch |
 
 **其他攻击面**:
-- JNI Interface: Java Flink Runtime ↔ C++ TaskManager 数据传递边界
-- Kafka Consumer: 从 Kafka Broker 接收消息数据
-- Netty Shuffle Network: TaskManager 间数据交换（远程网络连接）
-- State Snapshot Storage: 从/向外部分布式存储读写状态快照
-- Checkpoint Storage: 从/向外部存储读写 Checkpoint 数据
-- JSON Deserialization: 解析来自网络/Kafka 的 JSON 数据
-- Memory Segment Operations: 堆外内存读写操作
+- JNI Interface: Java Flink Runtime -> C++ Native Runtime (配置注入、任务描述、内存地址传递)
+- Kafka Consumer: External Kafka Cluster -> KafkaSource Reader (消息数据、配置)
+- Network I/O: Remote TaskManager -> NetworkInput/Deserializer (网络数据缓冲区)
+- File System: Checkpoint/Savepoint Files -> State Backend (文件路径、状态数据)
+- CSV Source: External Files -> CsvTableSource (文件路径、文件内容)
 
 ---
 
-## 3. Critical 漏洞 (3)
+## 3. Critical 漏洞深度分析 (5)
 
-### [VULN-DF-XMOD-002] cross_module_data_flow_kafka_to_deserialization - Kafka_to_JSON_Deserialization
+### [VULN-SERIAL-001] JSON反序列化缺少异常处理 — 最高风险
 
 **严重性**: Critical | **CWE**: CWE-502 | **置信度**: 85/100 | **状态**: CONFIRMED | **来源**: dataflow-scanner
 
-**位置**: `cpp/connector/kafka/source/reader/RdKafkaConsumer.cpp:55-62` @ `Kafka_to_JSON_Deserialization`
-**模块**: cross_module
-**跨模块**: connector_kafka → core_serialization
+**位置**: `cpp/core/api/common/serialization/JsonRowDataDeserializationSchema.h:40-44` @ `JsonRowDataDeserializationSchema::deserialize`
+**模块**: core_serialization
 
-**描述**: Cross-module data flow: Kafka messages → Deserialization → JSON parsing. Kafka message data from untrusted network source flows through multiple modules and eventually to JSON deserialization.
+#### 漏洞详情
 
-**漏洞代码** (`cpp/connector/kafka/source/reader/RdKafkaConsumer.cpp:55-62`)
+`JsonRowDataDeserializationSchema::deserialize()` 方法在解析 Kafka 消息 JSON 数据时，直接调用 `nlohmann::json::parse()` 而未进行任何异常处理。当外部攻击者通过 Kafka 发送恶意构造的 JSON 数据时，会导致：
 
-```c
-// See call_graph.json data_flows entry for Kafka data flow
-ConsumerRecords* RdKafkaConsumer::poll(int timeoutMs) → KafkaRecordEmitter::emitRecord → JsonRowDataDeserializationSchema::deserialize → nlohmann::json::parse
+1. **解析异常崩溃** — 畸形 JSON 触发 `parse_error` 异常，未捕获导致程序崩溃
+2. **拒绝服务 (DoS)** — 超长字符串或深度嵌套导致内存耗尽或无限循环解析
+3. **潜在内存损坏** — nlohmann::json 库在解析失败时可能产生未定义行为
+
+#### 攻击数据流路径
+
+```
+Kafka Broker (外部网络)
+  ↓ RdKafkaConsumer::poll()
+  ↓ ConsumerRecords::addRecord()
+  ↓ KafkaRecordEmitter::emitRecord()
+  ↓ KafkaRecordDeserializationSchema::deserialize()
+  ↓ JsonRowDataDeserializationSchema::deserialize() ← 漏洞点
+  ↓ nlohmann::json::parse() ← 无异常处理
 ```
 
-**达成路径**
+**信任边界**: Network Interface → Kafka Broker → KafkaSource Reader (Critical 风险)，数据来源为 **untrusted_network**，攻击者完全可控 Kafka 消息内容。
 
-Kafka Broker (RdKafkaConsumer.cpp:55-62) [SOURCE untrusted_network] → KafkaPartitionSplitReader → KafkaSourceReader → KafkaRecordEmitter → JsonRowDataDeserializationSchema → nlohmann::json::parse [SINK]
-This is a complete attack path from untrusted network input to JSON deserialization.
+#### 漏洞代码
 
-**验证说明**: Kafka Broker -> RdKafkaConsumer::poll -> JsonRowDataDeserializationSchema::deserialize -> json::parse. Complete attack path from untrusted Kafka.
+```cpp
+// JsonRowDataDeserializationSchema.h:33-47
+void* deserialize(std::vector<const uint8_t*>& messageVec, std::vector<size_t>& lengthVec) override
+{
+    int rowSize = static_cast<int>(messageVec.size());
+    int colSize = static_cast<int>(fieldNames.size());
+    auto *vectorBatch = createBatch(rowSize, fieldTypes);
+    nlohmann::json node;
+    for (int rowIndex = 0; rowIndex < rowSize; rowIndex++) {
+        // 漏洞点：无异常处理的 JSON 解析
+        node = nlohmann::json::parse(std::string_view(
+            reinterpret_cast<const char *>(messageVec[rowIndex]), lengthVec[rowIndex]));
+        for (int colIndex = 0; colIndex < colSize; colIndex++) {
+            setColValue(rowIndex, colIndex, vectorBatch, node);
+        }
+    }
+    return vectorBatch;
+}
+```
 
-**评分明细**: base: 30 | reachability: 30 | controllability: 25 | mitigations: 0 | context: 0 | cross_file: 0
+#### PoC Payload 示例
+
+```json
+// 畸形 JSON - 导致 parse_error 异常
+{"data": "value", "nested": {}}}}}
+
+// 超长字符串 - 导致内存耗尽
+{"field": "AAAAAAAAAAAAAAAA..." * 100000000}
+
+// 深度嵌套 - 导致栈溢出或解析缓慢
+{"a":{"a":{"a":{"a":{"a":{"a":{"a":{"a":{"a":{"a":...}}}}}}}}}}
+```
+
+#### CVSS 评分
+
+```
+CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:N/I:N/A:H
+Base Score: 7.5 (High)
+```
 
 ---
 
-### [SEC-004] Arbitrary Code Execution - LoadUDFFunction
+### [VULN-STREAM-001] 网络数据大小未验证导致越界访问
 
-**严重性**: Critical | **CWE**: CWE-94 | **置信度**: 75/100 | **状态**: CONFIRMED | **来源**: security-auditor
+**严重性**: Critical | **CWE**: CWE-125 | **置信度**: 85/100 | **状态**: CONFIRMED | **来源**: dataflow-scanner
 
-**位置**: `cpp/core/udf/UDFLoader.h:131-137` @ `LoadUDFFunction`
-**模块**: core_udf
-**跨模块**: jni → streaming_runtime_tasks → core_udf
+**位置**: `cpp/streaming/runtime/io/OmniAbstractStreamTaskNetworkInput.h:167-188` @ `OmniAbstractStreamTaskNetworkInput::processBufferOrEventOptForSQL`
+**模块**: streaming_runtime_io
 
-**描述**: UDFLoader uses dlopen() to load shared libraries based on file path parameters that can be derived from JSON configuration. If an attacker can inject malicious UDF library paths into the task deployment descriptor JSON, arbitrary code execution is possible. The filePath parameter comes from config["udf_so"] which is parsed from operator descriptions received from Java JobManager.
+#### 漏洞详情
 
-**漏洞代码** (`cpp/core/udf/UDFLoader.h:131-137`)
+`OmniAbstractStreamTaskNetworkInput::processBufferOrEventOptForSQL()` 方法在处理网络数据时，直接使用 `ObjectBuffer::GetSize()` 和 `ObjectBuffer::GetOffset()` 返回的值进行循环迭代，访问 `ObjectSegment::getObject(index)`。这些值来自网络缓冲区数据，攻击者可以通过发送恶意构造的网络数据包控制 size 和 offset 值，导致：
 
-```c
-void* handle = dlopen(filePath.c_str(), RTLD_LAZY);
-FuncType *funcPointer = (FuncType *)dlsym(handle, funcSignature.c_str());
+1. **越界读取** — size 或 offset 超出 ObjectSegment 实际容量，访问未分配内存
+2. **信息泄露** — 读取相邻内存区域，可能泄露敏感数据
+3. **进程崩溃** — 访问无效内存地址导致 SIGSEGV
+4. **潜在代码执行** — 配合其他漏洞可能实现任意代码执行
+
+#### 攻击数据流路径
+
+```
+Remote TaskManager (外部网络)
+  ↓ Network I/O Layer
+  ↓ CheckpointedInputGate::pollNext()
+  ↓ BufferOrEvent (包含 ObjectBuffer)
+  ↓ OmniAbstractStreamTaskNetworkInput::emitNext()
+  ↓ processBufferOrEventOptForSQL() ← 漏洞点
+  ↓ buff->GetSize() / buff->GetOffset() ← 未验证的网络数据
+  ↓ for (int64_t index = offset; index < offset + size; index++)
+  ↓ objSegment->getObject(index) ← 越界访问
 ```
 
-**达成路径**
+**信任边界**: Network Interface → Remote TaskManagers / JobManager → TaskExecutor (Critical 风险)，数据来源为 **untrusted_network**，攻击者可控制网络数据包内容。
 
-Java TaskDeploymentDescriptor JSON → operator["udf_so"] → UDFLoader.LoadMapFunction(filePath) → dlopen → arbitrary code execution
+#### 漏洞代码
 
-**验证说明**: CRITICAL: dlopen(filePath) at line 131 loads shared library from config['udf_so']. If TDD JSON is compromised, arbitrary code execution possible.
+```cpp
+// OmniAbstractStreamTaskNetworkInput.h:167-188
+auto size = buff->GetSize();      // 来自网络数据，未验证
+auto objSegment = buff->GetObjectSegment();
+auto offset = buff->GetOffset();  // 来自网络数据，未验证
 
-**评分明细**: base: 30 | reachability: 20 | controllability: 25 | mitigations: 0 | context: 0 | cross_file: 0
+// 循环使用未验证的 size/offset
+for (int64_t index = offset; index < offset + size; index++) {
+    // getObject 无边界检查，直接访问数组
+    StreamElement *object = objSegment->getObject(index);
+    
+    if (object->getTag() == StreamElementTag::TAG_REC_WITH_TIMESTAMP ||
+        object->getTag() == StreamElementTag::TAG_REC_WITHOUT_TIMESTAMP) {
+        auto record = static_cast<StreamRecord *>(object);
+        auto vectorBatch = static_cast<VectorBatch *>(record->getValue());
+        output->emitRecord(record);
+    }
+}
+```
+
+#### ObjectSegment 结构分析
+
+```cpp
+// ObjectSegment 直接访问 objects_[offset]，无边界检查
+StreamElement* getObject(int offset)
+{
+    return objects_[offset];  // 无边界检查！直接访问数组
+}
+```
+
+#### CVSS 评分
+
+```
+CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:H
+Base Score: 7.5 (High)
+```
 
 ---
 
-### [SEC-009] Configuration Injection - StreamMap::loadUdf
+### [VULN-CROSS-001] 跨模块反序列化链
 
-**严重性**: Critical | **CWE**: CWE-15 | **置信度**: 75/100 | **状态**: CONFIRMED | **来源**: security-auditor
+**严重性**: Critical | **CWE**: CWE-502 | **置信度**: 85/100 | **状态**: CONFIRMED | **来源**: dataflow-scanner
 
-**位置**: `cpp/streaming/api/operators/StreamMap.h:42-45` @ `StreamMap::loadUdf`
-**模块**: streaming_runtime_tasks
-**跨模块**: jni → streaming_runtime_tasks → core_udf
+**位置**: `cpp/connector/kafka/source/KafkaSource.cpp -> cpp/core/api/common/serialization/JsonRowDataDeserializationSchema.h:31-44`
+**模块**: cross_module (jni → connector_kafka → core_serialization)
 
-**描述**: Operator configurations are parsed from JSON descriptions that come from Java JobManager. Multiple operators (StreamCalc, KeyedProcessOperator, etc.) load UDF shared libraries based on config["udf_so"] paths. If JobManager is compromised or configuration is manipulated, malicious library paths could be injected.
+#### 漏洞详情
 
-**漏洞代码** (`cpp/streaming/api/operators/StreamMap.h:42-45`)
+这是一个**跨模块数据流漏洞链**，攻击者可通过 JNI 配置入口注入恶意配置，经过多个模块传递，最终在 JSON 反序列化层触发漏洞。整个数据流路径跨越三个模块，每个环节都缺少必要的验证。
 
-```c
-std::string soPath = config["udf_so"]; std::string udfObj = config["udf_obj"];
+#### 跨模块链路
+
+```
+[模块1: jni]
+  JNI 配置入口 → Java 侧传递的 opDescriptionJSON
+  ↓
+[模块2: connector_kafka]
+  KafkaSource 构造函数 → 解析 JSON 配置
+  ↓
+  DeserializationFactory::getDeserializationSchema(opDescriptionJSON)
+  ↓
+[模块3: core_serialization]
+  JsonRowDataDeserializationSchema 构造函数 → 解析 outputNames/outputTypes
+  ↓
+  deserialize() 方法 → 解析 Kafka 消息 JSON ← 最终漏洞点
 ```
 
-**达成路径**
+#### 跨模块验证缺失清单
 
-Java JobManager → TaskDeploymentDescriptor JSON → Operator Config → config["udf_so"] → dlopen
-
-**验证说明**: StreamMap::loadUdf at lines 44-49 uses config['udf_so'] for dlopen. Part of SEC-004 attack chain.
-
-**评分明细**: base: 30 | reachability: 20 | controllability: 25 | mitigations: 0 | context: 0 | cross_file: 0
+| 检查点 | 当前状态 | 应有验证 |
+|--------|----------|----------|
+| JNI JSON 解析 | 无验证 | schema 验证、大小限制 |
+| opDescriptionJSON 传递 | 无验证 | 字段完整性检查 |
+| outputNames 数组 | 无验证 | 大小限制、内容验证 |
+| outputTypes 类型 | 无验证 | 类型有效性检查 |
+| Kafka 消息解析 | 无异常处理 | try-catch、格式验证 |
 
 ---
 
-## 4. High 漏洞 (6)
+### [SEC-008] ObjectBuffer大小未验证 (与 VULN-STREAM-001 重复发现)
 
-### [VULN-DF-JNI-001] deserialization_exception_unsafe - Java_org_apache_flink_runtime_taskexecutor_TaskManagerRunner_initTMConfiguration
+**严重性**: Critical | **CWE**: CWE-20 | **置信度**: 85/100 | **状态**: CONFIRMED | **来源**: security-auditor
 
-**严重性**: High | **CWE**: CWE-502 | **置信度**: 85/100 | **状态**: CONFIRMED | **来源**: dataflow-scanner
+**位置**: `cpp/streaming/runtime/io/OmniAbstractStreamTaskNetworkInput.h:157-192`
+**模块**: streaming_runtime_io
 
-**位置**: `cpp/jni/init.cpp:50-55` @ `Java_org_apache_flink_runtime_taskexecutor_TaskManagerRunner_initTMConfiguration`
-**模块**: jni
-
-**描述**: JSON parsing from JNI input without exception safety. GetStringUTFChars returns Java string data which is passed to nlohmann::json::parse. If parse() throws an exception, ReleaseStringUTFChars is never called causing memory leak. Malformed JSON from Java side could cause parsing exceptions.
-
-**漏洞代码** (`cpp/jni/init.cpp:50-55`)
-
-```c
-const char *cStrCon = (env)->GetStringUTFChars(configStr, 0);
-nlohmann::json config = nlohmann::json::parse(cStrCon);
-Configuration::TM_CONFIG->setConfiguration(config);
-```
-
-**达成路径**
-
-Java jstring configStr → GetStringUTFChars → const char* cStrCon → nlohmann::json::parse → Configuration object
-[SOURCE] Line 52: GetStringUTFChars (JNI input)
-[SINK] Line 53: json::parse (deserialization)
-
-**验证说明**: Code confirmed: GetStringUTFChars at line 52 without ReleaseStringUTFChars, json::parse at line 53 without try-catch. If parse throws, memory leaks and JVM crashes.
-
-**评分明细**: base: 30 | reachability: 30 | controllability: 25 | mitigations: 0 | context: 0 | cross_file: 0
+本漏洞与 **VULN-STREAM-001** 为同一漏洞的重复发现，不同分析角度：本漏洞侧重输入验证缺失，VULN-STREAM-001 侧重越界访问风险。
 
 ---
 
-### [VULN-DF-JNI-002] deserialization_exception_unsafe - Java_com_huawei_omniruntime_flink_runtime_tasks_OmniStreamTask_createNativeStreamTask
+### [SEC-010] JSON反序列化缺少异常处理 (与 VULN-SERIAL-001 重复发现)
 
-**严重性**: High | **CWE**: CWE-502 | **置信度**: 85/100 | **状态**: CONFIRMED | **来源**: dataflow-scanner
+**严重性**: Critical | **CWE**: CWE-20 | **置信度**: 85/100 | **状态**: CONFIRMED | **来源**: security-auditor
 
-**位置**: `cpp/jni/tasks/jni_OmniStreamTask.cpp:18-40` @ `Java_com_huawei_omniruntime_flink_runtime_tasks_OmniStreamTask_createNativeStreamTask`
-**模块**: jni
-**跨模块**: jni → streaming_runtime_tasks
+**位置**: `cpp/core/api/common/serialization/JsonRowDataDeserializationSchema.h:33-47`
+**模块**: core_serialization
 
-**描述**: JSON parsing from JNI input without exception safety. TDD (Task Deployment Descriptor) JSON string from Java is parsed without proper exception handling. If json::parse throws, ReleaseStringUTFChars is skipped.
-
-**漏洞代码** (`cpp/jni/tasks/jni_OmniStreamTask.cpp:18-40`)
-
-```c
-const char *cStrTDD = (env)->GetStringUTFChars(TDDString, 0);
-nlohmann::json tdd = nlohmann::json::parse(cStrTDD);
-auto *streamTask = new omnistream::datastream::StreamTask(tdd, bufferStatus, task->getRuntimeEnv());
-```
-
-**达成路径**
-
-Java jstring TDDString → GetStringUTFChars → const char* cStrTDD → nlohmann::json::parse → StreamTask constructor
-[SOURCE] Line 21: GetStringUTFChars (JNI input)
-[SINK] Line 27: json::parse (deserialization)
-
-**验证说明**: Code confirmed: GetStringUTFChars at line 21, json::parse at line 27, ReleaseStringUTFChars at line 37. If parse throws exception before line 37, memory leak occurs.
-
-**评分明细**: base: 30 | reachability: 30 | controllability: 25 | mitigations: 0 | context: 0 | cross_file: 0
+本漏洞与 **VULN-SERIAL-001** 为同一漏洞的重复发现。
 
 ---
 
-### [VULN-DF-JNI-003] deserialization_exception_unsafe - Java_com_huawei_omniruntime_flink_runtime_tasks_OmniStreamTask_createNativeOmniInputProcessor
+## 4. High 漏洞 (1)
 
-**严重性**: High | **CWE**: CWE-502 | **置信度**: 85/100 | **状态**: CONFIRMED | **来源**: dataflow-scanner
+### [VULN-CROSS-004] 跨模块缓冲区溢出链
 
-**位置**: `cpp/jni/tasks/jni_OmniStreamTask.cpp:42-57` @ `Java_com_huawei_omniruntime_flink_runtime_tasks_OmniStreamTask_createNativeOmniInputProcessor`
-**模块**: jni
-**跨模块**: jni → streaming_runtime_io
+**严重性**: High | **CWE**: CWE-125 | **置信度**: 80/100 | **状态**: CONFIRMED | **来源**: dataflow-scanner
 
-**描述**: JSON parsing from JNI input without exception safety. Channel info JSON string from Java is parsed without proper exception handling.
+**位置**: `cpp/runtime/io/network/api/serialization/SpillingAdaptiveSpanningRecordDeserializer.cpp -> cpp/streaming/runtime/io/OmniAbstractStreamTaskNetworkInput.h:57-188`
+**模块**: cross_module (runtime_io_network → streaming_runtime_io)
 
-**漏洞代码** (`cpp/jni/tasks/jni_OmniStreamTask.cpp:42-57`)
+#### 漏洞详情
 
-```c
-const char *channelInfos = (env)->GetStringUTFChars(inputChannelInfo, 0);
-nlohmann::json channelJson = nlohmann::json::parse(channelInfos);
+这是一个**跨模块缓冲区越界读取链**，攻击者通过网络发送恶意构造的数据包，经过 runtime_io_network 模块反序列化后，传递到 streaming_runtime_io 模块，最终触发越界访问。虽然 SpillingAdaptiveSpanningRecordDeserializer 有部分边界检查 (canReadRecord)，但 ObjectBuffer.GetSize() 返回值仍可被攻击者控制。
+
+#### canReadRecord 检查的局限性
+
+```cpp
+// NonSpanningWrapper 有边界检查，但仅检查"能否读取"，不检查"值是否合理"
+inline bool canReadRecord(int recordLength) const
+{
+    return recordLength <= remaining();  // 大值只要 remaining 足够就能通过
+}
 ```
 
-**达成路径**
-
-Java jstring inputChannelInfo → GetStringUTFChars → const char* channelInfos → nlohmann::json::parse → channelJson
-[SOURCE] Line 45: GetStringUTFChars (JNI input)
-[SINK] Line 49: json::parse (deserialization)
-
-**验证说明**: Code confirmed: GetStringUTFChars at line 45, json::parse at line 49, ReleaseStringUTFChars at line 50. If parse throws, ReleaseStringUTFChars skipped causing memory leak.
-
-**评分明细**: base: 30 | reachability: 30 | controllability: 25 | mitigations: 0 | context: 0 | cross_file: 0
-
----
-
-### [SEC-001] Memory Leak + Exception Safety - Java_org_apache_flink_runtime_taskexecutor_TaskManagerRunner_initTMConfiguration
-
-**严重性**: High | **CWE**: CWE-401 | **置信度**: 85/100 | **状态**: CONFIRMED | **来源**: security-auditor
-
-**位置**: `cpp/jni/init.cpp:52-54` @ `Java_org_apache_flink_runtime_taskexecutor_TaskManagerRunner_initTMConfiguration`
-**模块**: jni
-
-**描述**: JNI function initTMConfiguration fails to release GetStringUTFChars and lacks exception handling for JSON parsing. The const char* pointer obtained from GetStringUTFChars is never released with ReleaseStringUTFChars, causing memory leak. Additionally, nlohmann::json::parse() is called without try-catch block, which could crash the JVM if malformed JSON is passed from Java side.
-
-**漏洞代码** (`cpp/jni/init.cpp:52-54`)
-
-```c
-const char *cStrCon = (env)->GetStringUTFChars(configStr, 0);
-nlohmann::json config = nlohmann::json::parse(cStrCon);
-Configuration::TM_CONFIG->setConfiguration(config);
-```
-
-**达成路径**
-
-Java JString → GetStringUTFChars → JSON Parse → Configuration
-
-**验证说明**: Duplicate of VULN-DF-JNI-001. Code confirmed: line 52 GetStringUTFChars without release, line 53 json::parse without exception handling.
-
-**评分明细**: base: 30 | reachability: 30 | controllability: 25 | mitigations: 0 | context: 0 | cross_file: 0
-
----
-
-### [SEC-002] Exception Safety - Java_com_huawei_omniruntime_flink_runtime_tasks_OmniStreamTask_createNativeStreamTask
-
-**严重性**: High | **CWE**: CWE-755 | **置信度**: 85/100 | **状态**: CONFIRMED | **来源**: security-auditor
-
-**位置**: `cpp/jni/tasks/jni_OmniStreamTask.cpp:27-29` @ `Java_com_huawei_omniruntime_flink_runtime_tasks_OmniStreamTask_createNativeStreamTask`
-**模块**: jni
-
-**描述**: JNI function createNativeStreamTask calls nlohmann::json::parse() without exception handling. If malformed TDD JSON string is passed from Java, the parse exception will propagate and crash the native code, potentially causing JVM instability.
-
-**漏洞代码** (`cpp/jni/tasks/jni_OmniStreamTask.cpp:27-29`)
-
-```c
-nlohmann::json tdd = nlohmann::json::parse(cStrTDD);
-LOG("Calling  StreamTask with json " + tdd.dump(2))
-```
-
-**达成路径**
-
-Java TDDString → GetStringUTFChars → JSON Parse → StreamTask Creation
-
-**验证说明**: Duplicate of VULN-DF-JNI-002. Code confirmed: line 27 json::parse without try-catch, exception propagation to JVM.
-
-**评分明细**: base: 30 | reachability: 30 | controllability: 25 | mitigations: 0 | context: 0 | cross_file: 0
-
----
-
-### [VULN-DF-NET-001] buffer_read_unvalidated_length - NonSpanningWrapper::readInt
-
-**严重性**: High | **CWE**: CWE-190 | **置信度**: 80/100 | **状态**: CONFIRMED | **来源**: dataflow-scanner
-
-**位置**: `cpp/runtime/io/network/api/serialization/NonSpanningWrapper.h:131-147` @ `NonSpanningWrapper::readInt`
-**模块**: runtime_io_network
-
-**描述**: Record length read from network buffer without upper bound validation. readInt() reads a 32-bit integer from network buffer representing record length. This value could be manipulated by malicious remote TaskManager to cause integer overflow or excessive memory allocation.
-
-**漏洞代码** (`cpp/runtime/io/network/api/serialization/NonSpanningWrapper.h:131-147`)
-
-```c
-uint32_t value = (static_cast<uint32_t>(data_[position_]) << 24) |
-                 (static_cast<uint32_t>(data_[position_ + 1]) << 16) |
-                 (static_cast<uint32_t>(data_[position_ + 2]) << 8) |
-                 static_cast<uint32_t>(data_[position_ + 3]);
-position_ += sizeof(uint32_t);
-return static_cast<int>(value);
-```
-
-**达成路径**
-
-Remote TaskManager network buffer → data_ pointer → readInt() → int recordLen → canReadRecord(recordLen) → SpanningWrapper buffer expansion
-[SOURCE] Network buffer from remote TaskManager (untrusted_network)
-[SINK] recordLength used in SpanningWrapper::ensureBufferCapacity
-
-**验证说明**: readInt() reads 32-bit int from network buffer. No upper bound validation - malicious remote TaskManager could send extremely large recordLength.
-
-**评分明细**: base: 30 | reachability: 30 | controllability: 25 | mitigations: -5 | context: 0 | cross_file: 0
+**局限性**: 仅检查缓冲区边界，未检查 recordLen 是否超出目标对象容量。
 
 ---
 
@@ -382,457 +345,247 @@ Remote TaskManager network buffer → data_ pointer → readInt() → int record
 
 | 模块 | Critical | High | Medium | Low | 合计 |
 |------|----------|------|--------|-----|------|
-| core_udf | 1 | 0 | 0 | 0 | 1 |
-| cross_module | 1 | 0 | 0 | 0 | 1 |
-| jni | 0 | 5 | 0 | 0 | 5 |
-| runtime_io_network | 0 | 1 | 0 | 0 | 1 |
-| streaming_runtime_tasks | 1 | 0 | 0 | 0 | 1 |
-| **合计** | **3** | **6** | **0** | **0** | **9** |
+| core_serialization | 2 | 0 | 0 | 0 | 2 |
+| cross_module | 1 | 1 | 0 | 0 | 2 |
+| streaming_runtime_io | 2 | 0 | 0 | 0 | 2 |
+| **合计** | **5** | **1** | **0** | **0** | **6** |
 
 ## 6. CWE 分布
 
 | CWE | 数量 | 占比 |
 |-----|------|------|
-| CWE-502 | 4 | 44.4% |
-| CWE-94 | 1 | 11.1% |
-| CWE-755 | 1 | 11.1% |
-| CWE-401 | 1 | 11.1% |
-| CWE-190 | 1 | 11.1% |
-| CWE-15 | 1 | 11.1% |
+| CWE-502 | 2 | 33.3% |
+| CWE-20 | 2 | 33.3% |
+| CWE-125 | 2 | 33.3% |
 
 ---
 
-## 7. Top 5 关键漏洞深度分析
+## 7. 修复建议
 
-### 7.1 [VULN-DF-XMOD-002] Kafka → JSON 反序列化跨模块漏洞
+### 7.1 JSON 反序列化安全修复 (CWE-502)
 
-#### 漏洞定位
-
-**源文件**: `cpp/connector/kafka/source/reader/RdKafkaConsumer.cpp`  
-**关键函数**: `RdKafkaConsumer::poll()` (第 55-62 行)
+#### JsonRowDataDeserializationSchema.h 修复
 
 ```cpp
-ConsumerRecords* RdKafkaConsumer::poll(int timeoutMs)
+void* deserialize(std::vector<const uint8_t*>& messageVec, std::vector<size_t>& lengthVec) override
 {
-    std::unordered_map<RdKafka::TopicPartition *, std::vector<RdKafka::Message *>> records =
-        consumer_->consumeBatch(timeoutMs, batch_size_);
-    ConsumerRecords* consumerRecords = new ConsumerRecords(std::move(records));
-    return consumerRecords;
-}
-```
-
-#### 数据流追踪
-
-完整攻击路径：
-```
-Kafka Broker (外部不可信网络源)
-    │
-    ▼ RdKafkaConsumer::poll() — 获取消息批次
-    │
-    ▼ KafkaPartitionSplitReader — 分区读取
-    │
-    ▼ KafkaSourceReader — 源读取器
-    │
-    ▼ KafkaRecordEmitter::emitRecord() — 发射记录
-    │
-    ▼ DeserializationSchema::deserialize() — 反序列化入口
-    │
-    ▼ JsonRowDataDeserializationSchema::deserialize()
-    │
-    ▼ nlohmann::json::parse() — JSON 解析 [SINK]
-```
-
-#### 安全风险
-
-1. **外部数据源**: Kafka Broker 位于不可信网络边界，消息数据可被攻击者控制
-2. **无数据校验**: 消息直接传递给反序列化器，未进行格式或大小验证
-3. **异常传播**: JSON 解析异常可能跨模块传播，影响流处理任务稳定性
-4. **内存问题**: 恶意消息可能触发内存耗尽或解析异常导致任务失败
-
-#### 影响范围
-
-- **模块**: connector_kafka → core_serialization
-- **组件**: RdKafkaConsumer, KafkaSourceReader, JsonRowDataDeserializationSchema
-- **信任边界**: Network Interface (Kafka) — Critical Risk
-
----
-
-### 7.2 [SEC-004] UDF 动态库加载代码执行漏洞
-
-#### 漏洞定位
-
-**源文件**: `cpp/core/udf/UDFLoader.h`  
-**关键函数**: `LoadUDFFunction()` 模板函数 (第 129-157 行)
-
-```cpp
-template<typename FuncType>
-FuncType* LoadUDFFunction(const std::string &filePath, const std::string &funcSignature)
-{
-    void* handle = dlopen(filePath.c_str(), RTLD_LAZY);  // 直接加载外部库
-    if (not handle) {
-        std::cerr << "Error loading library: " << dlerror() << std::endl;
+    // 验证消息数量
+    const size_t MAX_ROWS = 10000;
+    if (messageVec.size() > MAX_ROWS) {
+        LOG_ERROR("Too many messages in batch");
         return nullptr;
     }
-    FuncType *funcPointer = (FuncType *)dlsym(handle, funcSignature.c_str());
-    // ...
-    return funcPointer;
-}
-```
-
-#### 数据流追踪
-
-```
-Java JobManager
-    │
-    ▼ TaskDeploymentDescriptor JSON
-    │
-    ▼ operator["udf_so"] 配置项
-    │
-    ▼ StreamMap::loadUdf() / StreamCalc::loadUdf() 等
-    │
-    ▼ config["udf_so"] 字符串提取
-    │
-    ▼ UDFLoader::LoadMapFunction(filePath)
-    │
-    ▼ dlopen(filePath.c_str(), RTLD_LAZY) [SINK - 代码执行]
-```
-
-#### 安全风险
-
-1. **路径可控**: `filePath` 来自 JSON 配置 `config["udf_so"]`
-2. **无路径验证**: dlopen 直接加载，无白名单或路径校验
-3. **任意代码执行**: 恶意 .so 库可在 TaskManager 进程中执行任意代码
-4. **权限继承**: 加载的库继承 TaskManager 进程权限
-
-#### 影响范围
-
-- **模块**: jni → streaming_runtime_tasks → core_udf
-- **攻击面**: JNI Interface — Critical Risk
-- **前置条件**: JobManager 被入侵 或 TDD JSON 在传输中被篡改
-
----
-
-### 7.3 [SEC-009] 配置注入漏洞
-
-#### 漏洞定位
-
-**源文件**: `cpp/streaming/api/operators/StreamMap.h`  
-**关键函数**: `StreamMap::loadUdf()` (第 42-55 行)
-
-```cpp
-void loadUdf(const nlohmann::json &config)
-{
-    std::string soPath = config["udf_so"];       // 直接从配置提取路径
-    std::string udfObj = config["udf_obj"];
-    nlohmann::json udfObjJson = nlohmann::json::parse(udfObj);
     
-    auto *symbol = udfLoader.LoadMapFunction(soPath);  // 调用 dlopen
-    if (symbol == nullptr) {
-        throw std::out_of_range("null pointer when load " + soPath);
+    int rowSize = static_cast<int>(messageVec.size());
+    int colSize = static_cast<int>(fieldNames.size());
+    auto *vectorBatch = createBatch(rowSize, fieldTypes);
+    nlohmann::json node;
+    
+    for (int rowIndex = 0; rowIndex < rowSize; rowIndex++) {
+        // 修复 1：添加大小限制
+        const size_t MAX_JSON_SIZE = 1024 * 1024; // 1MB
+        if (lengthVec[rowIndex] > MAX_JSON_SIZE) {
+            LOG_ERROR("JSON message too large: " << lengthVec[rowIndex]);
+            continue;
+        }
+        
+        // 修复 2：添加异常处理
+        try {
+            // 修复 3：安全解析选项
+            node = nlohmann::json::parse(
+                std::string_view(
+                    reinterpret_cast<const char *>(messageVec[rowIndex]), 
+                    lengthVec[rowIndex]),
+                nullptr, // callback
+                false,   // allow exceptions = false
+                true     // ignore comments
+            );
+            
+            if (node.is_discarded()) {
+                LOG_ERROR("Invalid JSON at row " << rowIndex);
+                continue;
+            }
+            
+            for (int colIndex = 0; colIndex < colSize; colIndex++) {
+                setColValue(rowIndex, colIndex, vectorBatch, node);
+            }
+        } catch (const nlohmann::json::parse_error& e) {
+            LOG_ERROR("JSON parse error at row " << rowIndex << ": " << e.what());
+        } catch (const std::exception& e) {
+            LOG_ERROR("Unexpected error at row " << rowIndex << ": " << e.what());
+        }
     }
-    function = symbol(udfObjJson);
-    this->userFunction = function.release();
+    return vectorBatch;
 }
 ```
 
-#### 安全风险
+#### JNI 层 JSON 解析修复
 
-此漏洞与 SEC-004 共享同一攻击链，但发生在算子层面：
-- 多个算子 (StreamMap, StreamCalc, KeyedProcessOperator 等) 均使用相同模式
-- 配置 JSON 来自 Java JobManager 的 TaskDeploymentDescriptor
-- 若 TDD JSON 被篡改，所有算子均可能加载恶意库
-
----
-
-### 7.4 [VULN-DF-JNI-001/002/003] JNI 异常安全缺失
-
-#### 漏洞定位
-
-**源文件**: 
-- `cpp/jni/init.cpp` (VULN-DF-JNI-001)
-- `cpp/jni/tasks/jni_OmniStreamTask.cpp` (VULN-DF-JNI-002/003)
-
-#### 漏洞模式分析
-
-**错误模式** (jni/init.cpp):
 ```cpp
-const char *cStrCon = (env)->GetStringUTFChars(configStr, 0);  // 分配 JNI 资源
-nlohmann::json config = nlohmann::json::parse(cStrCon);         // 可抛出异常
-Configuration::TM_CONFIG->setConfiguration(config);
-// 缺少: env->ReleaseStringUTFChars(configStr, cStrCon);
-```
-
-**错误模式** (jni_OmniStreamTask.cpp):
-```cpp
+// jni_OmniStreamTask.cpp
 const char *cStrTDD = (env)->GetStringUTFChars(TDDString, 0);
-nlohmann::json tdd = nlohmann::json::parse(cStrTDD);  // 若抛出异常
-// ...
-env->ReleaseStringUTFChars(TDDString, cStrTDD);  // 此行不会执行
-```
 
-#### 安全风险
+// 添加大小限制
+size_t tdd_len = strlen(cStrTDD);
+if (tdd_len > MAX_TDD_SIZE) {
+    LOG_ERROR("TDD JSON too large: " << tdd_len);
+    env->ReleaseStringUTFChars(TDDString, cStrTDD);
+    return 0;
+}
 
-1. **内存泄漏**: GetStringUTFChars 分配的内存永不释放
-2. **JVM 崩溃**: C++ 异常跨 JNI 边界导致未定义行为
-3. **资源耗尽**: 重复调用可耗尽 JVM 堆内存
-4. **任务失败**: 流任务初始化失败导致集群不稳定
-
-#### 正确模式对比
-
-**正确实现** (jni_OmniTaskExecutor.cpp):
-```cpp
-const char* jobString = jniEnv->GetStringUTFChars(jobjson, nullptr);
-std::string jobInfoString(jobString);  // 复制到安全内存
-jniEnv->ReleaseStringUTFChars(jobjson, jobString);  // 立即释放
-nlohmann::json job = nlohmann::json::parse(jobInfoString);  // 解析安全副本
-```
-
----
-
-### 7.5 [VULN-DF-NET-001] 网络缓冲区长度未验证
-
-#### 漏洞定位
-
-**源文件**: `cpp/runtime/io/network/api/serialization/NonSpanningWrapper.h`  
-**关键函数**: `NonSpanningWrapper::readInt()` (第 131-147 行)
-
-```cpp
-inline int NonSpanningWrapper::readInt()
-{
-    if (unlikely(position_ + sizeof(uint32_t) > length_)) {
-        THROW_LOGIC_EXCEPTION("EOFException");
+// 安全解析
+nlohmann::json tdd;
+try {
+    tdd = nlohmann::json::parse(cStrTDD, nullptr, false, true);
+    if (tdd.is_discarded()) {
+        LOG_ERROR("Invalid TDD JSON");
+        env->ReleaseStringUTFChars(TDDString, cStrTDD);
+        return 0;
     }
-    uint32_t value = (static_cast<uint32_t>(data_[position_]) << 24) |
-                     (static_cast<uint32_t>(data_[position_ + 1]) << 16) |
-                     (static_cast<uint32_t>(data_[position_ + 2]) << 8) |
-                     static_cast<uint32_t>(data_[position_ + 3]);
-    position_ += sizeof(uint32_t);
-    return static_cast<int>(value);  // 返回 32 位整数作为记录长度
+} catch (...) {
+    LOG_ERROR("TDD parse exception");
+    env->ReleaseStringUTFChars(TDDString, cStrTDD);
+    return 0;
+}
+
+env->ReleaseStringUTFChars(TDDString, cStrTDD);
+```
+
+### 7.2 网络数据大小验证修复 (CWE-125)
+
+#### OmniAbstractStreamTaskNetworkInput.h 修复
+
+```cpp
+DataInputStatus processBufferOrEventOptForSQL(...) {
+    if (bufferOrEvent->isBuffer()) {
+        auto buff = reinterpret_cast<ObjectBuffer*>(bufferOrEvent->getBuffer());
+
+        auto claimed_size = buff->GetSize();
+        auto objSegment = buff->GetObjectSegment();
+        auto claimed_offset = buff->GetOffset();
+        
+        // 修复 1：获取 ObjectSegment 实际容量
+        size_t actual_capacity = objSegment->getSize();
+        
+        // 修复 2：验证 offset 有效性
+        if (claimed_offset < 0 || claimed_offset >= actual_capacity) {
+            LOG_ERROR("Invalid offset: " << claimed_offset 
+                      << " >= capacity: " << actual_capacity);
+            buff->RecycleBuffer();
+            return DataInputStatus::MORE_AVAILABLE;
+        }
+        
+        // 修复 3：验证 size 有效性
+        if (claimed_size < 0 || claimed_size > actual_capacity) {
+            LOG_ERROR("Invalid size: " << claimed_size 
+                      << " > capacity: " << actual_capacity);
+            buff->RecycleBuffer();
+            return DataInputStatus::MORE_AVAILABLE;
+        }
+        
+        // 修复 4：验证 offset + size 不超出容量
+        if (claimed_offset + claimed_size > actual_capacity) {
+            LOG_ERROR("offset + size overflow: " 
+                      << claimed_offset + claimed_size 
+                      << " > capacity: " << actual_capacity);
+            buff->RecycleBuffer();
+            return DataInputStatus::MORE_AVAILABLE;
+        }
+        
+        size_t size = static_cast<size_t>(claimed_size);
+        size_t offset = static_cast<size_t>(claimed_offset);
+        
+        for (size_t index = offset; index < offset + size; index++) {
+            StreamElement *object = objSegment->getObject(static_cast<int>(index));
+            if (object == nullptr) {
+                LOG_WARN("Null object at index " << index);
+                continue;
+            }
+            // ... 处理 object
+        }
+        
+        buff->RecycleBuffer();
+        return DataInputStatus::MORE_AVAILABLE;
+    }
 }
 ```
 
-#### 数据流追踪
-
-```
-远程 TaskManager (Netty Shuffle Network)
-    │
-    ▼ NetworkBuffer 数据包
-    │
-    ▼ SpillingAdaptiveSpanningRecordDeserializer::setNextBuffer()
-    │
-    ▼ NonSpanningWrapper::initializeFromMemoryBuffer()
-    │
-    ▼ NonSpanningWrapper::readInt() — 读取记录长度
-    │
-    ▼ SpanningWrapper::ensureBufferCapacity(recordLength) [SINK]
-    │
-    ▼ buffer_.reserve(newCapacity) — 内存分配
-```
-
-#### 安全风险
-
-1. **长度可控**: 记录长度来自远程 TaskManager 网络数据
-2. **无上限验证**: 32 位整数可达 2^31-1，无最大值限制
-3. **内存耗尽**: 恶意远程 TaskManager 可发送超大长度值
-4. **整数溢出**: 在后续计算中可能触发整数溢出
-
----
-
-## 8. 修复建议
-
-### 8.1 P0 优先级（立即修复）
-
-#### 修复 SEC-004/SEC-009: UDF 库路径验证
+#### ObjectSegment 边界检查修复
 
 ```cpp
-// 在 UDFLoader.h 中添加路径白名单验证
-class UDFLoader {
-private:
-    static const std::vector<std::string> ALLOWED_UDF_PATHS = {
-        "/opt/omnistream/udf/",
-        "/usr/local/lib/omnistream/"
-    };
-    
-    bool isPathAllowed(const std::string& filePath) {
-        // 解析真实路径防止符号链接攻击
-        char resolved[PATH_MAX];
-        if (realpath(filePath.c_str(), resolved) == nullptr) {
+// ObjectSegment.h
+StreamElement* getObject(int offset)
+{
+    // 添加边界检查
+    if (offset < 0 || offset >= static_cast<int>(size)) {
+        LOG_ERROR("ObjectSegment OOB access: offset=" << offset << " size=" << size);
+        return nullptr;
+    }
+    return objects_[offset];
+}
+```
+
+### 7.3 跨模块验证接口
+
+```cpp
+// 定义跨模块验证接口
+class NetworkBufferValidator {
+public:
+    static bool validateObjectBufferMetadata(
+        int claimedSize, int claimedOffset, int actualCapacity) 
+    {
+        if (claimedSize < 0 || claimedSize > actualCapacity) {
             return false;
         }
-        for (const auto& allowed : ALLOWED_UDF_PATHS) {
-            if (strncmp(resolved, allowed.c_str(), allowed.length()) == 0) {
-                return true;
-            }
+        if (claimedOffset < 0 || claimedOffset >= actualCapacity) {
+            return false;
         }
-        return false;
+        if (claimedOffset + claimedSize > actualCapacity) {
+            return false;
+        }
+        return true;
     }
     
-    template<typename FuncType>
-    FuncType* LoadUDFFunction(const std::string &filePath, const std::string &funcSignature)
-    {
-        if (!isPathAllowed(filePath)) {
-            std::cerr << "SECURITY: UDF path not in whitelist: " << filePath << std::endl;
-            return nullptr;
+    static bool validateOpDescriptionJSON(nlohmann::json& json) {
+        if (!json.contains("outputNames") || !json.contains("outputTypes")) {
+            return false;
         }
-        void* handle = dlopen(filePath.c_str(), RTLD_LAZY);
-        // ... 原有逻辑
+        auto& names = json["outputNames"];
+        auto& types = json["outputTypes"];
+        if (!names.is_array() || !types.is_array()) {
+            return false;
+        }
+        if (names.size() != types.size()) {
+            return false;
+        }
+        if (names.size() > MAX_COLUMNS) {
+            return false;
+        }
+        return true;
     }
 };
 ```
 
-#### 修复 VULN-DF-XMOD-002: Kafka 消息校验
+### 7.4 监控告警建议
 
-```cpp
-// 在 KafkaRecordEmitter::emitRecord 中添加数据校验
-void KafkaRecordEmitter::emitRecord(ConsumerRecord* record, SourceOutputWrapper* output) {
-    // 添加消息大小限制
-    const size_t MAX_MESSAGE_SIZE = 10 * 1024 * 1024;  // 10MB
-    if (record->value().size() > MAX_MESSAGE_SIZE) {
-        LOG_WARN("Kafka message exceeds size limit: " << record->value().size());
-        return;  // 跳过超大消息
-    }
-    
-    // 添加 JSON 格式预校验（可选）
-    if (requiresJsonValidation) {
-        // 快速检查 JSON 结构
-        const auto& data = record->value();
-        if (data.empty() || data[0] != '{') {
-            LOG_WARN("Invalid JSON format in Kafka message");
-            return;
-        }
-    }
-    
-    try {
-        deserializationSchema->deserialize(record, output);
-    } catch (const nlohmann::json::parse_error& e) {
-        LOG_ERROR("JSON parse error in Kafka message: " << e.what());
-        // 可选：将错误消息发送到侧输出流
-    }
-}
-```
+添加以下监控指标：
+
+| 指标名 | 说明 | 告警阈值 |
+|--------|------|----------|
+| `json_parse_errors` | JSON 解析异常次数 | > 10/min |
+| `oob_access_attempts` | 越界访问尝试次数 | > 0 (立即告警) |
+| `invalid_buffer_size` | 非法缓冲区大小次数 | > 5/min |
+| `network_buffer_errors` | 网络缓冲区解析错误次数 | > 20/min |
 
 ---
 
-### 8.2 P1 优先级（本周修复）
+## 附录：详细分析报告引用
 
-#### 修复 JNI 异常安全问题
+以下漏洞已生成详细的利用分析和 PoC 思路，请参阅：
 
-**方案 A: Copy + Release + Parse 模式**
-
-```cpp
-// 通用修复模板
-JNIEXPORT void JNICALL Java_..._initTMConfiguration(JNIEnv *env, jclass, jstring configStr)
-{
-    // 1. 获取并复制
-    const char *cStrCon = env->GetStringUTFChars(configStr, nullptr);
-    if (cStrCon == nullptr) {
-        return;  // JVM 已抛出 OutOfMemoryError
-    }
-    std::string configCopy(cStrCon);
-    
-    // 2. 立即释放 (在 parse 之前)
-    env->ReleaseStringUTFChars(configStr, cStrCon);
-    
-    // 3. 解析安全副本，添加异常处理
-    try {
-        nlohmann::json config = nlohmann::json::parse(configCopy);
-        Configuration::TM_CONFIG->setConfiguration(config);
-    } catch (const nlohmann::json::parse_error& e) {
-        env->ThrowNew(env->FindClass("java/lang/IllegalArgumentException"),
-                      ("Invalid JSON: " + std::string(e.what())).c_str());
-    } catch (const std::exception& e) {
-        env->ThrowNew(env->FindClass("java/lang/RuntimeException"), e.what());
-    }
-}
-```
-
-**方案 B: RAII 包装类 (推荐)**
-
-```cpp
-// 创建 cpp/jni/utils/JniStringHolder.h
-class JniStringHolder {
-public:
-    JniStringHolder(JNIEnv* env, jstring jstr) 
-        : env_(env), jstr_(jstr), cstr_(nullptr) {
-        if (jstr != nullptr) {
-            cstr_ = env->GetStringUTFChars(jstr, nullptr);
-        }
-    }
-    
-    ~JniStringHolder() {
-        if (cstr_ != nullptr && jstr_ != nullptr) {
-            env_->ReleaseStringUTFChars(jstr_, cstr_);
-        }
-    }
-    
-    std::string str() const { return cstr_ ? std::string(cstr_) : ""; }
-    bool valid() const { return cstr_ != nullptr; }
-    
-    // 禁止拷贝和移动
-    JniStringHolder(const JniStringHolder&) = delete;
-    JniStringHolder& operator=(const JniStringHolder&) = delete;
-
-private:
-    JNIEnv* env_;
-    jstring jstr_;
-    const char* cstr_;
-};
-```
-
-#### 修复网络缓冲区长度验证
-
-```cpp
-// 在 NonSpanningWrapper.h 中添加上限验证
-inline int NonSpanningWrapper::readInt()
-{
-    if (unlikely(position_ + sizeof(uint32_t) > length_)) {
-        THROW_LOGIC_EXCEPTION("EOFException");
-    }
-    uint32_t value = ...;  // 原有读取逻辑
-    
-    // 新增: 验证长度上限
-    const int32_t MAX_RECORD_LENGTH = 100 * 1024 * 1024;  // 100MB
-    int32_t intValue = static_cast<int>(value);
-    if (intValue < 0 || intValue > MAX_RECORD_LENGTH) {
-        THROW_LOGIC_EXCEPTION("Invalid record length: " + std::to_string(intValue));
-    }
-    
-    position_ += sizeof(uint32_t);
-    return intValue;
-}
-```
-
----
-
-### 8.3 P2 优先级（本月完成）
-
-1. **建立安全编码规范**
-   - 强制使用 RAII 包装类管理 JNI 资源
-   - 所有外部数据解析必须包含 try-catch
-   - 所有网络数据必须进行长度/格式验证
-
-2. **代码审计清单**
-   - 扫描所有 dlopen 调用点，验证路径来源
-   - 扫描所有 GetStringUTFChars 调用点，验证释放逻辑
-   - 扫描所有 json::parse 调用点，验证异常处理
-
-3. **安全测试**
-   - 添加 JNI 接口模糊测试
-   - 添加 Kafka 消息格式测试用例
-   - 添加 UDF 路径注入测试用例
-
----
-
-## 9. 参考链接
-
-- [CWE-502: Deserialization of Untrusted Data](https://cwe.mitre.org/data/definitions/502.html)
-- [CWE-94: Improper Control of Generation of Code ('Code Injection')](https://cwe.mitre.org/data/definitions/94.html)
-- [CWE-190: Integer Overflow or Wraparound](https://cwe.mitre.org/data/definitions/190.html)
-- [JNI Specification - Exception Handling](https://docs.oracle.com/javase/8/docs/technotes/guides/jni/spec/design.html)
-- [nlohmann::json Documentation](https://json.nlohmann.me/)
-
----
-
-**报告生成时间**: 2026-04-19  
-**扫描工具**: OpenCode Multi-Agent Vulnerability Scanner  
-**深度分析报告**: 见 `{SCAN_OUTPUT}/details/` 目录
+- [VULN-SERIAL-001 详细分析](scan-results/details/VULN-SERIAL-001.md)
+- [VULN-STREAM-001 详细分析](scan-results/details/VULN-STREAM-001.md)
+- [VULN-CROSS-001 详细分析](scan-results/details/VULN-CROSS-001.md)
+- [VULN-CROSS-004 详细分析](scan-results/details/VULN-CROSS-004.md)
+- [SEC-008 详细分析](scan-results/details/SEC-008.md)
+- [SEC-010 详细分析](scan-results/details/SEC-010.md)

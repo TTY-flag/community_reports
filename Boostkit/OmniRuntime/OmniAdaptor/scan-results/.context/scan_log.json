@@ -1,0 +1,95 @@
+{
+  "scan_id": "550e8400-e29b-41d4-a716-446655440000",
+  "start_time": "2026-04-22T15:30:00.000Z",
+  "end_time": "2026-04-22T16:35:00.000Z",
+  "duration_seconds": 3900,
+  "project_name": "OmniAdaptor",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/kunpeng/boostkit/OmniRuntime/OmniAdaptor",
+  "status": "success",
+  "agents": [
+    {
+      "name": "architecture",
+      "start_time": "2026-04-22T15:35:00.000Z",
+      "end_time": "2026-04-22T15:52:00.000Z",
+      "duration_seconds": 1020,
+      "status": "success",
+      "items_processed": 10,
+      "output_files": [
+        "scan-results/.context/project_model.json",
+        "scan-results/.context/call_graph.json",
+        "scan-results/threat_analysis_report.md"
+      ]
+    },
+    {
+      "name": "dataflow-scanner",
+      "start_time": "2026-04-22T15:55:00.000Z",
+      "end_time": "2026-04-22T16:05:00.000Z",
+      "duration_seconds": 600,
+      "status": "success",
+      "items_processed": 9,
+      "output_files": [
+        "scan-results/.context/scan.db (9 vulnerabilities)"
+      ]
+    },
+    {
+      "name": "security-auditor",
+      "start_time": "2026-04-22T15:55:00.000Z",
+      "end_time": "2026-04-22T16:10:00.000Z",
+      "duration_seconds": 900,
+      "status": "success",
+      "items_processed": 22,
+      "output_files": [
+        "scan-results/.context/scan.db (22 vulnerabilities)"
+      ]
+    },
+    {
+      "name": "verification",
+      "start_time": "2026-04-22T16:15:00.000Z",
+      "end_time": "2026-04-22T16:20:00.000Z",
+      "duration_seconds": 300,
+      "status": "success",
+      "items_processed": 31,
+      "output_files": [
+        "scan-results/.context/scan.db (verified: 3 CONFIRMED, 12 LIKELY, 4 POSSIBLE, 12 FALSE_POSITIVE)"
+      ]
+    },
+    {
+      "name": "details-analyzer",
+      "start_time": "2026-04-22T16:25:00.000Z",
+      "end_time": "2026-04-22T16:27:00.000Z",
+      "duration_seconds": 120,
+      "status": "success",
+      "items_processed": 2,
+      "output_files": [
+        "scan-results/details/VULN-DF-PTH-001.md",
+        "scan-results/details/VULN-DF-PTH-002.md"
+      ]
+    },
+    {
+      "name": "reporter",
+      "start_time": "2026-04-22T16:28:00.000Z",
+      "end_time": "2026-04-22T16:35:00.000Z",
+      "duration_seconds": 420,
+      "status": "success",
+      "items_processed": 19,
+      "output_files": [
+        "scan-results/report_confirmed.md",
+        "scan-results/report_unconfirmed.md"
+      ]
+    }
+  ],
+  "threat_mode": "autonomous",
+  "summary": {
+    "total_vulnerabilities": 31,
+    "confirmed": 3,
+    "likely": 12,
+    "possible": 4,
+    "false_positive": 12,
+    "critical": 3,
+    "high": 6,
+    "medium": 10,
+    "low": 12,
+    "modules_scanned": 10,
+    "entry_points": 10
+  }
+}

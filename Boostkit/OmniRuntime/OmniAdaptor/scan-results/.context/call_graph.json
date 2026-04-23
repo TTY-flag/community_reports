@@ -1,0 +1,1043 @@
+{
+  "functions": {
+    "Java_com_huawei_boostkit_spark_jni_SparkJniWrapper_nativeMake@SparkJniWrapper.cpp": {
+      "defined_at": 32,
+      "calls": [
+        "GetStringUTFChars@jni.h",
+        "ReleaseStringUTFChars@jni.h",
+        "Deserialize@vector",
+        "GetCompressionType@jni_common.cpp",
+        "SplitOptions::Defaults@splitter.cpp",
+        "setenv@stdlib",
+        "Splitter::Make@splitter.h",
+        "CallStaticObjectMethod@jni.h",
+        "CallLongMethod@jni.h"
+      ],
+      "called_by": [
+        "Spark Executor (Java)"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "input_types": [
+        "partitioning_name_jstr (jstring)",
+        "compression_type_jstr (jstring)",
+        "data_file_jstr (jstring)",
+        "local_dirs_jstr (jstring)",
+        "jInputType (jstring)",
+        "buffer_size (jint)",
+        "num_sub_dirs (jint)",
+        "spill_batch_row (jint)",
+        "task_spill_memory_threshold (jlong)",
+        "executor_spill_memory_threshold (jlong)"
+      ],
+      "taint_sources": [
+        "partitioning_name_jstr",
+        "compression_type_jstr",
+        "data_file_jstr",
+        "local_dirs_jstr"
+      ]
+    },
+    "Java_com_huawei_boostkit_spark_jni_SparkJniWrapper_split@SparkJniWrapper.cpp": {
+      "defined_at": 134,
+      "calls": [
+        "reinterpret_cast@builtin",
+        "Splitter::SetInputVecBatch@splitter.h",
+        "Splitter::Split@splitter.cpp"
+      ],
+      "called_by": [
+        "Java_com_huawei_boostkit_spark_jni_SparkJniWrapper_nativeMake@SparkJniWrapper.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "input_types": [
+        "splitter_addr (jlong)",
+        "jVecBatchAddress (jlong)"
+      ],
+      "taint_sources": [
+        "jVecBatchAddress"
+      ]
+    },
+    "Java_com_huawei_boostkit_spark_jni_SparkJniWrapper_rowSplit@SparkJniWrapper.cpp": {
+      "defined_at": 152,
+      "calls": [
+        "reinterpret_cast@builtin",
+        "Splitter::SetInputVecBatch@splitter.h",
+        "Splitter::SplitByRow@splitter.cpp"
+      ],
+      "called_by": [
+        "Spark Executor (Java)"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "Java_com_huawei_boostkit_spark_jni_SparkJniWrapper_stop@SparkJniWrapper.cpp": {
+      "defined_at": 170,
+      "calls": [
+        "reinterpret_cast@builtin",
+        "Splitter::Stop@splitter.cpp",
+        "Splitter::PartitionLengths@splitter.h",
+        "NewLongArray@jni.h",
+        "SetLongArrayRegion@jni.h",
+        "NewObject@jni.h"
+      ],
+      "called_by": [
+        "Spark Executor (Java)"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "Java_com_huawei_boostkit_spark_jni_SparkJniWrapper_close@SparkJniWrapper.cpp": {
+      "defined_at": 220,
+      "calls": [
+        "reinterpret_cast@builtin",
+        "delete@builtin"
+      ],
+      "called_by": [
+        "Spark Executor (Java)"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "GetCompressionType@jni_common.cpp": {
+      "defined_at": 47,
+      "calls": [
+        "GetStringUTFChars@jni.h",
+        "GetCompressionType@common.cpp",
+        "ReleaseStringUTFChars@jni.h"
+      ],
+      "called_by": [
+        "Java_com_huawei_boostkit_spark_jni_SparkJniWrapper_nativeMake@SparkJniWrapper.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "input_types": [
+        "codec_jstr (jstring)"
+      ]
+    },
+    "GetCompressionType@common.cpp": {
+      "defined_at": 29,
+      "calls": [],
+      "called_by": [
+        "GetCompressionType@jni_common.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "input_types": [
+        "name (std::string)"
+      ]
+    },
+    "Splitter::Make@splitter.h": {
+      "defined_at": 224,
+      "calls": [
+        "Splitter constructor@splitter.cpp"
+      ],
+      "called_by": [
+        "Java_com_huawei_boostkit_spark_jni_SparkJniWrapper_nativeMake@SparkJniWrapper.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "Splitter::Split_Init@splitter.cpp": {
+      "defined_at": 537,
+      "calls": [
+        "operator new@builtin",
+        "GetConfiguredLocalDirs@utils.h",
+        "CreateTempShuffleFile@utils.h"
+      ],
+      "called_by": [
+        "Splitter constructor@splitter.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "Splitter::Split@splitter.cpp": {
+      "defined_at": 604,
+      "calls": [
+        "ComputeAndCountPartitionId@splitter.cpp",
+        "DoSplit@splitter.cpp"
+      ],
+      "called_by": [
+        "Java_com_huawei_boostkit_spark_jni_SparkJniWrapper_split@SparkJniWrapper.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "Splitter::SplitByRow@splitter.cpp": {
+      "defined_at": 614,
+      "calls": [
+        "VectorHelper::TransRowBatchFromVectorBatch@vector",
+        "SpillToTmpFileByRow@splitter.cpp"
+      ],
+      "called_by": [
+        "Java_com_huawei_boostkit_spark_jni_SparkJniWrapper_rowSplit@SparkJniWrapper.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "Splitter::ComputeAndCountPartitionId@splitter.cpp": {
+      "defined_at": 26,
+      "calls": [
+        "memset_s@securec.h",
+        "Vector::GetValue@vector",
+        "VectorBatch::GetRowCount@vector"
+      ],
+      "called_by": [
+        "Splitter::Split@splitter.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "Splitter::DoSplit@splitter.cpp": {
+      "defined_at": 423,
+      "calls": [
+        "AllocatePartitionBuffers@splitter.cpp",
+        "CacheVectorBatch@splitter.cpp",
+        "SplitFixedWidthValueBuffer@splitter.cpp",
+        "SplitFixedWidthValidityBuffer@splitter.cpp",
+        "SplitBinaryArray@splitter.cpp",
+        "ReleaseVectorBatch@splitter.h",
+        "MemoryManager::GetGlobalAccountedMemory@omniruntime",
+        "SpillToTmpFile@splitter.cpp"
+      ],
+      "called_by": [
+        "Splitter::Split@splitter.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "Splitter::AllocatePartitionBuffers@splitter.cpp": {
+      "defined_at": 55,
+      "calls": [
+        "Allocator::Alloc@omniruntime",
+        "new Buffer@Buffer.h",
+        "operator new@builtin"
+      ],
+      "called_by": [
+        "Splitter::DoSplit@splitter.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "High",
+      "memory_operations": true
+    },
+    "Splitter::SplitFixedWidthValueBuffer@splitter.cpp": {
+      "defined_at": 121,
+      "calls": [
+        "memset_s@securec.h",
+        "VectorHelper::UnsafeGetValues@vector",
+        "VectorHelper::UnsafeGetDictionary@vector",
+        "reinterpret_cast@builtin",
+        "memcpy_s@securec.h"
+      ],
+      "called_by": [
+        "Splitter::DoSplit@splitter.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "memory_operations": true
+    },
+    "Splitter::SplitFixedWidthValidityBuffer@splitter.cpp": {
+      "defined_at": 338,
+      "calls": [
+        "Allocator::Alloc@omniruntime",
+        "memset_s@securec.h",
+        "UnsafeBaseVector::GetNulls@vector",
+        "memcpy_s@securec.h"
+      ],
+      "called_by": [
+        "Splitter::DoSplit@splitter.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "memory_operations": true
+    },
+    "Splitter::SplitBinaryArray@splitter.cpp": {
+      "defined_at": 311,
+      "calls": [
+        "SplitBinaryVector<true>@splitter.cpp",
+        "SplitBinaryVector<false>@splitter.cpp",
+        "VectorBatch::Get@vector",
+        "VectorBatch::GetVectorCount@vector"
+      ],
+      "called_by": [
+        "Splitter::DoSplit@splitter.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "Splitter::SplitBinaryVector@splitter.cpp": {
+      "defined_at": 233,
+      "calls": [
+        "Vector::GetValue@vector",
+        "Vector::IsNull@vector",
+        "VCBatchInfo::getVcList@common.h",
+        "VCBatchInfo::getVcbTotalLen@common.h",
+        "HandleNull@splitter.cpp"
+      ],
+      "called_by": [
+        "Splitter::SplitBinaryArray@splitter.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "Splitter::SpillToTmpFile@splitter.cpp": {
+      "defined_at": "internal",
+      "calls": [
+        "writeLocalFile@SparkFile.cc",
+        "ProtoWritePartition@splitter.cpp",
+        "createCompressor@Compression.cc"
+      ],
+      "called_by": [
+        "Splitter::DoSplit@splitter.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "High"
+    },
+    "Splitter::ProtoWritePartition@splitter.cpp": {
+      "defined_at": 862,
+      "calls": [
+        "SerializingFixedColumns@splitter.cpp",
+        "SerializingBinaryColumns@splitter.cpp",
+        "BufferedOutputStream::Next@OutputStream.cc",
+        "memcpy_s@securec.h",
+        "BufferedOutputStream::BackUp@OutputStream.cc",
+        "VecBatch::ByteSizeLong@protobuf",
+        "VecBatch::SerializeToZeroCopyStream@protobuf",
+        "BufferedOutputStream::flush@OutputStream.cc"
+      ],
+      "called_by": [
+        "Splitter::SpillToTmpFile@splitter.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "Splitter::SerializingFixedColumns@splitter.cpp": {
+      "defined_at": 734,
+      "calls": [
+        "memcpy_s@securec.h",
+        "Allocator::Free@omniruntime",
+        "std::string::resize@builtin",
+        "Buffer constructor@Buffer.h"
+      ],
+      "called_by": [
+        "Splitter::ProtoWritePartition@splitter.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "memory_operations": true
+    },
+    "Splitter::SerializingBinaryColumns@splitter.cpp": {
+      "defined_at": 832,
+      "calls": [
+        "BytesGen@common.h",
+        "std::string::resize@builtin"
+      ],
+      "called_by": [
+        "Splitter::ProtoWritePartition@splitter.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "Splitter::Stop@splitter.cpp": {
+      "defined_at": "internal",
+      "calls": [
+        "MergeSpilled@splitter.cpp",
+        "WriteSplit@splitter.cpp"
+      ],
+      "called_by": [
+        "Java_com_huawei_boostkit_spark_jni_SparkJniWrapper_stop@SparkJniWrapper.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "FileInputStream::FileInputStream@SparkFile.cc": {
+      "defined_at": 49,
+      "calls": [
+        "open@fcntl.h",
+        "fstat@sys/stat.h",
+        "throw@builtin"
+      ],
+      "called_by": [
+        "readLocalFile@SparkFile.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "sink_type": "file_operation",
+      "input_types": [
+        "filename (std::string)"
+      ]
+    },
+    "FileInputStream::read@SparkFile.cc": {
+      "defined_at": 72,
+      "calls": [
+        "pread@unistd.h"
+      ],
+      "called_by": [
+        "Data processing pipeline"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "FileOutputStream::FileOutputStream@SparkFile.cc": {
+      "defined_at": 117,
+      "calls": [
+        "open@fcntl.h",
+        "throw@builtin"
+      ],
+      "called_by": [
+        "writeLocalFile@SparkFile.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "sink_type": "file_operation",
+      "input_types": [
+        "filename (std::string)"
+      ]
+    },
+    "FileOutputStream::write@SparkFile.cc": {
+      "defined_at": 140,
+      "calls": [
+        "write@unistd.h",
+        "close@unistd.h"
+      ],
+      "called_by": [
+        "BufferedOutputStream::flush@OutputStream.cc"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "readLocalFile@SparkFile.cc": {
+      "defined_at": 101,
+      "calls": [
+        "FileInputStream::FileInputStream@SparkFile.cc"
+      ],
+      "called_by": [
+        "readFile@SparkFile.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "writeLocalFile@SparkFile.cc": {
+      "defined_at": 177,
+      "calls": [
+        "FileOutputStream::FileOutputStream@SparkFile.cc"
+      ],
+      "called_by": [
+        "Splitter::SpillToTmpFile@splitter.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "BufferedOutputStream::flush@OutputStream.cc": {
+      "defined_at": 101,
+      "calls": [
+        "OutputStream::write@SparkFile.cc",
+        "DataBuffer::resize@MemoryPool.cc"
+      ],
+      "called_by": [
+        "CompressionStreamBase::flush@Compression.cc",
+        "Splitter::ProtoWritePartition@splitter.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "BufferedOutputStream::Next@OutputStream.cc": {
+      "defined_at": 40,
+      "calls": [
+        "DataBuffer::reserve@MemoryPool.cc",
+        "DataBuffer::resize@MemoryPool.cc"
+      ],
+      "called_by": [
+        "Splitter::ProtoWritePartition@splitter.cpp",
+        "CompressionStreamBase::ensureHeader@Compression.cc"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "memory_operations": true
+    },
+    "createCompressor@Compression.cc": {
+      "defined_at": 599,
+      "calls": [
+        "ZlibCompressionStream::init@Compression.cc",
+        "Lz4CompressionSteam::init@Compression.cc",
+        "ZSTDCompressionStream::init@Compression.cc",
+        "SnappyCompressionStream constructor@Compression.cc",
+        "BufferedOutputStream constructor@OutputStream.cc"
+      ],
+      "called_by": [
+        "StreamsFactoryImpl::createStream@ColumnWriter.cc",
+        "Splitter::SpillToTmpFile@splitter.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "input_types": [
+        "kind (CompressionKind)"
+      ]
+    },
+    "ZlibCompressionStream::doStreamingCompression@Compression.cc": {
+      "defined_at": 252,
+      "calls": [
+        "deflateReset@zlib.h",
+        "BufferedOutputStream::Next@OutputStream.cc",
+        "deflate@zlib.h"
+      ],
+      "called_by": [
+        "CompressionStream::Next@Compression.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "Lz4CompressionSteam::doBlockCompression@Compression.cc": {
+      "defined_at": 457,
+      "calls": [
+        "LZ4_compress_fast_extState@lz4.h"
+      ],
+      "called_by": [
+        "BlockCompressionStream::Next@Compression.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "ZSTDCompressionStream::doBlockCompression@Compression.cc": {
+      "defined_at": 564,
+      "calls": [
+        "ZSTD_compressCCtx@zstd.h"
+      ],
+      "called_by": [
+        "BlockCompressionStream::Next@Compression.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "SnappyCompressionStream::doBlockCompression@Compression.cc": {
+      "defined_at": 516,
+      "calls": [
+        "snappy::RawCompress@snappy"
+      ],
+      "called_by": [
+        "BlockCompressionStream::Next@Compression.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "BlockCompressionStream::Next@Compression.cc": {
+      "defined_at": 364,
+      "calls": [
+        "CompressionStreamBase::ensureHeader@Compression.cc",
+        "writeHeader@Compression.cc",
+        "memcpy_s@securec.h",
+        "BufferedOutputStream::Next@OutputStream.cc",
+        "DataBuffer::resize@MemoryPool.cc"
+      ],
+      "called_by": [
+        "Compression pipeline"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "memory_operations": true
+    },
+    "CompressionStreamBase::ensureHeader@Compression.cc": {
+      "defined_at": 136,
+      "calls": [
+        "BufferedOutputStream::Next@OutputStream.cc"
+      ],
+      "called_by": [
+        "CompressionStream::Next@Compression.cc",
+        "BlockCompressionStream::Next@Compression.cc"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "DataBuffer::resize@MemoryPool.cc": {
+      "defined_at": 75,
+      "calls": [
+        "DataBuffer::reserve@MemoryPool.cc",
+        "memset_s@securec.h"
+      ],
+      "called_by": [
+        "BufferedOutputStream::Next@OutputStream.cc",
+        "CompressionStream::Next@Compression.cc"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "memory_operations": true
+    },
+    "DataBuffer::reserve@MemoryPool.cc": {
+      "defined_at": 90,
+      "calls": [
+        "MemoryPool::malloc@MemoryPool.cc",
+        "memcpy_s@securec.h",
+        "MemoryPool::free@MemoryPool.cc"
+      ],
+      "called_by": [
+        "DataBuffer::resize@MemoryPool.cc"
+      ],
+      "receives_external_input": false,
+      "risk": "High",
+      "memory_operations": true
+    },
+    "MemoryPoolImpl::malloc@MemoryPool.cc": {
+      "defined_at": 42,
+      "calls": [
+        "std::malloc@cstdlib"
+      ],
+      "called_by": [
+        "DataBuffer::reserve@MemoryPool.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "sink_type": "memory_operation",
+      "input_types": [
+        "size (uint64_t)"
+      ]
+    },
+    "MemoryPoolImpl::free@MemoryPool.cc": {
+      "defined_at": 46,
+      "calls": [
+        "std::free@cstdlib"
+      ],
+      "called_by": [
+        "DataBuffer::reserve@MemoryPool.cc",
+        "Buffer::~Buffer@Buffer.h"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "GetConfiguredLocalDirs@utils.h": {
+      "defined_at": 57,
+      "calls": [
+        "std::getenv@cstdlib",
+        "MakeTemporaryDir@utils.h",
+        "IsFileExist@common.cpp",
+        "mkdir@sys/stat.h"
+      ],
+      "called_by": [
+        "Splitter::Split_Init@splitter.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "sink_type": "env_read"
+    },
+    "CreateTempShuffleFile@utils.h": {
+      "defined_at": 121,
+      "calls": [
+        "IsFileExist@common.cpp",
+        "mkdir@sys/stat.h",
+        "GenerateUUID@utils.h",
+        "ConcatAbstractPath@utils.h"
+      ],
+      "called_by": [
+        "Splitter::Split_Init@splitter.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "GenerateUUID@utils.h": {
+      "defined_at": 35,
+      "calls": [
+        "boost::uuids::random_generator@boost",
+        "boost::uuids::to_string@boost"
+      ],
+      "called_by": [
+        "CreateTempShuffleFile@utils.h"
+      ],
+      "receives_external_input": false,
+      "risk": "Low"
+    },
+    "BytesGen@common.h": {
+      "defined_at": 40,
+      "calls": [
+        "memcpy_s@securec.h"
+      ],
+      "called_by": [
+        "Splitter::SerializingBinaryColumns@splitter.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "memory_operations": true
+    },
+    "IsFileExist@common.cpp": {
+      "defined_at": 47,
+      "calls": [
+        "access@unistd.h"
+      ],
+      "called_by": [
+        "GetConfiguredLocalDirs@utils.h",
+        "CreateTempShuffleFile@utils.h"
+      ],
+      "receives_external_input": true,
+      "risk": "Low"
+    },
+    "Allocator::Alloc@omniruntime": {
+      "defined_at": "external",
+      "calls": [],
+      "called_by": [
+        "Splitter::AllocatePartitionBuffers@splitter.cpp",
+        "Splitter::SplitFixedWidthValidityBuffer@splitter.cpp",
+        "Splitter::CaculateSpilledTmpFilePartitionOffsets@splitter.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "sink_type": "memory_allocation"
+    },
+    "Allocator::Free@omniruntime": {
+      "defined_at": "external",
+      "calls": [],
+      "called_by": [
+        "Splitter::SerializingFixedColumns@splitter.cpp",
+        "Buffer::~Buffer@Buffer.h"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "sink_type": "memory_free"
+    },
+    "main@main.py": {
+      "defined_at": 117,
+      "calls": [
+        "argparse.ArgumentParser@argparse",
+        "LogParser@spark_log_parser.py",
+        "FlinkLogParser@flink_log_parser.py"
+      ],
+      "called_by": [
+        "__main__"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "taint_sources": [
+        "args.input_data",
+        "args.java_path",
+        "args.class_path",
+        "args.url"
+      ]
+    },
+    "LogParser@spark_log_parser.py": {
+      "defined_at": 31,
+      "calls": [
+        "find_compressed_files@spark_log_parser.py",
+        "get_execution_plan@spark_log_parser.py",
+        "parse_event_log@spark_log_parser.py"
+      ],
+      "called_by": [
+        "main@main.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "parse_single_file@spark_log_parser.py": {
+      "defined_at": 94,
+      "calls": [
+        "subprocess.Popen@subprocess"
+      ],
+      "called_by": [
+        "get_execution_plan@spark_log_parser.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "sink_type": "command_execution",
+      "input_types": [
+        "self.args.java_path",
+        "self.args.class_path",
+        "input_file_path",
+        "output_file_path"
+      ]
+    },
+    "parse_json_file@spark_log_parser.py": {
+      "defined_at": 230,
+      "calls": [
+        "json.load@json",
+        "read_table_schema@spark_log_parser.py",
+        "get_column_type@spark_log_parser.py",
+        "OpParser@op_parser.py",
+        "FunctionParser@function_parser.py"
+      ],
+      "called_by": [
+        "parse_event_log@spark_log_parser.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "read_table_schema@spark_log_parser.py": {
+      "defined_at": 161,
+      "calls": [
+        "csv.DictReader@csv"
+      ],
+      "called_by": [
+        "parse_json_file@spark_log_parser.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Low"
+    },
+    "FlinkLogParser@flink_log_parser.py": {
+      "defined_at": 21,
+      "calls": [
+        "_get_arguments@flink_log_parser.py",
+        "_validate_url@flink_log_parser.py",
+        "_validate_numeric_args@flink_log_parser.py",
+        "analyze_flink_logs@flink_log_parser.py",
+        "generate_report@flink_log_parser.py"
+      ],
+      "called_by": [
+        "main@main.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "_validate_url@flink_log_parser.py": {
+      "defined_at": 56,
+      "calls": [
+        "urllib.parse.urlparse@urllib.parse"
+      ],
+      "called_by": [
+        "_get_arguments@flink_log_parser.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "input_types": [
+        "self.args.url"
+      ]
+    },
+    "analyze_flink_logs@flink_log_parser.py": {
+      "defined_at": 141,
+      "calls": [],
+      "called_by": [
+        "main@main.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "partitioning_name_jstr@SparkJniWrapper.cpp:40",
+      "path": [
+        "GetStringUTFChars@jni.h:83",
+        "std::string(partitioning_name_c)@SparkJniWrapper.cpp:84",
+        "SplitOptions.data_file@splitter.cpp:100",
+        "Splitter::Make@splitter.h:224",
+        "Splitter constructor@splitter.cpp"
+      ],
+      "sink": "Splitter internal storage",
+      "sink_type": "internal_state",
+      "risk": "High"
+    },
+    {
+      "source": "data_file_jstr@SparkJniWrapper.cpp:72",
+      "path": [
+        "GetStringUTFChars@jni.h:99",
+        "std::string(data_file_c)@SparkJniWrapper.cpp:100",
+        "SplitOptions.data_file@splitter.cpp:100",
+        "Splitter::Split_Init@splitter.cpp:562",
+        "CreateTempShuffleFile@utils.h:121",
+        "open@fcntl.h:121 (FileOutputStream)"
+      ],
+      "sink": "open@SparkFile.cc:121",
+      "sink_type": "file_operation",
+      "risk": "Critical",
+      "description": "Data file path from JNI flows to open() without sanitization. Path traversal possible."
+    },
+    {
+      "source": "local_dirs_jstr@SparkJniWrapper.cpp:77",
+      "path": [
+        "GetStringUTFChars@jni.h:103",
+        "setenv@stdlib:104",
+        "GetConfiguredLocalDirs@utils.h:57",
+        "std::getenv@utils.h:58",
+        "mkdir@sys/stat.h:79",
+        "CreateTempShuffleFile@utils.h:121",
+        "open@fcntl.h:121 (FileOutputStream)"
+      ],
+      "sink": "open@SparkFile.cc:121",
+      "sink_type": "file_operation",
+      "risk": "Critical",
+      "description": "Local directories from JNI set as environment variable, then used to create files. Path traversal possible."
+    },
+    {
+      "source": "compression_type_jstr@SparkJniWrapper.cpp:94",
+      "path": [
+        "GetStringUTFChars@jni.h:49",
+        "GetCompressionType@jni_common.cpp:49",
+        "GetCompressionType@common.cpp:29",
+        "SplitOptions.compression_type@splitter.cpp:96",
+        "createCompressor@Compression.cc:607"
+      ],
+      "sink": "Compression stream creation",
+      "sink_type": "configuration",
+      "risk": "Medium"
+    },
+    {
+      "source": "jVecBatchAddress@SparkJniWrapper.cpp:135",
+      "path": [
+        "reinterpret_cast<Splitter*>@SparkJniWrapper.cpp:137",
+        "Splitter::SetInputVecBatch@splitter.h:270",
+        "Splitter::Split@splitter.cpp:604",
+        "ComputeAndCountPartitionId@splitter.cpp:26",
+        "DoSplit@splitter.cpp:423",
+        "SplitFixedWidthValueBuffer@splitter.cpp:121",
+        "reinterpret_cast@splitter.cpp:131",
+        "memcpy_s@splitter.cpp:143"
+      ],
+      "sink": "memcpy_s@splitter.cpp:143",
+      "sink_type": "memory_operation",
+      "risk": "High",
+      "description": "VectorBatch data flows through splitter with multiple reinterpret_cast and memcpy operations."
+    },
+    {
+      "source": "VectorBatch data@Splitter::Split",
+      "path": [
+        "SplitFixedWidthValueBuffer@splitter.cpp:121",
+        "AllocatePartitionBuffers@splitter.cpp:55",
+        "Allocator::Alloc@splitter.cpp:77",
+        "Buffer constructor@Buffer.h:31"
+      ],
+      "sink": "Allocator::Alloc@splitter.cpp:77",
+      "sink_type": "memory_allocation",
+      "risk": "High",
+      "description": "Memory allocation based on data-derived sizes. Integer overflow could lead to undersized allocation."
+    },
+    {
+      "source": "VectorBatch data@Splitter::Split",
+      "path": [
+        "SplitBinaryVector@splitter.cpp:233",
+        "VCBatchInfo@splitter.cpp:263",
+        "SerializingBinaryColumns@splitter.cpp:832",
+        "BytesGen@common.h:40",
+        "memcpy_s@common.h:70"
+      ],
+      "sink": "memcpy_s@common.h:70",
+      "sink_type": "memory_operation",
+      "risk": "High"
+    },
+    {
+      "source": "VectorBatch data@Splitter::ProtoWritePartition",
+      "path": [
+        "SerializingFixedColumns@splitter.cpp:734",
+        "std::string::resize@splitter.cpp:746",
+        "memcpy_s@splitter.cpp:777",
+        "Buffer constructor@Buffer.h:31"
+      ],
+      "sink": "memcpy_s@splitter.cpp:777",
+      "sink_type": "memory_operation",
+      "risk": "High"
+    },
+    {
+      "source": "args.input_data@main.py:117",
+      "path": [
+        "LogParser(args)@main.py:145",
+        "find_compressed_files@spark_log_parser.py:111",
+        "get_execution_plan@spark_log_parser.py:137",
+        "parse_single_file@spark_log_parser.py:94",
+        "subprocess.Popen@spark_log_parser.py:105"
+      ],
+      "sink": "subprocess.Popen@spark_log_parser.py:105",
+      "sink_type": "command_execution",
+      "risk": "Medium",
+      "description": "Input file path flows to subprocess execution. Path validation present but command injection possible via crafted paths."
+    },
+    {
+      "source": "args.url@main.py:117",
+      "path": [
+        "FlinkLogParser(args)@main.py:153",
+        "_validate_url@flink_log_parser.py:56",
+        "urllib.parse.urlparse@flink_log_parser.py:60",
+        "analyze_flink_logs@flink_log_parser.py:141"
+      ],
+      "sink": "HTTP request to Flink API",
+      "sink_type": "network_request",
+      "risk": "Medium",
+      "description": "URL from CLI validated for scheme and host, but SSRF possible if internal networks allowed."
+    },
+    {
+      "source": "args.java_path@main.py:117",
+      "path": [
+        "LogParser(args)@main.py:145",
+        "parse_single_file@spark_log_parser.py:94",
+        "subprocess.Popen(cmd)@spark_log_parser.py:105"
+      ],
+      "sink": "subprocess.Popen@spark_log_parser.py:105",
+      "sink_type": "command_execution",
+      "risk": "Medium",
+      "description": "Java executable path from CLI flows to subprocess. Command injection possible if path contains shell metacharacters."
+    },
+    {
+      "source": "args.class_path@main.py:117",
+      "path": [
+        "LogParser(args)@main.py:145",
+        "parse_single_file@spark_log_parser.py:94",
+        "subprocess.Popen(cmd)@spark_log_parser.py:105"
+      ],
+      "sink": "subprocess.Popen@spark_log_parser.py:105",
+      "sink_type": "command_execution",
+      "risk": "Medium"
+    }
+  ],
+  "cross_module_flows": [
+    {
+      "description": "JNI Interface → IO Module",
+      "source_module": "jni-interface",
+      "sink_module": "io-module",
+      "path": [
+        "Java_com_huawei_boostkit_spark_jni_SparkJniWrapper_nativeMake@SparkJniWrapper.cpp",
+        "writeLocalFile@SparkFile.cc",
+        "FileOutputStream::FileOutputStream@SparkFile.cc",
+        "open@fcntl.h"
+      ],
+      "risk": "Critical"
+    },
+    {
+      "description": "JNI Interface → Shuffle Module",
+      "source_module": "jni-interface",
+      "sink_module": "shuffle-module",
+      "path": [
+        "Java_com_huawei_boostkit_spark_jni_SparkJniWrapper_split@SparkJniWrapper.cpp",
+        "Splitter::Split@splitter.cpp",
+        "Splitter::DoSplit@splitter.cpp",
+        "SplitFixedWidthValueBuffer@splitter.cpp"
+      ],
+      "risk": "High"
+    },
+    {
+      "description": "Shuffle Module → IO Module",
+      "source_module": "shuffle-module",
+      "sink_module": "io-module",
+      "path": [
+        "Splitter::SpillToTmpFile@splitter.cpp",
+        "writeLocalFile@SparkFile.cc",
+        "FileOutputStream::write@SparkFile.cc"
+      ],
+      "risk": "High"
+    },
+    {
+      "description": "Shuffle Module → Compression Module",
+      "source_module": "shuffle-module",
+      "sink_module": "io-module",
+      "path": [
+        "Splitter::SpillToTmpFile@splitter.cpp",
+        "createCompressor@Compression.cc",
+        "ZSTDCompressionStream::doBlockCompression@Compression.cc"
+      ],
+      "risk": "Medium"
+    },
+    {
+      "description": "Shuffle Module → Memory Pool",
+      "source_module": "shuffle-module",
+      "sink_module": "io-module",
+      "path": [
+        "Splitter::AllocatePartitionBuffers@splitter.cpp",
+        "Allocator::Alloc@omniruntime",
+        "MemoryPoolImpl::malloc@MemoryPool.cc"
+      ],
+      "risk": "High"
+    },
+    {
+      "description": "Python CLI → Java Subprocess",
+      "source_module": "python-main",
+      "sink_module": "external",
+      "path": [
+        "main@main.py",
+        "LogParser@spark_log_parser.py",
+        "parse_single_file@spark_log_parser.py",
+        "subprocess.Popen@subprocess"
+      ],
+      "risk": "Medium"
+    }
+  ]
+}

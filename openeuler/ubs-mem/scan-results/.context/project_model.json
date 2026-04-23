@@ -1,0 +1,373 @@
+{
+  "project_name": "ubs-mem",
+  "scan_time": "2026-04-22T21:43:00Z",
+  "lsp_available": false,
+  "total_files": 194,
+  "total_lines": 22153,
+  "project_profile": {
+    "project_type": "network_service",
+    "deployment_model": "Linux服务器上的systemd守护进程，通过systemctl start ubsmd启动。提供超节点内存借用、共享、缓存服务能力。",
+    "trust_boundaries": [
+      {
+        "boundary": "IPC Interface (Unix Domain Socket)",
+        "trusted_side": "ubsmd daemon (root privilege)",
+        "untrusted_side": "Local processes (various users)",
+        "risk": "High"
+      },
+      {
+        "boundary": "RPC Interface (TCP Network)",
+        "trusted_side": "Cluster nodes with TLS authentication",
+        "untrusted_side": "Remote nodes (TLS protected)",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "UBSE Library Interface",
+        "trusted_side": "ubs-mem service",
+        "untrusted_side": "UBSE engine (external dependency)",
+        "risk": "Low"
+      },
+      {
+        "boundary": "Configuration Files",
+        "trusted_side": "Admin controlled",
+        "untrusted_side": "Service reads from /config/",
+        "risk": "Low"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "mxm_shm",
+      "path": "src/mxm_shm",
+      "language": "c_cpp",
+      "components": ["ipc_handler.cpp", "ipc_server.cpp", "shm_manager.cpp", "region_manager.cpp", "rpc_handler.cpp", "rpc_server.cpp"]
+    },
+    {
+      "name": "mxm_lease",
+      "path": "src/mxm_lease",
+      "language": "c_cpp",
+      "components": ["ipc_handler.cpp", "mls_manager.cpp", "mem_lease_service.cpp"]
+    },
+    {
+      "name": "communication",
+      "path": "src/communication",
+      "language": "c_cpp",
+      "components": ["mxm_com_engine.cpp", "mxm_ipc_server.cpp", "mxm_rpc_service.cpp"]
+    },
+    {
+      "name": "security",
+      "path": "src/security",
+      "language": "c_cpp",
+      "components": ["ubs_cryptor_handler.cpp", "ubs_certify_handler.cpp"]
+    },
+    {
+      "name": "under_api",
+      "path": "src/under_api",
+      "language": "c_cpp",
+      "components": ["ubse_mem_adapter.cpp", "openssl_dl.cpp"]
+    },
+    {
+      "name": "process",
+      "path": "src/process",
+      "language": "c_cpp",
+      "components": ["ock_daemon.cpp", "ock_service.cpp"]
+    },
+    {
+      "name": "zen_discovery",
+      "path": "src/zen_discovery",
+      "language": "c_cpp",
+      "components": ["zen_discovery.cpp", "election_module.cpp"]
+    },
+    {
+      "name": "dlock_utils",
+      "path": "src/dlock_utils",
+      "language": "c_cpp",
+      "components": ["ubsm_lock.cpp", "dlock_executor.cpp", "dlock_context.cpp"]
+    },
+    {
+      "name": "store",
+      "path": "src/store",
+      "language": "c_cpp",
+      "components": ["record_store.cpp", "record_id_pool_allocator.cpp"]
+    },
+    {
+      "name": "mxm_message",
+      "path": "src/mxm_message",
+      "language": "c_cpp",
+      "components": ["mxm_msg.cpp", "mxm_msg_packer.h"]
+    },
+    {
+      "name": "app_lib",
+      "path": "src/app_lib",
+      "language": "c_cpp",
+      "components": ["ipc_proxy.cpp", "rack_mem_lib.cpp", "mxmem_shmem.cpp", "mxmem_lease.cpp"]
+    },
+    {
+      "name": "ulog",
+      "path": "src/ulog",
+      "language": "c_cpp",
+      "components": ["ulog.cpp"]
+    },
+    {
+      "name": "ptracer",
+      "path": "src/ptracer",
+      "language": "c_cpp",
+      "components": ["ptracer_default.cpp"]
+    }
+  ],
+  "files": [
+    {
+      "path": "src/mxm_shm/ipc_handler.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "mxm_shm",
+      "lines": 1407,
+      "priority": 1
+    },
+    {
+      "path": "src/under_api/ubse/ubse_mem_adapter.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "under_api",
+      "lines": 1808,
+      "priority": 2
+    },
+    {
+      "path": "src/communication/adapter/mxm_com_engine.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "communication",
+      "lines": 1179,
+      "priority": 3
+    },
+    {
+      "path": "src/dlock_utils/ubsm_lock.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "dlock_utils",
+      "lines": 1131,
+      "priority": 4
+    },
+    {
+      "path": "src/app_lib/mxm_shm_lib/mxmem_shmem.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "app_lib",
+      "lines": 1049,
+      "priority": 5
+    },
+    {
+      "path": "src/store/record_store.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "store",
+      "lines": 1001,
+      "priority": 6
+    },
+    {
+      "path": "src/zen_discovery/zen_discovery.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "zen_discovery",
+      "lines": 900,
+      "priority": 7
+    },
+    {
+      "path": "src/process/daemon/ock_daemon.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "process",
+      "lines": 775,
+      "priority": 8
+    },
+    {
+      "path": "src/mxm_shm/rpc_handler.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "mxm_shm",
+      "lines": 312,
+      "priority": 9
+    },
+    {
+      "path": "src/mxm_lease/ipc_handler.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "mxm_lease",
+      "lines": 539,
+      "priority": 10
+    },
+    {
+      "path": "src/security/cryptor/ubs_cryptor_handler.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "security",
+      "lines": 254,
+      "priority": 11
+    },
+    {
+      "path": "src/under_api/openssl/openssl_dl.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "under_api",
+      "lines": 414,
+      "priority": 12
+    },
+    {
+      "path": "src/process/common/util/configuration.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "process",
+      "lines": 487,
+      "priority": 13
+    },
+    {
+      "path": "src/security/certify/ubs_certify_handler.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "security",
+      "lines": 124,
+      "priority": 14
+    },
+    {
+      "path": "src/mxm_shm/shm_manager.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "mxm_shm",
+      "lines": 376,
+      "priority": 15
+    },
+    {
+      "path": "src/mxm_lease/mls_manager.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "mxm_lease",
+      "lines": 524,
+      "priority": 16
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "src/mxm_shm/ipc_handler.cpp",
+      "line": 118,
+      "function": "ShmCreate",
+      "type": "ipc",
+      "trust_level": "semi_trusted",
+      "justification": "Unix Domain Socket IPC接口，本地进程通过UDS发送共享内存创建请求，请求包含name/size等参数，socket路径由管理员配置",
+      "description": "处理共享内存创建IPC请求"
+    },
+    {
+      "file": "src/mxm_shm/ipc_handler.cpp",
+      "line": 584,
+      "function": "ShmMap",
+      "type": "ipc",
+      "trust_level": "semi_trusted",
+      "justification": "Unix Domain Socket IPC接口，本地进程请求映射共享内存，请求包含name/size/prot参数",
+      "description": "处理共享内存映射IPC请求"
+    },
+    {
+      "file": "src/mxm_shm/ipc_handler.cpp",
+      "line": 308,
+      "function": "ShmDelete",
+      "type": "ipc",
+      "trust_level": "semi_trusted",
+      "justification": "Unix Domain Socket IPC接口，本地进程请求删除共享内存",
+      "description": "处理共享内存删除IPC请求"
+    },
+    {
+      "file": "src/mxm_shm/ipc_handler.cpp",
+      "line": 689,
+      "function": "ShmUnmap",
+      "type": "ipc",
+      "trust_level": "semi_trusted",
+      "justification": "Unix Domain Socket IPC接口，本地进程请求取消映射",
+      "description": "处理共享内存取消映射IPC请求"
+    },
+    {
+      "file": "src/mxm_shm/ipc_handler.cpp",
+      "line": 1044,
+      "function": "ShmWriteLock",
+      "type": "ipc",
+      "trust_level": "semi_trusted",
+      "justification": "Unix Domain Socket IPC接口，本地进程请求写锁",
+      "description": "处理共享内存写锁IPC请求"
+    },
+    {
+      "file": "src/mxm_lease/ipc_handler.cpp",
+      "line": 169,
+      "function": "AppMallocMemory",
+      "type": "ipc",
+      "trust_level": "semi_trusted",
+      "justification": "Unix Domain Socket IPC接口，本地进程请求借用内存",
+      "description": "处理内存借用IPC请求"
+    },
+    {
+      "file": "src/mxm_lease/ipc_handler.cpp",
+      "line": 292,
+      "function": "AppFreeMemory",
+      "type": "ipc",
+      "trust_level": "semi_trusted",
+      "justification": "Unix Domain Socket IPC接口，本地进程请求释放借用内存",
+      "description": "处理内存释放IPC请求"
+    },
+    {
+      "file": "src/mxm_shm/rpc_handler.cpp",
+      "line": 73,
+      "function": "HandleMemLock",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "RPC接口，远程节点请求分布式锁操作，需TLS认证",
+      "description": "处理RPC分布式锁请求"
+    },
+    {
+      "file": "src/mxm_shm/rpc_handler.cpp",
+      "line": 120,
+      "function": "PingRequestInfo",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "RPC接口，节点发现Ping请求，需TLS认证",
+      "description": "处理节点发现Ping请求"
+    },
+    {
+      "file": "src/communication/adapter/mxm_com_engine.cpp",
+      "line": 305,
+      "function": "CreateChannel",
+      "type": "network",
+      "trust_level": "semi_trusted",
+      "justification": "网络连接创建，TCP/UDS协议，RPC通信使用TLS保护",
+      "description": "创建网络通信通道"
+    },
+    {
+      "file": "src/process/daemon/ock_daemon.cpp",
+      "line": 288,
+      "function": "Initialize",
+      "type": "cmdline",
+      "trust_level": "trusted_admin",
+      "justification": "守护进程初始化入口，由systemd启动，参数来自配置文件",
+      "description": "守护进程初始化"
+    },
+    {
+      "file": "src/security/cryptor/ubs_cryptor_handler.cpp",
+      "line": 226,
+      "function": "LoadDecryptFunction",
+      "type": "file",
+      "trust_level": "trusted_admin",
+      "justification": "动态加载解密库/usr/local/ubs_mem/lib/libdecrypt.so，路径硬编码",
+      "description": "加载解密动态库"
+    },
+    {
+      "file": "src/under_api/ubse/ubse_mem_adapter.cpp",
+      "line": 62,
+      "function": "Initialize",
+      "type": "file",
+      "trust_level": "trusted_admin",
+      "justification": "动态加载UBSE库/usr/lib64/libubse-client.so.1，路径硬编码",
+      "description": "加载UBSE底层库"
+    }
+  ],
+  "attack_surfaces": [
+    "Unix Domain Socket IPC: /var/run/ubsmd.sock (本地进程通信)",
+    "TCP RPC: 配置文件指定的IP和端口 (远程节点通信，TLS可选)",
+    "配置文件: /opt/ubs_mem/config/ubsmd.conf (管理员控制)",
+    "动态库加载: dlopen libubse-client.so.1, libdecrypt.so",
+    "共享内存: shm_open /ubsm_records (内部数据存储)"
+  ]
+}

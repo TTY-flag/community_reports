@@ -1,0 +1,539 @@
+{
+  "project_name": "Apache Gluten",
+  "scan_time": "2026-04-22T20:55:00Z",
+  "lsp_available": false,
+  "total_files": 727,
+  "total_lines": 119069,
+  "project_profile": {
+    "project_type": "library",
+    "deployment_model": "作为 Spark SQL 的原生向量化执行引擎插件部署，编译为 libspark_columnar_plugin.so 动态库，通过 JNI 与 Spark JVM 进程通信。部署在 Hadoop YARN 集群的 Executor 节点上，由 Spark Driver 调度执行。",
+    "trust_boundaries": [
+      {
+        "boundary": "JNI Interface",
+        "trusted_side": "Native C++ Library (libspark_columnar_plugin.so)",
+        "untrusted_side": "Spark JVM Process",
+        "risk": "High"
+      },
+      {
+        "boundary": "File System",
+        "trusted_side": "Native C++ Library",
+        "untrusted_side": "Local/Remote File Storage (HDFS, S3, Local)",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Protobuf/Substrait Parser",
+        "trusted_side": "Native Plan Execution",
+        "untrusted_side": "Serialized Plan Data from Spark",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Shuffle Data",
+        "trusted_side": "Native Shuffle Processing",
+        "untrusted_side": "Serialized VectorBatch Data from Spark",
+        "risk": "High"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "cpp-omni-jni",
+      "path": "cpp-omni/src/jni",
+      "language": "c_cpp",
+      "components": ["SparkJniWrapper.cpp", "jni_common.cpp", "deserializer.cpp"],
+      "description": "OmniOperator 后端 JNI 入口点，处理 Shuffle 和数据序列化"
+    },
+    {
+      "name": "cpp-omni-substrait",
+      "path": "cpp-omni/src/substrait",
+      "language": "c_cpp",
+      "components": ["SubstraitParser.cpp", "SubstraitToOmniPlan.cpp", "SubstraitToOmniPlanValidator.cpp", "SubstraitToOmniExpr.cpp"],
+      "description": "Substrait Plan 解析和转换为 Omni 执行计划"
+    },
+    {
+      "name": "cpp-omni-shuffle",
+      "path": "cpp-omni/src/shuffle",
+      "language": "c_cpp",
+      "components": ["splitter.cpp", "splitter.h", "type.h", "utils.h"],
+      "description": "Shuffle 数据分割和分区处理"
+    },
+    {
+      "name": "cpp-omni-compute",
+      "path": "cpp-omni/src/compute",
+      "language": "c_cpp",
+      "components": ["Runtime.cpp", "WholeStageResultIterator.cpp", "OmniPlanConverter.cpp"],
+      "description": "运行时执行和结果迭代器"
+    },
+    {
+      "name": "cpp-omni-io",
+      "path": "cpp-omni/src/io",
+      "language": "c_cpp",
+      "components": ["SparkFile.cc", "ColumnWriter.cc", "Compression.cc", "OutputStream.cc"],
+      "description": "文件 I/O 和数据压缩"
+    },
+    {
+      "name": "cpp-ch-jni",
+      "path": "cpp-ch/local-engine/jni",
+      "language": "c_cpp",
+      "components": ["jni_common.cpp", "jni_error.cpp", "SharedPointerWrapper.h", "CelebornClient.h"],
+      "description": "ClickHouse 后端 JNI 工具类"
+    },
+    {
+      "name": "cpp-ch-parser",
+      "path": "cpp-ch/local-engine/Parser",
+      "language": "c_cpp",
+      "components": ["SerializedPlanParser.cpp", "ExpressionParser.cpp", "CHColumnToSparkRow.cpp", "SparkRowToCHColumn.cpp"],
+      "description": "Substrait Plan 解析和列转换"
+    },
+    {
+      "name": "cpp-ch-shuffle",
+      "path": "cpp-ch/local-engine/Shuffle",
+      "language": "c_cpp",
+      "components": ["ShuffleReader.cpp", "ShuffleWriter.cpp", "NativeSplitter.cpp", "PartitionWriter.cpp", "SparkExchangeSink.cpp"],
+      "description": "ClickHouse Shuffle 读写和分区"
+    },
+    {
+      "name": "cpp-ch-storages",
+      "path": "cpp-ch/local-engine/Storages",
+      "language": "c_cpp",
+      "components": ["MergeTree/SparkMergeTreeWriter.cpp", "SubstraitSource/ReadBufferBuilder.cpp", "Cache/CacheManager.cpp"],
+      "description": "存储层和 MergeTree 写入"
+    },
+    {
+      "name": "cpp-ch-functions",
+      "path": "cpp-ch/local-engine/Functions",
+      "language": "c_cpp",
+      "components": ["SparkParseURL.cpp", "SparkFunctionTupleElement.cpp"],
+      "description": "Spark SQL 函数实现"
+    },
+    {
+      "name": "cpp-ch-main",
+      "path": "cpp-ch/local-engine",
+      "language": "c_cpp",
+      "components": ["local_engine_jni.cpp"],
+      "description": "ClickHouse 后端主 JNI 入口"
+    },
+    {
+      "name": "cpp-core-jni",
+      "path": "cpp/core/jni",
+      "language": "c_cpp",
+      "components": ["JniWrapper.cc", "JniCommon.cc", "JniError.cc"],
+      "description": "核心 JNI 接口实现"
+    },
+    {
+      "name": "cpp-core-shuffle",
+      "path": "cpp/core/shuffle",
+      "language": "c_cpp",
+      "components": ["ShuffleWriter.cc", "ShuffleReader.cc", "LocalPartitionWriter.cc", "Partitioner.cc", "Payload.cc", "Spill.cc"],
+      "description": "核心 Shuffle 写入和分区"
+    },
+    {
+      "name": "cpp-core-compute",
+      "path": "cpp/core/compute",
+      "language": "c_cpp",
+      "components": ["Runtime.cc"],
+      "description": "核心运行时"
+    },
+    {
+      "name": "cpp-core-memory",
+      "path": "cpp/core/memory",
+      "language": "c_cpp",
+      "components": ["AllocationListener.cc"],
+      "description": "内存管理和分配监听"
+    },
+    {
+      "name": "cpp-core-config",
+      "path": "cpp/core/config",
+      "language": "c_cpp",
+      "components": ["GlutenConfig.cc"],
+      "description": "配置管理"
+    },
+    {
+      "name": "cpp-core-operators",
+      "path": "cpp/core/operators",
+      "language": "c_cpp",
+      "components": ["serializer/ColumnarBatchSerializer.cc"],
+      "description": "列批序列化"
+    },
+    {
+      "name": "cpp-velox-substrait",
+      "path": "cpp/velox/substrait",
+      "language": "c_cpp",
+      "components": ["SubstraitToVeloxPlan.cc", "SubstraitToVeloxPlanValidator.cc", "SubstraitToVeloxExpr.cc", "VeloxToSubstraitExpr.cc"],
+      "description": "Velox 后端 Substrait 解析"
+    },
+    {
+      "name": "cpp-velox-shuffle",
+      "path": "cpp/velox/shuffle",
+      "language": "c_cpp",
+      "components": ["VeloxHashShuffleWriter.cc", "VeloxShuffleReader.cc"],
+      "description": "Velox Shuffle 写入和读取"
+    },
+    {
+      "name": "cpp-velox-compute",
+      "path": "cpp/velox/compute",
+      "language": "c_cpp",
+      "components": ["WholeStageResultIterator.cc"],
+      "description": "Velox 结果迭代器"
+    },
+    {
+      "name": "python-tools",
+      "path": "tools",
+      "language": "python",
+      "components": ["workload/benchmark_velox/init_disks.py"],
+      "description": "Python 工具脚本"
+    }
+  ],
+  "files": [
+    {
+      "path": "cpp-omni/src/jni/SparkJniWrapper.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "cpp-omni-jni",
+      "lines": 488,
+      "priority": 1,
+      "reason": "JNI 入口点，处理 Shuffle 配置和 Plan 验证，接收来自 Spark 的外部数据"
+    },
+    {
+      "path": "cpp-omni/src/jni/deserializer.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "cpp-omni-jni",
+      "lines": 220,
+      "priority": 2,
+      "reason": "Protobuf 数据反序列化，处理来自 Spark 的序列化 VectorBatch 数据"
+    },
+    {
+      "path": "cpp-omni/src/shuffle/splitter.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "cpp-omni-shuffle",
+      "lines": 1513,
+      "priority": 3,
+      "reason": "大量 memcpy 操作，处理 Shuffle 数据分割和分区"
+    },
+    {
+      "path": "cpp-omni/src/substrait/SubstraitParser.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "cpp-omni-substrait",
+      "lines": 394,
+      "priority": 4,
+      "reason": "Substrait Plan 解析，包含 memcpy 操作处理 decimal 数据"
+    },
+    {
+      "path": "cpp-omni/src/substrait/SubstraitToOmniPlan.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "cpp-omni-substrait",
+      "lines": 943,
+      "priority": 5,
+      "reason": "Substrait Plan 转换，处理复杂执行计划"
+    },
+    {
+      "path": "cpp-omni/src/substrait/SubstraitToOmniPlanValidator.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "cpp-omni-substrait",
+      "lines": 1103,
+      "priority": 6,
+      "reason": "Plan 验证，检查执行计划合法性"
+    },
+    {
+      "path": "cpp-omni/src/io/SparkFile.cc",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "cpp-omni-io",
+      "lines": 184,
+      "priority": 7,
+      "reason": "文件 I/O，包含 open/read/write 操作，路径来自 Spark 配置"
+    },
+    {
+      "path": "cpp-omni/src/io/Compression.cc",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "cpp-omni-io",
+      "lines": 645,
+      "priority": 8,
+      "reason": "数据压缩解压处理"
+    },
+    {
+      "path": "cpp-ch/local-engine/local_engine_jni.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "cpp-ch-main",
+      "lines": 1339,
+      "priority": 9,
+      "reason": "ClickHouse 后端主 JNI 入口，大量 JNI 函数，处理 Plan 解析和执行"
+    },
+    {
+      "path": "cpp-ch/local-engine/Parser/SerializedPlanParser.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "cpp-ch-parser",
+      "lines": 500,
+      "priority": 10,
+      "reason": "Substrait Plan 解析入口"
+    },
+    {
+      "path": "cpp-ch/local-engine/Parser/CHColumnToSparkRow.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "cpp-ch-parser",
+      "lines": 980,
+      "priority": 11,
+      "reason": "列数据转换，包含 memcpy 操作"
+    },
+    {
+      "path": "cpp-ch/local-engine/Shuffle/ShuffleReader.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "cpp-ch-shuffle",
+      "lines": 400,
+      "priority": 12,
+      "reason": "Shuffle 数据读取，处理外部 Shuffle 数据"
+    },
+    {
+      "path": "cpp-ch/local-engine/Shuffle/ShuffleWriter.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "cpp-ch-shuffle",
+      "lines": 350,
+      "priority": 13,
+      "reason": "Shuffle 数据写入"
+    },
+    {
+      "path": "cpp-ch/local-engine/Storages/SubstraitSource/ReadBufferBuilder.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "cpp-ch-storages",
+      "lines": 942,
+      "priority": 14,
+      "reason": "文件读取缓冲构建，处理多种存储源"
+    },
+    {
+      "path": "cpp-ch/local-engine/IO/SplittableBzip2ReadBuffer.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "cpp-ch-storages",
+      "lines": 1002,
+      "priority": 15,
+      "reason": "bzip2 解压缩读取缓冲，包含 memcpy 操作"
+    },
+    {
+      "path": "cpp/core/jni/JniWrapper.cc",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "cpp-core-jni",
+      "lines": 1230,
+      "priority": 16,
+      "reason": "核心 JNI 入口，处理 Runtime、MemoryManager、ShuffleWriter/Reader"
+    },
+    {
+      "path": "cpp/core/shuffle/LocalPartitionWriter.cc",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "cpp-core-shuffle",
+      "lines": 699,
+      "priority": 17,
+      "reason": "本地分区写入，处理文件 I/O"
+    },
+    {
+      "path": "cpp/velox/substrait/SubstraitToVeloxPlan.cc",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "cpp-velox-substrait",
+      "lines": 1479,
+      "priority": 18,
+      "reason": "Velox Substrait Plan 转换"
+    },
+    {
+      "path": "cpp/velox/shuffle/VeloxHashShuffleWriter.cc",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "cpp-velox-shuffle",
+      "lines": 1474,
+      "priority": 19,
+      "reason": "Velox Hash Shuffle 写入"
+    },
+    {
+      "path": "cpp/velox/compute/WholeStageResultIterator.cc",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "cpp-velox-compute",
+      "lines": 584,
+      "priority": 20,
+      "reason": "Velox 结果迭代器"
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "cpp-omni/src/jni/SparkJniWrapper.cpp",
+      "line": 37,
+      "function": "Java_com_huawei_boostkit_spark_jni_SparkJniWrapper_nativeMake",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "JNI 入口点，由 Spark JVM 进程调用，需要 Spark Executor 进程权限。参数来自 Spark 配置，包括分区数、压缩类型、文件路径等。",
+      "description": "创建 Shuffle Splitter"
+    },
+    {
+      "file": "cpp-omni/src/jni/SparkJniWrapper.cpp",
+      "line": 134,
+      "function": "Java_com_huawei_boostkit_spark_jni_SparkJniWrapper_split",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "JNI 入口点，处理 VectorBatch 数据分割，数据来自 Spark Executor",
+      "description": "执行 Shuffle Split 操作"
+    },
+    {
+      "file": "cpp-omni/src/jni/SparkJniWrapper.cpp",
+      "line": 237,
+      "function": "Java_org_apache_gluten_vectorized_OmniPlanEvaluatorJniWrapper_nativeValidateWithFailureReason",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "JNI 入口点，接收并解析来自 Spark 的 Substrait Plan (Protobuf 序列化数据)",
+      "description": "验证 Substrait 执行计划"
+    },
+    {
+      "file": "cpp-omni/src/jni/SparkJniWrapper.cpp",
+      "line": 267,
+      "function": "Java_org_apache_gluten_vectorized_OmniPlanEvaluatorJniWrapper_nativeCreateKernelWithIterator",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "JNI 入口点，接收 Plan 字节数组并创建执行内核",
+      "description": "创建执行内核"
+    },
+    {
+      "file": "cpp-omni/src/jni/deserializer.cpp",
+      "line": 26,
+      "function": "Java_com_huawei_boostkit_spark_serialize_ShuffleDataSerializerUtils_columnarShuffleParseInit",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "JNI 入口点，接收 Protobuf 字节数组并解析为 VecBatch，数据来自 Shuffle 序列化",
+      "description": "初始化列 Shuffle 数据解析"
+    },
+    {
+      "file": "cpp-omni/src/jni/deserializer.cpp",
+      "line": 127,
+      "function": "Java_com_huawei_boostkit_spark_serialize_ShuffleDataSerializerUtils_rowShuffleParseInit",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "JNI 入口点，接收 Protobuf 字节数组并解析为 ProtoRowBatch",
+      "description": "初始化行 Shuffle 数据解析"
+    },
+    {
+      "file": "cpp-ch/local-engine/local_engine_jni.cpp",
+      "line": 105,
+      "function": "JNI_OnLoad",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "JNI 库加载入口，初始化全局状态和类引用",
+      "description": "JNI 库初始化"
+    },
+    {
+      "file": "cpp-ch/local-engine/local_engine_jni.cpp",
+      "line": 192,
+      "function": "Java_org_apache_gluten_vectorized_ExpressionEvaluatorJniWrapper_nativeInitNative",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "JNI 入口点，接收配置 Plan 字节数组并初始化后端",
+      "description": "初始化 ClickHouse 后端"
+    },
+    {
+      "file": "cpp/core/jni/JniWrapper.cc",
+      "line": 203,
+      "function": "JNI_OnLoad",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "核心 JNI 库加载入口，注册 MemoryManager 和 Runtime 工厂",
+      "description": "核心 JNI 库初始化"
+    },
+    {
+      "file": "cpp/core/jni/JniWrapper.cc",
+      "line": 273,
+      "function": "Java_org_apache_gluten_runtime_RuntimeJniWrapper_createRuntime",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "JNI 入口点，创建 Runtime 实例，配置来自 Spark sessionConf",
+      "description": "创建 Runtime"
+    },
+    {
+      "file": "cpp/core/jni/JniWrapper.cc",
+      "line": 305,
+      "function": "Java_org_apache_gluten_memory_NativeMemoryManagerJniWrapper_create",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "JNI 入口点，创建内存管理器",
+      "description": "创建 NativeMemoryManager"
+    },
+    {
+      "file": "cpp/core/jni/JniWrapper.cc",
+      "line": 411,
+      "function": "Java_org_apache_gluten_vectorized_PlanEvaluatorJniWrapper_nativeCreateKernelWithIterator",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "JNI 入口点，解析 Plan 并创建结果迭代器，接收大量外部数据",
+      "description": "创建执行内核和迭代器"
+    },
+    {
+      "file": "cpp/core/jni/JniWrapper.cc",
+      "line": 830,
+      "function": "Java_org_apache_gluten_vectorized_ShuffleWriterJniWrapper_nativeMake",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "JNI 入口点，创建 ShuffleWriter，接收分区配置、压缩类型、文件路径等参数",
+      "description": "创建 ShuffleWriter"
+    },
+    {
+      "file": "cpp/core/jni/JniWrapper.cc",
+      "line": 1072,
+      "function": "Java_org_apache_gluten_vectorized_ShuffleReaderJniWrapper_make",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "JNI 入口点，创建 ShuffleReader",
+      "description": "创建 ShuffleReader"
+    },
+    {
+      "file": "cpp-omni/src/io/SparkFile.cc",
+      "line": 49,
+      "function": "FileInputStream::FileInputStream",
+      "type": "file",
+      "trust_level": "trusted_admin",
+      "justification": "文件打开操作，路径由 Spark 配置或 Shuffle 逻辑指定，属于管理员控制的路径",
+      "description": "打开文件进行读取"
+    },
+    {
+      "file": "cpp-omni/src/io/SparkFile.cc",
+      "line": 117,
+      "function": "FileOutputStream::FileOutputStream",
+      "type": "file",
+      "trust_level": "trusted_admin",
+      "justification": "文件创建和写入操作，路径由 Spark Shuffle 配置指定",
+      "description": "创建文件进行写入"
+    },
+    {
+      "file": "cpp-omni/src/substrait/SubstraitParser.cpp",
+      "line": 218,
+      "function": "GetLiteralValue<int64_t>",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "处理 decimal 数据的 memcpy 操作，数据来自解析后的 Substrait Plan",
+      "description": "解析 decimal 常量值"
+    },
+    {
+      "file": "cpp-omni/src/shuffle/splitter.cpp",
+      "line": 829,
+      "function": "Splitter::SplitFixedWidthValueBuffer",
+      "type": "internal",
+      "trust_level": "internal",
+      "justification": "内部数据拷贝操作，数据来自已经解析的 VectorBatch",
+      "description": "分割固定宽度值缓冲区"
+    }
+  ],
+  "attack_surfaces": [
+    "JNI Interface: 所有 JNI 函数入口点，接收来自 Spark JVM 的数据和配置",
+    "Protobuf/Substrait Deserialization: Substrait Plan 和 VectorBatch 数据解析",
+    "Shuffle Data Processing: Shuffle 数据的序列化/反序列化和分区处理",
+    "File I/O: Shuffle 文件和数据文件的读写",
+    "Memory Management: Native 内存分配和释放"
+  ]
+}

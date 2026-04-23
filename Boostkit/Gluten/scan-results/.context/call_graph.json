@@ -1,0 +1,313 @@
+{
+  "functions": {
+    "Java_com_huawei_boostkit_spark_jni_SparkJniWrapper_nativeMake@cpp-omni/src/jni/SparkJniWrapper.cpp": {
+      "defined_at": 37,
+      "calls": [
+        "Deserialize@cpp-omni/src/jni/deserializer.cpp",
+        "Splitter::Make@cpp-omni/src/shuffle/splitter.cpp",
+        "GetCompressionType@cpp-omni/src/jni/jni_common.cpp",
+        "SplitOptions::Defaults@cpp-omni/src/shuffle/splitter.cpp"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "input_types": ["partitioning_name_jstr", "num_partitions", "jInputType", "buffer_size", "compression_type_jstr", "data_file_jstr", "local_dirs_jstr"]
+    },
+    "Java_com_huawei_boostkit_spark_jni_SparkJniWrapper_split@cpp-omni/src/jni/SparkJniWrapper.cpp": {
+      "defined_at": 134,
+      "calls": [
+        "Splitter::Split@cpp-omni/src/shuffle/splitter.cpp",
+        "Splitter::SetInputVecBatch@cpp-omni/src/shuffle/splitter.cpp"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "input_types": ["splitter_addr", "jVecBatchAddress"]
+    },
+    "Java_org_apache_gluten_vectorized_OmniPlanEvaluatorJniWrapper_nativeValidateWithFailureReason@cpp-omni/src/jni/SparkJniWrapper.cpp": {
+      "defined_at": 237,
+      "calls": [
+        "CodedInputStream::ParseFromCodedStream@google/protobuf",
+        "SubstraitToOmniPlanValidator::Validate@cpp-omni/src/substrait/SubstraitToOmniPlanValidator.cpp",
+        "GetMemoryPool@cpp-omni/src/jni/jni_common.cpp"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "input_types": ["planArray"]
+    },
+    "Java_org_apache_gluten_vectorized_OmniPlanEvaluatorJniWrapper_nativeCreateKernelWithIterator@cpp-omni/src/jni/SparkJniWrapper.cpp": {
+      "defined_at": 267,
+      "calls": [
+        "GetRuntime@cpp-omni/src/jni/jni_common.cpp",
+        "Runtime::ParsePlan@cpp-omni/src/compute/Runtime.cpp",
+        "Runtime::CreateResultIterator@cpp-omni/src/compute/Runtime.cpp",
+        "JniColumnarBatchIterator::Next@cpp-omni/src/jni/jni_common.cpp"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "input_types": ["planArr", "splitInfosArr", "iterArr", "stageId", "partitionId", "taskId", "spillDir"]
+    },
+    "Java_com_huawei_boostkit_spark_serialize_ShuffleDataSerializerUtils_columnarShuffleParseInit@cpp-omni/src/jni/deserializer.cpp": {
+      "defined_at": 26,
+      "calls": [
+        "VecBatch::ParseFromArray@protobuf"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "input_types": ["address", "length"]
+    },
+    "Java_com_huawei_boostkit_spark_serialize_ShuffleDataSerializerUtils_columnarShuffleParseBatch@cpp-omni/src/jni/deserializer.cpp": {
+      "defined_at": 68,
+      "calls": [
+        "VectorHelper::CreateVector@cpp-omni/src/common",
+        "VectorHelper::UnsafeGetValues@cpp-omni/src/common",
+        "VectorHelper::UnsafeGetOffsetsAddr@cpp-omni/src/common",
+        "memcpy_s@stdlib"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "input_types": ["address", "typeIdArray", "precisionArray", "scaleArray", "vecNativeIdArray"]
+    },
+    "Java_org_apache_gluten_vectorized_ExpressionEvaluatorJniWrapper_nativeInitNative@cpp-ch/local-engine/local_engine_jni.cpp": {
+      "defined_at": 192,
+      "calls": [
+        "SparkConfigs::update@cpp-ch/local-engine/Common",
+        "BackendInitializerUtil::initBackend@cpp-ch/local-engine"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "input_types": ["conf_plan"]
+    },
+    "Java_org_apache_gluten_runtime_RuntimeJniWrapper_createRuntime@cpp/core/jni/JniWrapper.cc": {
+      "defined_at": 273,
+      "calls": [
+        "parseConfMap@cpp/core/jni/JniCommon.cc",
+        "Runtime::create@cpp/core/compute/Runtime.cc"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "input_types": ["jBackendType", "nmmHandle", "sessionConf"]
+    },
+    "Java_org_apache_gluten_vectorized_PlanEvaluatorJniWrapper_nativeCreateKernelWithIterator@cpp/core/jni/JniWrapper.cc": {
+      "defined_at": 411,
+      "calls": [
+        "getRuntime@cpp/core/jni/JniCommon.cc",
+        "Runtime::parsePlan@cpp/core/compute/Runtime.cc",
+        "Runtime::parseSplitInfo@cpp/core/compute/Runtime.cc",
+        "Runtime::createResultIterator@cpp/core/compute/Runtime.cc",
+        "makeJniColumnarBatchIterator@cpp/core/jni/JniCommon.cc"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "input_types": ["planArr", "splitInfosArr", "iterArr", "stageId", "partitionId", "taskId", "spillDir"]
+    },
+    "Java_org_apache_gluten_vectorized_ShuffleWriterJniWrapper_nativeMake@cpp/core/jni/JniWrapper.cc": {
+      "defined_at": 830,
+      "calls": [
+        "getRuntime@cpp/core/jni/JniCommon.cc",
+        "toPartitioning@cpp/core/shuffle/Partitioning.cc",
+        "getCompressionType@cpp/core/jni/JniWrapper.cc",
+        "LocalPartitionWriter@cpp/core/shuffle/LocalPartitionWriter.cc",
+        "RssPartitionWriter@cpp/core/shuffle/rss/RssPartitionWriter.cc",
+        "Runtime::createShuffleWriter@cpp/core/compute/Runtime.cc"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "input_types": ["partitioningNameJstr", "numPartitions", "bufferSize", "codecJstr", "dataFileJstr", "localDirsJstr", "taskAttemptId"]
+    },
+    "Splitter::Split@cpp-omni/src/shuffle/splitter.cpp": {
+      "defined_at": 147,
+      "calls": [
+        "Splitter::ComputeAndCountPartitionId@cpp-omni/src/shuffle/splitter.cpp",
+        "Splitter::SplitFixedWidthValueBuffer@cpp-omni/src/shuffle/splitter.cpp",
+        "Splitter::SplitBinaryColumn@cpp-omni/src/shuffle/splitter.cpp"
+      ],
+      "called_by": ["Java_com_huawei_boostkit_spark_jni_SparkJniWrapper_split@cpp-omni/src/jni/SparkJniWrapper.cpp"],
+      "receives_external_input": true,
+      "risk": "High",
+      "input_types": ["VectorBatch"]
+    },
+    "Splitter::SplitFixedWidthValueBuffer@cpp-omni/src/shuffle/splitter.cpp": {
+      "defined_at": 145,
+      "calls": [
+        "memset_s@stdlib",
+        "memcpy_s@stdlib"
+      ],
+      "called_by": ["Splitter::Split@cpp-omni/src/shuffle/splitter.cpp"],
+      "receives_external_input": true,
+      "risk": "High",
+      "input_types": ["VectorBatch"]
+    },
+    "SubstraitParser::ParseType@cpp-omni/src/substrait/SubstraitParser.cpp": {
+      "defined_at": 38,
+      "calls": [
+        "type::BooleanType@omniruntime",
+        "type::IntType@omniruntime",
+        "type::Decimal64Type@omniruntime",
+        "type::Decimal128Type@omniruntime"
+      ],
+      "called_by": ["SubstraitParser::ParseNamedStruct@cpp-omni/src/substrait/SubstraitParser.cpp"],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "input_types": ["substrait::Type"]
+    },
+    "SubstraitParser::GetLiteralValue<int64_t>@cpp-omni/src/substrait/SubstraitParser.cpp": {
+      "defined_at": 213,
+      "calls": [
+        "memcpy@stdlib"
+      ],
+      "called_by": ["SubstraitParser::ParseType@cpp-omni/src/substrait/SubstraitParser.cpp"],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "input_types": ["substrait::Expression::Literal"]
+    },
+    "SubstraitToOmniPlanValidator::Validate@cpp-omni/src/substrait/SubstraitToOmniPlanValidator.cpp": {
+      "defined_at": 50,
+      "calls": [
+        "SubstraitParser::ParseNamedStruct@cpp-omni/src/substrait/SubstraitParser.cpp",
+        "SubstraitParser::ParseType@cpp-omni/src/substrait/SubstraitParser.cpp"
+      ],
+      "called_by": ["Java_org_apache_gluten_vectorized_OmniPlanEvaluatorJniWrapper_nativeValidateWithFailureReason@cpp-omni/src/jni/SparkJniWrapper.cpp"],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "input_types": ["substrait::Plan"]
+    },
+    "FileInputStream::FileInputStream@cpp-omni/src/io/SparkFile.cc": {
+      "defined_at": 49,
+      "calls": [
+        "open@unistd",
+        "fstat@sys/stat"
+      ],
+      "called_by": ["readLocalFile@cpp-omni/src/io/SparkFile.cc"],
+      "receives_external_input": true,
+      "risk": "High",
+      "input_types": ["filename"]
+    },
+    "FileOutputStream::FileOutputStream@cpp-omni/src/io/SparkFile.cc": {
+      "defined_at": 117,
+      "calls": [
+        "open@unistd"
+      ],
+      "called_by": ["writeLocalFile@cpp-omni/src/io/SparkFile.cc"],
+      "receives_external_input": true,
+      "risk": "High",
+      "input_types": ["filename"]
+    },
+    "Runtime::ParsePlan@cpp-omni/src/compute/Runtime.cpp": {
+      "defined_at": 80,
+      "calls": [
+        "SubstraitToOmniPlan::parsePlan@cpp-omni/src/substrait/SubstraitToOmniPlan.cpp",
+        "CodedInputStream::ParseFromCodedStream@protobuf"
+      ],
+      "called_by": ["Java_org_apache_gluten_vectorized_OmniPlanEvaluatorJniWrapper_nativeCreateKernelWithIterator@cpp-omni/src/jni/SparkJniWrapper.cpp"],
+      "receives_external_input": true,
+      "risk": "High",
+      "input_types": ["planData", "planSize"]
+    },
+    "CHColumnToSparkRow::convert@cpp-ch/local-engine/Parser/CHColumnToSparkRow.cpp": {
+      "defined_at": 100,
+      "calls": [
+        "memcpy@stdlib",
+        "CHColumnToSparkRow::createSparkRowInfo@cpp-ch/local-engine/Parser/CHColumnToSparkRow.cpp"
+      ],
+      "called_by": ["LocalExecutor::execute@cpp-ch/local-engine/Parser/LocalExecutor.cpp"],
+      "receives_external_input": true,
+      "risk": "High",
+      "input_types": ["DB::Block"]
+    },
+    "ShuffleReader::readStream@cpp-ch/local-engine/Shuffle/ShuffleReader.cpp": {
+      "defined_at": 150,
+      "calls": [
+        "DecompressedReadBuffer@clickhouse",
+        "ReadBuffer@clickhouse"
+      ],
+      "called_by": ["Java_org_apache_gluten_vectorized_ShuffleReaderJniWrapper_readStream@cpp/core/jni/JniWrapper.cc"],
+      "receives_external_input": true,
+      "risk": "High",
+      "input_types": ["InputStream"]
+    }
+  },
+  "data_flows": [
+    {
+      "source": "JNI_OnLoad@cpp-omni/src/jni/jni_common.cpp:120",
+      "path": [
+        "Java_com_huawei_boostkit_spark_jni_SparkJniWrapper_nativeMake@cpp-omni/src/jni/SparkJniWrapper.cpp:37",
+        "Splitter::Make@cpp-omni/src/shuffle/splitter.cpp:128",
+        "SplitOptions::Defaults@cpp-omni/src/shuffle/splitter.cpp:25"
+      ],
+      "sink": "Splitter::Split@cpp-omni/src/shuffle/splitter.cpp:147",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "planArray@Java_org_apache_gluten_vectorized_OmniPlanEvaluatorJniWrapper_nativeValidateWithFailureReason:241",
+      "path": [
+        "CodedInputStream@cpp-omni/src/jni/SparkJniWrapper.cpp:244",
+        "substraitPlan.ParseFromCodedStream@cpp-omni/src/jni/SparkJniWrapper.cpp:247",
+        "SubstraitToOmniPlanValidator::Validate@cpp-omni/src/substrait/SubstraitToOmniPlanValidator.cpp:253"
+      ],
+      "sink": "SubstraitParser::ParseType@cpp-omni/src/substrait/SubstraitParser.cpp:38",
+      "sink_type": "data_parser"
+    },
+    {
+      "source": "address@Java_com_huawei_boostkit_spark_serialize_ShuffleDataSerializerUtils_columnarShuffleParseInit:32",
+      "path": [
+        "VecBatch::ParseFromArray@cpp-omni/src/jni/deserializer.cpp:33",
+        "columnarShuffleParseBatch@cpp-omni/src/jni/deserializer.cpp:69"
+      ],
+      "sink": "memcpy_s@cpp-omni/src/jni/deserializer.cpp:106",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "planArr@Java_org_apache_gluten_vectorized_PlanEvaluatorJniWrapper_nativeCreateKernelWithIterator:415",
+      "path": [
+        "Runtime::parsePlan@cpp/core/jni/JniWrapper.cc:456",
+        "substrait::Plan@cpp/core/compute/Runtime.cc"
+      ],
+      "sink": "SubstraitToVeloxPlan::parsePlan@cpp/velox/substrait/SubstraitToVeloxPlan.cc",
+      "sink_type": "data_parser"
+    },
+    {
+      "source": "filename@FileInputStream::FileInputStream:51",
+      "path": [
+        "open@cpp-omni/src/io/SparkFile.cc:51"
+      ],
+      "sink": "pread@cpp-omni/src/io/SparkFile.cc:78",
+      "sink_type": "file_operation"
+    },
+    {
+      "source": "VectorBatch@Splitter::Split:147",
+      "path": [
+        "Splitter::SplitFixedWidthValueBuffer@cpp-omni/src/shuffle/splitter.cpp:145",
+        "memcpy_s@cpp-omni/src/shuffle/splitter.cpp:829"
+      ],
+      "sink": "partition_fixed_width_value_addrs@cpp-omni/src/shuffle/splitter.cpp:829",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "conf_plan@Java_org_apache_gluten_vectorized_ExpressionEvaluatorJniWrapper_nativeInitNative:192",
+      "path": [
+        "SparkConfigs::update@cpp-ch/local-engine/local_engine_jni.cpp:197",
+        "BackendInitializerUtil::initBackend@cpp-ch/local-engine/local_engine_jni.cpp:200"
+      ],
+      "sink": "BackendFinalizerUtil::finalizeGlobally@cpp-ch/local-engine/local_engine_jni.cpp:176",
+      "sink_type": "configuration"
+    },
+    {
+      "source": "dataFileJstr@Java_org_apache_gluten_vectorized_ShuffleWriterJniWrapper_nativeMake:913",
+      "path": [
+        "LocalPartitionWriter@cpp/core/shuffle/LocalPartitionWriter.cc:921",
+        "FileOutputStream@cpp/core/shuffle/LocalPartitionWriter.cc"
+      ],
+      "sink": "write@cpp/core/shuffle/LocalPartitionWriter.cc",
+      "sink_type": "file_operation"
+    }
+  ]
+}

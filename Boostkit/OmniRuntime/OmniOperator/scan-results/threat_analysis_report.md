@@ -1,345 +1,412 @@
-# OmniOperator 威胁分析报告
+# OmniOperator Threat Analysis Report
 
-> **分析模式：自主分析模式**
-> 本次攻击面分析为 AI 自主识别，未受 threat.md 约束。
+## Executive Summary
 
-## 项目架构概览
+OmniOperator is a C++ native runtime library providing high-performance operators for big data query execution. The project serves as a backend processing engine for OmniRuntime, accessed primarily through Java JNI bindings.
 
-### 项目定位
+**Key Security Findings:**
+- **Primary Attack Surface**: JNI interface serves as the main entry point for external data and control flow
+- **High-Risk Areas**: Expression parsing, UDF execution, and configuration deserialization
+- **Data Flow**: External JSON strings control expression trees, function execution, and file system operations
+- **Code Execution Risk**: Hive UDF framework allows arbitrary Java class invocation through class name strings
 
-**OmniOperator** 是华为鲲鹏 BoostKit 大数据 OmniRuntime 的核心特性之一，是一个大数据引擎加速库：
-
-- **项目类型**：库/SDK
-- **主要语言**：C/C++ (Native 实现) + Python (辅助脚本)
-- **部署方式**：作为 Spark/Hive 的动态库被 JVM 通过 JNI 调用
-- **核心功能**：用高性能 Native 算子替代 Spark/Hive 的 Java/Scala 算子
-
-### 核心架构组件
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    Spark/Hive Java 适配层                         │
-│  (SparkExtension / Gluten / HiveExtension)                      │
-└─────────────────────────────┬───────────────────────────────────┘
-                              │ JNI 调用
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    JNI 绑定层 (bindings/java)                    │
-│  - jni_operator.cpp      算子操作接口                            │
-│  - jni_operator_factory.cpp  算子工厂接口                        │
-│  - jni_vector.cpp        向量数据接口                            │
-└─────────────────────────────┬───────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    C++ Native 算子层 (core/src)                   │
-│                                                                  │
-│  ┌──────────────┐ ┌──────────────┐ ┌──────────────┐            │
-│  │  operator/   │ │  codegen/    │ │  expression/ │            │
-│  │  aggregation │ │  llvm_engine │ │  jsonparser  │            │
-│  │  join        │ │  functions   │ │  parser      │            │
-│  │  sort        │ │              │ │              │            │
-│  │  filter      │ │              │ │              │            │
-│  │  window      │ │              │ │              │            │
-│  └──────────────┘ └──────────────┘ └──────────────┘            │
-│                                                                  │
-│  ┌──────────────┐ ┌──────────────┐ ┌──────────────┐            │
-│  │  vector/     │ │  memory/     │ │  type/       │            │
-│  │  vector_batch│ │  memory_pool │ │  data_type   │            │
-│  │  string_cont │ │  allocator   │ │  serializer  │            │
-│  └──────────────┘ └──────────────┘ └──────────────┘            │
-│                                                                  │
-│  ┌──────────────┐ ┌──────────────┐                              │
-│  │  udf/        │ │  util/       │                              │
-│  │  java_udf    │ │  config_util │                              │
-│  │  jni_util    │ │  native_log  │                              │
-│  └──────────────┘ └──────────────┘                              │
-└─────────────────────────────────────────────────────────────────┘
-```
-
-### 模块分布
-
-| 模块 | 文件数 | 主要功能 | 风险等级 |
-|------|--------|----------|----------|
-| jni_bindings | 6 | JNI 接口层 | Critical |
-| operator | 50+ | 算子实现 | Medium |
-| codegen | 40+ | LLVM 代码生成 | High |
-| expression | 10+ | 表达式解析 | High |
-| vector | 20+ | 向量数据结构 | Medium |
-| memory | 10+ | 内存管理 | Medium |
-| type | 10+ | 数据类型 | Medium |
-| udf | 2 | UDF 执行 | High |
-| util | 8 | 工具类 | Low |
-
-## 模块风险评估
-
-### Critical 级别模块
-
-#### 1. JNI 绑定层 (jni_bindings)
-
-**风险描述**：这是 Java JVM 与 C++ Native 层的唯一交互通道，所有数据和控制流都通过此层传递。
-
-**主要风险点**：
-- `jni_operator.cpp`：直接接收 Java 传入的内存地址指针，进行指针转换和内存访问
-- `jni_operator_factory.cpp`：接收 JSON 格式的表达式字符串，进行解析和算子创建
-- 数据类型反序列化：解析从 Java 传入的数据类型 JSON
-
-**潜在漏洞类型**：
-- 内存访问越界（指针转换后访问超出边界）
-- 类型混淆（错误的数据类型转换）
-- JSON 解析异常（恶意构造的 JSON 表达式）
-
-### High 级别模块
-
-#### 2. 表达式解析 (expression/jsonparser)
-
-**风险描述**：解析从 Java 端传入的 JSON 格式 SQL 表达式。
-
-**主要风险点**：
-- `JSONParser::ParseJSON`：解析嵌套的 JSON 结构
-- 表达式字符串来自 Spark/Hive SQL 解析器，包含用户查询中的表达式
-
-**潜在漏洞类型**：
-- JSON 解析异常导致的崩溃
-- 表达式注入（构造特殊表达式触发异常行为）
-
-#### 3. LLVM 代码生成 (codegen/llvm_engine)
-
-**风险描述**：使用 LLVM JIT 动态编译和执行表达式代码。
-
-**主要风险点**：
-- `LLVMEngine::Compile`：编译生成的 LLVM IR
-- 动态函数注册和调用
-
-**潜在漏洞类型**：
-- JIT 编译时资源消耗（CPU/内存）
-- 生成的代码执行异常
-
-#### 4. UDF 执行 (udf/java_udf_functions)
-
-**风险描述**：执行用户定义的 Hive/Java UDF 函数。
-
-**主要风险点**：
-- `ExecuteHiveUdfSingle/Batch`：调用 Java UDF
-- UDF 类名来自配置或 SQL 查询
-
-**潜在漏洞类型**：
-- UDF 类名注入（指定恶意 UDF 类）
-- JVM 调用异常
-
-### Medium 级别模块
-
-#### 5. 数据处理 (vector/, operator/)
-
-**风险描述**：大量使用 memcpy_s 进行数据复制。
-
-**主要风险点**：
-- `Vector::SetValues`：批量数据复制
-- `LargeStringContainer::SetValue`：字符串存储
-- Spill 文件读写
-
-**潜在漏洞类型**：
-- 内存复制越界
-- 文件路径构造问题
-
-#### 6. 配置处理 (util/config_util)
-
-**风险描述**：从环境变量和配置文件读取运行参数。
-
-**主要风险点**：
-- `getenv("OMNI_HOME/OMNI_CONF")`：环境变量读取
-- 配置文件解析
-
-**潜在漏洞类型**：
-- 配置文件路径遍历（符号链接问题）
-- 环境变量影响运行行为
-
-## 攻击面分析
-
-### 信任边界模型
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│  信任边界 1: JNI 接口边界 (Critical)                             │
-│  ─────────────────────────────────────────────────────────────  │
-│  可信侧: C++ Native 算子实现                                     │
-│  不可信侧: Spark/Hive Java 适配层                                │
-│  说明: Java JVM 与 C++ 在同一进程，但数据来自外部查询            │
-└─────────────────────────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────────────────────────┐
-│  信任边界 2: UDF 执行边界 (High)                                  │
-│  ─────────────────────────────────────────────────────────────  │
-│  可信侧: C++ Native 算子                                         │
-│  不可信侧: 用户定义的 Java UDF 函数                               │
-│  说明: UDF 由用户通过 SQL 查询指定，代码由用户编写               │
-└─────────────────────────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────────────────────────┐
-│  信任边界 3: 数据输入边界 (Medium)                                │
-│  ─────────────────────────────────────────────────────────────  │
-│  可信侧: 内部数据处理逻辑                                         │
-│  不可信侧: 从数据文件读取的数据                                   │
-│  说明: ORC/Parquet 数据文件内容                                   │
-└─────────────────────────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────────────────────────┐
-│  信任边界 4: 配置边界 (Low)                                       │
-│  ─────────────────────────────────────────────────────────────  │
-│  可信侧: 管理员控制的配置                                         │
-│  不可信侧: 环境变量                                               │
-│  说明: 部署人员设置 OMNI_HOME/OMNI_CONF                          │
-└─────────────────────────────────────────────────────────────────┘
-```
-
-### 入口点分析
-
-| 入口类型 | 位置 | 信任等级 | 数据来源 | 可控性 |
-|----------|------|----------|----------|--------|
-| JNI addInput | jni_operator.cpp | semi_trusted | Spark/Hive 查询数据 | 由查询引擎控制 |
-| JNI createOperator | jni_operator_factory.cpp | semi_trusted | Spark/Hive 查询计划 | 由查询引擎控制 |
-| JSON 表达式解析 | jsonparser.h | semi_trusted | SQL 表达式 | 用户通过 SQL 控制 |
-| 数据类型反序列化 | data_type_serializer.cpp | semi_trusted | 查询计划中的类型 | 由查询引擎控制 |
-| UDF 执行 | java_udf_functions.cpp | untrusted_local | 用户指定的 UDF 类 | 用户直接控制 |
-| Spill 文件 | spiller.cpp | trusted_admin | 配置的目录 | 管理员控制 |
-| 环境变量 | config_util.cpp | trusted_admin | 启动脚本设置 | 管理员控制 |
-
-## STRIDE 威胁建模
-
-### Spoofing (欺骗)
-
-| 威胁 | 描述 | 风险等级 | 影响模块 |
-|------|------|----------|----------|
-| UDF 类名伪造 | 用户指定非预期的 UDF 类名执行恶意代码 | High | udf/java_udf_functions |
-| 数据类型伪装 | JSON 数据类型描述与实际数据不符 | Medium | type/data_type_serializer |
-
-### Tampering (篡改)
-
-| 威胁 | 描述 | 风险等级 | 影响模块 |
-|------|------|----------|----------|
-| 内存数据篡改 | JNI 传递的内存地址被错误使用 | High | jni_bindings, vector |
-| 配置篡改 | 配置文件被非授权修改 | Low | util/config_util |
-| Spill 文件篡改 | 临时文件被其他进程修改 | Low | operator/spill |
-
-### Repudiation (抵赖)
-
-| 威胁 | 描述 | 风险等级 | 影响模块 |
-|------|------|----------|----------|
-| 操作日志缺失 | 缺少关键操作的审计日志 | Low | util/native_log |
-| UDF 执行无记录 | UDF 执行缺乏追踪机制 | Medium | udf/java_udf_functions |
-
-### Information Disclosure (信息泄露)
-
-| 威胁 | 描述 | 风险等级 | 影响模块 |
-|------|------|----------|----------|
-| 内存数据泄露 | 错误返回内存地址导致数据泄露 | Medium | jni_operator.cpp (Transform) |
-| Spill 文件数据泄露 | 临时文件包含敏感查询数据 | Medium | operator/spill |
-| 日志信息泄露 | 日志包含敏感查询内容 | Low | util/native_log |
-
-### Denial of Service (拒绝服务)
-
-| 威胁 | 描述 | 风险等级 | 影响模块 |
-|------|------|----------|----------|
-| JSON 解析耗尽资源 | 深度嵌套或超大 JSON 消耗 CPU | High | expression/jsonparser |
-| LLVM 编译耗时 | 复杂表达式编译消耗大量 CPU | Medium | codegen/llvm_engine |
-| 内存耗尽 | 处理超大数据批次耗尽堆外内存 | Medium | memory/, vector/ |
-| UDF 执行阻塞 | 恶意 UDF 阻塞 JVM 调用 | Medium | udf/java_udf_functions |
-
-### Elevation of Privilege (权限提升)
-
-| 威胁 | 描述 | 风险等级 | 影响模块 |
-|------|------|----------|----------|
-| UDF 代码执行 | 恶意 UDF 在 JVM 中执行任意代码 | High | udf/java_udf_functions |
-| JIT 代码注入 | 通过 LLVM JIT 执行非预期代码 | Medium | codegen/llvm_engine |
-
-## 数据流分析
-
-### 关键数据流路径
-
-#### 1. JNI 输入数据流
-
-```
-Java VectorBatch → JNI addInputNative → Operator::AddInput → memcpy_s (Vector::SetValues)
-```
-
-**风险点**：
-- Java 传入的内存地址直接转换
-- 批量数据复制可能越界
-
-#### 2. JSON 表达式解析流
-
-```
-Java JSON expression → nlohmann::json::parse → JSONParser::ParseJSON → Expr 创建
-```
-
-**风险点**：
-- JSON 解析异常处理
-- 表达式对象内存管理
-
-#### 3. UDF 执行流
-
-```
-SQL UDF ClassName → ExecuteHiveUdf → JNI CallStaticVoidMethod → Java UDF 执行
-```
-
-**风险点**：
-- UDF 类名验证不足
-- JNI 调用异常传播
-
-#### 4. Spill 文件流
-
-```
-内存数据 → memcpy_s → SpillWriter::WriteVecBatch → fwrite → 临时文件
-```
-
-**风险点**：
-- 文件路径构造
-- 数据写入完整性
-
-## 安全加固建议
-
-### 架构层面建议
-
-1. **JNI 接口安全加固**
-   - 增加传入指针的边界检查
-   - 对 JSON 输入增加深度和大小限制
-   - 增加调用者身份验证机制
-
-2. **UDF 执行安全加固**
-   - 增加允许执行的 UDF 类白名单
-   - 对 UDF 执行设置超时限制
-   - 增加沙箱机制隔离 UDF 执行环境
-
-3. **表达式解析安全加固**
-   - 对 JSON 解析设置深度限制
-   - 增加表达式复杂度限制
-   - 对解析异常进行安全处理
-
-4. **内存操作安全加固**
-   - 使用安全的内存复制函数（已使用 memcpy_s）
-   - 增加内存分配上限检查
-   - 对向量大小进行合理性检查
-
-5. **配置安全加固**
-   - 验证配置文件路径的合法性
-   - 对环境变量设置默认安全值
-   - 增加配置完整性检查
-
-6. **日志审计加固**
-   - 增加关键操作审计日志
-   - 对 UDF 执行进行记录
-   - 避免日志中包含敏感数据
-
-### 代码层面建议
-
-1. 对所有 JNI 传入的指针增加 null 检查和范围检查
-2. 对 JSON 解析增加异常捕获和资源限制
-3. 对 UDF 类名增加白名单验证
-4. 对 Spill 文件路径增加规范化处理
-5. 增加内存使用的监控和限制机制
+**Overall Risk Assessment**: **HIGH** - Multiple paths for external input to influence native code execution
 
 ---
 
-*报告生成时间：2026-04-19*
-*分析范围：OmniOperator C/C++ Native 实现 + JNI 绑定层*
-*分析工具：Architecture Agent*
+## Project Overview
+
+| Attribute | Value |
+|-----------|-------|
+| Project Name | OmniOperator |
+| Project Type | C++ Native Runtime Library |
+| Primary Language | C++17 |
+| Secondary Languages | Java (JNI bindings), Python (test scripts) |
+| Source Files | 291 C++ + 304 Headers |
+| Primary Use Case | Big data query execution operators |
+
+### Module Architecture
+
+```
+OmniOperator/
+├── bindings/java/          [HIGH RISK] - JNI interface layer
+│   └── src/main/cpp/       - Native JNI implementations
+│   └── src/main/java/      - Java vector/operator classes
+├── core/src/
+│   ├── udf/                [HIGH RISK] - User-defined function execution
+│   ├── expression/         [HIGH RISK] - Expression parsing
+│   ├── operator/           [MEDIUM]    - Data processing operators
+│   ├── codegen/            [MEDIUM]    - Function registry & codegen
+│   ├── type/               [MEDIUM]    - Type serialization
+│   ├── vector/             [LOW]       - Columnar data structures
+│   ├── memory/             [LOW]       - Memory management
+│   └── util/               [LOW]       - Utilities
+├── examples/
+│   └── externalfunctions/  [HIGH RISK] - External function registration
+└── core/test/              - Test suite
+```
+
+---
+
+## Attack Surface Analysis
+
+### 1. JNI Interface Layer (Critical Risk)
+
+**Location**: `bindings/java/src/main/cpp/src/`
+
+**Entry Points Identified**:
+
+| Function | File | Line | Risk Level |
+|----------|------|------|------------|
+| `addInputNative` | jni_operator.cpp | 159 | HIGH |
+| `getOutputNative` | jni_operator.cpp | 178 | HIGH |
+| `createOperatorNative` | jni_operator_factory.cpp | 156 | HIGH |
+| `createFilterAndProjectOperatorFactory` | jni_operator_factory.cpp | 457 | CRITICAL |
+| `createLookupJoinOperatorFactory` | jni_operator_factory.cpp | 620 | HIGH |
+| `parseOneRow` | jni_operator.cpp | 348 | HIGH |
+
+**Threat Analysis**:
+
+1. **Pointer Injection via jlong**
+   - JNI methods receive `jlong` values that are directly cast to native pointers
+   - Example: `reinterpret_cast<VectorBatch*>(jVecBatchAddress)`
+   - **Risk**: Malicious pointer values could cause arbitrary memory access, type confusion, or memory corruption
+
+2. **Expression Injection via JSON**
+   - `createFilterAndProjectOperatorFactory` receives expression strings parsed as JSON
+   - Flow: `jstring -> GetStringUTFChars -> nlohmann::json::parse -> JSONParser::ParseJSON`
+   - **Risk**: Malicious JSON expressions could trigger unexpected function calls or type coercion
+
+3. **Configuration Injection**
+   - Operator configuration received as JSON string
+   - Flow: `jstring -> OperatorConfig::DeserializeOperatorConfig`
+   - **Risk**: Configuration manipulation affecting spill paths, memory limits, or operator behavior
+
+### 2. Expression Parsing (High Risk)
+
+**Location**: `core/src/expression/jsonparser/`
+
+**Data Flow**:
+```
+JSON String → nlohmann::json::parse → JSONParser::ParseJSON → Expr Tree → FunctionRegistry::LookupFunction
+```
+
+**Key Vulnerabilities**:
+
+1. **Function Name Injection**
+   - `ParseJSONFunc` extracts `function_name` from JSON: `string funcName = jsonExpr["function_name"]`
+   - Function name used to lookup execution targets: `FunctionRegistry::LookupFunction(&signature)`
+   - **CWE-94**: Code Injection via function name manipulation
+
+2. **Hive UDF Class Name Injection**
+   - `FunctionRegistry::LookupHiveUdf(funcName)` returns Java UDF class name
+   - Class name passed to JVM for execution: `ExecuteHiveUdfSingle(udfClass, ...)`
+   - **CWE-94**: Arbitrary Java class execution via manipulated function name
+
+3. **Type Coercion Issues**
+   - JSON literal parsing performs implicit type conversions
+   - Decimal types constructed from JSON values without validation
+   - **CWE-704**: Type casting issues leading to precision loss or overflow
+
+**Affected Code**:
+```cpp
+// jsonparser.cpp:405-502
+Expr *JSONParser::ParseJSONFunc(const Json &jsonExpr) {
+    string funcName = jsonExpr["function_name"];  // Direct extraction from JSON
+    // ... function lookup and execution ...
+    auto &hiveUdfClass = omniruntime::codegen::FunctionRegistry::LookupHiveUdf(funcName);
+    if (!hiveUdfClass.empty()) {
+        return new FuncExpr(hiveUdfClass, args, std::move(retType), HIVE_UDF);  // Executes external Java class
+    }
+}
+```
+
+### 3. UDF Execution Framework (Critical Risk)
+
+**Location**: `core/src/udf/cplusplus/`
+
+**Execution Chain**:
+```
+ExecuteHiveUdfSingle/ExecuteHiveUdfBatch → JniUtil::GetJNIEnv → NewStringUTF(udfClass) → CallStaticVoidMethod → HiveUdfExecutor.executeSingle/executeBatch
+```
+
+**Threats Identified**:
+
+1. **Arbitrary Java Class Execution**
+   - UDF class name comes from expression parsing chain
+   - No class name validation or whitelist enforcement
+   - **CWE-470**: Use of Externally-Controlled Input to Select Classes/Code
+
+2. **Direct Memory Pointer Exposure**
+   - Native memory addresses passed to Java UDFs
+   - `inputValueAddr`, `outputValueAddr` parameters
+   - **CWE-787**: Out-of-bounds write via manipulated pointer values
+
+3. **JVM Exception Handling**
+   - Exceptions caught but error messages passed back through `SetError`
+   - Potential information disclosure via exception messages
+
+**Affected Code**:
+```cpp
+// java_udf_functions.cpp:42-73
+void ExecuteHiveUdfSingle(int64_t contextPtr, const char *udfClass, ...) {
+    jstring jUdfClassName = env->NewStringUTF(udfClass);  // Class name from external source
+    env->CallStaticVoidMethod(executorCls, executeSingleMethod, jUdfClassName, ...);  // Execute arbitrary class
+}
+```
+
+### 4. Configuration Deserialization (Medium-High Risk)
+
+**Location**: `core/src/operator/config/operator_config.cpp`
+
+**Attack Vector**: JSON configuration string controls:
+- Spill configuration (file paths)
+- Overflow handling behavior
+- Memory thresholds
+
+**Key Vulnerabilities**:
+
+1. **Path Injection in Spill Configuration**
+   - `spillPath` extracted from JSON: `result.at("spillConfig").at("spillPath").get<std::string>()`
+   - Path used for directory creation: `CreateSpillDirectory(spillPath.c_str())`
+   - **CWE-22**: Path Traversal via manipulated spill path
+
+2. **File System Operations**
+   - `mkdir(spillPathChars, 0750)` - Directory creation
+   - `statfs(spillPathChars, &diskInfo)` - File system stat
+   - `access(spillPathChars, 0)` - File access check
+   - **CWE-73**: External Control of File Name/Path
+
+**Affected Code**:
+```cpp
+// operator_config.cpp:67-112
+OperatorConfig OperatorConfig::DeserializeOperatorConfig(const std::string &configString) {
+    auto result = nlohmann::json::parse(configString);
+    auto spillPath = result.at("spillConfig").at("spillPath").get<std::string>();  // Path from JSON
+    // ... later used in CreateSpillDirectories ...
+}
+
+// operator_config.cpp:152-159
+static void CreateSpillDirectory(const char *spillPathChars) {
+    mkdir(spillPathChars, 0750);  // Uses path from configuration
+}
+```
+
+### 5. Data Type Serialization (Medium Risk)
+
+**Location**: `core/src/type/data_type_serializer.cpp`
+
+**Function**: `Deserialize(const std::string &dataTypes)`
+
+**Vulnerabilities**:
+- Type IDs extracted from JSON without validation
+- Recursive parsing of nested type structures
+- **CWE-20**: Improper Input Validation
+
+### 6. External Function Registration (High Risk)
+
+**Location**: `examples/externalfunctions/`
+
+**Threat**: Dynamic loading of native functions from configuration file
+- `externalregistration.conf` defines function signatures
+- Functions loaded at runtime via `extern "C" DLLEXPORT`
+- **CWE-502**: Deserialization of Untrusted Data leading to code execution
+
+---
+
+## Data Flow Analysis
+
+### Critical Data Flow Path 1: Expression Execution
+
+```
+[Java/JNI] createFilterAndProjectOperatorFactory
+    ↓ GetStringUTFChars (jExpression)
+    ↓ nlohmann::json::parse (expression string)
+    ↓ JSONParser::ParseJSON
+    ↓ ParseJSONFunc → funcName extraction
+    ↓ FunctionRegistry::LookupHiveUdf (funcName)
+    ↓ ExecuteHiveUdfSingle (hiveUdfClass, memory pointers)
+    ↓ JVM: HiveUdfExecutor.executeSingle
+    ↓ [Native Memory] Output buffer manipulation
+```
+
+**Risk Assessment**: Full chain from external JSON to arbitrary Java code execution with native memory access.
+
+### Critical Data Flow Path 2: Configuration to File System
+
+```
+[Java/JNI] createOperatorFactory (jOperatorConfig)
+    ↓ GetStringUTFChars (configString)
+    ↓ OperatorConfig::DeserializeOperatorConfig
+    ↓ JSON parse → spillPath extraction
+    ↓ OperatorConfig::CheckSpillConfig
+    ↓ CreateSpillDirectories
+    ↓ mkdir (spillPath from JSON)
+```
+
+**Risk Assessment**: External JSON controls file system operations.
+
+### Critical Data Flow Path 3: Row Data Processing
+
+```
+[Java/JNI] parseOneRow (jbyteArray bytes)
+    ↓ GetByteArrayElements
+    ↓ RowParser::ParseOnRow (uint8_t* row)
+    ↓ Vector manipulation
+    ↓ Memory write operations
+```
+
+**Risk Assessment**: Raw byte array from Java processed in native code without bounds checking.
+
+---
+
+## Trust Boundaries
+
+| Boundary | Description | Crossing Mechanism | Risk |
+|----------|-------------|-------------------|------|
+| Java ↔ Native | JNI interface | Pointer casts, array elements | Memory corruption |
+| External Config ↔ Internal State | JSON configuration | nlohmann::json::parse | Behavior manipulation |
+| Expression String ↔ Expression Tree | Query predicates | JSONParser::ParseJSON | Function injection |
+| UDF Class Name ↔ Java Execution | Hive UDF framework | JniUtil + JVM calls | Arbitrary code execution |
+| JSON ↔ File System | Spill configuration | mkdir, statfs | Path traversal |
+
+---
+
+## Vulnerability Summary by CWE
+
+| CWE ID | CWE Name | Affected Components | Severity |
+|--------|----------|---------------------|----------|
+| CWE-94 | Code Injection | expression/jsonparser.cpp, codegen/func_registry.cpp | CRITICAL |
+| CWE-470 | Externally-Controlled Class Selection | udf/java_udf_functions.cpp | CRITICAL |
+| CWE-22 | Path Traversal | operator/config/operator_config.cpp | HIGH |
+| CWE-787 | Out-of-bounds Write | bindings/jni_operator.cpp (pointer handling) | HIGH |
+| CWE-20 | Improper Input Validation | Multiple JSON parsing locations | MEDIUM |
+| CWE-704 | Type Casting Issues | jsonparser.cpp (literal parsing) | MEDIUM |
+| CWE-73 | External Control of File Path | operator_config.cpp | HIGH |
+| CWE-502 | Deserialization of Untrusted Data | externalfunctions example | HIGH |
+
+---
+
+## High-Risk Function List
+
+| Priority | Function | File | Line | Threat |
+|----------|----------|------|------|--------|
+| 1 | `ExecuteHiveUdfSingle` | java_udf_functions.cpp | 42 | Arbitrary Java class execution |
+| 2 | `ExecuteHiveUdfBatch` | java_udf_functions.cpp | 166 | Batch UDF execution with memory pointers |
+| 3 | `ParseJSONFunc` | jsonparser.cpp | 405 | Function name extraction and lookup |
+| 4 | `DeserializeOperatorConfig` | operator_config.cpp | 67 | Configuration parsing with spill path |
+| 5 | `createFilterAndProjectOperatorFactory` | jni_operator_factory.cpp | 457 | Expression parsing entry point |
+| 6 | `CheckSpillConfig` | operator_config.cpp | 182 | File system operations |
+| 7 | `FunctionRegistry::LookupHiveUdf` | func_registry.cpp | - | UDF class name lookup |
+| 8 | `addInputNative` | jni_operator.cpp | 159 | Pointer cast from jlong |
+| 9 | `parseOneRow` | jni_operator.cpp | 348 | Raw byte array processing |
+
+---
+
+## Recommendations
+
+### Immediate Actions (Critical)
+
+1. **UDF Class Whitelist**: Implement a whitelist of allowed UDF class names in `FunctionRegistry::LookupHiveUdf`
+2. **Expression Validation**: Add schema validation for JSON expression input before parsing
+3. **Pointer Validation**: Add bounds checking and null pointer validation for jlong casts
+
+### Short-Term Actions (High Priority)
+
+4. **Path Sanitization**: Validate and sanitize spill path in `OperatorConfig::CheckSpillConfig`
+5. **Memory Address Validation**: Validate memory addresses passed to UDF execution
+6. **Function Name Validation**: Restrict allowed function names in expression parsing
+
+### Medium-Term Actions (Medium Priority)
+
+7. **JSON Schema Enforcement**: Define strict schemas for all JSON input types
+8. **Error Message Sanitization**: Sanitize exception messages before returning to JNI
+9. **Input Rate Limiting**: Add limits on expression complexity and nesting depth
+
+### Long-Term Actions
+
+10. **Security Architecture Review**: Consider separation between expression parsing and execution
+11. **Code Signing**: Implement code signing for external functions
+12. **Audit Logging**: Add comprehensive logging for security-sensitive operations
+
+---
+
+## Appendix A: JNI Entry Point Details
+
+### Full JNI Method List
+
+```cpp
+// Operator Operations (jni_operator.cpp)
+Java_nova_hetu_omniruntime_operator_OmniOperator_addInputNative
+Java_nova_hetu_omniruntime_operator_OmniOperator_getOutputNative
+Java_nova_hetu_omniruntime_operator_OmniOperator_closeNative
+Java_nova_hetu_omniruntime_operator_OmniOperator_getSpilledBytesNative
+Java_nova_hetu_omniruntime_operator_OmniOperator_getMetricsInfoNative
+Java_nova_hetu_omniruntime_operator_OmniOperator_alignSchemaNative
+Java_nova_hetu_omniruntime_operator_OmniOperator_getHashMapUniqueKeysNative
+
+// Vector Operations (jni_vector.cpp)
+Java_nova_hetu_omniruntime_vector_Vec_newVectorNative
+Java_nova_hetu_omniruntime_vector_Vec_newDictionaryVectorNative
+Java_nova_hetu_omniruntime_vector_Vec_sliceVectorNative
+Java_nova_hetu_omniruntime_vector_Vec_copyPositionsNative
+Java_nova_hetu_omniruntime_vector_Vec_freeVectorNative
+Java_nova_hetu_omniruntime_vector_VecBatch_newVectorBatchNative
+Java_nova_hetu_omniruntime_vector_VecBatch_freeVectorBatchNative
+
+// Row Operations (jni_operator.cpp)
+Java_nova_hetu_omniruntime_vector_RowBatch_freeRowBatchNative
+Java_nova_hetu_omniruntime_vector_RowBatch_newRowBatchNative
+Java_nova_hetu_omniruntime_vector_RowBatch_transFromVectorBatch
+Java_nova_hetu_omniruntime_vector_serialize_OmniRowDeserializer_newOmniRowDeserializer
+Java_nova_hetu_omniruntime_vector_serialize_OmniRowDeserializer_freeOmniRowDeserializer
+Java_nova_hetu_omniruntime_vector_serialize_OmniRowDeserializer_parseOneRow
+Java_nova_hetu_omniruntime_vector_serialize_OmniRowDeserializer_parseOneRowByAddr
+Java_nova_hetu_omniruntime_vector_serialize_OmniRowDeserializer_parseAllRow
+
+// Operator Factory Operations (jni_operator_factory.cpp)
+Java_nova_hetu_omniruntime_operator_OmniOperatorFactory_createOperatorNative
+Java_nova_hetu_omniruntime_operator_aggregator_OmniHashAggregationOperatorFactory_createHashAggregationOperatorFactory
+Java_nova_hetu_omniruntime_operator_aggregator_OmniAggregationOperatorFactory_createAggregationOperatorFactory
+Java_nova_hetu_omniruntime_operator_sort_OmniSortOperatorFactory_createSortOperatorFactory
+Java_nova_hetu_omniruntime_operator_window_OmniWindowOperatorFactory_createWindowOperatorFactory
+Java_nova_hetu_omniruntime_operator_topn_OmniTopNOperatorFactory_createTopNOperatorFactory
+Java_nova_hetu_omniruntime_operator_filter_OmniFilterAndProjectOperatorFactory_createFilterAndProjectOperatorFactory
+Java_nova_hetu_omniruntime_operator_project_OmniProjectOperatorFactory_createProjectOperatorFactory
+Java_nova_hetu_omniruntime_operator_join_OmniHashBuilderOperatorFactory_createHashBuilderOperatorFactory
+Java_nova_hetu_omniruntime_operator_join_OmniLookupJoinOperatorFactory_createLookupJoinOperatorFactory
+Java_nova_hetu_omniruntime_operator_union_OmniUnionOperatorFactory_createUnionOperatorFactory
+```
+
+---
+
+## Appendix B: JSON Expression Schema Risk Analysis
+
+### Expression Types Processed
+
+| Type | JSON Key | Risk |
+|------|----------|------|
+| FIELD_REFERENCE | `colVal`, `dataType` | Type confusion |
+| LITERAL | `value`, `dataType`, `isNull` | Value injection |
+| BINARY | `operator`, `left`, `right` | Operator manipulation |
+| UNARY | `operator`, `expr` | Operator injection |
+| FUNC/FUNCTION | `function_name`, `arguments`, `returnType` | **CRITICAL** - Function injection |
+| IN | `arguments` | List injection |
+| BETWEEN | `value`, `lower_bound`, `upper_bound` | Range manipulation |
+| IF | `condition`, `if_true`, `if_false` | Logic injection |
+| SWITCH | `numOfCases`, `CaseN` | Complex expression nesting |
+| COALESCE | `value1`, `value2` | Null handling manipulation |
+| IS_NULL/IS_NOT_NULL | `arguments` | Null check manipulation |
+| MULTIPLE_AND_OR | `operator`, `conditions` | Logic chain injection |
+
+---
+
+## Report Metadata
+
+- **Generated**: 2026-04-22
+- **Analyzer**: Sisyphus-Junior (OpenCode)
+- **Scan Output**: `/home/pwn20tty/Desktop/opencode_project/kunpeng/boostkit/OmniRuntime/OmniOperator/scan-results/`
+- **Context Files**: 
+  - `project_model.json`
+  - `call_graph.json`
+- **Next Phase**: DataFlow Scanner module-by-module analysis

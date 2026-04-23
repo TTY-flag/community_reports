@@ -1,390 +1,307 @@
-# OmniStateStore 威胁分析报告
+# OmniStateStore Threat Analysis Report
 
-## 项目概述
-
-| 属性 | 值 |
-|------|-----|
-| 项目名称 | OmniStateStore |
-| 语言 | C++14 + Java |
-| 代码规模 | ~57,209 行核心代码，380 个源文件 |
-| 用途 | Apache Flink 高性能状态存储引擎 |
-| 架构 | LSM-tree 多层级内存管理架构 |
+**Project**: OmniStateStore - Huawei Flink State Storage Engine  
+**Scan Date**: 2026-04-22  
+**Total Files**: 380 (C/C++ source files)  
+**Total Lines**: 57,205  
+**Language**: C++ (core) + Java (plugin layer)
 
 ---
 
-## 1. 攻击面分析
+## 1. Executive Summary
 
-### 1.1 外部输入入口点
+OmniStateStore is a high-performance state storage engine for Apache Flink streaming applications. It uses a hybrid architecture with a C++ native engine accessed via JNI from Java Flink TaskManagers. The system stores state data locally and supports checkpointing to HDFS/S3.
 
-OmniStateStore 作为 Flink 状态后端，主要暴露以下攻击面：
+**Key Attack Surfaces Identified**:
+- **25+ JNI Entry Points** - Primary attack surface receiving data from Java Flink operators
+- **Checkpoint Restore Pipeline** - Parses binary data from potentially untrusted checkpoint files
+- **HDFS I/O Layer** - Receives data from remote Hadoop clusters via JNI bridge
+- **Binary Parsing Layer** - LSM blocks, slices, keys parsed from file buffers
+- **Memory Management** - Complex allocator/pool system with potential injection points
 
-| 入口点类型 | 描述 | 数据来源 | 风险等级 |
-|-----------|------|----------|---------|
-| **JNI 调用** | Java Native Interface 接口 | Flink 应用配置、用户数据 | **Critical** |
-| **Checkpoint 文件** | 外部检查点文件 | HDFS/本地文件系统 | **Critical** |
-| **配置参数** | 路径、内存限制、并行度 | Java BoostConfig 对象 | **High** |
-| **序列化数据** | 二进制 KV 数据 | SST 文件、Slice 文件 | **High** |
-
-### 1.2 JNI 接口攻击面 (Critical)
-
-**JNI 入口点统计**: 21 个实现文件，~50 个导出函数
-
-**主要安全风险函数**:
-
-| 函数 | 文件 | 风险描述 |
-|------|------|----------|
-| `BoostStateDB_restore()` | BoostStateDB.cpp:64-131 | 外部路径传递，路径遍历风险 |
-| `KVTableImpl_put/get()` | KVTableImpl.cpp | 原始指针传递，无句柄验证 |
-| `DirectBuffer_nativeFreeDirectBuffer()` | DirectBuffer.cpp:89-90 | Use-after-free 风险 |
-| `PQKeyIterator_open()` | PQKeyIterator.cpp | ByteArray 无边界检查 |
-
-**数据流风险**:
-- Java 传递 `jlong` 类型的原生指针直接用于 `reinterpret_cast`
-- 原生内存地址暴露给 Java (通过 `SetLongField`)
-- 无句柄有效性验证机制
+**Overall Risk Assessment**: **HIGH**  
+The system has multiple critical attack vectors where untrusted data from checkpoint files, HDFS storage, or JNI interfaces flows into binary parsing functions without comprehensive validation.
 
 ---
 
-## 2. 高危漏洞风险分析
+## 2. Attack Surface Analysis
 
-### 2.1 路径遍历风险 (High → Critical)
+### 2.1 JNI Interface Layer (Critical Risk)
 
-**影响范围**: 状态恢复操作
+**Location**: `src/core/jni/`
 
-**代码路径**:
-```
-JNI BoostStateDB_restore()
-  → CheckPathValid() [kv_helper.h:327-381]
-  → RestoreOperator::Restore()
-  → CreateHardLinkForRestoredLocalFile() [restore_operator.cpp:152-165]
-  → link(srcFile->GetPath(), targetFile->GetPath())
-```
+| Entry Point | Risk | Data Source | Attack Vector |
+|-------------|------|-------------|---------------|
+| `Java_com_huawei_ock_bss_common_BoostStateDB_open` | Critical | Java BoostConfig | Config injection - paths, sizes, flags |
+| `Java_com_huawei_ock_bss_common_BoostStateDB_restore` | Critical | Java restorePaths | Path traversal via checkpoint locations |
+| `Java_com_huawei_ock_bss_table_KVTableImpl_put` | High | Java key/value | Data injection into state tables |
+| `Java_com_huawei_ock_bss_table_iterator_PQKeyIterator_open` | Critical | Java groupId array | Memory allocation with untrusted size |
 
-**漏洞分析**:
-- `fileName` 来自检查点元数据文件 (`restoredFileInfo->GetFileName()`)
-- `CheckPathValid()` 使用 `realpath()` 验证，但：
-  - `realpath()` 需要路径存在才能完全验证
-  - `allowPathNotExist` 标志可绕过存在性检查
-  - **无显式 '..' 序列检查**
-- 硬链接创建使用外部派生的路径组件
+**Key Findings**:
+- `CheckPathValid()` in `kv_helper.h:327` validates paths but uses `realpath()` which may resolve symlinks to unexpected locations
+- `GetStringFromJava()` reads strings from Java without length limits (except hardcoded checks)
+- `CreateConfig()` trusts Java-provided parallelism values, key group ranges
+- `PQKeyIterator::open()` allocates memory with size from `env->GetArrayLength()` - potential integer overflow
 
-**缓解措施 (已存在)**:
-- Java 层使用 `Path.normalize()` (BoostStateDownloader.java:95)
-- Java 层检查 `Files.isSymbolicLink()` (EmbeddedOckStateBackend.java:847)
+### 2.2 Checkpoint Restore Pipeline (Critical Risk)
 
-**建议增强**:
-- 在 C++ 层添加显式 `'..'` 检查
-- 验证解析后的路径在预期基础目录内
-- 在 `link()` 操作前验证文件类型
+**Location**: `src/core/snapshot/`
 
-### 2.2 内存安全风险 (Critical)
+| Entry Point | Risk | Data Source | Attack Vector |
+|-------------|------|-------------|---------------|
+| `SnapshotRestoreUtils::ReadDbMeta` | Critical | Checkpoint meta file | Metadata parsing - version, snapshotId, operator info |
+| `SnapshotRestoreUtils::Deserialize` | Critical | Checkpoint file | Binary deserialization of operator info |
+| `Slice::RestoreSliceUseByteBuffer` | Critical | Checkpoint slice file | Slice structure parsing - header, index, offsets |
+| `LogicalSliceChainImpl::Restore` | High | Checkpoint file | Chain restoration with slice addresses |
 
-#### 2.2.1 Use-after-free
+**Key Findings**:
+- `FileInputView::ReadUTF()` reads length from file (limited to 128KB) but still allows large allocations
+- No magic number validation in snapshot meta parsing (only footer has magic check)
+- `Slice::RestoreSliceUseByteBuffer()` reads multiple length/count fields without upper bounds
+- CRC validation only in `FileReader::ReadBlock()` - snapshot files lack CRC
 
-**位置**: `jni/DirectBuffer.cpp:89-90`
+### 2.3 LSM Store Block Parsing (High Risk)
 
-```cpp
-void *addr = reinterpret_cast<void *>(data);
-free(addr);
-```
+**Location**: `src/core/lsm_store/block/`
 
-**问题**:
-- 无所有权追踪
-- 如果 Java 在 `nativeFreeDirectBuffer()` 后继续使用缓冲区，存在 UAF
-- 无验证缓冲区是否真正由本模块分配
+| Entry Point | Risk | Data Source | Attack Vector |
+|-------------|------|-------------|---------------|
+| `FileReader::ReadBlock` | High | SST file | Block reading + LZ4 decompression |
+| `DataBlock::InitIndexReader` | High | Block buffer | Header parsing - offset, size, count |
+| `IndexReader::GetBlockIndex` | High | Index buffer | Variable-length encoding decode |
+| `FullKeyUtil::ReadInternalKey` | High | File buffer | Key structure parsing |
 
-**攻击场景**:
-1. Java 创建直接缓冲区
-2. Native 调用 `nativeFreeDirectBuffer()`
-3. Java 继续访问缓冲区 → UAF → 内存损坏/信息泄露
+**Key Findings**:
+- `Lz4Interface::Decompress()` uses `srcSize` and `dstCapacity` from file headers
+- `VarEncodingUtil::DecodeUnsignedInt()` reads variable-length integers without strict bounds
+- Block parsing uses `reinterpret_cast` for struct overlaying (alignment issues)
+- `DataBlock::InitIndexReader()` reads count/offset from buffer tail without validation
 
-#### 2.2.2 原生指针暴露
+### 2.4 Binary Parsing Utilities (High Risk)
 
-**位置**: `jni/kv_helper.h:687-728`
+**Location**: `src/core/binary/`
 
-```cpp
-env->SetLongField(javaItem, keyFiled, reinterpret_cast<jlong>(cppItem->mKey));
-env->SetIntField(javaItem, keyLenFiled, cppItem->mKeyLength);
-```
+| Function | Risk | Input Source | Vulnerability Type |
+|----------|------|--------------|-------------------|
+| `LsmKeyValueInfo::Unpack` | High | Buffer | Length field parsing, key/value read |
+| `SliceKey::Unpack` | High | Buffer | Key length from buffer |
+| `BinaryReader::ReadBytes` | Medium | Buffer | Raw byte reading (limited to 8 bytes) |
 
-**问题**:
-- 原生内存地址直接暴露给 Java
-- Java 可通过 DirectByteBuffer 访问任意原生内存
-- 如果地址被篡改或泄露，可能导致内存损坏
+**Key Findings**:
+- `Unpack` functions read length fields and use `ByteBuffer::Read()` without validation
+- Multiple `ByteBuffer::memcpy_s` operations with lengths from buffer data
+- Buffer overflow checks use macros but may miss edge cases in offset calculations
 
-### 2.3 反序列化风险 (High)
+### 2.5 File System Layer (High Risk)
 
-#### 2.3.1 长度控制的内存分配
+**Location**: `src/core/common/fs/`
 
-**位置**: `common/io/file_input_view.h:64-88` (ReadUTF)
+| Component | Risk | Data Source | Attack Vector |
+|-----------|------|-------------|---------------|
+| `HadoopFileSystem::Read` | High | HDFS remote | Network data via JNI |
+| `HadoopFileSystem::Download` | High | HDFS remote | File download to local path |
+| `LocalFileSystem::Read` | Medium | Local disk | File content read |
+| `FileInputView::ReadByteBuffer` | High | File system | Buffer read with position/length |
 
-```cpp
-uint64_t utfLen = 0;
-if (UNLIKELY(Read(utfLen) != BSS_OK)) { return BSS_IO_ERR; }
-if (UNLIKELY(utfLen > IO_SIZE_128K)) { return BSS_IO_ERR; }
-auto *tempBuf = new (std::nothrow)uint8_t[utfLen];
-```
+**Key Findings**:
+- `HadoopFileSystem::Read()` receives data from Java Hadoop client - potentially malicious HDFS cluster
+- `Download()` writes to local path from JNI - path handling from Java
+- No content validation on downloaded files
 
-**缓解**:
-- 限制 `utfLen` ≤ 128KB ✓
-- 但攻击者仍可控制分配 0-128KB
+### 2.6 Memory Management (Medium-High Risk)
 
-**位置**: `lsm_store/key/full_key_util.cpp:184-213` (ReadPrimary)
+**Location**: `src/core/memory/`
 
-```cpp
-uint32_t keyLen = 0;
-RETURN_AS_NOT_OK_NO_LOG(inputView->Read(keyLen));
-auto addr = FileMemAllocator::Alloc(memManager, holder, keyLen, __FUNCTION__);
-```
+| Component | Risk | Issue |
+|-----------|------|-------|
+| `SegmentHeads metadata hack` | Critical | Metadata written BEFORE returned pointer - potential underrun |
+| `DirectAllocator::Allocate` | High | malloc with size from caller - no validation |
+| `ByteBuffer dual-free paths` | High | `mMemManagerFree` and `mDataFree` flags - potential double-free |
+| `FreshTable::NewActiveSegment` | Medium | Bypasses MemManager limits |
 
-**问题**:
-- **无 keyLen 上限检查**
-- 潜在内存耗尽攻击
-- 可从恶意检查点文件触发
-
-#### 2.3.2 无边界检查的 reinterpret_cast
-
-**位置**: `binary/slice_binary.h:46-67` (SliceKey::Unpack)
-
-```cpp
-uint8_t *data = buffer->Data() + bufferOffset;
-uint16_t stateId = *reinterpret_cast<const uint16_t *>(data);
-```
-
-**问题**:
-- 无 `bufferOffset + sizeof(uint16_t) < bufferLen` 验证
-- 如果 `bufferOffset` 无效，可能读取超出缓冲区边界
+**Key Findings**:
+- Memory metadata pattern: `SegmentHeads` struct at `address - sizeof(SegmentHeads)` creates buffer underrun risk
+- JNI memory allocation: `PQKeyIterator::open()` and `DirectBuffer` allocate with sizes from Java
+- ByteBuffer destruction has dual free paths that could lead to double-free if flags set incorrectly
 
 ---
 
-## 3. 中危漏洞分析
+## 3. Data Flow Analysis
 
-### 3.1 整数溢出风险
-
-**位置**: `common/io/output_view.h:206-217` (Grow)
-
-**已存在缓解**:
-- 整数回绕检测 ✓
-- `newCapacity << 1 < newCapacity` 检查
-
-**潜在问题**:
-- 如果初始大小较大，可能绕过某些检查
-
-**位置**: `jni/KVTableImpl.cpp` 各函数
-
-- `jint/jlong` 长度参数直接转换为 `uint32_t`
-- 负值已检查，但大 `jlong` 值可能溢出 `uint32_t`
-
-### 3.2 JNI 异常处理缺失
-
-**位置**: 多处 JNI 调用
-
-- 大多数 JNI 方法调用后未检查 Java 异常
-- 例如 `kv_helper.h:161`: `env->CallObjectMethod()` 无异常检查
-
-### 3.3 静态全局引用缓存
-
-**位置**: `jni/kv_helper.h:40-53`
-
-```cpp
-static jclass stateTypeClass = nullptr;
-static jmethodID stateTypeOfMethod = nullptr;
-// ... 多个静态缓存
-```
-
-**风险**:
-- 如果类被卸载/重载，过期引用可能导致崩溃
-- JVM 崩溃时全局引用可能泄露
-
----
-
-## 4. 已实施的安全控制
-
-### 4.1 路径验证
-
-| 机制 | 位置 | 描述 |
-|------|------|------|
-| `CheckPathValid()` | kv_helper.h:327-381 | realpath, access, lstat |
-| `validateFilePath()` | EmbeddedOckStateBackend.java | Files.isSymbolicLink 检查 |
-| `Path.normalize()` | BoostStateDownloader.java | 解析 '..' 序列 |
-
-### 4.2 内存限制
-
-| 机制 | 限制 | 位置 |
-|------|------|------|
-| UTF 长度限制 | 128KB | file_input_view.h |
-| 整数回绕检测 | UINT32_MAX | output_view.h |
-| ByteBuffer 边界检查 | pos + len ≤ mCapacity | byte_buffer.h |
-
-### 4.3 版本验证
-
-| 检查点 | 版本限制 | 验证位置 |
-|--------|---------|----------|
-| Snapshot 版本 | ≤ 5 | snapshot_restore_utils.cpp |
-| Primary File Status 版本 | ≤ PRIMARY_FILE_STATUS_VERSION | version_meta_serializer.h |
-| Java 元数据版本 | ≤ 3 | AbstractBoostSnapshotStrategy.java |
-| Magic Number | -42 | version_meta_serializer.h |
-
-### 4.4 安全函数使用
-
-- 全项目使用 `memcpy_s` (secure memcpy)
-- 集成 `libboundscheck` 安全库
-
-### 4.5 编译安全选项
+### Critical Data Flow: JNI -> Checkpoint Restore
 
 ```
--fstack-protector-all
--fstack-protector-strong
--Wl,-z,relro,-z,now,-z,noexecstack
--D_FORTIFY_SOURCE=2
--fPIC
+Java restorePaths (JNI)
+  └── Java_com_huawei_ock_bss_common_BoostStateDB_restore()
+      └── CheckPathValid() - realpath(), access(), lstat()
+      └── BoostStateDB::Restore()
+          └── SnapshotRestoreUtils::ReadDbMeta()
+              └── FileInputView::Init() - opens checkpoint file
+              └── ReadSnapshotMetaTail() - reads version, snapshotId
+              └── ReadSnapshotOperatorInfo() - binary parsing
+              └── SliceTableRestoreOperation::Restore()
+                  └── Slice::RestoreSliceUseByteBuffer()
+                      └── ByteBuffer::ReadUint32/64 - reads lengths
+                      └── SliceKey::Unpack() - parses key data
 ```
 
----
+**Risk Points**:
+1. Path validation uses `realpath()` - may resolve symlinks to attacker-controlled paths
+2. Length fields read from file without comprehensive bounds checking
+3. No magic number validation in early parsing stages
 
-## 5. 漏洞严重性评估
+### Critical Data Flow: SST File -> Block Parsing
 
-### 严重性矩阵
+```
+SST file on disk/HDFS
+  └── FileReader::ReadBlock()
+      └── FileInputView::ReadByteBuffer() - reads compressed data
+      └── CheckCRC() - validates CRC (1024 magic)
+      └── Lz4Interface::Decompress() - srcSize/dstCapacity from file
+      └── DataBlock::InitIndexReader()
+          └── ByteBuffer::ReadUint32() - reads offset, count
+      └── DataBlock::GetKey()
+          └── FullKeyUtil::ReadInternalKey()
+              └── VarEncodingUtil::DecodeUnsignedInt() - variable-length
+```
 
-| 漏洞类型 | 严重性 | 可利用性 | 影响范围 |
-|----------|--------|----------|----------|
-| Use-after-free (DirectBuffer) | **Critical** | High | 内存损坏、RCE 潜在 |
-| 路径遍历 (Restore) | **High** | Medium | 文件系统访问 |
-| 内存耗尽 (ReadPrimary keyLen) | **High** | Medium | 服务拒绝 |
-| 原生指针暴露 | **High** | Medium | 内存损坏 |
-| 缓冲区边界 (SliceKey::Unpack) | **Medium** | Low | 信息泄露 |
-| 整数溢出 | **Medium** | Low | 内存损坏 |
-| JNI 异常处理缺失 | **Low** | Low | 稳定性问题 |
-
----
-
-## 6. 建议修复优先级
-
-### P0 - 紧急修复
-
-1. **DirectBuffer 所有权追踪**
-   - 实现引用计数或所有权标志
-   - 验证 `nativeFreeDirectBuffer()` 调用者拥有缓冲区
-   - 防止 Use-after-free
-
-2. **ReadPrimary keyLen 上限**
-   - 添加最大 key 长度检查 (建议 1MB)
-   - 防止恶意检查点导致内存耗尽
-
-### P1 - 高优先级
-
-3. **路径遍历增强**
-   - 在 C++ `CheckPathValid()` 添加显式 '..' 检查
-   - 验证解析路径在预期基础目录内
-   - 在 `link()` 前验证文件类型
-
-4. **句柄验证层**
-   - 创建句柄注册表验证 `jlong` 句柄
-   - 在 `reinterpret_cast` 前验证句柄有效性
-
-### P2 - 中优先级
-
-5. **SliceKey::Unpack 边界检查**
-   - 添加显式边界验证: `bufferOffset + sizeof(T) < bufferLen`
-
-6. **JNI 异常处理**
-   - 在所有 JNI 方法调用后添加异常检查
-
-### P3 - 低优先级
-
-7. **原生地址保护**
-   - 考虑混淆或验证传递给 Java 的内存地址
+**Risk Points**:
+1. LZ4 decompression size parameters from file - could cause buffer overflow
+2. Variable-length encoding reads without bounds
+3. Count/offset from buffer tail - may overflow capacity
 
 ---
 
-## 7. 模块风险评估
+## 4. STRIDE Threat Modeling
 
-| 模块 | 风险等级 | 主要风险点 |
-|------|----------|------------|
-| **jni** | Critical | 原生指针暴露、UAF、无句柄验证 |
-| **snapshot** | Critical | 外部路径、恢复操作、硬链接创建 |
-| **common/io** | High | 反序列化长度控制、边界检查 |
-| **lsm_store/key** | High | 无上限 keyLen、内存分配 |
-| **binary** | Medium | reinterpret_cast 无边界验证 |
-| **db** | High | 协调所有高风险操作 |
-| **slice_table** | Medium | 数据处理、索引操作 |
-| **fresh_table** | Medium | 内存管理、SkipList 操作 |
-| **memory** | Medium | 分配器、淘汰管理 |
-| **compress** | Low | LZ4 压缩/解压 |
-| **plugin_java** | Critical | Unsafe 内存操作、路径处理 |
+### Spoofing
+- **Risk**: Medium
+- **Vectors**: 
+  - HDFS cluster impersonation - attacker controls remote storage
+  - Checkpoint file tampering - modify checkpoint files on shared storage
+- **Mitigation Needed**: Signature verification for checkpoint files
 
----
+### Tampering
+- **Risk**: High
+- **Vectors**:
+  - Checkpoint metadata tampering - inject malicious operator info
+  - SST file block tampering - modify compressed blocks
+  - Config injection via JNI - malicious BoostConfig from Java
+- **Mitigation Needed**: Cryptographic integrity checks for all checkpoint files
 
-## 8. 攻击场景示例
+### Repudiation
+- **Risk**: Low
+- **Vectors**: Operations not logged sufficiently
+- **Mitigation**: Add audit logging for restore operations
 
-### 场景 1: 恶意检查点恢复
+### Information Disclosure
+- **Risk**: Medium
+- **Vectors**:
+  - Path leakage via logging (`PathTransform::ExtractFileName`)
+  - State data exposure through iterator APIs
+- **Mitigation**: Review logging for sensitive data exposure
 
-**攻击向量**: 构造恶意检查点文件
+### Denial of Service
+- **Risk**: High
+- **Vectors**:
+  - Memory exhaustion - large allocations from file lengths
+  - LZ4 decompression bomb - crafted compressed data
+  - Infinite loops in variable-length decoding
+- **Mitigation**: Strict size limits on all parsed fields
 
-1. 修改检查点元数据，插入 `../../../etc/passwd` 作为文件名
-2. 触发恢复操作 `BoostStateDB_restore()`
-3. 路径验证可能通过 (取决于 `allowPathNotExist` 配置)
-4. 硬链接创建可能导致敏感文件链接
-
-**缓解**: 增强 `CheckPathValid()`，添加基础目录验证
-
-### 场景 2: 内存耗尽
-
-**攻击向量**: 构造大 keyLen 的检查点文件
-
-1. 修改 SST 文件，设置 `keyLen = 0xFFFFFFFF`
-2. 触发读取操作 `FullKeyUtil::ReadPrimary()`
-3. 尝试分配 ~4GB 内存
-4. 服务拒绝或 OOM
-
-**缓解**: 添加 keyLen 上限检查
-
-### 场景 3: UAF 利用
-
-**攻击向量**: DirectBuffer 生命周期攻击
-
-1. Java 创建直接缓冲区
-2. 开始迭代操作
-3. 触发 `nativeFreeDirectBuffer()`
-4. 继续迭代 → UAF → 潜在代码执行
-
-**缓解**: 实现所有权追踪
+### Elevation of Privilege
+- **Risk**: Critical
+- **Vectors**:
+  - Path traversal via checkpoint restore - escape from allowed directories
+  - Memory corruption - buffer overflow leading to code execution
+  - JNI boundary exploitation - Java native bridge vulnerabilities
+- **Mitigation**: Comprehensive input validation, sandboxing
 
 ---
 
-## 9. 总结
+## 5. High-Risk Vulnerability Candidates
 
-OmniStateStore 作为 Flink 状态存储引擎，暴露了广泛的 JNI 接口攻击面。主要安全风险集中在：
+### 5.1 Path Traversal in Checkpoint Restore
+**Severity**: Critical  
+**Location**: `kv_helper.h:327`, `com_huawei_ock_bss_common_BoostStateDB.cpp:64`  
+**Description**: `CheckPathValid()` uses `realpath()` which resolves symlinks. An attacker controlling checkpoint storage could create symlinks pointing to sensitive files outside intended directories.  
+**Attack Scenario**: Malicious HDFS/S3 admin creates checkpoint symlink → restore reads unintended file.
 
-1. **JNI 边界**: 原生指针暴露、句柄验证缺失、DirectBuffer UAF
-2. **恢复操作**: 外部路径传递、硬链接创建使用外部文件名
-3. **反序列化**: 长度控制内存分配、边界检查缺失
+### 5.2 Unchecked Length Fields in Binary Parsing
+**Severity**: Critical  
+**Location**: `slice.cpp:615`, `lsm_binary.h:107`, `snapshot_restore_utils.cpp`  
+**Description**: Multiple `ReadUint32`, `ReadUint64` calls read length/count fields from checkpoint buffers without upper bounds validation.  
+**Attack Scenario**: Malicious checkpoint with large length field → buffer overflow in `memcpy_s`.
 
-已存在的安全控制（路径验证、版本检查、安全编译选项）提供了基础防护，但建议增强：
+### 5.3 LZ4 Decompression with File Parameters
+**Severity**: High  
+**Location**: `lz4_interface.cpp:39`, `file_reader.cpp:184`  
+**Description**: `LZ4_decompress_safe()` is called with `srcSize` and `dstCapacity` from file headers. Malicious SST file could specify incorrect sizes.  
+**Attack Scenario**: Crafted SST with mismatched sizes → decompression failure or memory corruption.
 
-- C++ 层路径遍历检查
-- DirectBuffer 所有权机制
-- 反序列化长度上限
-- 句柄验证层
+### 5.4 Variable-Length Integer Decoding
+**Severity**: High  
+**Location**: `var_encoding_util.h:71`, `full_key_util.cpp:91`  
+**Description**: `DecodeUnsignedInt()` reads bytes from buffer until continuation bit cleared - no explicit bounds.  
+**Attack Scenario**: Malicious buffer with infinite continuation bytes → infinite loop or integer overflow.
+
+### 5.5 JNI Memory Allocation with Java Size
+**Severity**: Critical  
+**Location**: `PQKeyIterator.cpp:34`, `DirectBuffer.cpp:70`  
+**Description**: `malloc(len)` where `len = env->GetArrayLength()` - untrusted size from Java environment.  
+**Attack Scenario**: Java provides huge array length → integer overflow or excessive allocation.
+
+### 5.6 SegmentHeads Buffer Underrun
+**Severity**: High  
+**Location**: `mem_manager.cpp:129-133`  
+**Description**: Memory metadata written BEFORE returned pointer at `address - sizeof(SegmentHeads)`.  
+**Attack Scenario**: Caller writes to negative offset → metadata corruption, allocator crash.
 
 ---
 
-## 附录: 关键文件清单
+## 6. Recommendations
 
-| 类别 | 文件 | 安全相关性 |
-|------|------|------------|
-| JNI 核心 | jni/jni_common.cpp | JNI 生命周期 |
-| JNI DB | jni/BoostStateDB.cpp | 恢复路径 |
-| JNI 辅助 | jni/kv_helper.h | 路径验证、指针暴露 |
-| JNI 内存 | jni/DirectBuffer.cpp | UAF 风险 |
-| 恢复 | snapshot/restore_operator.cpp | 硬链接创建 |
-| 序列化 | common/io/file_input_view.h | UTF 长度限制 |
-| Key 读取 | lsm_store/key/full_key_util.cpp | keyLen 无上限 |
-| Binary | binary/slice_binary.h | 边界检查缺失 |
-| Java 路径 | EmbeddedOckStateBackend.java | symlink 检查 |
+### Critical (Immediate Action Required)
+1. **Add magic number validation** to all checkpoint/snapshot file parsing before processing
+2. **Add upper bounds validation** for all length/count fields read from binary files (limit to reasonable max sizes)
+3. **Add integrity verification** (HMAC/signature) for checkpoint files to prevent tampering
+4. **Validate JNI array lengths** before malloc - reject values exceeding MAX_PARALLELISM or reasonable limits
+
+### High (Near-Term Action)
+1. **Audit realpath() usage** - consider canonical path validation without symlink resolution
+2. **Add explicit bounds** to `VarEncodingUtil::DecodeUnsignedInt()` - limit iterations
+3. **Validate LZ4 sizes** - verify compressed size matches block header before decompression
+4. **Review SegmentHeads pattern** - move metadata after pointer or add guard pages
+
+### Medium (Long-Term Improvements)
+1. Add comprehensive logging for all restore operations
+2. Implement rate limiting on JNI operations
+3. Add fuzz testing for checkpoint file parsing
+4. Consider sandboxing file system operations
 
 ---
 
-**报告生成时间**: 2026-04-20  
-**分析范围**: 核心代码 57,209 行，380 源文件  
-**分析方法**: 多 Agent 并行深度分析
+## 7. Attack Surfaces Summary
+
+| Category | Entry Points | Risk Level | Priority |
+|----------|--------------|------------|----------|
+| JNI Interface | 25+ | Critical | 1 |
+| Checkpoint Restore | 15+ | Critical | 1 |
+| LSM Block Parsing | 10+ | High | 2 |
+| Binary Parsing | 8+ | High | 2 |
+| File System I/O | 6+ | High | 2 |
+| Memory Management | 5+ | Medium | 3 |
+
+---
+
+## 8. Next Steps
+
+1. **Scanner Agents**: Run dataflow scanner and security auditor on identified high-risk files
+2. **Verification**: Validate each vulnerability candidate with confidence scoring
+3. **Detailed Analysis**: For confirmed vulnerabilities, generate exploitation details
+4. **Report**: Produce final vulnerability report with remediation guidance
+
+---
+
+**Generated by**: Architecture Analysis Agent  
+**Confidence**: High (based on comprehensive code exploration)

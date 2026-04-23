@@ -1,0 +1,589 @@
+{
+  "project_name": "OmniAdaptor",
+  "scan_time": "2026-04-22T15:30:00+08:00",
+  "lsp_available": false,
+  "total_files": 28,
+  "total_lines": 8631,
+  "project_profile": {
+    "project_type": "library",
+    "deployment_model": "Integrated as Native Library via JNI within Spark/Flink executor processes on Linux servers. Runs as part of big data processing pipeline, receives data batches from Java runtime through JNI interface.",
+    "trust_boundaries": [
+      {
+        "boundary": "JNI Interface",
+        "trusted_side": "C++ Native Code (OmniAdaptor)",
+        "untrusted_side": "Java Spark/Flink Executor",
+        "risk": "Critical"
+      },
+      {
+        "boundary": "File System",
+        "trusted_side": "C++ Native Code",
+        "untrusted_side": "Disk Files (Shuffle Data, Spill Files)",
+        "risk": "High"
+      },
+      {
+        "boundary": "Python CLI Interface",
+        "trusted_side": "Python Parser Logic",
+        "untrusted_side": "User Command Line Arguments, Log Files",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Flink REST API",
+        "trusted_side": "Python Parser Logic",
+        "untrusted_side": "Flink Dashboard HTTP API",
+        "risk": "Medium"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "jni-interface",
+      "path": "omnioperator/omniop-spark-extension/cpp/src/jni",
+      "language": "c_cpp",
+      "components": [
+        "SparkJniWrapper.cpp",
+        "jni_common.cpp",
+        "jni_common.h"
+      ],
+      "risk": "Critical",
+      "risk_reason": "Primary entry point for Java-to-C++ data flow. Receives user-controlled strings for file paths, compression types, and partitioning configurations. Cross-language boundary with pointer reinterpretation."
+    },
+    {
+      "name": "io-module",
+      "path": "omnioperator/omniop-spark-extension/cpp/src/io",
+      "language": "c_cpp",
+      "components": [
+        "SparkFile.cc",
+        "Compression.cc",
+        "MemoryPool.cc",
+        "OutputStream.cc",
+        "ColumnWriter.cc",
+        "WriterOptions.cc"
+      ],
+      "risk": "High",
+      "risk_reason": "File I/O operations with paths from JNI. Compression handling (LZ4, ZSTD, ZLIB, Snappy). Memory pool management with custom allocator. Buffer operations with memcpy_s."
+    },
+    {
+      "name": "shuffle-module",
+      "path": "omnioperator/omniop-spark-extension/cpp/src/shuffle",
+      "language": "c_cpp",
+      "components": [
+        "splitter.cpp",
+        "splitter.h",
+        "type.h",
+        "utils.h"
+      ],
+      "risk": "High",
+      "risk_reason": "Core data shuffle processing. Receives VectorBatch from JNI, performs partition computation, serialization to protobuf, and file spill operations. Memory-intensive operations with buffer overflow potential."
+    },
+    {
+      "name": "common-module",
+      "path": "omnioperator/omniop-spark-extension/cpp/src/common",
+      "language": "c_cpp",
+      "components": [
+        "common.cpp",
+        "common.h",
+        "Buffer.h",
+        "debug.h",
+        "BinaryLocation.h"
+      ],
+      "risk": "Medium",
+      "risk_reason": "Shared utilities including compression type mapping, file existence checking, and BytesGen template function for binary serialization."
+    },
+    {
+      "name": "io-wrap-module",
+      "path": "omnioperator/omniop-spark-extension/cpp/src/io/wrap",
+      "language": "c_cpp",
+      "components": [
+        "snappy_wrapper.h",
+        "coded_stream_wrapper.h",
+        "zero_copy_stream_wrapper.h"
+      ],
+      "risk": "Medium",
+      "risk_reason": "Stream wrapper implementations for compression libraries. Zero-copy stream operations with buffer management."
+    },
+    {
+      "name": "flink-native-extension",
+      "path": "omnistream/omniop-flink-extension/java/src/main/resources/ai4c/ai4c-cpp",
+      "language": "c_cpp",
+      "components": [
+        "com_huawei_qinwei_JDFlinkWordCount_lambda_main_eccf3286_1_org_apache_flink_api_common_functions_MapFunction.cpp",
+        "com_huawei_qinwei_JDFlinkWordCount_lambda_main_eccf3286_2_org_apache_flink_api_common_functions_MapFunction.cpp",
+        "com_huawei_qinwei_JDFlinkWordCount_lambda_main_8119522c_1_org_apache_flink_api_common_functions_ReduceFunction.cpp",
+        "com_huawei_qinwei_JDFlinkWordCount_lambda_main_b9058687_1_org_apache_flink_api_java_functions_KeySelector.cpp"
+      ],
+      "risk": "Medium",
+      "risk_reason": "Auto-generated JNI native functions for Flink operations. Limited custom logic, mainly mapping/reduce function implementations."
+    },
+    {
+      "name": "python-main",
+      "path": "omnihelper",
+      "language": "python",
+      "components": [
+        "main.py",
+        "spark_log_parser.py",
+        "flink_log_parser.py"
+      ],
+      "risk": "Medium",
+      "risk_reason": "CLI entry points for log analysis. File path handling from command line, subprocess execution with Java, URL parsing for Flink API."
+    },
+    {
+      "name": "python-parser",
+      "path": "omnihelper/parser",
+      "language": "python",
+      "components": [
+        "parser/__init__.py",
+        "parser/type_matcher.py",
+        "parser/cte/parser.py",
+        "parser/cte/cte_extractor.py",
+        "parser/cte/tracer.py",
+        "parser/cte/table_extractor.py",
+        "parser/operator/op_parser.py",
+        "parser/function/return_type_parser.py",
+        "parser/function/expr_tree.py",
+        "parser/function/function_checker.py",
+        "parser/function/function_builder.py",
+        "parser/function/function_parser.py"
+      ],
+      "risk": "Low",
+      "risk_reason": "SQL/log parsing utilities. JSON file parsing, regex-based extraction. Limited external input handling beyond file reading."
+    },
+    {
+      "name": "python-util",
+      "path": "omnihelper/util",
+      "language": "python",
+      "components": [
+        "util/func_util.py",
+        "util/common_util.py",
+        "util/excel_util.py",
+        "util/flink_excel_util.py"
+      ],
+      "risk": "Low",
+      "risk_reason": "Utility functions for Excel generation and common operations. No direct external input handling."
+    },
+    {
+      "name": "python-constants",
+      "path": "omnihelper/constants",
+      "language": "python",
+      "components": [
+        "constants/type_enum.py",
+        "constants/function_enum.py",
+        "constants/spark_type_enum.py"
+      ],
+      "risk": "Low",
+      "risk_reason": "Enum definitions and constants. No execution logic."
+    }
+  ],
+  "files": [
+    {
+      "path": "omnioperator/omniop-spark-extension/cpp/src/jni/SparkJniWrapper.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "jni-interface",
+      "lines": 231,
+      "priority": 1,
+      "entry_point": true,
+      "entry_point_type": "rpc"
+    },
+    {
+      "path": "omnioperator/omniop-spark-extension/cpp/src/jni/jni_common.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "jni-interface",
+      "lines": 114,
+      "priority": 2
+    },
+    {
+      "path": "omnioperator/omniop-spark-extension/cpp/src/jni/jni_common.h",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "jni-interface",
+      "lines": 78,
+      "priority": 3
+    },
+    {
+      "path": "omnioperator/omniop-spark-extension/cpp/src/io/SparkFile.cc",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "io-module",
+      "lines": 184,
+      "priority": 4,
+      "entry_point": true,
+      "entry_point_type": "file"
+    },
+    {
+      "path": "omnioperator/omniop-spark-extension/cpp/src/io/Compression.cc",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "io-module",
+      "lines": 646,
+      "priority": 5
+    },
+    {
+      "path": "omnioperator/omniop-spark-extension/cpp/src/io/MemoryPool.cc",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "io-module",
+      "lines": 159,
+      "priority": 6
+    },
+    {
+      "path": "omnioperator/omniop-spark-extension/cpp/src/io/OutputStream.cc",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "io-module",
+      "lines": 108,
+      "priority": 7
+    },
+    {
+      "path": "omnioperator/omniop-spark-extension/cpp/src/io/ColumnWriter.cc",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "io-module",
+      "lines": 61,
+      "priority": 8
+    },
+    {
+      "path": "omnioperator/omniop-spark-extension/cpp/src/shuffle/splitter.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "shuffle-module",
+      "lines": 1033,
+      "priority": 9
+    },
+    {
+      "path": "omnioperator/omniop-spark-extension/cpp/src/shuffle/splitter.h",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "shuffle-module",
+      "lines": 283,
+      "priority": 10
+    },
+    {
+      "path": "omnioperator/omniop-spark-extension/cpp/src/shuffle/type.h",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "shuffle-module",
+      "lines": 75,
+      "priority": 11
+    },
+    {
+      "path": "omnioperator/omniop-spark-extension/cpp/src/shuffle/utils.h",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "shuffle-module",
+      "lines": 134,
+      "priority": 12
+    },
+    {
+      "path": "omnioperator/omniop-spark-extension/cpp/src/common/common.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "common-module",
+      "lines": 50,
+      "priority": 13
+    },
+    {
+      "path": "omnioperator/omniop-spark-extension/cpp/src/common/common.h",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "common-module",
+      "lines": 84,
+      "priority": 14
+    },
+    {
+      "path": "omnioperator/omniop-spark-extension/cpp/src/common/Buffer.h",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "common-module",
+      "lines": 57,
+      "priority": 15
+    },
+    {
+      "path": "omnihelper/main.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "python-main",
+      "lines": 161,
+      "priority": 16,
+      "entry_point": true,
+      "entry_point_type": "cmdline"
+    },
+    {
+      "path": "omnihelper/spark_log_parser.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "python-main",
+      "lines": 326,
+      "priority": 17
+    },
+    {
+      "path": "omnihelper/flink_log_parser.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "python-main",
+      "lines": 225,
+      "priority": 18
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "omnioperator/omniop-spark-extension/cpp/src/jni/SparkJniWrapper.cpp",
+      "line": 32,
+      "function": "Java_com_huawei_boostkit_spark_jni_SparkJniWrapper_nativeMake",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "JNI entry point called by Spark executor. Receives configuration strings (partitioning name, compression type, data file path, local dirs) from Java side. These values originate from Spark configuration which may be influenced by user queries.",
+      "description": "Creates Splitter instance with user-provided configuration parameters via JNI"
+    },
+    {
+      "file": "omnioperator/omniop-spark-extension/cpp/src/jni/SparkJniWrapper.cpp",
+      "line": 134,
+      "function": "Java_com_huawei_boostkit_spark_jni_SparkJniWrapper_split",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "JNI entry point for data split operation. Receives VectorBatch pointer from Java, processes and partitions data.",
+      "description": "Performs shuffle split operation on VectorBatch received via JNI"
+    },
+    {
+      "file": "omnioperator/omniop-spark-extension/cpp/src/jni/SparkJniWrapper.cpp",
+      "line": 152,
+      "function": "Java_com_huawei_boostkit_spark_jni_SparkJniWrapper_rowSplit",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "JNI entry point for row-based split operation. Alternative split method.",
+      "description": "Performs row-based shuffle split operation"
+    },
+    {
+      "file": "omnioperator/omniop-spark-extension/cpp/src/io/SparkFile.cc",
+      "line": 49,
+      "function": "FileInputStream::FileInputStream",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "Opens file for reading based on path provided via JNI from Spark configuration. Path may contain user-influenced values.",
+      "description": "Opens file for reading shuffle data"
+    },
+    {
+      "file": "omnioperator/omniop-spark-extension/cpp/src/io/SparkFile.cc",
+      "line": 117,
+      "function": "FileOutputStream::FileOutputStream",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "Creates/opens file for writing shuffle spill data. Path derived from JNI-provided local_dirs configuration.",
+      "description": "Creates file for writing shuffle/spill output"
+    },
+    {
+      "file": "omnioperator/omniop-spark-extension/cpp/src/shuffle/utils.h",
+      "line": 57,
+      "function": "GetConfiguredLocalDirs",
+      "type": "env",
+      "trust_level": "semi_trusted",
+      "justification": "Reads NATIVESQL_SPARK_LOCAL_DIRS environment variable set via JNI. Environment variable may be influenced by Spark executor configuration.",
+      "description": "Reads local directories configuration from environment variable"
+    },
+    {
+      "file": "omnihelper/main.py",
+      "line": 117,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "trusted_admin",
+      "justification": "CLI entry point for OmniHelper log analysis tool. Arguments provided by administrator/user running the tool.",
+      "description": "Python CLI entry point for log parsing"
+    },
+    {
+      "file": "omnihelper/spark_log_parser.py",
+      "line": 94,
+      "function": "parse_single_file",
+      "type": "cmdline",
+      "trust_level": "trusted_admin",
+      "justification": "Executes Java subprocess for log parsing. Java path and classpath from CLI arguments, file path from input.",
+      "description": "Executes Java subprocess for Spark log parsing"
+    },
+    {
+      "file": "omnihelper/flink_log_parser.py",
+      "line": 141,
+      "function": "analyze_flink_logs",
+      "type": "web_route",
+      "trust_level": "semi_trusted",
+      "justification": "Connects to Flink dashboard REST API. URL provided via CLI argument, may connect to remote server.",
+      "description": "Connects to Flink dashboard API for log analysis"
+    },
+    {
+      "file": "omnioperator/omniop-spark-extension/cpp/src/shuffle/splitter.cpp",
+      "line": 604,
+      "function": "Splitter::Split",
+      "type": "internal",
+      "trust_level": "internal",
+      "justification": "Internal function called after JNI entry. Processes VectorBatch data, computes partition IDs, performs memory-intensive operations.",
+      "description": "Core shuffle split processing function"
+    },
+    {
+      "file": "omnioperator/omniop-spark-extension/cpp/src/shuffle/splitter.cpp",
+      "line": 614,
+      "function": "Splitter::SplitByRow",
+      "type": "internal",
+      "trust_level": "internal",
+      "justification": "Alternative row-based split processing. Similar to Split() but handles RowBatch format.",
+      "description": "Row-based shuffle split processing"
+    },
+    {
+      "file": "omnioperator/omniop-spark-extension/cpp/src/shuffle/splitter.cpp",
+      "line": 862,
+      "function": "Splitter::ProtoWritePartition",
+      "type": "internal",
+      "trust_level": "internal",
+      "justification": "Serializes partition data to protobuf and writes to output stream. Memory operations for serialization.",
+      "description": "Protobuf serialization and partition write"
+    },
+    {
+      "file": "omnioperator/omniop-spark-extension/cpp/src/io/Compression.cc",
+      "line": 599,
+      "function": "createCompressor",
+      "type": "internal",
+      "trust_level": "internal",
+      "justification": "Creates compression stream based on compression kind. Compression type derived from JNI-provided string.",
+      "description": "Creates compression stream handler"
+    }
+  ],
+  "attack_surfaces": [
+    "JNI Interface: Java strings (partitioning_name, compression_type, data_file, local_dirs) → C++ string conversion via GetStringUTFChars",
+    "JNI Pointer Reinterpretation: jlong addresses converted to Splitter* and VectorBatch*",
+    "Environment Variable: NATIVESQL_SPARK_LOCAL_DIRS set via setenv() in JNI wrapper",
+    "File Paths: open() calls with paths derived from JNI-provided strings",
+    "Compression Input: User-controlled compression type string mapped to enum",
+    "Memory Operations: memcpy_s, memset_s with sizes derived from data processing",
+    "Protobuf Serialization: ByteSizeLong() followed by allocation and serialization",
+    "Python CLI: File paths, Java paths, classpath from command line arguments",
+    "Python Subprocess: subprocess.Popen with Java executable and arguments",
+    "Python HTTP: urllib.parse for Flink dashboard URL, potential SSRF if URL validation insufficient"
+  ],
+  "high_risk_functions": [
+    {
+      "function": "Java_com_huawei_boostkit_spark_jni_SparkJniWrapper_nativeMake",
+      "file": "omnioperator/omniop-spark-extension/cpp/src/jni/SparkJniWrapper.cpp",
+      "line": 32,
+      "risk": "Critical",
+      "reason": "Primary JNI entry point. Receives multiple configuration strings from Java, performs setenv() with user-controlled value, converts jlong to pointer."
+    },
+    {
+      "function": "FileInputStream::FileInputStream",
+      "file": "omnioperator/omniop-spark-extension/cpp/src/io/SparkFile.cc",
+      "line": 49,
+      "risk": "High",
+      "reason": "Opens file for reading with path from JNI. Uses open() without path sanitization."
+    },
+    {
+      "function": "FileOutputStream::FileOutputStream",
+      "file": "omnioperator/omniop-spark-extension/cpp/src/io/SparkFile.cc",
+      "line": 117,
+      "risk": "High",
+      "reason": "Creates file for writing with path from JNI. Uses open() with O_CREAT|O_TRUNC."
+    },
+    {
+      "function": "Splitter::Split",
+      "file": "omnioperator/omniop-spark-extension/cpp/src/shuffle/splitter.cpp",
+      "line": 604,
+      "risk": "High",
+      "reason": "Core data processing function. Memory-intensive operations with buffer allocations, memset_s/memcpy_s operations."
+    },
+    {
+      "function": "Splitter::AllocatePartitionBuffers",
+      "file": "omnioperator/omniop-spark-extension/cpp/src/shuffle/splitter.cpp",
+      "line": 55,
+      "risk": "High",
+      "reason": "Allocates partition buffers with size derived from data. Uses Allocator::Alloc without bounds checking."
+    },
+    {
+      "function": "Splitter::SplitFixedWidthValueBuffer",
+      "file": "omnioperator/omniop-spark-extension/cpp/src/shuffle/splitter.cpp",
+      "line": 121,
+      "risk": "High",
+      "reason": "Processes fixed-width data with reinterpret_cast and buffer writes. Loop-based memcpy operations."
+    },
+    {
+      "function": "createCompressor",
+      "file": "omnioperator/omniop-spark-extension/cpp/src/io/Compression.cc",
+      "line": 599,
+      "risk": "High",
+      "reason": "Creates compression stream based on user-provided compression type. Instantiates compression objects with configuration parameters."
+    },
+    {
+      "function": "GetConfiguredLocalDirs",
+      "file": "omnioperator/omniop-spark-extension/cpp/src/shuffle/utils.h",
+      "line": 57,
+      "risk": "Medium",
+      "reason": "Reads environment variable and creates directories. Uses getenv() and mkdir()."
+    },
+    {
+      "function": "LogParser::parse_single_file",
+      "file": "omnihelper/spark_log_parser.py",
+      "line": 94,
+      "risk": "Medium",
+      "reason": "Subprocess execution with Java and file paths from CLI arguments."
+    },
+    {
+      "function": "FlinkLogParser::_validate_url",
+      "file": "omnihelper/flink_log_parser.py",
+      "line": 56,
+      "risk": "Medium",
+      "reason": "URL parsing for Flink dashboard. Limited SSRF protection (scheme/host validation only)."
+    }
+  ],
+  "data_flow_patterns": [
+    {
+      "pattern": "JNI String to C++ String",
+      "source": "Java jstring parameters",
+      "sink": "std::string via GetStringUTFChars",
+      "risk": "High",
+      "description": "Strings from Java converted to C++ without length validation. GetStringUTFChars may return NULL on allocation failure."
+    },
+    {
+      "pattern": "JNI Pointer Conversion",
+      "source": "Java jlong addresses",
+      "sink": "C++ object pointers via reinterpret_cast",
+      "risk": "High",
+      "description": "Pointer addresses passed as jlong from Java and reinterpret_cast to Splitter*/VectorBatch*. Invalid pointer could cause memory corruption."
+    },
+    {
+      "pattern": "Environment Variable Setting",
+      "source": "JNI local_dirs_jstr",
+      "sink": "setenv(NATIVESQL_SPARK_LOCAL_DIRS)",
+      "risk": "Medium",
+      "description": "Environment variable set with user-controlled value. Could affect subsequent file operations."
+    },
+    {
+      "pattern": "File Path to open()",
+      "source": "JNI data_file_jstr / local_dirs_jstr",
+      "sink": "open() in FileInputStream/FileOutputStream",
+      "risk": "High",
+      "description": "File paths from JNI directly used in open() without sanitization. Path traversal possible."
+    },
+    {
+      "pattern": "Compression Type Mapping",
+      "source": "JNI compression_type_jstr",
+      "sink": "CompressionKind enum via GetCompressionType",
+      "risk": "Medium",
+      "description": "String mapped to compression enum. Invalid string throws exception."
+    },
+    {
+      "pattern": "VectorBatch Processing",
+      "source": "JNI jVecBatchAddress",
+      "sink": "Splitter::Split(VectorBatch&)",
+      "risk": "High",
+      "description": "Data batch processed through splitter. Memory allocations based on row count and column types."
+    },
+    {
+      "pattern": "Python CLI to Subprocess",
+      "source": "CLI args (java_path, class_path, input_data)",
+      "sink": "subprocess.Popen()",
+      "risk": "Medium",
+      "description": "CLI arguments used to execute Java subprocess. Command injection possible if arguments not properly sanitized."
+    },
+    {
+      "pattern": "Python URL to HTTP Request",
+      "source": "CLI args.url",
+      "sink": "Flink dashboard API",
+      "risk": "Medium",
+      "description": "URL from CLI used for HTTP requests. SSRF potential if validation insufficient."
+    }
+  ]
+}

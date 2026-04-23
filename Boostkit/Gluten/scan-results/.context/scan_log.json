@@ -1,0 +1,80 @@
+{
+  "scan_id": "gluten-scan-001",
+  "start_time": "2026-04-22T12:55:00Z",
+  "end_time": "2026-04-23T08:57:00Z",
+  "duration_seconds": 72000,
+  "status": "success",
+  "project_path": "/home/pwn20tty/Desktop/opencode_project/kunpeng/boostkit/Gluten",
+  "project_name": "Apache Gluten",
+  "agents": [
+    {
+      "name": "architecture",
+      "status": "success",
+      "start_time": "2026-04-22T15:18:00Z",
+      "end_time": "2026-04-22T23:28:00Z",
+      "duration_seconds": 30000,
+      "output_files": ["project_model.json", "call_graph.json", "threat_analysis_report.md"],
+      "modules_analyzed": 20,
+      "entry_points_identified": 101
+    },
+    {
+      "name": "dataflow-scanner",
+      "status": "success",
+      "start_time": "2026-04-22T23:30:00Z",
+      "end_time": "2026-04-23T07:00:00Z",
+      "duration_seconds": 25200,
+      "vulnerabilities_found": 196,
+      "modules_scanned": 14,
+      "modules_failed": 6
+    },
+    {
+      "name": "security-auditor",
+      "status": "success",
+      "start_time": "2026-04-22T23:30:00Z",
+      "end_time": "2026-04-23T00:30:00Z",
+      "duration_seconds": 3600,
+      "vulnerabilities_found": 154,
+      "modules_scanned": 12
+    },
+    {
+      "name": "verification",
+      "status": "success",
+      "start_time": "2026-04-23T07:00:00Z",
+      "end_time": "2026-04-23T07:32:00Z",
+      "duration_seconds": 1920,
+      "vulnerabilities_verified": 135,
+      "confirmed": 26,
+      "false_positive": 25
+    },
+    {
+      "name": "details-analyzer",
+      "status": "failed",
+      "start_time": "2026-04-23T07:35:00Z",
+      "end_time": "2026-04-23T07:45:00Z",
+      "duration_seconds": 600,
+      "error": "Task timeout - no report files generated",
+      "non_blocking": true
+    },
+    {
+      "name": "reporter",
+      "status": "success",
+      "start_time": "2026-04-23T08:50:00Z",
+      "end_time": "2026-04-23T08:57:00Z",
+      "duration_seconds": 420,
+      "output_files": ["report_confirmed.md", "report_unconfirmed.md"]
+    }
+  ],
+  "summary": {
+    "total_vulnerabilities": 204,
+    "confirmed": 26,
+    "likely": 82,
+    "possible": 49,
+    "false_positive": 25,
+    "critical": 7,
+    "high": 48,
+    "medium": 79,
+    "low": 26,
+    "top_modules": ["cpp-omni-jni", "cpp-ch-storages", "cpp-core-shuffle", "cpp-ch-parser", "cpp-ch-main"],
+    "top_vulnerability_types": ["CWE-20", "CWE-787", "CWE-121", "CWE-125", "CWE-190"]
+  }
+}

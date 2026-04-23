@@ -1,44 +1,20 @@
 # 漏洞扫描报告 — 待确认漏洞
 
-**项目**: OmniStream  
-**扫描时间**: 2026-04-19T21:52:00+08:00  
+**项目**: OmniStream
+**扫描时间**: 2025-04-22T23:30:00Z
 **报告范围**: 包含 LIKELY / POSSIBLE 状态的漏洞
 
 ---
 
 ## 执行摘要
 
-### 扫描概述
+本报告包含 **32 个待确认漏洞** (18 LIKELY + 14 POSSIBLE)，其中 **18 个为 High 级别，11 个为 Medium 级别，3 个为 Low 级别**。这些漏洞需要进一步验证和测试，部分可能与已确认漏洞存在关联。
 
-本报告包含扫描发现的 **15 个待确认漏洞**（LIKELY: 12 个，POSSIBLE: 3 个）。这些漏洞需要进一步人工验证以确认其可利用性和实际风险等级。
+**重点关注的待确认漏洞**：
 
-### 关键发现
-
-| 严重程度 | 数量 | 主要类型 |
-|----------|------|----------|
-| **High** | 5 | JSON 解析异常安全、反序列化风险 |
-| **Medium** | 8 | 内存分配控制、环境变量注入 |
-| **Low** | 2 | 整数溢出潜在风险 |
-
-### 重点关注漏洞
-
-1. **[VULN-DF-JNI-006/007] JNI TaskExecutor JSON 解析**  
-   - 与已确认漏洞 VULN-DF-JNI-001-003 同类模式
-   - 需验证：异常处理和内存释放是否完善
-
-2. **[SEC-007] Kafka 消息反序列化**  
-   - 与 VULN-DF-XMOD-002 相关
-   - 需验证：KafkaRecordEmitter 的异常处理是否足够
-
-3. **[SEC-003] OMNI_HOME 环境变量注入**  
-   - 潜在路径注入风险
-   - 需验证：环境变量控制是否可被攻击者利用
-
-### 建议措施
-
-- **验证优先级**: 先验证 High 级别漏洞，确认与已确认漏洞的关系
-- **联动修复**: 与已确认报告中的同类漏洞一并修复
-- **人工审计**: 对配置加载和环境变量使用进行安全审计
+1. **JNI 层输入验证** — 多个 JNI 接口缺少 JSON 解析异常处理，可能导致内存泄露或崩溃
+2. **NULL 指针解引用** — 网络数据对象转换缺少 NULL 检查，可能导致崩溃
+3. **文件路径处理** — CSV 文件路径可能存在路径遍历风险
 
 ---
 
@@ -48,34 +24,33 @@
 
 | 状态 | 数量 | 占比 |
 |------|------|------|
-| LIKELY | 12 | 40.0% |
-| CONFIRMED | 9 | 30.0% |
-| FALSE_POSITIVE | 6 | 20.0% |
-| POSSIBLE | 3 | 10.0% |
-| **总计** | **30** | 100% |
+| LIKELY | 18 | 47.4% |
+| POSSIBLE | 14 | 36.8% |
+| CONFIRMED | 6 | 15.8% |
+| **总计** | **38** | 100% |
 
 ### 1.2 严重性分布
 
 | 严重性 | 数量 | 占比 |
 |--------|------|------|
-| High | 5 | 33.3% |
-| Medium | 8 | 53.3% |
-| Low | 2 | 13.3% |
-| **有效漏洞总计** | **15** | - |
-| 误报 (FALSE_POSITIVE) | 6 | - |
+| High | 18 | 56.3% |
+| Medium | 11 | 34.4% |
+| Low | 3 | 9.4% |
+| **有效漏洞总计** | **32** | - |
+| 误报 (FALSE_POSITIVE) | 0 | - |
 
 ### 1.3 Top 10 关键漏洞
 
-1. **[VULN-DF-JNI-006]** json_parse_exception_unsafe (High) - `cpp/jni/taskexecutor/jni_OmniTaskExecutor.cpp:47` @ `Java_com_huawei_omniruntime_flink_runtime_taskexecutor_OmniTaskExecutor_submitTaskNative` | 置信度: 75
-2. **[VULN-DF-JNI-007]** json_parse_exception_unsafe (High) - `cpp/jni/taskexecutor/jni_OmniTaskExecutor.cpp:85` @ `Java_com_huawei_omniruntime_flink_runtime_taskexecutor_OmniTaskExecutor_submitTaskNativeWithCheckpointing` | 置信度: 75
-3. **[SEC-007]** Deserialization Safety (High) - `cpp/connector/kafka/source/reader/KafkaRecordEmitter.cpp:33` @ `KafkaRecordEmitter::emitRecord` | 置信度: 75
-4. **[SEC-006]** Deserialization Safety (High) - `cpp/runtime/io/network/api/serialization/SpillingAdaptiveSpanningRecordDeserializer.cpp:68` @ `SpillingAdaptiveSpanningRecordDeserializer::setNextBuffer` | 置信度: 70
-5. **[VULN-DF-XMOD-001]** cross_module_data_flow_jni_to_network (High) - `cpp/jni/tasks/jni_OmniStreamTask.cpp:18` @ `JNI_to_StreamTask_NetworkInput` | 置信度: 65
-6. **[VULN-DF-NET-002]** memory_allocation_external_control (Medium) - `cpp/runtime/io/network/api/serialization/SpanningWrapper.h:186` @ `SpanningWrapper::ensureBufferCapacity` | 置信度: 70
-7. **[VULN-DF-JNI-004]** deserialization_exception_unsafe (Medium) - `cpp/jni/bridge/OmniTaskBridgeImpl2.cpp:518` @ `convertResult` | 置信度: 65
-8. **[VULN-DF-OPS-001]** json_parse_from_config (Medium) - `cpp/streaming/runtime/tasks/OperatorChain.cpp:214` @ `OperatorChainV2::getChainOutputType` | 置信度: 65
-9. **[VULN-DF-OPS-002]** json_parse_from_config (Medium) - `cpp/streaming/runtime/tasks/omni/OmniStreamTask.cpp:111` @ `OmniStreamTask::postConstruct` | 置信度: 65
-10. **[VULN-DF-OPS-003]** json_parse_from_config (Medium) - `cpp/streaming/runtime/tasks/StreamTask.cpp:138` @ `StreamTask::createDataInput` | 置信度: 65
+1. **[VULN-STREAM-002]** NULL Pointer Dereference (High) - `cpp/streaming/runtime/io/OmniAbstractStreamTaskNetworkInput.h:175` @ `OmniAbstractStreamTaskNetworkInput::processBufferOrEventOptForSQL` | 置信度: 75
+2. **[VULN-CROSS-002]** Cross-Module Memory Corruption (High) - `cpp/jni/io/jni_OmniLocalInputChannel.cpp:42` @ `Java_org_apache_flink_runtime_io_network_partition_consumer_OmniLocalInputChannel_sendMemorySegmentToNative` | 置信度: 75
+3. **[SEC-009]** NULL Pointer Dereference (High) - `cpp/streaming/runtime/io/OmniAbstractStreamTaskNetworkInput.h:177` @ `OmniAbstractStreamTaskNetworkInput::processBufferOrEventOptForSQL` | 置信度: 75
+4. **[VULN-JNI-003]** Deserialization of Untrusted Data (High) - `cpp/jni/tasks/jni_OmniStreamTask.cpp:27` @ `Java_com_huawei_omniruntime_flink_runtime_tasks_OmniStreamTask_createNativeStreamTask` | 置信度: 70
+5. **[VULN-JNI-007]** Deserialization of Untrusted Data (High) - `cpp/jni/bridge/OmniTaskBridgeImpl2.cpp:772` @ `convertResult` | 置信度: 70
+6. **[VULN-NET-001]** Out-of-bounds Read (High) - `cpp/runtime/io/network/api/serialization/SpillingAdaptiveSpanningRecordDeserializer.cpp:57` @ `SpillingAdaptiveSpanningRecordDeserializer::readNonSpanningRecord` | 信度: 70
+7. **[VULN-KAFKA-001]** Improper Input Validation (High) - `cpp/connector/kafka/source/KafkaSource.cpp:31` @ `KafkaSource::KafkaSource` | 置信度: 70
+8. **[VULN-CROSS-003]** Cross-Module State Restoration (High) - `cpp/jni/bridge/OmniTaskBridgeImpl2.cpp -> cpp/runtime/state/RocksdbKeyedStateBackend.h:730` @ `OmniTaskBridgeImpl2::CallDownloadFileToLocal -> RocksdbKeyedStateBackend::restore` | 置信度: 70
+9. **[SEC-003]** Improper Input Validation (High) - `cpp/jni/bridge/OmniTaskBridgeImpl2.cpp:768` @ `convertResult` | 置信度: 70
+10. **[SEC-006]** Improper Input Validation (High) - `cpp/runtime/io/network/api/serialization/SpillingAdaptiveSpanningRecordDeserializer.cpp:53` @ `SpillingAdaptiveSpanningRecordDeserializer::readNonSpanningRecord` | 置信度: 70
 
 ---
 
@@ -83,225 +58,146 @@
 
 | 入口点 | 类型 | 信任等级 | 可达性理由 | 说明 |
 |--------|------|----------|-----------|------|
-| `Java_com_huawei_omniruntime_flink_TNELLibrary_initialize@cpp/jni/init.cpp` | rpc | semi_trusted | JNI 初始化入口，由 Java Flink Runtime 调用，初始化共享内存 Metric Manager | JNI 初始化函数，设置共享内存监控 |
-| `Java_org_apache_flink_runtime_taskexecutor_TaskManagerRunner_initTMConfiguration@cpp/jni/init.cpp` | rpc | semi_trusted | JNI 配置入口，由 Java TaskManagerRunner 调用，接收 JSON 配置字符串 | 初始化 TaskManager 配置，解析 JSON 配置字符串 |
-| `Java_com_huawei_omniruntime_flink_runtime_tasks_OmniStreamTask_createNativeStreamTask@cpp/jni/tasks/jni_OmniStreamTask.cpp` | rpc | semi_trusted | JNI 任务创建入口，由 Java 调用，接收 TDD JSON 字符串创建 C++ StreamTask | 创建原生 StreamTask 对象，解析任务部署描述符 JSON |
-| `Java_com_huawei_omniruntime_flink_runtime_tasks_OmniStreamTask_createNativeOmniInputProcessor@cpp/jni/tasks/jni_OmniStreamTask.cpp` | rpc | semi_trusted | JNI 输入处理器创建入口，接收通道信息 JSON | 创建 OmniInputProcessor，处理输入通道配置 |
-| `OmniTaskBridgeImpl2::CallMaterializeMetaData@cpp/jni/bridge/OmniTaskBridgeImpl2.cpp` | rpc | semi_trusted | JNI 回调，将状态元数据序列化为 JSON 并上传到 Java 端 | 序列化状态元数据并调用 Java 方法 |
-| `OmniTaskBridgeImpl2::readMetaData@cpp/jni/bridge/OmniTaskBridgeImpl2.cpp` | rpc | semi_trusted | JNI 回调，从 Java 端读取状态元数据并反序列化 | 读取状态元数据 JSON 并解析 |
-| `OmniTaskBridgeImpl2::getKeyGroupEntries@cpp/jni/bridge/OmniTaskBridgeImpl2.cpp` | rpc | semi_trusted | JNI 回调，从 Java 端获取 KeyGroup 数据，处理字节数组数据 | 从 Java 流中读取 KeyGroup 数据 |
-| `KafkaSource::createReader@cpp/connector/kafka/source/KafkaSource.cpp` | network | untrusted_network | Kafka 数据源入口，创建 KafkaSourceReader 从 Kafka Broker 读取数据 | 创建 Kafka Source Reader，配置反序列化 Schema |
-| `RdKafkaConsumer::poll@cpp/connector/kafka/source/reader/RdKafkaConsumer.cpp` | network | untrusted_network | Kafka 数据接收入口，从 Kafka Broker 消费消息数据 | 从 Kafka 消费批量消息数据 |
-| `SpillingAdaptiveSpanningRecordDeserializer::setNextBuffer@cpp/runtime/io/network/api/serialization/SpillingAdaptiveSpanningRecordDeserializer.cpp` | network | untrusted_network | 网络数据反序列化入口，接收来自远程 TaskManager 的网络缓冲区数据 | 设置网络缓冲区并反序列化记录 |
-| `SpillingAdaptiveSpanningRecordDeserializer::SetNextBuffer@cpp/runtime/io/network/api/serialization/SpillingAdaptiveSpanningRecordDeserializer.cpp` | network | untrusted_network | 网络数据反序列化入口（V2），接收 ReadOnlySlicedNetworkBuffer | 设置网络缓冲区并反序列化记录（V2 版本） |
-| `StreamTaskNetworkInput::processInput@cpp/streaming/runtime/io/StreamTaskNetworkInput.cpp` | network | untrusted_network | 流处理网络输入入口，处理来自远程 TaskManager 的数据 | 处理网络输入数据 |
-| `JsonRowDataDeserializationSchema::deserialize@cpp/core/api/common/serialization/JsonRowDataDeserializationSchema.cpp` | network | untrusted_network | JSON 反序列化入口，解析来自 Kafka 或网络的数据 | 反序列化 JSON 数据为 RowData |
-| `MemorySegment::put@cpp/core/memory/MemorySegment.cpp` | internal | internal | 内存写入操作，接收外部数据写入堆外内存 | 向内存段写入数据 |
-| `MemorySegment::get@cpp/core/memory/MemorySegment.cpp` | internal | internal | 内存读取操作，从堆外内存读取数据 | 从内存段读取数据 |
-| `RocksDBStateDownloader::download@cpp/runtime/state/rocksdb/RocksDBStateDownloader.cpp` | file | semi_trusted | 状态恢复入口，从外部存储下载 RocksDB 状态快照 | 从外部存储下载状态数据 |
-| `RocksDBStateUploader::upload@cpp/runtime/state/rocksdb/RocksDBStateUploader.cpp` | file | semi_trusted | 状态快照入口，将 RocksDB 状态上传到外部存储 | 上传状态数据到外部存储 |
+| `Java_org_apache_flink_runtime_taskexecutor_TaskManagerRunner_initTMConfiguration@cpp/jni/init.cpp` | rpc | semi_trusted | JNI 调用入口，接收 Java 侧传递的配置 JSON 字符串，Java Flink Runtime 为半信任方（部署在集群环境） | 初始化 TaskManager 配置，接收并解析 JSON 配置字符串 |
+| `Java_com_huawei_omniruntime_flink_runtime_tasks_OmniStreamTask_createNativeStreamTask@cpp/jni/tasks/jni_OmniStreamTask.cpp` | rpc | semi_trusted | JNI 调用入口，接收 Java 传递的 TDD（TaskDeploymentDescriptor）JSON 字符串 | 创建原生 StreamTask 对象，解析任务描述 JSON |
+| `Java_com_huawei_omniruntime_flink_runtime_tasks_OmniStreamTask_createNativeOmniInputProcessor@cpp/jni/tasks/jni_OmniStreamTask.cpp` | rpc | semi_trusted | JNI 调用入口，接收输入通道信息 JSON 字符串 | 创建输入处理器，解析通道配置 JSON |
+| `Java_org_apache_flink_runtime_io_network_partition_consumer_OmniLocalInputChannel_sendMemorySegmentToNative@cpp/jni/io/jni_OmniLocalInputChannel.cpp` | rpc | semi_trusted | JNI 调用入口，接收 Java 传递的内存段地址和数据长度，直接操作共享内存 | 发送内存段数据到原生侧，传递内存地址和数据参数 |
+| `OmniTaskBridgeImpl2::CallMaterializeMetaData@cpp/jni/bridge/OmniTaskBridgeImpl2.cpp` | rpc | semi_trusted | 通过 JNI 回调 Java 方法，涉及 checkpoint 元数据和文件路径传递 | 调用 Java 端 checkpoint 元数据持久化 |
+| `RdKafkaConsumer::poll@cpp/connector/kafka/source/reader/RdKafkaConsumer.h` | network | untrusted_network | 从 Kafka Broker 消费消息，数据来源为外部网络集群 | Kafka 消息消费，接收外部 Kafka 数据 |
+| `KafkaSource::KafkaSource@cpp/connector/kafka/source/KafkaSource.cpp` | network | untrusted_network | 解析 Kafka 配置属性，配置来源于 JSON opDescription | Kafka 源初始化，解析配置并创建消费者 |
+| `OmniAbstractStreamTaskNetworkInput::emitNext@cpp/streaming/runtime/io/OmniAbstractStreamTaskNetworkInput.h` | network | untrusted_network | 处理来自其他 TaskManager 的网络数据，数据通过网络传输接收 | 网络输入数据处理，反序列化并分发数据 |
+| `SpillingAdaptiveSpanningRecordDeserializer::deserialize@cpp/runtime/io/network/api/serialization/SpillingAdaptiveSpanningRecordDeserializer.cpp` | network | untrusted_network | 反序列化网络数据缓冲区，数据来源为远程 TaskManager | 记录反序列化，处理网络数据缓冲区 |
+| `CsvLookupFunction::open@cpp/table/sources/CsvTableSource.h` | file | semi_trusted | 读取 CSV 文件，文件路径来自配置，数据内容可被外部修改 | CSV 文件读取和哈希表构建 |
+| `JsonRowDataDeserializationSchema::deserialize@cpp/core/api/common/serialization/JsonRowDataDeserializationSchema.h` | network | untrusted_network | 解析 JSON 数据，数据来源为 Kafka 消息或网络数据 | JSON 数据反序列化，将字节流转换为 VectorBatch |
 
 **其他攻击面**:
-- JNI Interface: Java Flink Runtime ↔ C++ TaskManager 数据传递边界
-- Kafka Consumer: 从 Kafka Broker 接收消息数据
-- Netty Shuffle Network: TaskManager 间数据交换（远程网络连接）
-- State Snapshot Storage: 从/向外部分布式存储读写状态快照
-- Checkpoint Storage: 从/向外部存储读写 Checkpoint 数据
-- JSON Deserialization: 解析来自网络/Kafka 的 JSON 数据
-- Memory Segment Operations: 堆外内存读写操作
+- JNI Interface: Java Flink Runtime -> C++ Native Runtime (配置注入、任务描述、内存地址传递)
+- Kafka Consumer: External Kafka Cluster -> KafkaSource Reader (消息数据、配置)
+- Network I/O: Remote TaskManager -> NetworkInput/Deserializer (网络数据缓冲区)
+- File System: Checkpoint/Savepoint Files -> State Backend (文件路径、状态数据)
+- CSV Source: External Files -> CsvTableSource (文件路径、文件内容)
 
 ---
 
-## 3. High 漏洞 (5)
+## 3. High 漏洞 (18)
 
-### [VULN-DF-JNI-006] json_parse_exception_unsafe - Java_com_huawei_omniruntime_flink_runtime_taskexecutor_OmniTaskExecutor_submitTaskNative
+### [VULN-STREAM-002] NULL Pointer Dereference - OmniAbstractStreamTaskNetworkInput::processBufferOrEventOptForSQL
 
-**严重性**: High | **CWE**: CWE-502 | **置信度**: 75/100 | **状态**: LIKELY | **来源**: dataflow-scanner
+**严重性**: High | **CWE**: CWE-476 | **置信度**: 75/100 | **状态**: LIKELY | **来源**: dataflow-scanner
 
-**位置**: `cpp/jni/taskexecutor/jni_OmniTaskExecutor.cpp:47-78` @ `Java_com_huawei_omniruntime_flink_runtime_taskexecutor_OmniTaskExecutor_submitTaskNative`
-**模块**: jni
-**跨模块**: jni → runtime_execution → streaming_runtime_tasks
+**位置**: `cpp/streaming/runtime/io/OmniAbstractStreamTaskNetworkInput.h:175-184` @ `OmniAbstractStreamTaskNetworkInput::processBufferOrEventOptForSQL`
+**模块**: streaming_runtime_io
 
-**描述**: JSON parsing from JNI strings without exception handling. Multiple JSON strings (jobjson, taskjson, tddjson) are converted to C++ strings and parsed. If any json::parse throws an exception, the function exits without proper cleanup.
+**描述**: Object retrieved from network data (objSegment->getObject(index)) is cast to StreamRecord/VectorBatch without null checking. Malformed network data could result in null pointers being dereferenced.
 
-**漏洞代码** (`cpp/jni/taskexecutor/jni_OmniTaskExecutor.cpp:47-78`)
+**漏洞代码** (`cpp/streaming/runtime/io/OmniAbstractStreamTaskNetworkInput.h:175-184`)
 
 ```c
-const char* jobString = jniEnv->GetStringUTFChars(jobjson, nullptr);
-std::string jobInfoString(jobString);
-jniEnv->ReleaseStringUTFChars(jobjson, jobString);
-nlohmann::json job = nlohmann::json::parse(jobInfoString);
+StreamElement *object = objSegment->getObject(index);
+if (object->getTag() == StreamElementTag::TAG_REC_WITH_TIMESTAMP ||...) {
+    auto record = static_cast<StreamRecord *>(object);
+    auto vectorBatch = static_cast<VectorBatch *>(record->getValue());
 ```
 
 **达成路径**
 
-Java jstring jobjson/taskjson/tddjson → GetStringUTFChars → std::string → nlohmann::json::parse → JobInformationPOD/TaskInformationPOD/TaskDeploymentDescriptorPOD
-[SOURCE] Lines 50, 54, 58: JNI string input
-[SINK] Lines 66, 68, 70: json::parse
+ObjectSegment::getObject (Network Source) -> static_cast (no null check) -> getValue dereference
 
-**验证说明**: Code pattern safer: GetStringUTFChars → std::string → ReleaseStringUTFChars → parse(std::string). Memory released before parse, but no try-catch so exception still crashes JVM.
+**验证说明**: 源代码确认object指针未检查null(line175)。但getTag()访问在static_cast之后，实际崩溃风险取决于ObjectSegment::getObject实现。
 
-**评分明细**: base: 30 | reachability: 30 | controllability: 25 | mitigations: -10 | context: 0 | cross_file: 0
+**评分明细**: base: 30 | controllability: 20 | context: 0 | cross_file: 0 | mitigations: -5 | reachability: 30
 
 ---
 
-### [VULN-DF-JNI-007] json_parse_exception_unsafe - Java_com_huawei_omniruntime_flink_runtime_taskexecutor_OmniTaskExecutor_submitTaskNativeWithCheckpointing
+### [VULN-CROSS-002] Cross-Module Memory Corruption - Java_org_apache_flink_runtime_io_network_partition_consumer_OmniLocalInputChannel_sendMemorySegmentToNative
 
-**严重性**: High | **CWE**: CWE-502 | **置信度**: 75/100 | **状态**: LIKELY | **来源**: dataflow-scanner
+**严重性**: High | **CWE**: CWE-119 | **置信度**: 75/100 | **状态**: LIKELY | **来源**: dataflow-scanner
 
-**位置**: `cpp/jni/taskexecutor/jni_OmniTaskExecutor.cpp:85-142` @ `Java_com_huawei_omniruntime_flink_runtime_taskexecutor_OmniTaskExecutor_submitTaskNativeWithCheckpointing`
-**模块**: jni
-**跨模块**: jni → runtime_execution → streaming_runtime_tasks
-
-**描述**: JSON parsing from JNI strings without exception handling. Same pattern as submitTaskNative - multiple JSON strings parsed without exception safety.
-
-**漏洞代码** (`cpp/jni/taskexecutor/jni_OmniTaskExecutor.cpp:85-142`)
-
-```c
-const char* jobString = jniEnv->GetStringUTFChars(jobjson, nullptr);
-std::string jobInfoString(jobString);
-nlohmann::json job = nlohmann::json::parse(jobInfoString);
-```
-
-**达成路径**
-
-Java jstring → GetStringUTFChars → std::string → nlohmann::json::parse → POD objects
-[SOURCE] Lines 92, 96, 100: JNI string input
-[SINK] Lines 108, 110, 112: json::parse
-
-**验证说明**: Same pattern as VULN-DF-JNI-006: safer memory handling but no exception safety for json::parse.
-
-**评分明细**: base: 30 | reachability: 30 | controllability: 25 | mitigations: -10 | context: 0 | cross_file: 0
-
----
-
-### [SEC-007] Deserialization Safety - KafkaRecordEmitter::emitRecord
-
-**严重性**: High | **CWE**: CWE-502 | **置信度**: 75/100 | **状态**: LIKELY | **来源**: security-auditor
-
-**位置**: `cpp/connector/kafka/source/reader/KafkaRecordEmitter.cpp:33-36` @ `KafkaRecordEmitter::emitRecord`
-**模块**: connector_kafka
-**跨模块**: connector_kafka → core_serialization
-
-**描述**: KafkaSource receives messages from external Kafka brokers and deserializes them using user-defined deserialization schemas. The KafkaRecordEmitter::emitRecord() calls deserializationSchema->deserialize() on data from untrusted external Kafka sources. Malformed Kafka messages could trigger exceptions in deserializers.
-
-**漏洞代码** (`cpp/connector/kafka/source/reader/KafkaRecordEmitter.cpp:33-36`)
-
-```c
-deserializationSchema->deserialize(consumerRecord, sourceOutputWrapper);
-} catch (const std::exception& e) {
-throw std::runtime_error("Failed to deserialize consumer record due to: " + std::string(e.what()));
-```
-
-**达成路径**
-
-Kafka Broker → RdKafkaConsumer::poll() → KafkaRecordEmitter → DeserializationSchema → Application
-
-**验证说明**: emitRecord calls deserialize on Kafka message data. Untrusted network input with exception handling.
-
-**评分明细**: base: 30 | reachability: 30 | controllability: 25 | mitigations: -10 | context: 0 | cross_file: 0
-
----
-
-### [SEC-006] Deserialization Safety - SpillingAdaptiveSpanningRecordDeserializer::setNextBuffer
-
-**严重性**: High | **CWE**: CWE-502 | **置信度**: 70/100 | **状态**: LIKELY | **来源**: security-auditor
-
-**位置**: `cpp/runtime/io/network/api/serialization/SpillingAdaptiveSpanningRecordDeserializer.cpp:68-86` @ `SpillingAdaptiveSpanningRecordDeserializer::setNextBuffer`
-**模块**: runtime_io_network
-**跨模块**: runtime_io_network → streaming_runtime_io
-
-**描述**: SpillingAdaptiveSpanningRecordDeserializer receives network buffers from remote TaskManagers and deserializes records without explicit validation. The setNextBuffer() function processes data from untrusted network sources (remote TaskManagers via Netty shuffle). Malformed or malicious network data could potentially cause issues during deserialization.
-
-**漏洞代码** (`cpp/runtime/io/network/api/serialization/SpillingAdaptiveSpanningRecordDeserializer.cpp:68-86`)
-
-```c
-void SpillingAdaptiveSpanningRecordDeserializer::setNextBuffer(const uint8_t *buffer, int size)
-{ if (spanningWrapper->getNumGatheredBytes() > 0) { spanningWrapper->addNextChunkFromMemoryBuffer(buffer, size); } else { nonSpanningWrapper->initializeFromMemoryBuffer(buffer, size); } }
-```
-
-**达成路径**
-
-Remote TaskManager → Netty Network → NetworkBuffer → SpillingAdaptiveSpanningRecordDeserializer → Record Deserialization
-
-**验证说明**: setNextBuffer processes network data from remote TaskManager. Partial boundary checks but potential deserialization issues.
-
-**评分明细**: base: 30 | reachability: 30 | controllability: 25 | mitigations: -15 | context: 0 | cross_file: 0
-
----
-
-### [VULN-DF-XMOD-001] cross_module_data_flow_jni_to_network - JNI_to_StreamTask_NetworkInput
-
-**严重性**: High | **CWE**: CWE-502 | **置信度**: 65/100 | **状态**: LIKELY | **来源**: dataflow-scanner
-
-**位置**: `cpp/jni/tasks/jni_OmniStreamTask.cpp:18-52` @ `JNI_to_StreamTask_NetworkInput`
+**位置**: `cpp/jni/io/jni_OmniLocalInputChannel.cpp:42-43` @ `Java_org_apache_flink_runtime_io_network_partition_consumer_OmniLocalInputChannel_sendMemorySegmentToNative`
 **模块**: cross_module
-**跨模块**: jni → streaming_runtime_tasks → streaming_runtime_io → runtime_io_network
+**跨模块**: jni → runtime_partition → streaming_runtime_io
 
-**描述**: Cross-module data flow: JNI JSON input → StreamTask creation → Network input processor. Malformed JSON from Java could propagate through the entire pipeline, affecting network data processing.
+**描述**: Cross-module memory address chain: segmentAddress from JNI is passed through OmniLocalInputChannel to memory operations. Invalid addresses could corrupt memory across multiple modules.
 
-**漏洞代码** (`cpp/jni/tasks/jni_OmniStreamTask.cpp:18-52`)
+**漏洞代码** (`cpp/jni/io/jni_OmniLocalInputChannel.cpp:42-43`)
 
 ```c
-// See VULN-DF-JNI-002 and VULN-DF-JNI-003 for detailed code
-// Data flows: JNI → StreamTask → StreamOneInputProcessor → StreamTaskNetworkInput → SpillingAdaptiveSpanningRecordDeserializer
+jni_OmniLocalInputChannel.cpp:43 -> OmniLocalInputChannel::notifyOriginalDataAvailable
 ```
 
 **达成路径**
 
-JNI (jni_OmniStreamTask.cpp:21-27) → StreamTask (StreamTask.cpp:36-40) → StreamOneInputProcessor → StreamTaskNetworkInput → SpillingAdaptiveSpanningRecordDeserializer (NonSpanningWrapper.h:131-147)
-[SOURCE] JNI input (semi_trusted)
-[PATH] StreamTask → InputProcessor → Network Deserializer
-[SINK] Network buffer processing (untrusted_network)
+jni_OmniLocalInputChannel.cpp (jni) segmentAddress -> OmniLocalInputChannel (runtime_partition) -> MemorySegment operations -> Network buffer processing (streaming_runtime_io)
 
-**验证说明**: JNI -> StreamTask -> StreamOneInputProcessor -> StreamTaskNetworkInput -> SpillingAdaptiveSpanningRecordDeserializer. Cross-module data flow verified.
+**验证说明**: 跨模块链确认: JNI segmentAddress -> OmniLocalInputChannel -> memory操作。缺少地址验证。但需要控制Java侧传值，实际攻击难度较高。
 
-**评分明细**: base: 30 | reachability: 20 | controllability: 15 | mitigations: 0 | context: 0 | cross_file: 0
+**评分明细**: base: 30 | controllability: 20 | context: 0 | cross_file: 0 | mitigations: 0 | reachability: 25
 
 ---
 
-## 4. Medium 漏洞 (8)
+### [SEC-009] NULL Pointer Dereference - OmniAbstractStreamTaskNetworkInput::processBufferOrEventOptForSQL
 
-### [VULN-DF-NET-002] memory_allocation_external_control - SpanningWrapper::ensureBufferCapacity
+**严重性**: High | **CWE**: CWE-476 | **置信度**: 75/100 | **状态**: LIKELY | **来源**: security-auditor
 
-**严重性**: Medium | **CWE**: CWE-190 | **置信度**: 70/100 | **状态**: LIKELY | **来源**: dataflow-scanner
+**位置**: `cpp/streaming/runtime/io/OmniAbstractStreamTaskNetworkInput.h:177-186` @ `OmniAbstractStreamTaskNetworkInput::processBufferOrEventOptForSQL`
+**模块**: streaming_runtime_io
 
-**位置**: `cpp/runtime/io/network/api/serialization/SpanningWrapper.h:186-192` @ `SpanningWrapper::ensureBufferCapacity`
-**模块**: runtime_io_network
+**描述**: StreamElement类型转换无NULL检查。OmniAbstractStreamTaskNetworkInput.h中static_cast<StreamRecord*>和static_cast<VectorBatch*>转换前未检查指针有效性，若object为nullptr会导致崩溃。
 
-**描述**: Buffer capacity expansion based on externally controlled record length. The recordLength_ value comes from network buffer and is used to expand internal buffer capacity. A malicious remote TaskManager could send extremely large record length values.
-
-**漏洞代码** (`cpp/runtime/io/network/api/serialization/SpanningWrapper.h:186-192`)
+**漏洞代码** (`cpp/streaming/runtime/io/OmniAbstractStreamTaskNetworkInput.h:177-186`)
 
 ```c
-if (static_cast<size_t>(minLength) > buffer_.capacity()) {
-    int newCapacity_ = std::max(minLength, static_cast<int>(buffer_.capacity() * 2));
-    buffer_.reserve(newCapacity_);
-}
+auto record = static_cast<StreamRecord *>(object);
+auto vectorBatch = static_cast<VectorBatch *>(record->getValue());
 ```
 
 **达成路径**
 
-Network buffer → readInt() → recordLength_ → updateLength() → ensureBufferCapacity(recordLength_) → buffer_.reserve()
-[SOURCE] recordLength_ from network
-[SINK] buffer_.reserve(newCapacity_) (memory allocation)
+objSegment.getObject -> StreamElement -> static_cast -> getValue
 
-**验证说明**: ensureBufferCapacity uses minLength from network data to reserve buffer. No explicit upper bound limit.
+**验证说明**: 源代码确认object指针未检查null。与VULN-STREAM-002重复发现。
 
-**评分明细**: base: 30 | reachability: 30 | controllability: 10 | mitigations: 0 | context: 0 | cross_file: 0
+**评分明细**: base: 30 | controllability: 20 | context: 0 | cross_file: 0 | mitigations: -5 | reachability: 30
 
 ---
 
-### [VULN-DF-JNI-004] deserialization_exception_unsafe - convertResult
+### [VULN-JNI-003] Deserialization of Untrusted Data - Java_com_huawei_omniruntime_flink_runtime_tasks_OmniStreamTask_createNativeStreamTask
 
-**严重性**: Medium | **CWE**: CWE-502 | **置信度**: 65/100 | **状态**: LIKELY | **来源**: dataflow-scanner
+**严重性**: High | **CWE**: CWE-502 | **置信度**: 70/100 | **状态**: LIKELY | **来源**: dataflow-scanner
 
-**位置**: `cpp/jni/bridge/OmniTaskBridgeImpl2.cpp:518-566` @ `convertResult`
+**位置**: `cpp/jni/tasks/jni_OmniStreamTask.cpp:27-34` @ `Java_com_huawei_omniruntime_flink_runtime_tasks_OmniStreamTask_createNativeStreamTask`
 **模块**: jni
 
-**描述**: JSON parsing from JNI returned data. The convertResult function parses JSON data returned from Java JNI call. Malformed JSON could cause parsing exceptions.
+**描述**: nlohmann::json::parse() parses TDD (TaskDeploymentDescriptor) JSON string from Java without validation. Malicious JSON could cause exceptions, memory exhaustion, or injection of malicious task configurations.
 
-**漏洞代码** (`cpp/jni/bridge/OmniTaskBridgeImpl2.cpp:518-566`)
+**漏洞代码** (`cpp/jni/tasks/jni_OmniStreamTask.cpp:27-34`)
+
+```c
+nlohmann::json tdd = nlohmann::json::parse(cStrTDD);
+LOG("Calling  StreamTask with json " + tdd.dump(2))
+auto *streamTask = new omnistream::datastream::StreamTask(tdd, bufferStatus, task->getRuntimeEnv());
+```
+
+**达成路径**
+
+JNIEnv::GetStringUTFChars (JNI Source) -> nlohmann::json::parse (no validation) -> StreamTask constructor
+
+**验证说明**: 源代码确认缺少try-catch。parse异常时ReleaseStringUTFChars不执行，存在内存泄露。但trust_level为semi_trusted，攻击者需控制Java传递的TDD字符串。
+
+**评分明细**: base: 30 | controllability: 20 | context: 0 | cross_file: 0 | mitigations: 0 | reachability: 20
+
+---
+
+### [VULN-JNI-007] Deserialization of Untrusted Data - convertResult
+
+**严重性**: High | **CWE**: CWE-502 | **置信度**: 70/100 | **状态**: LIKELY | **来源**: dataflow-scanner
+
+**位置**: `cpp/jni/bridge/OmniTaskBridgeImpl2.cpp:772-773` @ `convertResult`
+**模块**: jni
+
+**描述**: nlohmann::json::parse() parses checkpoint metadata JSON from Java in convertResult() without validation. Malformed metadata could cause state restoration failures or injection attacks.
+
+**漏洞代码** (`cpp/jni/bridge/OmniTaskBridgeImpl2.cpp:772-773`)
 
 ```c
 nlohmann::json parsed = nlohmann::json::parse(cppResult);
@@ -310,241 +206,726 @@ for (const auto& oneSnapshot : parsed) {
 
 **达成路径**
 
-Java jstring result → GetStringUTFChars → std::string cppResult → nlohmann::json::parse → StateMetaInfoSnapshot vector
-[SOURCE] Line 602: GetStringUTFChars (JNI input)
-[SINK] Line 522: json::parse (deserialization)
+Java metadata string (JNI Source) -> nlohmann::json::parse (no validation) -> StateMetaInfoSnapshot reconstruction
 
-**验证说明**: Code at line 522: json::parse on Java bridge returned data. Indirect external input, partial controllability.
+**验证说明**: 源代码确认checkpoint元数据JSON解析缺少异常处理(line772)。虽有部分字段验证(line775-781)，但parse调用本身无try-catch包裹。
 
-**评分明细**: base: 30 | reachability: 20 | controllability: 15 | mitigations: 0 | context: 0 | cross_file: 0
+**评分明细**: base: 30 | controllability: 15 | context: 0 | cross_file: 0 | mitigations: -5 | reachability: 30
 
 ---
 
-### [VULN-DF-OPS-001] json_parse_from_config - OperatorChainV2::getChainOutputType
+### [VULN-NET-001] Out-of-bounds Read - SpillingAdaptiveSpanningRecordDeserializer::readNonSpanningRecord
 
-**严重性**: Medium | **CWE**: CWE-502 | **置信度**: 65/100 | **状态**: LIKELY | **来源**: dataflow-scanner
+**严重性**: High | **CWE**: CWE-125 | **置信度**: 70/100 | **状态**: LIKELY | **来源**: dataflow-scanner
 
-**位置**: `cpp/streaming/runtime/tasks/OperatorChain.cpp:214-240` @ `OperatorChainV2::getChainOutputType`
-**模块**: streaming_runtime_tasks
+**位置**: `cpp/runtime/io/network/api/serialization/SpillingAdaptiveSpanningRecordDeserializer.cpp:57-66` @ `SpillingAdaptiveSpanningRecordDeserializer::readNonSpanningRecord`
+**模块**: runtime_io_network
 
-**描述**: JSON parsing from operator configuration without exception handling. Operator output type strings from configuration are parsed as JSON. Malformed configuration could cause exceptions.
+**描述**: recordLen is read from network buffer via nonSpanningWrapper->readInt() without validation. A maliciously crafted length value could lead to buffer overflows when used in subsequent read operations.
 
-**漏洞代码** (`cpp/streaming/runtime/tasks/OperatorChain.cpp:214-240`)
+**漏洞代码** (`cpp/runtime/io/network/api/serialization/SpillingAdaptiveSpanningRecordDeserializer.cpp:57-66`)
 
 ```c
-nlohmann::json outputRowType = nlohmann::json::parse(lastOperatorOutput.type);
-// ...
-auto description = nlohmann::json::parse(operatorPod.getDescription());
+int recordLen = nonSpanningWrapper->readInt();
+if (nonSpanningWrapper->canReadRecord(recordLen)) {
+    return nonSpanningWrapper->readInto(target);
+} else {
+    spanningWrapper->transferFrom(*nonSpanningWrapper, recordLen);
 ```
 
 **达成路径**
 
-OperatorPOD configuration → lastOperatorOutput.type/operatorPod.getDescription() → nlohmann::json::parse → TypeInfo
-[SOURCE] Configuration strings (from TDD JSON)
-[SINK] Lines 214, 217, 222, 233, 239: json::parse
+Network buffer (Source) -> readInt (tainted length) -> readInto/transferFrom
 
-**验证说明**: OperatorChain.cpp lines 214, 217, 222, 239: json::parse on operator configuration from TDD JSON. Indirect external input.
+**验证说明**: 源代码确认recordLen从网络读取，但有canReadRecord检查(line61)作为部分缓解。trust_level为untrusted_network，但仍需验证canReadRecord是否充分。
 
-**评分明细**: base: 30 | reachability: 20 | controllability: 15 | mitigations: 0 | context: 0 | cross_file: 0
+**评分明细**: base: 30 | controllability: 25 | context: 0 | cross_file: 0 | mitigations: -15 | reachability: 30
 
 ---
 
-### [VULN-DF-OPS-002] json_parse_from_config - OmniStreamTask::postConstruct
+### [VULN-KAFKA-001] Improper Input Validation - KafkaSource::KafkaSource
 
-**严重性**: Medium | **CWE**: CWE-502 | **置信度**: 65/100 | **状态**: LIKELY | **来源**: dataflow-scanner
+**严重性**: High | **CWE**: CWE-20 | **置信度**: 70/100 | **状态**: LIKELY | **来源**: dataflow-scanner
 
-**位置**: `cpp/streaming/runtime/tasks/omni/OmniStreamTask.cpp:111-124` @ `OmniStreamTask::postConstruct`
-**模块**: streaming_runtime_tasks
-**跨模块**: streaming_runtime_tasks → runtime_state
-
-**描述**: JSON parsing from local recovery configuration string. The configuration string is parsed without exception handling. Malformed recovery config could cause parsing exceptions.
-
-**漏洞代码** (`cpp/streaming/runtime/tasks/omni/OmniStreamTask.cpp:111-124`)
-
-```c
-std::string localRecoveryProviderStr = taskConfiguration_.getLocalRecoveryConfig();
-nlohmann::json localJson = nlohmann::json::parse(localRecoveryProviderStr);
-```
-
-**达成路径**
-
-TaskConfiguration → getLocalRecoveryConfig() → std::string → nlohmann::json::parse → LocalRecoveryDirectoryProviderImpl
-[SOURCE] Line 111: Configuration string
-[SINK] Line 112: json::parse
-
-**验证说明**: OmniStreamTask.cpp line 112: json::parse on localRecoveryProviderStr from taskConfiguration.
-
-**评分明细**: base: 30 | reachability: 20 | controllability: 15 | mitigations: 0 | context: 0 | cross_file: 0
-
----
-
-### [VULN-DF-OPS-003] json_parse_from_config - StreamTask::createDataInput
-
-**严重性**: Medium | **CWE**: CWE-502 | **置信度**: 65/100 | **状态**: LIKELY | **来源**: dataflow-scanner
-
-**位置**: `cpp/streaming/runtime/tasks/StreamTask.cpp:138-148` @ `StreamTask::createDataInput`
-**模块**: streaming_runtime_tasks
-
-**描述**: JSON parsing from operator description string. The operatorPod description is parsed as JSON without exception handling.
-
-**漏洞代码** (`cpp/streaming/runtime/tasks/StreamTask.cpp:138-148`)
-
-```c
-auto operatorPod = env_->taskConfiguration().getStreamConfigPOD().getOperatorDescription();
-auto description = nlohmann::json::parse(operatorPod.getDescription());
-```
-
-**达成路径**
-
-TaskConfiguration → getOperatorDescription() → getDescription() → nlohmann::json::parse → inputTypes
-[SOURCE] Line 137: Configuration
-[SINK] Line 138: json::parse
-
-**验证说明**: StreamTask.cpp line 138: json::parse on operatorPod.getDescription() from TDD JSON.
-
-**评分明细**: base: 30 | reachability: 20 | controllability: 15 | mitigations: 0 | context: 0 | cross_file: 0
-
----
-
-### [VULN-DF-JNI-009] jni_string_unsafe - Java_com_huawei_omniruntime_flink_runtime_taskmanager_OmniTask_notifyCheckpointComplete
-
-**严重性**: Medium | **CWE**: CWE-502 | **置信度**: 65/100 | **状态**: LIKELY | **来源**: dataflow-scanner
-
-**位置**: `cpp/jni/taskmanager/jni_OmniTask.cpp:126-128` @ `Java_com_huawei_omniruntime_flink_runtime_taskmanager_OmniTask_notifyCheckpointComplete`
-**模块**: jni
-
-**描述**: JNI string handling and potential JSON parsing. GetStringUTFChars returns checkpoint option JSON string. No explicit exception handling.
-
-**漏洞代码** (`cpp/jni/taskmanager/jni_OmniTask.cpp:126-128`)
-
-```c
-const char* checkpointStr = jniEnv->GetStringUTFChars(checkpointoptionJson, nullptr);
-```
-
-**达成路径**
-
-Java jstring checkpointoptionJson → GetStringUTFChars → const char* checkpointStr → potential JSON parsing
-[SOURCE] Line 126: JNI string
-[SINK] GetStringUTFChars
-
-**验证说明**: Code at lines 126-128: GetStringUTFChars → json::parse → ReleaseStringUTFChars. Same exception safety issue.
-
-**评分明细**: base: 30 | reachability: 30 | controllability: 5 | mitigations: 0 | context: 0 | cross_file: 0
-
----
-
-### [SEC-003] Environment Variable Path Injection - GetOmniHome
-
-**严重性**: Medium | **CWE**: CWE-78 | **置信度**: 60/100 | **状态**: LIKELY | **来源**: security-auditor
-
-**位置**: `cpp/connector/kafka/utils/ConfigLoader.cpp:23-30` @ `GetOmniHome`
+**位置**: `cpp/connector/kafka/source/KafkaSource.cpp:31-33` @ `KafkaSource::KafkaSource`
 **模块**: connector_kafka
-**跨模块**: connector_kafka → runtime_state
 
-**描述**: Kafka configuration loader uses OMNI_HOME environment variable to construct file paths without proper validation. An attacker who can control the OMNI_HOME environment variable could redirect configuration loading to arbitrary files, potentially loading malicious Kafka configurations including security settings (sasl.mechanism, security.protocol). The default fallback to /opt also has potential for symlink attacks.
+**描述**: Deserialization schema is created from opDescriptionJSON without validation. JSON configuration from Java/Kafka setup could inject malicious deserialization settings.
 
-**漏洞代码** (`cpp/connector/kafka/utils/ConfigLoader.cpp:23-30`)
+**漏洞代码** (`cpp/connector/kafka/source/KafkaSource.cpp:31-33`)
 
 ```c
-auto omniHome = std::getenv("OMNI_HOME");
-if (omniHome != nullptr && omniHome[0] != '\0') {
-    std::string confDir { omniHome }; Trim(confDir); return confDir;
-} else { return "/opt"; }
+auto innerDeserializationSchema = DeserializationFactory::getDeserializationSchema(
+    opDescriptionJSON);
+deserializationSchema = KafkaRecordDeserializationSchema::valueOnly(innerDeserializationSchema);
 ```
 
 **达成路径**
 
-OMNI_HOME env → GetOmniHome() → GetConfigFilePath() → LoadKafkaConfig() → Kafka Consumer Configuration
+opDescriptionJSON (Java config Source) -> DeserializationFactory::getDeserializationSchema (no validation)
 
-**验证说明**: GetOmniHome at lines 23-30 uses OMNI_HOME env var for config path. realpath() provides partial mitigation against symlink attacks.
+**验证说明**: 源代码确认opDescriptionJSON直接用于创建deserializer(line31)。缺少schema验证。但信任边界为Java->C++，实际攻击需控制Java配置。
 
-**评分明细**: base: 30 | reachability: 20 | controllability: 25 | mitigations: -15 | context: 0 | cross_file: 0
+**评分明细**: base: 30 | controllability: 15 | context: 0 | cross_file: 0 | mitigations: 0 | reachability: 25
 
 ---
 
-### [SEC-008] Deserialization Safety - TaskLocalStateStore::restore
+### [VULN-CROSS-003] Cross-Module State Restoration - OmniTaskBridgeImpl2::CallDownloadFileToLocal -> RocksdbKeyedStateBackend::restore
 
-**严重性**: Medium | **CWE**: CWE-502 | **置信度**: 55/100 | **状态**: POSSIBLE | **来源**: security-auditor
+**严重性**: High | **CWE**: CWE-125 | **置信度**: 70/100 | **状态**: LIKELY | **来源**: dataflow-scanner
 
-**位置**: `cpp/runtime/state/TaskLocalStateStore.cpp:227-228` @ `TaskLocalStateStore::restore`
-**模块**: runtime_state
-**跨模块**: runtime_state → jni
+**位置**: `cpp/jni/bridge/OmniTaskBridgeImpl2.cpp -> cpp/runtime/state/RocksdbKeyedStateBackend.h:730-765` @ `OmniTaskBridgeImpl2::CallDownloadFileToLocal -> RocksdbKeyedStateBackend::restore`
+**模块**: cross_module
+**跨模块**: jni → runtime_state
 
-**描述**: State restoration reads serialized state data from external storage (HDFS/S3) via Java bridge and deserializes it. The TaskLocalStateStore reads state snapshots from external storage and deserializes them using TaskStateSnapshotDeserializer. Malicious state data in checkpoint storage could compromise the restoration process.
+**描述**: Cross-module file path chain: File paths from Java checkpoint metadata are passed through JNI bridge to RocksDB state backend for restoration. Malicious checkpoint files could lead to arbitrary file access or state corruption.
 
-**漏洞代码** (`cpp/runtime/state/TaskLocalStateStore.cpp:227-228`)
+**漏洞代码** (`cpp/jni/bridge/OmniTaskBridgeImpl2.cpp -> cpp/runtime/state/RocksdbKeyedStateBackend.h:730-765`)
 
 ```c
-TaskStateSnapshotDeserializer::Deserialize(std::string(buffer.data(), buffer.size()));
+OmniTaskBridgeImpl2.cpp:730 -> RocksdbKeyedStateBackend.h
 ```
 
 **达成路径**
 
-External Storage (HDFS/S3) → Java FSDataInputStream → JNI Bridge → C++ Buffer → TaskStateSnapshotDeserializer → State Restoration
+OmniTaskBridgeImpl2.cpp (jni) CallDownloadFileToLocal -> RocksdbKeyedStateBackend.h (runtime_state) restore -> RocksDB::Open (potential arbitrary file access)
 
-**验证说明**: restore deserializes state from external storage (HDFS/S3). Partially controlled input.
+**验证说明**: 跨模块链确认checkpoint文件路径传递。但文件操作受Java安全机制约束，实际攻击难度较高。
 
-**评分明细**: base: 30 | reachability: 20 | controllability: 15 | mitigations: -10 | context: 0 | cross_file: 0
+**评分明细**: base: 30 | controllability: 15 | context: 0 | cross_file: 0 | mitigations: -5 | reachability: 30
 
 ---
 
-## 5. Low 漏洞 (2)
+### [SEC-003] Improper Input Validation - convertResult
 
-### [VULN-DF-JNI-005] integer_overflow_potential - CreateByteStreamStateHandle
+**严重性**: High | **CWE**: CWE-20 | **置信度**: 70/100 | **状态**: LIKELY | **来源**: security-auditor
 
-**严重性**: Low | **CWE**: CWE-190 | **置信度**: 55/100 | **状态**: POSSIBLE | **来源**: dataflow-scanner
-
-**位置**: `cpp/jni/bridge/OmniTaskBridgeImpl2.cpp:227-278` @ `CreateByteStreamStateHandle`
+**位置**: `cpp/jni/bridge/OmniTaskBridgeImpl2.cpp:768-817` @ `convertResult`
 **模块**: jni
 **跨模块**: jni → runtime_state
 
-**描述**: Byte array copy from JNI without explicit size limit validation. GetByteArrayElements returns raw bytes from Java. While GetArrayLength returns jsize (int), for extremely large arrays there could be integer overflow issues when used with size_t operations.
+**描述**: Checkpoint元数据JSON解析缺少异常处理。OmniTaskBridgeImpl2.cpp中convertResult函数直接调用nlohmann::json::parse解析从Java端获取的元数据字符串，无异常捕获。恶意元数据可能导致解析崩溃。
 
-**漏洞代码** (`cpp/jni/bridge/OmniTaskBridgeImpl2.cpp:227-278`)
+**漏洞代码** (`cpp/jni/bridge/OmniTaskBridgeImpl2.cpp:768-817`)
 
 ```c
-jsize dataLen = env->GetArrayLength(jData);
-jbyte* dataBytes = env->GetByteArrayElements(jData, nullptr);
-data.assign(reinterpret_cast<uint8_t*>(dataBytes), reinterpret_cast<uint8_t*>(dataBytes + dataLen));
+nlohmann::json parsed = nlohmann::json::parse(cppResult);
 ```
 
 **达成路径**
 
-Java jbyteArray jData → GetArrayLength → jsize dataLen → GetByteArrayElements → jbyte* dataBytes → std::vector::assign
-[SOURCE] Line 248: Java byte array (JNI input)
-[SINK] Line 267: vector::assign (memory allocation/copy)
+Java metadata JNI -> readMetaData -> convertResult -> json::parse
 
-**验证说明**: Code at lines 263-269: GetArrayLength checks size, GetByteArrayElements with ReleaseByteArrayElements. Potential integer overflow for extremely large arrays.
+**验证说明**: 源代码确认checkpoint元数据JSON解析缺少异常处理。与VULN-JNI-007重复发现，合并评分。
 
-**评分明细**: base: 30 | reachability: 20 | controllability: 15 | mitigations: -10 | context: 0 | cross_file: 0
+**评分明细**: base: 30 | controllability: 15 | context: 0 | cross_file: 0 | mitigations: -5 | reachability: 30
 
 ---
 
-### [VULN-DF-JNI-008] jni_bytearray_no_limit - uploadRocksDBStateToJava
+### [SEC-006] Improper Input Validation - SpillingAdaptiveSpanningRecordDeserializer::readNonSpanningRecord
 
-**严重性**: Low | **CWE**: CWE-190 | **置信度**: 55/100 | **状态**: POSSIBLE | **来源**: dataflow-scanner
+**严重性**: High | **CWE**: CWE-20 | **置信度**: 70/100 | **状态**: LIKELY | **来源**: security-auditor
 
-**位置**: `cpp/runtime/state/rocksdb/RocksDBStateUploader.cpp:374-380` @ `uploadRocksDBStateToJava`
-**模块**: jni
-**跨模块**: jni → runtime_state
+**位置**: `cpp/runtime/io/network/api/serialization/SpillingAdaptiveSpanningRecordDeserializer.cpp:53-67` @ `SpillingAdaptiveSpanningRecordDeserializer::readNonSpanningRecord`
+**模块**: runtime_io_network
+**跨模块**: runtime_io_network → streaming_runtime_io
 
-**描述**: JNI byte array handling without size limit validation. GetByteArrayElements is called on potentially large state data. No explicit size limit check before memory operations.
+**描述**: 网络数据反序列化缺少长度校验。SpillingAdaptiveSpanningRecordDeserializer.cpp中recordLen从网络缓冲区读取后直接使用，未验证是否超出缓冲区大小。可能导致读取越界。
 
-**漏洞代码** (`cpp/runtime/state/rocksdb/RocksDBStateUploader.cpp:374-380`)
+**漏洞代码** (`cpp/runtime/io/network/api/serialization/SpillingAdaptiveSpanningRecordDeserializer.cpp:53-67`)
 
 ```c
-jbyte* dataBytes = env->GetByteArrayElements(jData, nullptr);
+int recordLen = nonSpanningWrapper->readInt();
+if (nonSpanningWrapper->canReadRecord(recordLen)) {...}
 ```
 
 **达成路径**
 
-Java jbyteArray → GetByteArrayElements → jbyte* dataBytes → state data processing
-[SOURCE] JNI byte array from Java
-[SINK] GetByteArrayElements (memory access)
+NetworkBuffer -> readInt(recordLen) -> readInto/spanningWrapper
 
-**验证说明**: Code at lines 375-381: GetByteArrayElements on state data with ReleaseByteArrayElements. Same pattern as VULN-DF-JNI-005.
+**验证说明**: 源代码确认recordLen缺少充分验证。虽有canReadRecord检查，但需验证其完整性。与VULN-NET-001重复发现。
 
-**评分明细**: base: 30 | reachability: 20 | controllability: 15 | mitigations: -10 | context: 0 | cross_file: 0
+**评分明细**: base: 30 | controllability: 25 | context: 0 | cross_file: 0 | mitigations: -15 | reachability: 30
+
+---
+
+### [VULN-JNI-002] Improper Input Validation - Java_org_apache_flink_runtime_taskexecutor_TaskManagerRunner_initTMConfiguration
+
+**严重性**: High | **CWE**: CWE-20 | **置信度**: 65/100 | **状态**: LIKELY | **来源**: dataflow-scanner
+
+**位置**: `cpp/jni/init.cpp:53-54` @ `Java_org_apache_flink_runtime_taskexecutor_TaskManagerRunner_initTMConfiguration`
+**模块**: jni
+
+**描述**: nlohmann::json::parse() parses external JSON configuration from Java without exception handling or input validation. Malformed JSON could cause exceptions, denial of service, or potential memory corruption.
+
+**漏洞代码** (`cpp/jni/init.cpp:53-54`)
+
+```c
+nlohmann::json config = nlohmann::json::parse(cStrCon);
+Configuration::TM_CONFIG->setConfiguration(config);
+```
+
+**达成路径**
+
+JNIEnv::GetStringUTFChars (JNI Source) -> nlohmann::json::parse (no validation) -> Configuration::setConfiguration
+
+**验证说明**: 源代码确认缺少try-catch异常处理。JSON解析可能抛出parse_error异常导致进程崩溃。但trust_level为semi_trusted(JNI来自Java Flink Runtime)，攻击者需控制Java侧配置。
+
+**评分明细**: base: 30 | controllability: 15 | context: 0 | cross_file: 0 | mitigations: 0 | reachability: 20
+
+---
+
+### [VULN-JNI-005] Deserialization of Untrusted Data - Java_org_apache_flink_runtime_io_network_partition_consumer_OmniLocalInputChannel_doChangeNativeLocalInputChannel
+
+**严重性**: High | **CWE**: CWE-502 | **置信度**: 65/100 | **状态**: LIKELY | **来源**: dataflow-scanner
+
+**位置**: `cpp/jni/io/jni_OmniLocalInputChannel.cpp:31-32` @ `Java_org_apache_flink_runtime_io_network_partition_consumer_OmniLocalInputChannel_doChangeNativeLocalInputChannel`
+**模块**: jni
+
+**描述**: nlohmann::json::parse() parses partition ID JSON from Java without validation in doChangeNativeLocalInputChannel.
+
+**漏洞代码** (`cpp/jni/io/jni_OmniLocalInputChannel.cpp:31-32`)
+
+```c
+nlohmann::json partitionId = nlohmann::json::parse(paritionIdStr);
+omnistream::ResultPartitionIDPOD partitionIdPOD = partitionId;
+```
+
+**达成路径**
+
+JNIEnv::GetStringUTFChars (JNI Source) -> nlohmann::json::parse (no validation) -> ResultPartitionIDPOD
+
+**验证说明**: 源代码确认JSON解析缺少异常处理。但trust_level为semi_trusted，实际攻击需控制Java侧传值。
+
+**评分明细**: base: 30 | controllability: 15 | context: 0 | cross_file: 0 | mitigations: 0 | reachability: 20
+
+---
+
+### [VULN-BUF-001] Improper Validation of Array Index - LocalMemoryBufferPool::toMemoryBufferBuilder
+
+**严重性**: High | **CWE**: CWE-129 | **置信度**: 65/100 | **状态**: LIKELY | **来源**: dataflow-scanner
+
+**位置**: `cpp/runtime/buffer/LocalMemoryBufferPool.cpp:202-203` @ `LocalMemoryBufferPool::toMemoryBufferBuilder`
+**模块**: runtime_buffer
+
+**描述**: targetChannel is used as an index into subpartitionBufferRecyclers_ array without bounds checking. If targetChannel exceeds the array size, this causes out-of-bounds array access.
+
+**漏洞代码** (`cpp/runtime/buffer/LocalMemoryBufferPool.cpp:202-203`)
+
+```c
+return new MemoryBufferBuilder(memorySegment, subpartitionBufferRecyclers_[targetChannel]);
+```
+
+**达成路径**
+
+targetChannel parameter (JNI/config) -> subpartitionBufferRecyclers_ array access (no bounds check)
+
+**验证说明**: 源代码确认targetChannel数组访问无边界检查(line202)。但targetChannel来源需进一步追踪，可能是内部配置而非外部可控。
+
+**评分明细**: base: 30 | controllability: 10 | context: -5 | cross_file: 0 | mitigations: 0 | reachability: 30
+
+---
+
+### [VULN-JNI-009] Deserialization of Untrusted Data - Java_com_huawei_omniruntime_flink_runtime_tasks_OmniStreamTask_createNativeOmniInputProcessor
+
+**严重性**: High | **CWE**: CWE-502 | **置信度**: 65/100 | **状态**: LIKELY | **来源**: dataflow-scanner
+
+**位置**: `cpp/jni/tasks/jni_OmniStreamTask.cpp:49-52` @ `Java_com_huawei_omniruntime_flink_runtime_tasks_OmniStreamTask_createNativeOmniInputProcessor`
+**模块**: jni
+
+**描述**: JSON parsing of input channel info from Java without validation in createNativeOmniInputProcessor.
+
+**漏洞代码** (`cpp/jni/tasks/jni_OmniStreamTask.cpp:49-52`)
+
+```c
+nlohmann::json tdd = nlohmann::json::parse(cStrTDD);
+```
+
+**达成路径**
+
+JNI inputChannelInfo string -> nlohmann::json::parse
+
+**验证说明**: 源代码确认JSON解析缺少异常处理(line49)。trust_level为semi_trusted JNI接口。
+
+**评分明细**: base: 30 | controllability: 15 | context: 0 | cross_file: 0 | mitigations: 0 | reachability: 20
+
+---
+
+### [SEC-001] Improper Input Validation - Java_org_apache_flink_runtime_taskexecutor_TaskManagerRunner_initTMConfiguration
+
+**严重性**: High | **CWE**: CWE-20 | **置信度**: 65/100 | **状态**: LIKELY | **来源**: security-auditor
+
+**位置**: `cpp/jni/init.cpp:50-55` @ `Java_org_apache_flink_runtime_taskexecutor_TaskManagerRunner_initTMConfiguration`
+**模块**: jni
+
+**描述**: JNI配置JSON解析缺少异常处理。init.cpp中nlohmann::json::parse()直接解析Java传递的配置字符串，无try-catch包裹。恶意JSON可能导致解析异常崩溃，且缺少ReleaseStringUTFChars调用存在内存泄露风险。
+
+**漏洞代码** (`cpp/jni/init.cpp:50-55`)
+
+```c
+const char *cStrCon = (env)->GetStringUTFChars(configStr, 0);
+nlohmann::json config = nlohmann::json::parse(cStrCon);
+```
+
+**达成路径**
+
+Java configStr JNI -> GetStringUTFChars -> json::parse -> setConfiguration
+
+**验证说明**: 源代码确认JSON解析缺少异常处理(init.cpp:53)。与VULN-JNI-002重复发现，合并评分。
+
+**评分明细**: base: 30 | controllability: 15 | context: 0 | cross_file: 0 | mitigations: 0 | reachability: 20
+
+---
+
+### [VULN-JNI-004] Buffer Errors - Java_com_huawei_omniruntime_flink_runtime_tasks_OmniStreamTask_createNativeStreamTask
+
+**严重性**: High | **CWE**: CWE-119 | **置信度**: 60/100 | **状态**: LIKELY | **来源**: dataflow-scanner
+
+**位置**: `cpp/jni/tasks/jni_OmniStreamTask.cpp:25-34` @ `Java_com_huawei_omniruntime_flink_runtime_tasks_OmniStreamTask_createNativeStreamTask`
+**模块**: jni
+
+**描述**: statusAddress and nativeTask are jlong values passed from Java and directly cast to pointers using reinterpret_cast without validation. Invalid addresses could cause memory corruption, crashes, or potential exploitation.
+
+**漏洞代码** (`cpp/jni/tasks/jni_OmniStreamTask.cpp:25-34`)
+
+```c
+void *bufferStatus = reinterpret_cast<void *>(statusAddress);
+...
+auto task = reinterpret_cast<omnistream::OmniTask *>(nativeTask);
+auto *streamTask = new omnistream::datastream::StreamTask(tdd, bufferStatus, task->getRuntimeEnv());
+```
+
+**达成路径**
+
+jlong statusAddress/nativeTask (JNI Source) -> reinterpret_cast (no validation) -> pointer usage
+
+**验证说明**: 源代码确认jlong直接reinterpret_cast为指针。这是JNI标准做法，但缺少地址有效性验证。攻击者可传递非法地址导致崩溃。实际攻击需控制Java侧传值。
+
+**评分明细**: base: 30 | controllability: 15 | context: 0 | cross_file: 0 | mitigations: 0 | reachability: 15
+
+---
+
+### [VULN-JNI-006] Buffer Errors - Java_org_apache_flink_runtime_io_network_partition_consumer_OmniLocalInputChannel_sendMemorySegmentToNative
+
+**严重性**: High | **CWE**: CWE-119 | **置信度**: 60/100 | **状态**: LIKELY | **来源**: dataflow-scanner
+
+**位置**: `cpp/jni/io/jni_OmniLocalInputChannel.cpp:42-43` @ `Java_org_apache_flink_runtime_io_network_partition_consumer_OmniLocalInputChannel_sendMemorySegmentToNative`
+**模块**: jni
+
+**描述**: segmentAddress (jlong) is passed directly from Java to notifyOriginalDataAvailable without validation. Invalid memory addresses could cause memory corruption or out-of-bounds writes when accessing shared memory segments.
+
+**漏洞代码** (`cpp/jni/io/jni_OmniLocalInputChannel.cpp:42-43`)
+
+```c
+auto omniInputChannel = reinterpret_cast<omnistream::OmniLocalInputChannel*>(omniLocalInputChannelRef);
+omniInputChannel->notifyOriginalDataAvailable(segmentAddress, length, readIndex, sequenceNum, memorySegmentOffset, bufferType);
+```
+
+**达成路径**
+
+jlong segmentAddress (JNI Source) -> notifyOriginalDataAvailable (direct memory access)
+
+**验证说明**: 源代码确认jlong segmentAddress直接传递给notifyOriginalDataAvailable，缺少验证。但这是JNI接口，实际攻击需控制Java侧传值。
+
+**评分明细**: base: 30 | controllability: 15 | context: 0 | cross_file: 0 | mitigations: 0 | reachability: 15
+
+---
+
+### [SEC-011] Improper Input Validation - JsonRowDataDeserializationSchema::setColValue
+
+**严重性**: High | **CWE**: CWE-20 | **置信度**: 60/100 | **状态**: LIKELY | **来源**: security-auditor
+
+**位置**: `cpp/core/api/common/serialization/JsonRowDataDeserializationSchema.h:49-85` @ `JsonRowDataDeserializationSchema::setColValue`
+**模块**: core_serialization
+
+**描述**: JSON字段类型不匹配处理不当。JsonRowDataDeserializationSchema.h中node[name].get<T>()直接调用类型转换，若JSON字段类型与预期不符会抛出异常。缺少类型检查和错误处理。
+
+**漏洞代码** (`cpp/core/api/common/serialization/JsonRowDataDeserializationSchema.h:49-85`)
+
+```c
+vectorBatch->SetValueAt(colIndex, rowIndex, node[name].get<int32_t>());
+```
+
+**达成路径**
+
+JSON node -> node[name].get<T>() -> SetValueAt
+
+**验证说明**: JSON字段类型转换缺少异常处理(line55-79)。node[name].get<T>()可能抛出type_error。
+
+**评分明细**: base: 30 | controllability: 15 | context: 0 | cross_file: 0 | mitigations: 0 | reachability: 15
+
+---
+
+## 4. Medium 漏洞 (11)
+
+### [VULN-MEM-001] Out-of-bounds Read - MemorySegment::equalTo
+
+**严重性**: Medium | **CWE**: CWE-125 | **置信度**: 55/100 | **状态**: POSSIBLE | **来源**: dataflow-scanner
+
+**位置**: `cpp/core/memory/MemorySegment.cpp:171` @ `MemorySegment::equalTo`
+**模块**: core_memory
+
+**描述**: equalTo() method uses memcmp with offset parameters without bounds checking. If offsets exceed buffer sizes, this causes out-of-bounds memory reads.
+
+**漏洞代码** (`cpp/core/memory/MemorySegment.cpp:171`)
+
+```c
+return (memcmp((offHeapBuffer_ + offset1), (seg2.offHeapBuffer_ + offset2), length) == 0);
+```
+
+**达成路径**
+
+offset1/offset2/length parameters -> memcmp (no bounds check)
+
+**验证说明**: memcmp使用offset参数，需验证调用方是否有边界检查。内部函数，攻击面较小。
+
+**评分明细**: base: 30 | controllability: 10 | context: -15 | cross_file: 0 | mitigations: 0 | reachability: 30
+
+---
+
+### [SEC-004] Improper Input Validation - KafkaSource::KafkaSource
+
+**严重性**: Medium | **CWE**: CWE-20 | **置信度**: 55/100 | **状态**: POSSIBLE | **来源**: security-auditor
+
+**位置**: `cpp/connector/kafka/source/KafkaSource.cpp:15-34` @ `KafkaSource::KafkaSource`
+**模块**: connector_kafka
+
+**描述**: Kafka配置属性直接注入。KafkaSource.cpp中从opDescriptionJSON直接读取properties并用于创建Kafka消费者，未对配置值进行验证。恶意配置可能导致Kafka连接异常或安全问题。
+
+**漏洞代码** (`cpp/connector/kafka/source/KafkaSource.cpp:15-34`)
+
+```c
+nlohmann::json properties = opDescriptionJSON["properties"];
+for (auto &[key, value] : properties.items()) {
+    props.emplace(iter->second, value);
+}
+```
+
+**达成路径**
+
+opDescriptionJSON -> properties extraction -> Kafka config props
+
+**验证说明**: Kafka配置属性直接使用，缺少验证。但配置来源为Java opDescription，非直接外部网络数据。
+
+**评分明细**: base: 30 | controllability: 10 | context: -5 | cross_file: 0 | mitigations: 0 | reachability: 20
+
+---
+
+### [VULN-JNI-008] Buffer Copy without Checking Size - OmniTaskBridgeImpl2::WriteSavepointOutputStream
+
+**严重性**: Medium | **CWE**: CWE-120 | **置信度**: 50/100 | **状态**: POSSIBLE | **来源**: dataflow-scanner
+
+**位置**: `cpp/jni/bridge/OmniTaskBridgeImpl2.cpp:1220-1221` @ `OmniTaskBridgeImpl2::WriteSavepointOutputStream`
+**模块**: jni
+
+**描述**: SetByteArrayRegion is called with offset and len parameters without bounds checking. If offset + len exceeds the byte array bounds, this could cause buffer overflow.
+
+**漏洞代码** (`cpp/jni/bridge/OmniTaskBridgeImpl2.cpp:1220-1221`)
+
+```c
+jbyteArray data = env->NewByteArray(len);
+env->SetByteArrayRegion(data, offset, len, chunk);
+```
+
+**达成路径**
+
+offset/len parameters (potentially tainted) -> SetByteArrayRegion (no bounds check)
+
+**验证说明**: SetByteArrayRegion offset/len参数需进一步验证是否有边界检查。但JNIEnv API本身有一定安全机制。
+
+**评分明细**: base: 30 | controllability: 10 | context: 0 | cross_file: 0 | mitigations: -10 | reachability: 20
+
+---
+
+### [VULN-TABLE-001] Integer Overflow or Wraparound - CsvStrConverterFunc<int64_t>
+
+**严重性**: Medium | **CWE**: CWE-190 | **置信度**: 50/100 | **状态**: POSSIBLE | **来源**: dataflow-scanner
+
+**位置**: `cpp/table/sources/CsvTableSource.h:49` @ `CsvStrConverterFunc<int64_t>`
+**模块**: table_sources
+
+**描述**: std::stol() is called on CSV file content without exception handling or bounds validation. Malicious CSV content with very large numbers could cause integer overflow or exceptions.
+
+**漏洞代码** (`cpp/table/sources/CsvTableSource.h:49`)
+
+```c
+static_cast<omniruntime::vec::Vector<int64_t>* >(vec)->SetValue(rowIndex, std::stol(inStr));
+```
+
+**达成路径**
+
+CSV file content (File Source) -> std::stol (no validation) -> Vector SetValue
+
+**验证说明**: std::stol转换CSV数据缺少异常处理。但CSV文件来源通常为可信配置，实际攻击需控制文件内容。
+
+**评分明细**: base: 30 | controllability: 10 | context: -10 | cross_file: 0 | mitigations: 0 | reachability: 20
+
+---
+
+### [VULN-TABLE-003] Path Traversal - CsvLookupFunction::open
+
+**严重性**: Medium | **CWE**: CWE-22 | **置信度**: 50/100 | **状态**: POSSIBLE | **来源**: dataflow-scanner
+
+**位置**: `cpp/table/sources/CsvTableSource.h:134` @ `CsvLookupFunction::open`
+**模块**: table_sources
+
+**描述**: CSV file path from configuration could contain path traversal sequences if not validated. Malicious paths like '../../../etc/passwd' could be used to read arbitrary files.
+
+**漏洞代码** (`cpp/table/sources/CsvTableSource.h:134`)
+
+```c
+std::ifstream file(src->getFilePath());
+```
+
+**达成路径**
+
+filepath from config -> std::ifstream open
+
+**验证说明**: CSV文件路径来自配置，存在path traversal风险。但文件路径通常由管理员配置而非攻击者可控。
+
+**评分明细**: base: 30 | controllability: 10 | context: -10 | cross_file: 0 | mitigations: 0 | reachability: 20
+
+---
+
+### [SEC-007] Improper Input Validation - EventSerializer::fromSerializedEvent
+
+**严重性**: Medium | **CWE**: CWE-20 | **置信度**: 50/100 | **状态**: POSSIBLE | **来源**: security-auditor
+
+**位置**: `cpp/runtime/io/network/api/serialization/EventSerializer.cpp:148-213` @ `EventSerializer::fromSerializedEvent`
+**模块**: runtime_io_network
+
+**描述**: 事件类型未完全验证。EventSerializer.cpp中eventType从缓冲区读取后直接用于switch判断，缺少对未知事件类型的完整处理，可能返回nullptr或抛出异常导致崩溃。
+
+**漏洞代码** (`cpp/runtime/io/network/api/serialization/EventSerializer.cpp:148-213`)
+
+```c
+int eventType = byteBuffer.getIntFromValue();
+if (eventType == END_OF_PARTITION_EVENT) {...} else {... return nullptr;}
+```
+
+**达成路径**
+
+Buffer rawData -> getIntFromValue(eventType) -> switch processing
+
+**验证说明**: eventType未完全验证，可能返回nullptr。但影响为异常处理而非安全漏洞。
+
+**评分明细**: base: 30 | controllability: 10 | context: -10 | cross_file: 0 | mitigations: 0 | reachability: 20
+
+---
+
+### [SEC-012] Improper Input Validation - CsvLookupFunction::open
+
+**严重性**: Medium | **CWE**: CWE-20 | **置信度**: 50/100 | **状态**: POSSIBLE | **来源**: security-auditor
+
+**位置**: `cpp/table/sources/CsvTableSource.h:156-158` @ `CsvLookupFunction::open`
+**模块**: table_sources
+
+**描述**: CSV数值转换缺少异常处理。CsvTableSource.h中std::stol(keyStr)直接转换CSV读取的字符串，若数据格式错误会抛出invalid_argument异常。缺少错误处理机制。
+
+**漏洞代码** (`cpp/table/sources/CsvTableSource.h:156-158`)
+
+```c
+K key = std::stol(keyStr);
+dataMap[key].push_back(irow);
+```
+
+**达成路径**
+
+CSV file getline -> keyStr -> std::stol -> dataMap insert
+
+**验证说明**: std::stol转换缺少异常处理。与VULN-TABLE-001重复发现。
+
+**评分明细**: base: 30 | controllability: 10 | context: -10 | cross_file: 0 | mitigations: 0 | reachability: 20
+
+---
+
+### [SEC-014] Use of Potentially Dangerous Function - Java_com_huawei_omniruntime_flink_runtime_tasks_OmniStreamTask_createNativeStreamTask
+
+**严重性**: Medium | **CWE**: CWE-710 | **置信度**: 50/100 | **状态**: POSSIBLE | **来源**: security-auditor
+
+**位置**: `cpp/jni/tasks/jni_OmniStreamTask.cpp:25-34` @ `Java_com_huawei_omniruntime_flink_runtime_tasks_OmniStreamTask_createNativeStreamTask`
+**模块**: jni
+
+**描述**: 裸指针reinterpret_cast使用。jni_OmniStreamTask.cpp中statusAddress和nativeTask参数直接reinterpret_cast为指针，若Java传递无效地址可能导致非法内存访问。缺少地址有效性验证。
+
+**漏洞代码** (`cpp/jni/tasks/jni_OmniStreamTask.cpp:25-34`)
+
+```c
+void *bufferStatus = reinterpret_cast<void *>(statusAddress);
+auto task = reinterpret_cast<omnistream::OmniTask *>(nativeTask);
+```
+
+**达成路径**
+
+JNI jlong params -> reinterpret_cast -> pointer use
+
+**验证说明**: 与VULN-JNI-004重复发现。jlong reinterpret_cast缺少验证。JNI标准做法，实际攻击需控制Java传值。
+
+**评分明细**: base: 30 | controllability: 10 | context: -10 | cross_file: 0 | mitigations: 0 | reachability: 20
+
+---
+
+### [VULN-TABLE-002] Improper Input Validation - CsvLookupFunction::CsvLookupFunction
+
+**严重性**: Medium | **CWE**: CWE-20 | **置信度**: 45/100 | **状态**: POSSIBLE | **来源**: dataflow-scanner
+
+**位置**: `cpp/table/sources/CsvTableSource.h:75-103` @ `CsvLookupFunction::CsvLookupFunction`
+**模块**: table_sources
+
+**描述**: JSON field access and parsing without validation. Missing fields or malformed JSON could cause exceptions.
+
+**漏洞代码** (`cpp/table/sources/CsvTableSource.h:75-103`)
+
+```c
+auto lookupTypeStrs = description["lookupInputTypes"].get<std::vector<std::string>>();
+```
+
+**达成路径**
+
+JSON description (config) -> operator[] access -> get<std::vector<std::string>> (no validation)
+
+**验证说明**: JSON字段访问缺少验证。但description来源为配置文件而非外部网络数据。
+
+**评分明细**: base: 30 | controllability: 5 | context: -10 | cross_file: 0 | mitigations: 0 | reachability: 20
+
+---
+
+### [SEC-005] Uncontrolled Resource Consumption - RdKafkaConsumer
+
+**严重性**: Medium | **CWE**: CWE-400 | **置信度**: 45/100 | **状态**: POSSIBLE | **来源**: security-auditor
+
+**位置**: `cpp/connector/kafka/source/reader/RdKafkaConsumer.h:237-238` @ `RdKafkaConsumer`
+**模块**: connector_kafka
+
+**描述**: Kafka批量消息大小过大。RdKafkaConsumer.h中batch_size_默认值为100000，大量恶意消息可能导致内存耗尽。缺少消息大小限制和流量控制机制。
+
+**漏洞代码** (`cpp/connector/kafka/source/reader/RdKafkaConsumer.h:237-238`)
+
+```c
+int batch_size_ = 100000; // 默认批量大小
+```
+
+**达成路径**
+
+Kafka poll -> ConsumerRecords collection -> batch_size_ limit
+
+**验证说明**: batch_size_默认值较大。但该参数可配置，且Kafka消费有流量控制机制。实际DoS风险需评估。
+
+**评分明细**: base: 30 | controllability: 5 | context: -10 | cross_file: 0 | mitigations: 0 | reachability: 30
+
+---
+
+### [SEC-013] Race Condition - OmniAbstractStreamTaskNetworkInput::timerThread
+
+**严重性**: Medium | **CWE**: CWE-362 | **置信度**: 45/100 | **状态**: POSSIBLE | **来源**: security-auditor
+
+**位置**: `cpp/streaming/runtime/io/OmniAbstractStreamTaskNetworkInput.h:104-120` @ `OmniAbstractStreamTaskNetworkInput::timerThread`
+**模块**: streaming_runtime_io
+
+**描述**: 定时器线程与主线程竞态条件。OmniAbstractStreamTaskNetworkInput.h中timerThread与主线程共享rowList和rowCount，存在潜在的竞态条件。mutex保护不够全面，batchStartTime在锁外更新。
+
+**漏洞代码** (`cpp/streaming/runtime/io/OmniAbstractStreamTaskNetworkInput.h:104-120`)
+
+```c
+while (running_) {
+    std::unique_lock<std::mutex> lock(mutex_);
+    cv_.wait_for(lock, std::chrono::seconds(1), ...);
+    emitCurrentBatch(output_);
+}
+```
+
+**达成路径**
+
+timerThread -> rowList/rowCount access -> emitCurrentBatch -> main thread
+
+**验证说明**: 定时器线程竞态条件需进一步分析。mutex保护范围需验证是否充分。实际安全影响取决于共享数据的使用方式。
+
+**评分明细**: base: 30 | controllability: 0 | context: -10 | cross_file: 0 | mitigations: -5 | reachability: 20
+
+---
+
+## 5. Low 漏洞 (3)
+
+### [VULN-JNI-001] Memory Leak - Java_org_apache_flink_runtime_taskexecutor_TaskManagerRunner_initTMConfiguration
+
+**严重性**: Low | **CWE**: CWE-401 | **置信度**: 40/100 | **状态**: POSSIBLE | **来源**: dataflow-scanner
+
+**位置**: `cpp/jni/init.cpp:52-55` @ `Java_org_apache_flink_runtime_taskexecutor_TaskManagerRunner_initTMConfiguration`
+**模块**: jni
+
+**描述**: GetStringUTFChars returns a pointer to the Java string in initTMConfiguration, but it's never released with ReleaseStringUTFChars. This causes a memory leak as the JNI memory is not freed.
+
+**漏洞代码** (`cpp/jni/init.cpp:52-55`)
+
+```c
+const char *cStrCon = (env)->GetStringUTFChars(configStr, 0);
+nlohmann::json config = nlohmann::json::parse(cStrCon);
+Configuration::TM_CONFIG->setConfiguration(config);
+```
+
+**达成路径**
+
+JNIEnv::GetStringUTFChars -> nlohmann::json::parse -> Configuration::setConfiguration (memory never released)
+
+**验证说明**: 源代码确认缺少ReleaseStringUTFChars调用。但该函数很短且配置解析后进程继续运行，内存泄露影响有限。
+
+**评分明细**: base: 30 | controllability: 0 | context: -10 | cross_file: 0 | mitigations: 0 | reachability: 20
+
+---
+
+### [SEC-002] Memory Leak - Java_com_huawei_omniruntime_flink_runtime_tasks_OmniStreamTask_createNativeStreamTask
+
+**严重性**: Low | **CWE**: CWE-401 | **置信度**: 40/100 | **状态**: POSSIBLE | **来源**: security-auditor
+
+**位置**: `cpp/jni/tasks/jni_OmniStreamTask.cpp:18-40` @ `Java_com_huawei_omniruntime_flink_runtime_tasks_OmniStreamTask_createNativeStreamTask`
+**模块**: jni
+
+**描述**: JNI内存释放顺序不当。jni_OmniStreamTask.cpp中ReleaseStringUTFChars在JSON解析之后调用，若解析抛出异常则字符串资源无法释放。存在异常路径下的内存泄露风险。
+
+**漏洞代码** (`cpp/jni/tasks/jni_OmniStreamTask.cpp:18-40`)
+
+```c
+const char *cStrTDD = (env)->GetStringUTFChars(TDDString, 0);
+nlohmann::json tdd = nlohmann::json::parse(cStrTDD);
+...
+env->ReleaseStringUTFChars(TDDString, cStrTDD);
+```
+
+**达成路径**
+
+TDDString JNI -> GetStringUTFChars -> parse (may throw) -> ReleaseStringUTFChars (not reached on exception)
+
+**验证说明**: 内存释放顺序不当，异常路径下可能泄露。但影响有限，仅为单个JNI字符串资源。
+
+**评分明细**: base: 30 | controllability: 0 | context: -10 | cross_file: 0 | mitigations: 0 | reachability: 20
+
+---
+
+### [SEC-015] Improper Check for Unusual or Exceptional Conditions - OmniTaskBridgeImpl2::readMetaData
+
+**严重性**: Low | **CWE**: CWE-754 | **置信度**: 40/100 | **状态**: POSSIBLE | **来源**: security-auditor
+
+**位置**: `cpp/jni/bridge/OmniTaskBridgeImpl2.cpp:847-850` @ `OmniTaskBridgeImpl2::readMetaData`
+**模块**: jni
+
+**描述**: JNI异常处理后继续执行。OmniTaskBridgeImpl2.cpp多处JNI调用后检查ExceptionCheck并清除异常，但函数继续执行返回空值或默认值，可能导致后续逻辑异常。缺少正确错误传播机制。
+
+**漏洞代码** (`cpp/jni/bridge/OmniTaskBridgeImpl2.cpp:847-850`)
+
+```c
+if (env->ExceptionCheck()) {
+    env->ExceptionDescribe();
+    env->ExceptionClear();
+}
+```
+
+**达成路径**
+
+JNI CallObjectMethod -> ExceptionCheck -> ExceptionClear -> continue execution
+
+**验证说明**: JNI异常处理后继续执行存在风险。但函数有返回值处理，实际影响需评估后续逻辑是否能正确处理空值。
+
+**评分明细**: base: 30 | controllability: 0 | context: -10 | cross_file: 0 | mitigations: 0 | reachability: 20
 
 ---
 
@@ -552,18 +933,67 @@ Java jbyteArray → GetByteArrayElements → jbyte* dataBytes → state data pro
 
 | 模块 | Critical | High | Medium | Low | 合计 |
 |------|----------|------|--------|-----|------|
-| connector_kafka | 0 | 1 | 1 | 0 | 2 |
-| cross_module | 0 | 1 | 0 | 0 | 1 |
-| jni | 0 | 2 | 2 | 2 | 6 |
-| runtime_io_network | 0 | 1 | 1 | 0 | 2 |
-| runtime_state | 0 | 0 | 1 | 0 | 1 |
-| streaming_runtime_tasks | 0 | 0 | 3 | 0 | 3 |
-| **合计** | **0** | **5** | **8** | **2** | **15** |
+| connector_kafka | 0 | 1 | 2 | 0 | 3 |
+| core_memory | 0 | 0 | 1 | 0 | 1 |
+| core_serialization | 0 | 1 | 0 | 0 | 1 |
+| cross_module | 0 | 2 | 0 | 0 | 2 |
+| jni | 0 | 9 | 2 | 3 | 14 |
+| runtime_buffer | 0 | 1 | 0 | 0 | 1 |
+| runtime_io_network | 0 | 2 | 1 | 0 | 3 |
+| streaming_runtime_io | 0 | 2 | 1 | 0 | 3 |
+| table_sources | 0 | 0 | 4 | 0 | 4 |
+| **合计** | **0** | **18** | **11** | **3** | **32** |
 
 ## 7. CWE 分布
 
 | CWE | 数量 | 占比 |
 |-----|------|------|
-| CWE-502 | 11 | 73.3% |
-| CWE-190 | 3 | 20.0% |
-| CWE-78 | 1 | 6.7% |
+| CWE-20 | 10 | 31.3% |
+| CWE-502 | 4 | 12.5% |
+| CWE-125 | 3 | 9.4% |
+| CWE-119 | 3 | 9.4% |
+| CWE-476 | 2 | 6.3% |
+| CWE-401 | 2 | 6.3% |
+| CWE-754 | 1 | 3.1% |
+| CWE-710 | 1 | 3.1% |
+| CWE-400 | 1 | 3.1% |
+| CWE-362 | 1 | 3.1% |
+| CWE-22 | 1 | 3.1% |
+| CWE-190 | 1 | 3.1% |
+| CWE-129 | 1 | 3.1% |
+| CWE-120 | 1 | 3.1% |
+
+---
+
+## 8. 后续验证建议
+
+### 优先验证的漏洞
+
+以下 LIKELY 状态漏洞建议优先进行人工验证：
+
+1. **VULN-STREAM-002 / SEC-009** — NULL 指针解引用，需验证 ObjectSegment::getObject 返回值
+2. **VULN-JNI-003** — TDD JSON 解析异常处理，需验证异常场景下的内存管理
+3. **VULN-NET-001** — 网络数据长度验证，需评估 canReadRecord 检查的完整性
+
+### 验证方法建议
+
+| 漏洞类型 | 验证方法 |
+|----------|----------|
+| JSON 解析异常处理 | 构造畸形 JSON payload 进行 fuzz 测试 |
+| 越界访问 | 构造超大 size/offset 值的网络数据包进行测试 |
+| NULL 指针解引用 | 源代码审查 + 动态测试验证指针检查逻辑 |
+| 内存泄露 | 长期运行测试 + 内存分析工具检测 |
+| 竞态条件 | 多线程并发测试 + 静态分析工具检测 |
+
+---
+
+## 附录：与已确认漏洞的关联
+
+以下待确认漏洞与已确认漏洞存在关联：
+
+| 待确认漏洞 | 关联的已确认漏洞 | 关联类型 |
+|------------|------------------|----------|
+| VULN-STREAM-002 | VULN-STREAM-001 | 同一文件，不同风险点 (NULL vs OOB) |
+| VULN-NET-001 | VULN-CROSS-004 | 同一模块，不同验证缺口 |
+| SEC-003 | VULN-JNI-007 | 同一漏洞，不同发现者 |
+| SEC-006 | VULN-NET-001 | 同一漏洞，不同发现者 |

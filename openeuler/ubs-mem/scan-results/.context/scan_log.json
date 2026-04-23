@@ -1,0 +1,113 @@
+{
+  "scan_id": "ubs-mem-scan-001",
+  "start_time": "2026-04-22T21:41:00+08:00",
+  "end_time": "2026-04-22T22:12:37+08:00",
+  "duration_seconds": 1897,
+  "status": "success",
+  "project_name": "ubs-mem",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/openeuler/ubs-mem",
+  "agents": [
+    {
+      "name": "architecture",
+      "start_time": "2026-04-22T21:41:30+08:00",
+      "end_time": "2026-04-22T21:47:13+08:00",
+      "status": "success",
+      "output_files": [
+        "scan-results/.context/project_model.json",
+        "scan-results/.context/call_graph.json",
+        "scan-results/threat_analysis_report.md"
+      ],
+      "summary": {
+        "total_files": 194,
+        "modules": 13,
+        "entry_points": 13,
+        "high_risk_modules": 5
+      }
+    },
+    {
+      "name": "dataflow-scanner",
+      "start_time": "2026-04-22T21:47:15+08:00",
+      "end_time": "2026-04-22T21:51:39+08:00",
+      "status": "success",
+      "output_files": [],
+      "summary": {
+        "modules_scanned": 13,
+        "candidates_found": 19,
+        "critical": 1,
+        "high": 6,
+        "medium": 10,
+        "low": 2
+      }
+    },
+    {
+      "name": "security-auditor",
+      "start_time": "2026-04-22T21:47:22+08:00",
+      "end_time": "2026-04-22T21:51:53+08:00",
+      "status": "success",
+      "output_files": [],
+      "summary": {
+        "modules_scanned": 13,
+        "candidates_found": 6,
+        "high": 6
+      }
+    },
+    {
+      "name": "verification",
+      "start_time": "2026-04-22T21:51:55+08:00",
+      "end_time": "2026-04-22T21:54:13+08:00",
+      "status": "success",
+      "output_files": [],
+      "summary": {
+        "candidates_total": 31,
+        "confirmed": 5,
+        "likely": 15,
+        "possible": 9,
+        "false_positive": 3
+      }
+    },
+    {
+      "name": "details-analyzer",
+      "start_time": "2026-04-22T22:04:00+08:00",
+      "end_time": "2026-04-22T22:08:20+08:00",
+      "status": "success",
+      "output_files": [
+        "scan-results/details/VUL-UNDER-API-001.md",
+        "scan-results/details/VULN-SEC-DLOCK-001.md",
+        "scan-results/details/VULN-SEC-DLOCK-002.md",
+        "scan-results/details/mxm_msg_handler_no_check.md",
+        "scan-results/details/VULN-COM-001.md"
+      ],
+      "summary": {
+        "confirmed_vulns": 5,
+        "reports_generated": 5
+      }
+    },
+    {
+      "name": "reporter",
+      "start_time": "2026-04-22T22:10:00+08:00",
+      "end_time": "2026-04-22T22:12:37+08:00",
+      "status": "success",
+      "output_files": [
+        "scan-results/report_confirmed.md",
+        "scan-results/report_unconfirmed.md"
+      ],
+      "summary": {
+        "confirmed_report_lines": 400,
+        "unconfirmed_report_lines": 700
+      }
+    }
+  ],
+  "summary": {
+    "total_vulnerabilities": 31,
+    "confirmed": 5,
+    "likely": 15,
+    "possible": 9,
+    "false_positive": 3,
+    "critical_severity": 3,
+    "high_severity": 6,
+    "medium_severity": 18,
+    "low_severity": 4,
+    "files_scanned": 194,
+    "modules_analyzed": 13
+  }
+}

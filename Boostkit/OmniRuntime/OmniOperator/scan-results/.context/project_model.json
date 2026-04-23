@@ -1,400 +1,373 @@
 {
   "project_name": "OmniOperator",
-  "scan_time": "2026-04-19T12:00:00Z",
-  "lsp_available": true,
-  "total_files": 596,
-  "total_lines": 150000,
-  "project_profile": {
-    "project_type": "library",
-    "deployment_model": "作为大数据引擎(Spark/Hive)的加速库，通过 JNI 被调用。部署在服务器集群的计算节点上，与 Spark/Hive JVM 进程在同一机器上运行。",
-    "trust_boundaries": [
-      {
-        "boundary": "JNI 接口边界",
-        "trusted_side": "C++ Native 算子实现",
-        "untrusted_side": "Spark/Hive Java 适配层",
-        "risk": "Critical"
-      },
-      {
-        "boundary": "配置文件边界",
-        "trusted_side": "管理员控制的配置文件 (/opt/omni.conf)",
-        "untrusted_side": "环境变量 OMNI_HOME/OMNI_CONF",
-        "risk": "Medium"
-      },
-      {
-        "boundary": "UDF 执行边界",
-        "trusted_side": "C++ Native 算子",
-        "untrusted_side": "用户定义的 Java UDF 函数",
-        "risk": "High"
-      },
-      {
-        "boundary": "数据输入边界",
-        "trusted_side": "内部数据处理",
-        "untrusted_side": "从数据文件(ORC/Parquet)读取的数据",
-        "risk": "Medium"
-      }
-    ]
+  "project_type": "C/C++ Native Runtime Library",
+  "language": "C++17",
+  "description": "OmniRuntime operator library for big data processing, providing native operators for query execution",
+  "root_directory": "/home/pwn20tty/Desktop/opencode_project/kunpeng/boostkit/OmniRuntime/OmniOperator",
+  "statistics": {
+    "total_source_files": 291,
+    "total_header_files": 304,
+    "total_cpp_files": 163,
+    "total_c_files": 0,
+    "total_python_files": 4,
+    "total_java_files": 20,
+    "total_directories": 75
   },
   "modules": [
     {
-      "name": "jni_bindings",
-      "path": "bindings/java/src/main/cpp/src",
-      "language": "c_cpp",
-      "components": ["jni_operator.cpp", "jni_operator_factory.cpp", "jni_vector.cpp", "jni_helper.cpp", "jni_common_def.cpp"]
+      "name": "bindings",
+      "path": "bindings/java",
+      "type": "JNI Interface",
+      "description": "Java JNI bindings for native operator execution",
+      "languages": ["Java", "C++"],
+      "risk_level": "HIGH",
+      "is_entry_point": true,
+      "entry_point_type": "JNI",
+      "files": [
+        "bindings/java/src/main/cpp/src/jni_operator.cpp",
+        "bindings/java/src/main/cpp/src/jni_operator.h",
+        "bindings/java/src/main/cpp/src/jni_vector.cpp",
+        "bindings/java/src/main/cpp/src/jni_vector.h",
+        "bindings/java/src/main/cpp/src/jni_operator_factory.cpp",
+        "bindings/java/src/main/cpp/src/jni_operator_factory.h",
+        "bindings/java/src/main/cpp/src/jni_helper.cpp",
+        "bindings/java/src/main/cpp/src/jni_helper.h"
+      ]
     },
     {
-      "name": "operator",
-      "path": "core/src/operator",
-      "language": "c_cpp",
-      "components": ["aggregation/", "join/", "sort/", "filter/", "window/", "topn/", "limit/", "union/", "spill/"]
-    },
-    {
-      "name": "codegen",
-      "path": "core/src/codegen",
-      "language": "c_cpp",
-      "components": ["llvm_engine.cpp", "expression_codegen.cpp", "filter_codegen.cpp", "projection_codegen.cpp", "functions/"]
+      "name": "udf",
+      "path": "core/src/udf",
+      "type": "User Defined Functions",
+      "description": "UDF execution framework supporting Java Hive UDFs",
+      "languages": ["C++", "Java"],
+      "risk_level": "HIGH",
+      "is_entry_point": true,
+      "entry_point_type": "External Code Execution",
+      "files": [
+        "core/src/udf/cplusplus/java_udf_functions.cpp",
+        "core/src/udf/cplusplus/java_udf_functions.h",
+        "core/src/udf/cplusplus/jni_util.cpp",
+        "core/src/udf/cplusplus/jni_util.h",
+        "core/src/udf/java/src/main/java/omniruntime/udf/HiveUdfExecutor.java"
+      ]
     },
     {
       "name": "expression",
       "path": "core/src/expression",
-      "language": "c_cpp",
-      "components": ["parser/", "jsonparser/", "expressions.cpp", "expr_visitor.cpp", "expr_verifier.cpp"]
+      "type": "Expression Parser",
+      "description": "Expression parsing and evaluation for query predicates",
+      "languages": ["C++"],
+      "risk_level": "HIGH",
+      "is_entry_point": true,
+      "entry_point_type": "Input Parsing",
+      "files": [
+        "core/src/expression/jsonparser/jsonparser.cpp",
+        "core/src/expression/jsonparser/jsonparser.h",
+        "core/src/expression/parser/parser.cpp",
+        "core/src/expression/parser/parser.h",
+        "core/src/expression/parserhelper.cpp",
+        "core/src/expression/expressions.cpp",
+        "core/src/expression/expressions.h"
+      ]
+    },
+    {
+      "name": "operator",
+      "path": "core/src/operator",
+      "type": "Data Processing Operators",
+      "description": "Native operators for data transformation (filter, join, aggregate, sort, etc.)",
+      "languages": ["C++"],
+      "risk_level": "MEDIUM",
+      "is_entry_point": false,
+      "sub_modules": [
+        "aggregation",
+        "filter",
+        "join",
+        "limit",
+        "sort",
+        "topn",
+        "window",
+        "union",
+        "projection",
+        "expand",
+        "grouping",
+        "hashmap",
+        "spill"
+      ]
+    },
+    {
+      "name": "codegen",
+      "path": "core/src/codegen",
+      "type": "Function Registry & Code Generation",
+      "description": "Function registry, expression evaluation, and LLVM code generation",
+      "languages": ["C++"],
+      "risk_level": "MEDIUM",
+      "is_entry_point": false,
+      "files": [
+        "core/src/codegen/func_registry.h",
+        "core/src/codegen/func_registry.cpp",
+        "core/src/codegen/expr_evaluator.h",
+        "core/src/codegen/function.h",
+        "core/src/codegen/func_signature.h"
+      ]
     },
     {
       "name": "vector",
       "path": "core/src/vector",
-      "language": "c_cpp",
-      "components": ["vector.h", "vector_batch.cpp", "large_string_container.cpp", "array_vector.cpp", "map_vector.cpp"]
+      "type": "Vector Processing",
+      "description": "Columnar vector data structures and operations",
+      "languages": ["C++"],
+      "risk_level": "LOW",
+      "is_entry_point": false
     },
     {
       "name": "memory",
       "path": "core/src/memory",
-      "language": "c_cpp",
-      "components": ["memory_pool.h", "memory_manager.h", "aligned_buffer.h", "allocator.h"]
+      "type": "Memory Management",
+      "description": "Memory pool, allocator, and memory tracking",
+      "languages": ["C++"],
+      "risk_level": "LOW",
+      "is_entry_point": false
     },
     {
       "name": "type",
       "path": "core/src/type",
-      "language": "c_cpp",
-      "components": ["data_type.h", "decimal128.cpp", "integer256.cpp", "date32.cpp", "big_integer.cpp", "data_type_serializer.cpp"]
-    },
-    {
-      "name": "udf",
-      "path": "core/src/udf/cplusplus",
-      "language": "c_cpp",
-      "components": ["java_udf_functions.cpp", "jni_util.cpp"]
+      "type": "Type System",
+      "description": "Data type definitions and serialization",
+      "languages": ["C++"],
+      "risk_level": "MEDIUM",
+      "is_entry_point": false,
+      "files": [
+        "core/src/type/data_type.h",
+        "core/src/type/data_type_serializer.cpp",
+        "core/src/type/data_types.h"
+      ]
     },
     {
       "name": "util",
       "path": "core/src/util",
-      "language": "c_cpp",
-      "components": ["config_util.cpp", "native_log.cpp", "perf_util.cpp", "type_util.cpp", "error_code.cpp"]
+      "type": "Utilities",
+      "description": "Error handling, logging, configuration utilities",
+      "languages": ["C++"],
+      "risk_level": "LOW",
+      "is_entry_point": false
     },
     {
-      "name": "compute",
-      "path": "core/src/compute",
-      "language": "c_cpp",
-      "components": ["driver.cpp", "task.cpp", "process_base.cpp", "ResultIterator.cpp"]
+      "name": "operator_config",
+      "path": "core/src/operator/config",
+      "type": "Configuration",
+      "description": "Operator configuration including spill and overflow settings",
+      "languages": ["C++"],
+      "risk_level": "MEDIUM",
+      "is_entry_point": true,
+      "entry_point_type": "Configuration Parsing",
+      "files": [
+        "core/src/operator/config/operator_config.cpp",
+        "core/src/operator/config/operator_config.h"
+      ]
     },
     {
-      "name": "simd",
-      "path": "core/src/simd",
-      "language": "c_cpp",
-      "components": ["func/quick_sort_simd.cpp", "instruction/"]
-    },
-    {
-      "name": "plannode",
-      "path": "core/src/plannode",
-      "language": "c_cpp",
-      "components": ["planNode.cpp", "planFragment.cpp"]
-    }
-  ],
-  "files": [
-    {
-      "path": "bindings/java/src/main/cpp/src/jni_operator.cpp",
-      "language": "c_cpp",
-      "risk": "Critical",
-      "module": "jni_bindings",
-      "lines": 377,
-      "priority": 1
-    },
-    {
-      "path": "bindings/java/src/main/cpp/src/jni_operator_factory.cpp",
-      "language": "c_cpp",
-      "risk": "Critical",
-      "module": "jni_bindings",
-      "lines": 1200,
-      "priority": 2
-    },
-    {
-      "path": "core/src/udf/cplusplus/java_udf_functions.cpp",
-      "language": "c_cpp",
-      "risk": "High",
-      "module": "udf",
-      "lines": 179,
-      "priority": 3
-    },
-    {
-      "path": "core/src/udf/cplusplus/jni_util.cpp",
-      "language": "c_cpp",
-      "risk": "High",
-      "module": "udf",
-      "lines": 280,
-      "priority": 4
-    },
-    {
-      "path": "core/src/codegen/llvm_engine.cpp",
-      "language": "c_cpp",
-      "risk": "High",
-      "module": "codegen",
-      "lines": 331,
-      "priority": 5
-    },
-    {
-      "path": "core/src/expression/jsonparser/jsonparser.h",
-      "language": "c_cpp",
-      "risk": "High",
-      "module": "expression",
-      "lines": 40,
-      "priority": 6
-    },
-    {
-      "path": "core/src/type/data_type_serializer.cpp",
-      "language": "c_cpp",
-      "risk": "High",
-      "module": "type",
-      "lines": 90,
-      "priority": 7
-    },
-    {
-      "path": "core/src/operator/spill/spiller.cpp",
-      "language": "c_cpp",
-      "risk": "Medium",
-      "module": "operator",
-      "lines": 495,
-      "priority": 8
-    },
-    {
-      "path": "core/src/codegen/functions/json_functions.cpp",
-      "language": "c_cpp",
-      "risk": "High",
-      "module": "codegen",
-      "lines": 51,
-      "priority": 9
-    },
-    {
-      "path": "core/src/util/config_util.cpp",
-      "language": "c_cpp",
-      "risk": "Medium",
-      "module": "util",
-      "lines": 385,
-      "priority": 10
-    },
-    {
-      "path": "core/src/vector/vector.h",
-      "language": "c_cpp",
-      "risk": "Medium",
-      "module": "vector",
-      "lines": 751,
-      "priority": 11
-    },
-    {
-      "path": "core/src/vector/large_string_container.cpp",
-      "language": "c_cpp",
-      "risk": "Medium",
-      "module": "vector",
-      "lines": 100,
-      "priority": 12
-    },
-    {
-      "path": "core/src/codegen/functions/stringfunctions.cpp",
-      "language": "c_cpp",
-      "risk": "Medium",
-      "module": "codegen",
-      "lines": 1500,
-      "priority": 13
-    },
-    {
-      "path": "core/src/operator/aggregation/aggregation.cpp",
-      "language": "c_cpp",
-      "risk": "Medium",
-      "module": "operator",
-      "lines": 300,
-      "priority": 14
-    },
-    {
-      "path": "core/src/operator/join/lookup_join.cpp",
-      "language": "c_cpp",
-      "risk": "Medium",
-      "module": "operator",
-      "lines": 250,
-      "priority": 15
-    },
-    {
-      "path": "core/src/codegen/functions/md5.cpp",
-      "language": "c_cpp",
-      "risk": "Medium",
-      "module": "codegen",
-      "lines": 250,
-      "priority": 16
-    },
-    {
-      "path": "core/src/memory/memory_pool.cpp",
-      "language": "c_cpp",
-      "risk": "Medium",
-      "module": "memory",
-      "lines": 160,
-      "priority": 17
-    },
-    {
-      "path": "core/src/operator/hashmap/vector_marshaller.cpp",
-      "language": "c_cpp",
-      "risk": "Medium",
-      "module": "operator",
-      "lines": 200,
-      "priority": 18
-    },
-    {
-      "path": "core/src/simd/func/quick_sort_simd.cpp",
-      "language": "c_cpp",
-      "risk": "Low",
-      "module": "simd",
-      "lines": 150,
-      "priority": 19
-    },
-    {
-      "path": "core/src/codegen/functions/datetime_functions.cpp",
-      "language": "c_cpp",
-      "risk": "Medium",
-      "module": "codegen",
-      "lines": 200,
-      "priority": 20
+      "name": "externalfunctions",
+      "path": "examples/externalfunctions",
+      "type": "External Function Example",
+      "description": "Example of externally registered native functions",
+      "languages": ["C++"],
+      "risk_level": "HIGH",
+      "is_entry_point": true,
+      "entry_point_type": "Dynamic Loading",
+      "files": [
+        "examples/externalfunctions/externalfunctions.cpp",
+        "examples/externalfunctions/externalfunctions.h",
+        "examples/externalfunctions/externalregistration.conf"
+      ]
     }
   ],
   "entry_points": [
     {
+      "id": "jni_operator_addInput",
+      "name": "addInputNative",
       "file": "bindings/java/src/main/cpp/src/jni_operator.cpp",
       "line": 159,
-      "function": "Java_nova_hetu_omniruntime_operator_OmniOperator_addInputNative",
-      "type": "jni",
-      "trust_level": "semi_trusted",
-      "justification": "JNI 接口，由 Spark/Hive Java 适配层调用，传入 VectorBatch 数据地址。调用方是与 C++ 在同一进程的 JVM，非远程网络调用。",
-      "description": "接收来自 Java 端的输入数据向量批次"
+      "type": "JNI",
+      "description": "JNI entry point for adding input data to operator",
+      "parameters": ["jlong jOperatorAddress", "jlong jVecBatchAddress"],
+      "data_flow": "External (Java) -> Internal (C++ Operator)",
+      "risk_factors": ["Pointer cast from jlong", "Direct memory access", "No bounds validation"]
     },
     {
+      "id": "jni_operator_getOutput",
+      "name": "getOutputNative",
       "file": "bindings/java/src/main/cpp/src/jni_operator.cpp",
       "line": 178,
-      "function": "Java_nova_hetu_omniruntime_operator_OmniOperator_getOutputNative",
-      "type": "jni",
-      "trust_level": "semi_trusted",
-      "justification": "JNI 接口，返回处理结果到 Java 端。调用方是与 C++ 在同一进程的 JVM。",
-      "description": "返回处理结果到 Java 端"
+      "type": "JNI",
+      "description": "JNI entry point for getting output from operator",
+      "parameters": ["jlong jOperatorAddr"],
+      "data_flow": "Internal (C++ Operator) -> External (Java)",
+      "risk_factors": ["Pointer cast from jlong", "Memory exposure via VecBatch addresses"]
     },
     {
+      "id": "jni_operator_factory_create",
+      "name": "createOperatorNative",
       "file": "bindings/java/src/main/cpp/src/jni_operator_factory.cpp",
       "line": 156,
-      "function": "Java_nova_hetu_omniruntime_operator_OmniOperatorFactory_createOperatorNative",
-      "type": "jni",
-      "trust_level": "semi_trusted",
-      "justification": "JNI 接口，创建算子实例。调用方是与 C++ 在同一进程的 JVM。",
-      "description": "创建算子实例"
+      "type": "JNI",
+      "description": "JNI entry point for creating operator factories",
+      "parameters": ["jlong jNativeFactoryObj"],
+      "data_flow": "External (Java) -> Internal (C++ Factory)",
+      "risk_factors": ["Pointer manipulation", "Factory creation chain"]
     },
     {
+      "id": "jni_operator_factory_filter_project",
+      "name": "createFilterAndProjectOperatorFactory",
       "file": "bindings/java/src/main/cpp/src/jni_operator_factory.cpp",
-      "line": 458,
-      "function": "Java_nova_hetu_omniruntime_operator_filter_OmniFilterAndProjectOperatorFactory_createFilterAndProjectOperatorFactory",
-      "type": "jni",
-      "trust_level": "semi_trusted",
-      "justification": "JNI 接口，接收 JSON 格式的表达式字符串进行解析。表达式来自 SQL 查询解析结果，可能包含用户输入的表达式。",
-      "description": "创建过滤和投影算子，解析 JSON 表达式"
+      "line": 457,
+      "type": "JNI",
+      "description": "JNI entry point creating filter/project operator with expression parsing",
+      "parameters": ["jstring jInputTypes", "jstring jExpression", "jobjectArray jProjections", "jstring jOperatorConfig"],
+      "data_flow": "External (Java JSON) -> Internal (C++ Expression Parser)",
+      "risk_factors": ["JSON expression parsing", "Expression injection", "Configuration deserialization"]
     },
     {
-      "file": "core/src/expression/jsonparser/jsonparser.h",
-      "line": 21,
-      "function": "JSONParser::ParseJSON",
-      "type": "decorator",
-      "trust_level": "semi_trusted",
-      "justification": "解析从 Java 端传入的 JSON 格式表达式。表达式来自 Spark/Hive SQL 解析器，包含用户 SQL 查询中的表达式。",
-      "description": "解析 JSON 格式的表达式"
+      "id": "json_expression_parser",
+      "name": "ParseJSON",
+      "file": "core/src/expression/jsonparser/jsonparser.cpp",
+      "line": 530,
+      "type": "Parser",
+      "description": "JSON expression parser for query predicates",
+      "parameters": ["nlohmann::json jsonExpr"],
+      "data_flow": "External (JSON string) -> Internal (Expr tree)",
+      "risk_factors": ["Recursive parsing", "Type coercion", "Function lookup by name"]
     },
     {
-      "file": "core/src/type/data_type_serializer.cpp",
-      "line": 23,
-      "function": "Deserialize",
-      "type": "decorator",
-      "trust_level": "semi_trusted",
-      "justification": "反序列化从 Java 端传入的数据类型 JSON 字符串。数据类型描述来自 Spark/Hive 的查询计划。",
-      "description": "反序列化数据类型 JSON"
-    },
-    {
+      "id": "udf_executor_single",
+      "name": "ExecuteHiveUdfSingle",
       "file": "core/src/udf/cplusplus/java_udf_functions.cpp",
       "line": 42,
-      "function": "ExecuteHiveUdfSingle",
-      "type": "jni",
-      "trust_level": "untrusted_local",
-      "justification": "执行用户定义的 Hive UDF 函数，UDF 类名来自配置或用户输入。用户可以通过 SQL 查询指定自定义 UDF。",
-      "description": "执行用户定义的 Hive UDF 函数"
+      "type": "UDF",
+      "description": "Execute Hive UDF via JNI with single row",
+      "parameters": ["const char *udfClass", "int32_t *inputTypes", "int64_t inputValueAddr"],
+      "data_flow": "External (Java UDF Class) -> Native memory",
+      "risk_factors": ["External code execution", "Class name injection", "Direct memory pointers"]
     },
     {
-      "file": "core/src/util/config_util.cpp",
-      "line": 21,
-      "function": "GetOmniHome",
-      "type": "env",
-      "trust_level": "trusted_admin",
-      "justification": "读取 OMNI_HOME 环境变量，由部署人员/管理员在启动脚本中设置。非用户可控。",
-      "description": "读取 OMNI_HOME 环境变量"
+      "id": "udf_executor_batch",
+      "name": "ExecuteHiveUdfBatch",
+      "file": "core/src/udf/cplusplus/java_udf_functions.cpp",
+      "line": 166,
+      "type": "UDF",
+      "description": "Execute Hive UDF via JNI with batch data",
+      "parameters": ["const char *udfClass", "int32_t rowCount", "int64_t *inputValues"],
+      "data_flow": "External (Java UDF Class) -> Native memory batch",
+      "risk_factors": ["External code execution", "Batch memory manipulation"]
     },
     {
-      "file": "core/src/util/config_util.cpp",
-      "line": 34,
-      "function": "GetConfigFilePath",
-      "type": "env",
-      "trust_level": "trusted_admin",
-      "justification": "读取 OMNI_CONF 环境变量，由部署人员/管理员在启动脚本中设置。配置文件由管理员控制。",
-      "description": "读取 OMNI_CONF 环境变量"
+      "id": "config_deserialize",
+      "name": "DeserializeOperatorConfig",
+      "file": "core/src/operator/config/operator_config.cpp",
+      "line": 67,
+      "type": "Configuration",
+      "description": "Deserialize operator configuration from JSON",
+      "parameters": ["const std::string &configString"],
+      "data_flow": "External (JSON string) -> Internal (SpillConfig)",
+      "risk_factors": ["File system operations (mkdir)", "Spill path injection", "JSON parsing"]
     },
     {
-      "file": "core/src/operator/spill/spiller.cpp",
-      "line": 173,
-      "function": "SpillWriter::WriteVecBatch",
-      "type": "file",
-      "trust_level": "trusted_admin",
-      "justification": "Spill 文件路径由配置目录决定，目录由管理员控制。文件名由进程 ID 和线程 ID 生成。",
-      "description": "写入 Spill 临时文件"
+      "id": "data_type_deserialize",
+      "name": "Deserialize",
+      "file": "core/src/type/data_type_serializer.cpp",
+      "line": 23,
+      "type": "Parser",
+      "description": "Deserialize data types from JSON string",
+      "parameters": ["const std::string &dataTypes"],
+      "data_flow": "External (JSON string) -> Internal (DataTypes)",
+      "risk_factors": ["Type manipulation", "JSON parsing"]
     },
     {
-      "file": "core/src/udf/cplusplus/jni_util.cpp",
-      "line": 144,
-      "function": "CreateJavaVM",
-      "type": "env",
-      "trust_level": "trusted_admin",
-      "justification": "读取 OMNI_OPERATOR_CLASSPATH 环境变量设置 JVM classpath。由部署人员/管理员在启动脚本中设置。",
-      "description": "创建 JVM 时读取 classpath 环境变量"
-    },
-    {
+      "id": "row_parser",
+      "name": "ParseOnRow",
       "file": "bindings/java/src/main/cpp/src/jni_operator.cpp",
-      "line": 348,
-      "function": "Java_nova_hetu_omniruntime_vector_serialize_OmniRowDeserializer_parseOneRow",
-      "type": "jni",
-      "trust_level": "semi_trusted",
-      "justification": "JNI 接口，解析单行数据。数据来自 Shuffle 传输的序列化行数据，可能来自其他节点。",
-      "description": "解析序列化的单行数据"
-    },
-    {
-      "file": "core/src/codegen/llvm_engine.cpp",
-      "line": 26,
-      "function": "LLVMEngine::LLVMEngine",
-      "type": "decorator",
-      "trust_level": "internal",
-      "justification": "LLVM JIT 引擎初始化，用于代码生成。表达式来自内部解析结果，非直接用户输入。",
-      "description": "初始化 LLVM JIT 代码生成引擎"
+      "line": 354,
+      "type": "JNI",
+      "description": "Parse row data from byte array via JNI",
+      "parameters": ["jlong parserAddr", "jbyteArray bytes", "jint rowIndex"],
+      "data_flow": "External (Java byte array) -> Internal (RowParser)",
+      "risk_factors": ["Raw byte array input", "Pointer manipulation"]
     }
   ],
-  "attack_surfaces": [
-    "JNI 接口层: 数据从 Java JVM 传入 C++ Native 层",
-    "JSON 表达式解析: 解析 SQL 表达式字符串",
-    "数据类型反序列化: 解析 JSON 格式数据类型描述",
-    "UDF 执行: 调用用户定义的 Java/Hive UDF 函数",
-    "Spill 文件操作: 内存溢出数据的临时文件读写",
-    "环境变量读取: OMNI_HOME, OMNI_CONF, OMNI_OPERATOR_CLASSPATH"
-  ]
+  "attack_surface": {
+    "external_interfaces": [
+      "JNI (Java Native Interface)",
+      "JSON Expression Parsing",
+      "Configuration Deserialization",
+      "Hive UDF Execution",
+      "External Function Registration"
+    ],
+    "data_flow_paths": [
+      {
+        "name": "Query Execution Path",
+        "entry": "JNI Operator Factory",
+        "flow": [
+          "jni_operator_factory.cpp -> Operator Factory creation",
+          "OperatorConfig::DeserializeOperatorConfig -> Configuration parsing",
+          "JSONParser::ParseJSON -> Expression parsing",
+          "Operator::AddInput -> Data processing",
+          "Operator::GetOutput -> Results output"
+        ]
+      },
+      {
+        "name": "UDF Execution Path",
+        "entry": "JNI UDF invocation",
+        "flow": [
+          "ExecuteHiveUdfSingle/ExecuteHiveUdfBatch -> UDF execution",
+          "JniUtil::GetJNIEnv -> JVM access",
+          "HiveUdfExecutor.executeSingle/executeBatch -> Java UDF",
+          "Output buffer manipulation"
+        ]
+      },
+      {
+        "name": "Expression Parsing Path",
+        "entry": "JSON Expression string",
+        "flow": [
+          "nlohmann::json::parse -> JSON parsing",
+          "JSONParser::ParseJSON -> Expression tree building",
+          "FunctionRegistry::LookupFunction -> Function lookup",
+          "FuncExpr -> Function execution"
+        ]
+      }
+    ],
+    "trust_boundaries": [
+      {
+        "boundary": "Java JVM <-> Native C++",
+        "description": "JNI calls passing pointers and data between Java and native code",
+        "risk": "Type confusion, memory corruption, pointer injection"
+      },
+      {
+        "boundary": "External Configuration <-> Internal State",
+        "description": "JSON configuration strings controlling operator behavior",
+        "risk": "Configuration injection, path traversal"
+      },
+      {
+        "boundary": "Expression String <-> Expression Tree",
+        "description": "User-provided expressions parsed and executed",
+        "risk": "Expression injection, function name manipulation"
+      },
+      {
+        "boundary": "External UDF Class <-> Native Execution",
+        "description": "Java UDF class names used to invoke external code",
+        "risk": "Code injection, unauthorized class execution"
+      }
+    ]
+  },
+  "dependencies": {
+    "external_libraries": [
+      "nlohmann/json (JSON parsing)",
+      "LLVM (code generation)",
+      "securec (security functions)",
+      "Bun test framework"
+    ],
+    "system_dependencies": [
+      "JNI (Java Native Interface)",
+      "POSIX file system APIs",
+      "Memory management APIs"
+    ]
+  }
 }

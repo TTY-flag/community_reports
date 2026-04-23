@@ -1,0 +1,337 @@
+{
+  "functions": {
+    "ShmCreate@src/mxm_shm/ipc_handler.cpp": {
+      "defined_at": 118,
+      "calls": [
+        "UbseMemAdapter::ShmCreate@src/under_api/ubse/ubse_mem_adapter.cpp",
+        "RegionManager::GetRegionInfo@src/mxm_shm/region_manager.cpp",
+        "SHMManager::GetShareMemoryInfo@src/mxm_shm/shm_manager.cpp"
+      ],
+      "called_by": [
+        "MxmIpcServer::HandleMessage@src/communication/ipc/server/mxm_ipc_server.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "ShmMap@src/mxm_shm/ipc_handler.cpp": {
+      "defined_at": 584,
+      "calls": [
+        "UbseMemAdapter::ShmAttach@src/under_api/ubse/ubse_mem_adapter.cpp",
+        "SHMManager::GetShareMemoryInfo@src/mxm_shm/shm_manager.cpp",
+        "ShmMmapInner@src/mxm_shm/ipc_handler.cpp",
+        "CheckPermission@src/mxm_shm/ipc_handler.cpp"
+      ],
+      "called_by": [
+        "MxmIpcServer::HandleMessage@src/communication/ipc/server/mxm_ipc_server.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "ShmDelete@src/mxm_shm/ipc_handler.cpp": {
+      "defined_at": 308,
+      "calls": [
+        "UbseMemAdapter::ShmDelete@src/under_api/ubse/ubse_mem_adapter.cpp",
+        "SHMManager::GetMemoryUsersCountByName@src/mxm_shm/shm_manager.cpp",
+        "ShmPermissionCheck@src/mxm_shm/ipc_handler.cpp"
+      ],
+      "called_by": [
+        "MxmIpcServer::HandleMessage@src/communication/ipc/server/mxm_ipc_server.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "AppMallocMemory@src/mxm_lease/ipc_handler.cpp": {
+      "defined_at": 169,
+      "calls": [
+        "BorrowMemory@src/mxm_lease/ipc_handler.cpp",
+        "BorrowNewMemory@src/mxm_lease/ipc_handler.cpp",
+        "MLSManager::ReuseBufferedMem@src/mxm_lease/mls_manager.cpp",
+        "UbseMemAdapter::LeaseMalloc@src/under_api/ubse/ubse_mem_adapter.cpp"
+      ],
+      "called_by": [
+        "MxmIpcServer::HandleMessage@src/communication/ipc/server/mxm_ipc_server.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "HandleMemLock@src/mxm_shm/rpc_handler.cpp": {
+      "defined_at": 73,
+      "calls": [
+        "UbsmLock::Lock@src/dlock_utils/ubsm_lock.cpp"
+      ],
+      "called_by": [
+        "RpcServer::HandleMessage@src/communication/rpc/server/mxm_rpc_service.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "CreateChannel@src/communication/adapter/mxm_com_engine.cpp": {
+      "defined_at": 305,
+      "calls": [
+        "UBSHcomService::Connect@external",
+        "linkManager::InsertChannel@src/communication/adapter/mxm_com_engine.cpp"
+      ],
+      "called_by": [
+        "MxmCommunication::MxmComRpcConnect@src/communication/adapter/mxm_com_engine.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "Initialize@src/under_api/ubse/ubse_mem_adapter.cpp": {
+      "defined_at": 62,
+      "calls": [
+        "DlopenLibUbse@src/under_api/ubse/ubse_mem_adapter.cpp",
+        "SystemAdapter::DlOpen@external",
+        "SystemAdapter::DlSym@external"
+      ],
+      "called_by": [
+        "OckDaemon::StartServices@src/process/daemon/ock_daemon.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "High"
+    },
+    "LoadDecryptFunction@src/security/cryptor/ubs_cryptor_handler.cpp": {
+      "defined_at": 226,
+      "calls": [
+        "SystemAdapter::DlOpen@external",
+        "SystemAdapter::DlSym@external",
+        "validate_real_so@src/security/cryptor/ubs_cryptor_handler.cpp"
+      ],
+      "called_by": [
+        "UbsCryptorHandler::Initialize@src/security/cryptor/ubs_cryptor_handler.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "High"
+    },
+    "Decrypt@src/security/cryptor/ubs_cryptor_handler.cpp": {
+      "defined_at": 102,
+      "calls": [
+        "ReadFile@src/security/cryptor/ubs_cryptor_handler.cpp",
+        "decryptLibHandlePtr@external"
+      ],
+      "called_by": [
+        "InitLockTlsConfig@src/process/daemon/ock_daemon.cpp",
+        "InitRpcTlsConfig@src/process/daemon/ock_daemon.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "Initialize@src/process/daemon/ock_daemon.cpp": {
+      "defined_at": 288,
+      "calls": [
+        "CommonInitialize@src/process/daemon/ock_daemon.cpp",
+        "ServicesInitialize@src/process/daemon/ock_daemon.cpp",
+        "InitHtrace@src/process/daemon/ock_daemon.cpp",
+        "LoadDaemonConf@src/process/daemon/ock_daemon.cpp"
+      ],
+      "called_by": [],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "StartServices@src/process/daemon/ock_daemon.cpp": {
+      "defined_at": 533,
+      "calls": [
+        "CheckUbseStatus@src/process/daemon/ock_daemon.cpp",
+        "serviceManager::ServiceStart@external",
+        "RecordStore::Initialize@src/store/record_store.cpp",
+        "InitUbsmLock@src/process/daemon/ock_daemon.cpp"
+      ],
+      "called_by": [
+        "OckDaemon::Start@src/process/daemon/ock_daemon.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "Lock@src/dlock_utils/ubsm_lock.cpp": {
+      "defined_at": 400,
+      "calls": [
+        "DLockExecutor::Lock@external",
+        "DLockContext::Instance@src/dlock_utils/dlock_context.cpp"
+      ],
+      "called_by": [
+        "HandleMemLock@src/mxm_shm/rpc_handler.cpp",
+        "ShmWriteLock@src/mxm_shm/ipc_handler.cpp",
+        "ShmReadLock@src/mxm_shm/ipc_handler.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "Init@src/dlock_utils/ubsm_lock.cpp": {
+      "defined_at": 33,
+      "calls": [
+        "DLockExecutor::InitDLockDlopenLib@src/dlock_utils/dlock_executor.cpp",
+        "DlockServerInit@src/dlock_utils/ubsm_lock.cpp",
+        "DlockClientLibInit@src/dlock_utils/ubsm_lock.cpp"
+      ],
+      "called_by": [
+        "InitUbsmLock@src/process/daemon/ock_daemon.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "High"
+    },
+    "ShmPermissionCheck@src/mxm_shm/ipc_handler.cpp": {
+      "defined_at": 288,
+      "calls": [
+        "UbseMemAdapter::ShmGetUserData@src/under_api/ubse/ubse_mem_adapter.cpp"
+      ],
+      "called_by": [
+        "ShmDelete@src/mxm_shm/ipc_handler.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "CheckPermission@src/mxm_shm/ipc_handler.cpp": {
+      "defined_at": 442,
+      "calls": [
+        "CalculateProvidedPermissions@src/mxm_shm/ipc_handler.cpp",
+        "GetMaxOflag@src/mxm_shm/ipc_handler.cpp"
+      ],
+      "called_by": [
+        "ShmMmapInner@src/mxm_shm/ipc_handler.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "PingRequestInfo@src/mxm_shm/rpc_handler.cpp": {
+      "defined_at": 120,
+      "calls": [
+        "ZenDiscovery::HandlePingRequest@src/zen_discovery/zen_discovery.cpp"
+      ],
+      "called_by": [
+        "RpcServer::HandleMessage@src/communication/rpc/server/mxm_rpc_service.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "VoteRequestInfo@src/mxm_shm/rpc_handler.cpp": {
+      "defined_at": 184,
+      "calls": [
+        "ZenDiscovery::HandleVoteRequest@src/zen_discovery/zen_discovery.cpp"
+      ],
+      "called_by": [
+        "RpcServer::HandleMessage@src/communication/rpc/server/mxm_rpc_service.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "JoinRequestInfo@src/mxm_shm/rpc_handler.cpp": {
+      "defined_at": 151,
+      "calls": [
+        "ZenDiscovery::HandleJoinRequest@src/zen_discovery/zen_discovery.cpp"
+      ],
+      "called_by": [
+        "RpcServer::HandleMessage@src/communication/rpc/server/mxm_rpc_service.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "HandleElectionEvent@src/dlock_utils/ubsm_lock_event.cpp": {
+      "defined_at": 30,
+      "calls": [
+        "UbsmLock::Reinit@src/dlock_utils/ubsm_lock.cpp"
+      ],
+      "called_by": [
+        "ZenDiscovery::AddElectionListener@src/zen_discovery/zen_discovery.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "IPC Request (Unix Domain Socket)@src/communication/ipc/server/mxm_ipc_server.cpp",
+      "path": [
+        "MxmIpcServer::Start@src/communication/ipc/server/mxm_ipc_server.cpp",
+        "MxmComEngine::HandleMessage@src/communication/adapter/mxm_com_engine.cpp",
+        "ShmCreate@src/mxm_shm/ipc_handler.cpp"
+      ],
+      "sink": "UbseMemAdapter::ShmCreate@src/under_api/ubse/ubse_mem_adapter.cpp",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "IPC Request (name parameter)@src/mxm_shm/ipc_handler.cpp",
+      "path": [
+        "ShmCreate@src/mxm_shm/ipc_handler.cpp",
+        "CreateShmParam.name assignment@src/mxm_shm/ipc_handler.cpp:203"
+      ],
+      "sink": "UbseMemAdapter::ShmCreate@src/under_api/ubse/ubse_mem_adapter.cpp",
+      "sink_type": "api_call"
+    },
+    {
+      "source": "IPC Request (size parameter)@src/mxm_shm/ipc_handler.cpp",
+      "path": [
+        "ShmCreate@src/mxm_shm/ipc_handler.cpp",
+        "CreateShmParam.size assignment@src/mxm_shm/ipc_handler.cpp:204"
+      ],
+      "sink": "UbseMemAdapter::ShmCreate@src/under_api/ubse/ubse_mem_adapter.cpp",
+      "sink_type": "memory_size"
+    },
+    {
+      "source": "IPC Request (regionDesc)@src/mxm_shm/ipc_handler.cpp",
+      "path": [
+        "ShmCreate@src/mxm_shm/ipc_handler.cpp",
+        "StrUtil::StrToUint@src/mxm_shm/ipc_handler.cpp:161",
+        "createParam.privider.slot_ids@src/mxm_shm/ipc_handler.cpp:168"
+      ],
+      "sink": "UbseMemAdapter::ShmCreate@src/under_api/ubse/ubse_mem_adapter.cpp",
+      "sink_type": "array_index"
+    },
+    {
+      "source": "IPC Request (name/prot)@src/mxm_shm/ipc_handler.cpp",
+      "path": [
+        "ShmMap@src/mxm_shm/ipc_handler.cpp",
+        "importParam.name/prot assignment@src/mxm_shm/ipc_handler.cpp:629-635",
+        "ShmMmapInner@src/mxm_shm/ipc_handler.cpp:500"
+      ],
+      "sink": "UbseMemAdapter::ShmAttach@src/under_api/ubse/ubse_mem_adapter.cpp",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "IPC Request (udsInfo)@src/mxm_shm/ipc_handler.cpp",
+      "path": [
+        "ShmCreate@src/mxm_shm/ipc_handler.cpp",
+        "createParam.appContext assignment@src/mxm_shm/ipc_handler.cpp:205-207"
+      ],
+      "sink": "UbseMemAdapter::ShmCreate@src/under_api/ubse/ubse_mem_adapter.cpp",
+      "sink_type": "user_context"
+    },
+    {
+      "source": "RPC Request (memName/isExclusive)@src/mxm_shm/rpc_handler.cpp",
+      "path": [
+        "HandleMemLock@src/mxm_shm/rpc_handler.cpp",
+        "LockRequest parsing@src/mxm_shm/rpc_handler.cpp:79-91"
+      ],
+      "sink": "UbsmLock::Lock@src/dlock_utils/ubsm_lock.cpp",
+      "sink_type": "lock_operation"
+    },
+    {
+      "source": "File Input (keypass file)@src/security/cryptor/ubs_cryptor_handler.cpp",
+      "path": [
+        "Decrypt@src/security/cryptor/ubs_cryptor_handler.cpp",
+        "ReadFile@src/security/cryptor/ubs_cryptor_handler.cpp:70",
+        "encryptedText@src/security/cryptor/ubs_cryptor_handler.cpp:109"
+      ],
+      "sink": "decryptLibHandlePtr@src/security/cryptor/ubs_cryptor_handler.cpp:117",
+      "sink_type": "decryption"
+    },
+    {
+      "source": "Configuration File@src/process/common/util/configuration.cpp",
+      "path": [
+        "LoadDaemonConf@src/process/daemon/ock_daemon.cpp",
+        "Configuration::GetInstance@src/process/common/util/configuration.cpp"
+      ],
+      "sink": "TLS paths configuration@src/process/daemon/ock_daemon.cpp:438-444",
+      "sink_type": "config_value"
+    },
+    {
+      "source": "IPC Request (size/regionName)@src/mxm_lease/ipc_handler.cpp",
+      "path": [
+        "AppMallocMemory@src/mxm_lease/ipc_handler.cpp",
+        "BorrowMemory@src/mxm_lease/ipc_handler.cpp:152",
+        "BorrowNewMemory@src/mxm_lease/ipc_handler.cpp:102"
+      ],
+      "sink": "UbseMemAdapter::LeaseMalloc@src/under_api/ubse/ubse_mem_adapter.cpp",
+      "sink_type": "memory_allocation"
+    }
+  ]
+}
