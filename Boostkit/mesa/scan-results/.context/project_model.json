@@ -1,0 +1,549 @@
+{
+  "project_name": "Mesa 3D Graphics Library",
+  "scan_time": "2025-04-21T19:10:00Z",
+  "lsp_available": true,
+  "total_files": 3232,
+  "total_lines": 2500000,
+  "project_profile": {
+    "project_type": "library",
+    "deployment_model": "Mesa作为系统图形库，部署在Linux/Unix服务器和桌面环境中，作为OpenGL/Vulkan驱动栈的一部分。典型部署包括：桌面Linux发行版（作为默认图形驱动）、服务器环境（用于GPU加速计算）、嵌入式设备（Android等）。用户通过应用程序间接调用Mesa API，恶意应用程序可构造恶意shader代码或API调用序列进行攻击。",
+    "trust_boundaries": [
+      {
+        "boundary": "Application to Graphics API",
+        "trusted_side": "Mesa driver internals",
+        "untrusted_side": "User applications (GL/Vulkan apps)",
+        "risk": "Critical"
+      },
+      {
+        "boundary": "Shader Input to Compiler",
+        "trusted_side": "Mesa compiler backend",
+        "untrusted_side": "Shader source code (GLSL/SPIR-V)",
+        "risk": "Critical"
+      },
+      {
+        "boundary": "GPU Memory",
+        "trusted_side": "Mesa memory management",
+        "untrusted_side": "GPU hardware",
+        "risk": "High"
+      },
+      {
+        "boundary": "File System",
+        "trusted_side": "Mesa driver",
+        "untrusted_side": "Shader cache files, config files",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Network/VirtIO",
+        "trusted_side": "Mesa virtio driver",
+        "untrusted_side": "Remote guest VM",
+        "risk": "High"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "compiler",
+      "path": "src/compiler",
+      "language": "c_cpp",
+      "components": ["glsl", "spirv", "nir", "clc"]
+    },
+    {
+      "name": "spirv-parser",
+      "path": "src/compiler/spirv",
+      "language": "c_cpp",
+      "components": ["spirv_to_nir.c", "vtn_variables.c", "vtn_cfg.c", "vtn_alu.c"]
+    },
+    {
+      "name": "glsl-parser",
+      "path": "src/compiler/glsl",
+      "language": "c_cpp",
+      "components": ["glsl_parser.yy", "glsl_parser_extras.cpp", "glsl_lexer.ll", "glcpp"]
+    },
+    {
+      "name": "nir-compiler",
+      "path": "src/compiler/nir",
+      "language": "c_cpp",
+      "components": ["nir.c", "nir_builder.c", "nir_clone.c"]
+    },
+    {
+      "name": "vulkan-runtime",
+      "path": "src/vulkan/runtime",
+      "language": "c_cpp",
+      "components": ["vk_shader_module.c", "vk_device.c", "vk_queue.c", "vk_render_pass.c"]
+    },
+    {
+      "name": "amd-vulkan",
+      "path": "src/amd/vulkan",
+      "language": "c_cpp",
+      "components": ["radv_cmd_buffer.c", "radv_pipeline.c", "radv_shader.c", "radv_device.c"]
+    },
+    {
+      "name": "intel-vulkan",
+      "path": "src/intel/vulkan",
+      "language": "c_cpp",
+      "components": ["anv_cmd_buffer.c", "anv_pipeline.c", "anv_device.c", "genX_cmd_buffer.c"]
+    },
+    {
+      "name": "egl",
+      "path": "src/egl",
+      "language": "c_cpp",
+      "components": ["eglapi.c", "egldisplay.c", "eglsurface.c"]
+    },
+    {
+      "name": "glx",
+      "path": "src/glx",
+      "language": "c_cpp",
+      "components": ["glxext.c", "glxcurrent.c"]
+    },
+    {
+      "name": "mesa-main",
+      "path": "src/mesa/main",
+      "language": "c_cpp",
+      "components": ["shaderapi.c", "context.c", "glspirv.c"]
+    },
+    {
+      "name": "gallium",
+      "path": "src/gallium",
+      "language": "c_cpp",
+      "components": ["auxiliary", "drivers", "frontends"]
+    },
+    {
+      "name": "util",
+      "path": "src/util",
+      "language": "c_cpp",
+      "components": ["disk_cache.c", "xmlconfig.c", "blob.c", "ralloc.c"]
+    },
+    {
+      "name": "loader",
+      "path": "src/loader",
+      "language": "c_cpp",
+      "components": ["loader.c", "loader_dri3_helper.c"]
+    },
+    {
+      "name": "virtio",
+      "path": "src/virtio/vulkan",
+      "language": "c_cpp",
+      "components": ["vn_renderer_vtest.c", "vn_cs.c", "vn_ring.c"]
+    },
+    {
+      "name": "broadcom-vulkan",
+      "path": "src/broadcom/vulkan",
+      "language": "c_cpp",
+      "components": ["v3dv_pipeline.c"]
+    },
+    {
+      "name": "freedreno-vulkan",
+      "path": "src/freedreno/vulkan",
+      "language": "c_cpp",
+      "components": ["tu_pipeline.c", "tu_shader.c"]
+    },
+    {
+      "name": "panfrost-vulkan",
+      "path": "src/panfrost/vulkan",
+      "language": "c_cpp",
+      "components": ["panvk_vX_shader.c"]
+    }
+  ],
+  "files": [
+    {
+      "path": "src/compiler/spirv/spirv_to_nir.c",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "spirv-parser",
+      "lines": 6645,
+      "priority": 1
+    },
+    {
+      "path": "src/compiler/spirv/vtn_variables.c",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "spirv-parser",
+      "lines": 2826,
+      "priority": 1
+    },
+    {
+      "path": "src/compiler/spirv/vtn_cfg.c",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "spirv-parser",
+      "lines": 1568,
+      "priority": 1
+    },
+    {
+      "path": "src/compiler/spirv/vtn_alu.c",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "spirv-parser",
+      "lines": 1200,
+      "priority": 2
+    },
+    {
+      "path": "src/compiler/glsl/glsl_parser.yy",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "glsl-parser",
+      "lines": 3109,
+      "priority": 1
+    },
+    {
+      "path": "src/compiler/glsl/glsl_parser_extras.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "glsl-parser",
+      "lines": 2560,
+      "priority": 1
+    },
+    {
+      "path": "src/compiler/glsl/glsl_lexer.ll",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "glsl-parser",
+      "lines": 1200,
+      "priority": 2
+    },
+    {
+      "path": "src/compiler/glsl/glcpp/glcpp-parse.y",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "glsl-parser",
+      "lines": 2000,
+      "priority": 2
+    },
+    {
+      "path": "src/vulkan/runtime/vk_shader_module.c",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "vulkan-runtime",
+      "lines": 133,
+      "priority": 1
+    },
+    {
+      "path": "src/amd/vulkan/radv_cmd_buffer.c",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "amd-vulkan",
+      "lines": 9242,
+      "priority": 1
+    },
+    {
+      "path": "src/amd/vulkan/radv_pipeline.c",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "amd-vulkan",
+      "lines": 8900,
+      "priority": 1
+    },
+    {
+      "path": "src/amd/vulkan/radv_shader.c",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "amd-vulkan",
+      "lines": 2800,
+      "priority": 1
+    },
+    {
+      "path": "src/intel/vulkan/anv_cmd_buffer.c",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "intel-vulkan",
+      "lines": 1950,
+      "priority": 1
+    },
+    {
+      "path": "src/intel/vulkan/anv_pipeline.c",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "intel-vulkan",
+      "lines": 3900,
+      "priority": 1
+    },
+    {
+      "path": "src/intel/vulkan/genX_cmd_buffer.c",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "intel-vulkan",
+      "lines": 7493,
+      "priority": 1
+    },
+    {
+      "path": "src/egl/main/eglapi.c",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "egl",
+      "lines": 2818,
+      "priority": 2
+    },
+    {
+      "path": "src/mesa/main/shaderapi.c",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "mesa-main",
+      "lines": 3844,
+      "priority": 1
+    },
+    {
+      "path": "src/mesa/main/glspirv.c",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "mesa-main",
+      "lines": 500,
+      "priority": 1
+    },
+    {
+      "path": "src/util/disk_cache.c",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "util",
+      "lines": 525,
+      "priority": 2
+    },
+    {
+      "path": "src/util/xmlconfig.c",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "util",
+      "lines": 1299,
+      "priority": 3
+    },
+    {
+      "path": "src/util/blob.c",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "util",
+      "lines": 300,
+      "priority": 2
+    },
+    {
+      "path": "src/virtio/vulkan/vn_renderer_vtest.c",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "virtio",
+      "lines": 800,
+      "priority": 2
+    },
+    {
+      "path": "src/virtio/vulkan/vn_cs.c",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "virtio",
+      "lines": 600,
+      "priority": 2
+    },
+    {
+      "path": "src/loader/loader.c",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "loader",
+      "lines": 550,
+      "priority": 3
+    },
+    {
+      "path": "src/broadcom/vulkan/v3dv_pipeline.c",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "broadcom-vulkan",
+      "lines": 3500,
+      "priority": 2
+    },
+    {
+      "path": "src/freedreno/vulkan/tu_pipeline.c",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "freedreno-vulkan",
+      "lines": 4500,
+      "priority": 2
+    },
+    {
+      "path": "src/compiler/nir/nir.c",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "nir-compiler",
+      "lines": 3000,
+      "priority": 2
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "src/vulkan/runtime/vk_shader_module.c",
+      "line": 33,
+      "function": "vk_common_CreateShaderModule",
+      "type": "decorator",
+      "trust_level": "untrusted_network",
+      "justification": "Vulkan API入口点，应用程序传入SPIR-V shader代码字节流，可被恶意应用利用进行代码注入攻击",
+      "description": "接收应用程序传入的SPIR-V shader模块字节码"
+    },
+    {
+      "file": "src/compiler/spirv/spirv_to_nir.c",
+      "line": 200,
+      "function": "spirv_to_nir",
+      "type": "decorator",
+      "trust_level": "untrusted_network",
+      "justification": "SPIR-V shader解析器主入口，直接处理来自应用程序的字节流，历史上有多次漏洞报告",
+      "description": "解析SPIR-V字节码转换为NIR中间表示"
+    },
+    {
+      "file": "src/compiler/glsl/glsl_parser.yy",
+      "line": 1,
+      "function": "_mesa_glsl_parse",
+      "type": "decorator",
+      "trust_level": "untrusted_network",
+      "justification": "GLSL shader源码解析器，处理来自应用程序的shader源代码文本",
+      "description": "解析GLSL shader源代码"
+    },
+    {
+      "file": "src/compiler/glsl/glcpp/glcpp-parse.y",
+      "line": 1,
+      "function": "glcpp_parser_parse",
+      "type": "decorator",
+      "trust_level": "untrusted_network",
+      "justification": "GLSL预处理器，处理shader源代码中的预处理指令",
+      "description": "GLSL shader预处理器"
+    },
+    {
+      "file": "src/egl/main/eglapi.c",
+      "line": 100,
+      "function": "eglInitialize",
+      "type": "decorator",
+      "trust_level": "semi_trusted",
+      "justification": "EGL API入口点，初始化图形显示连接",
+      "description": "EGL显示初始化"
+    },
+    {
+      "file": "src/egl/main/eglapi.c",
+      "line": 300,
+      "function": "eglCreateContext",
+      "type": "decorator",
+      "trust_level": "semi_trusted",
+      "justification": "EGL上下文创建，接收配置参数",
+      "description": "创建EGL渲染上下文"
+    },
+    {
+      "file": "src/mesa/main/shaderapi.c",
+      "line": 150,
+      "function": "_mesa_ShaderSource",
+      "type": "decorator",
+      "trust_level": "untrusted_network",
+      "justification": "OpenGL shader源码提交入口，接收应用程序传入的shader字符串",
+      "description": "设置OpenGL shader源代码"
+    },
+    {
+      "file": "src/mesa/main/glspirv.c",
+      "line": 50,
+      "function": "_mesa_SpecializeShader",
+      "type": "decorator",
+      "trust_level": "untrusted_network",
+      "justification": "SPIR-V shader特化入口，处理来自应用程序的shader数据",
+      "description": "SPIR-V shader特化处理"
+    },
+    {
+      "file": "src/util/xmlconfig.c",
+      "line": 200,
+      "function": "parseConfigFile",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "XML配置文件解析，读取系统/用户配置文件，可能被篡改",
+      "description": "解析XML配置文件"
+    },
+    {
+      "file": "src/util/disk_cache.c",
+      "line": 72,
+      "function": "disk_cache_create",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "磁盘shader缓存操作，读写缓存文件，可能被篡改导致加载恶意shader",
+      "description": "创建磁盘shader缓存"
+    },
+    {
+      "file": "src/util/disk_cache.c",
+      "line": 300,
+      "function": "disk_cache_load",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "从磁盘加载缓存的shader二进制，文件可被外部篡改",
+      "description": "从磁盘加载shader缓存"
+    },
+    {
+      "file": "src/amd/vulkan/radv_cmd_buffer.c",
+      "line": 100,
+      "function": "radv_CmdDraw",
+      "type": "decorator",
+      "trust_level": "untrusted_network",
+      "justification": "Vulkan绘制命令处理，处理GPU命令缓冲区",
+      "description": "处理Vulkan绘制命令"
+    },
+    {
+      "file": "src/intel/vulkan/genX_cmd_buffer.c",
+      "line": 100,
+      "function": "genX_CmdDraw",
+      "type": "decorator",
+      "trust_level": "untrusted_network",
+      "justification": "Intel Vulkan绘制命令处理，处理GPU命令缓冲区",
+      "description": "处理Intel Vulkan绘制命令"
+    },
+    {
+      "file": "src/virtio/vulkan/vn_renderer_vtest.c",
+      "line": 100,
+      "function": "vn_renderer_vtest_connect",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "virtio-gpu渲染器连接，通过网络socket与远程guest VM通信",
+      "description": "virtio渲染器网络连接"
+    },
+    {
+      "file": "src/virtio/vulkan/vn_cs.c",
+      "line": 50,
+      "function": "vn_cs_decoder_read",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "virtio命令流解码，从网络接收数据",
+      "description": "virtio命令流解码"
+    },
+    {
+      "file": "src/loader/loader.c",
+      "line": 50,
+      "function": "loader_get_driver_for_device",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "驱动加载器，根据设备信息加载GPU驱动",
+      "description": "GPU驱动加载"
+    },
+    {
+      "file": "src/broadcom/vulkan/v3dv_pipeline.c",
+      "line": 200,
+      "function": "v3dv_CreatePipeline",
+      "type": "decorator",
+      "trust_level": "untrusted_network",
+      "justification": "Broadcom Vulkan pipeline创建，处理shader编译",
+      "description": "创建Broadcom Vulkan pipeline"
+    },
+    {
+      "file": "src/freedreno/vulkan/tu_pipeline.c",
+      "line": 200,
+      "function": "tu_CreatePipeline",
+      "type": "decorator",
+      "trust_level": "untrusted_network",
+      "justification": "Freedreno Vulkan pipeline创建，处理shader编译",
+      "description": "创建Freedreno Vulkan pipeline"
+    },
+    {
+      "file": "src/compiler/nir/nir.c",
+      "line": 100,
+      "function": "nir_shader_create",
+      "type": "internal",
+      "trust_level": "semi_trusted",
+      "justification": "NIR shader创建，内部处理编译后的shader",
+      "description": "创建NIR shader对象"
+    }
+  ],
+  "attack_surfaces": [
+    "SPIR-V Shader Parsing: Applications submit SPIR-V bytecode that is parsed by spirv_to_nir parser - direct bytecode manipulation attack vector",
+    "GLSL Shader Parsing: Applications submit GLSL source code parsed by glsl_parser - source code injection attack vector",
+    "Vulkan API Calls: Application-initiated Vulkan commands processed by driver - API parameter manipulation attack vector",
+    "OpenGL/EGL API Calls: Application-initiated GL/EGL calls - API parameter manipulation attack vector",
+    "Shader Cache Files: Disk cache stores compiled shaders - cache file tampering attack vector",
+    "XML Config Files: Driver configuration files parsed by xmlconfig - config file tampering attack vector",
+    "virtio-gpu Network: virtio renderer communicates with guest VM via socket - network data injection attack vector",
+    "GPU Command Buffers: Command buffers submitted by applications processed by drivers - command buffer manipulation attack vector",
+    "GPU Memory Operations: Memory allocation and data transfer between CPU and GPU - memory corruption attack vector"
+  ]
+}

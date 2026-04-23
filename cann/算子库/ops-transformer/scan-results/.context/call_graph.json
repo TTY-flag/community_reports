@@ -1,0 +1,270 @@
+{
+  "functions": {
+    "aclnnFlashAttentionScoreGetWorkspaceSize@attention/flash_attention_score/op_api/aclnn_flash_attention_score.cpp": {
+      "defined_at": 100,
+      "calls": [
+        "FlashAttentionScore@attention/flash_attention_score/op_api/flash_attention_score.cpp",
+        "contiguous@aclnn_kernels/contiguous.h",
+        "pad@aclnn_kernels/pad.h",
+        "reshape@aclnn_kernels/reshape.h",
+        "transpose@aclnn_kernels/transpose.h"
+      ],
+      "called_by": ["PyTorch Framework"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "FlashAttentionScore@attention/flash_attention_score/op_api/flash_attention_score.cpp": {
+      "defined_at": 20,
+      "calls": [
+        "INFER_SHAPE@opdev/make_op_executor.h",
+        "ADD_TO_LAUNCHER_LIST_AICORE@opdev/make_op_executor.h",
+        "executor->AllocTensor@opdev/op_executor.h",
+        "executor->ConvertToTensor@opdev/op_executor.h"
+      ],
+      "called_by": ["aclnnFlashAttentionScoreGetWorkspaceSize"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "InferShapeFlashAttentionScore@attention/flash_attention_score/op_host/flash_attention_score_infershape.cpp": {
+      "defined_at": 35,
+      "calls": [
+        "context->GetInputShape@gert::InferShapeContext",
+        "context->GetInputDesc@gert::InferShapeContext",
+        "context->GetAttrs@gert::InferShapeContext",
+        "softmaxMaxShape->SetDim@gert::Shape",
+        "softmaxOutShape->SetDimNum@gert::Shape"
+      ],
+      "called_by": ["IMPL_OP_INFERSHAPE(FlashAttentionScore)"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "aclnnMatmulAllReduceGetWorkspaceSize@mc2/matmul_all_reduce/op_api/aclnn_matmul_all_reduce.cpp": {
+      "defined_at": 1,
+      "calls": [
+        "MatmulAllReduce@mc2/matmul_all_reduce/op_api",
+        "GetWorkspaceSize@context",
+        "check_tensor_shape@mc2_common_infershape.cpp"
+      ],
+      "called_by": ["PyTorch Framework"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "MatmulAllReduceTilingBase::GetWorkspaceSize@mc2/matmul_all_reduce/op_host/op_tiling/matmul_all_reduce_tiling_base.cpp": {
+      "defined_at": 476,
+      "calls": [
+        "context_->GetWorkspaceSizes",
+        "mm1.SetShape",
+        "bias->GetStorageShape().GetShapeSize"
+      ],
+      "called_by": ["MatmulAllReduce Kernel Launch"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "aclnnMoeDistributeDispatchGetWorkspaceSize@mc2/moe_distribute_dispatch/op_api/aclnn_moe_distribute_dispatch.cpp": {
+      "defined_at": 1,
+      "calls": [
+        "MoeDistributeDispatch@mc2/moe_distribute_dispatch",
+        "GetWorkspaceSize@context",
+        "check_tensor_shape@mc2_common_infershape.cpp"
+      ],
+      "called_by": ["PyTorch Framework"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "MoeInitRoutingInfershape@moe/moe_init_routing/op_host/moe_init_routing_infershape.cpp": {
+      "defined_at": 1,
+      "calls": [
+        "context->GetInputShape@gert::InferShapeContext",
+        "context->GetAttrs@gert::InferShapeContext",
+        "outputShape->SetDim@gert::Shape"
+      ],
+      "called_by": ["IMPL_OP_INFERSHAPE(MoeInitRouting)"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "GroupedMatmulInfershape@gmm/grouped_matmul/op_host/grouped_matmul_infershape.cpp": {
+      "defined_at": 1,
+      "calls": [
+        "context->GetInputShape@gert::InferShapeContext",
+        "context->GetAttrs@gert::InferShapeContext",
+        "check_quant_shape@gmm/grouped_matmul_infershape_quant_checker.cpp",
+        "outputShape->SetDim@gert::Shape"
+      ],
+      "called_by": ["IMPL_OP_INFERSHAPE(GroupedMatmul)"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "npu_moe_distribute_dispatch_v2@torch_extension/npu_ops_transformer/ops/moe_distribute_dispatch_v2.py": {
+      "defined_at": 1,
+      "calls": [
+        "torch_npu.npu_moe_distribute_dispatch_v2",
+        "MoeDistributeBuffer@torch_extension/npu_ops_transformer/ops/deep_ep.py"
+      ],
+      "called_by": ["PyTorch Model Code"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "Parser::main@cmake/scripts/parse_changed_files.py": {
+      "defined_at": 141,
+      "calls": [
+        "yaml.load@yaml",
+        "Parser.parse_classify_file",
+        "Parser.parse_changed_file",
+        "Path.is_absolute"
+      ],
+      "called_by": ["CI System"],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "main@scripts/check_build_dependencies.py": {
+      "defined_at": 165,
+      "calls": [
+        "argparse.ArgumentParser",
+        "check_build_deps",
+        "read_pkg_version",
+        "os.path.join"
+      ],
+      "called_by": ["Build System"],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "main@scripts/generate_version_info.py": {
+      "defined_at": 40,
+      "calls": [
+        "argparse.ArgumentParser",
+        "gen_version_info_content",
+        "open@os"
+      ],
+      "called_by": ["Build System"],
+      "receives_external_input": false,
+      "risk": "Low"
+    },
+    "check_build_deps@scripts/check_build_dependencies.py": {
+      "defined_at": 147,
+      "calls": [
+        "read_pkg_version",
+        "check_build_dep",
+        "Receiver.warn_msgs.append"
+      ],
+      "called_by": ["main@scripts/check_build_dependencies.py"],
+      "receives_external_input": false,
+      "risk": "Medium"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "aclnnFlashAttentionScoreGetWorkspaceSize@attention/flash_attention_score/op_api/aclnn_flash_attention_score.cpp:100",
+      "path": [
+        "FlashAttentionScore@attention/flash_attention_score/op_api/flash_attention_score.cpp:20",
+        "INFER_SHAPE(FlashAttentionScore)@opdev/make_op_executor.h:128",
+        "InferShapeFlashAttentionScore@attention/flash_attention_score/op_host/flash_attention_score_infershape.cpp:35"
+      ],
+      "sink": "softmaxMaxShape->SetDim@attention/flash_attention_score/op_host/flash_attention_score_infershape.cpp:100",
+      "sink_type": "memory_operation",
+      "description": "外部输入张量形状经过 API 层传递到 Infershape 层进行形状推理，可能存在整数溢出风险"
+    },
+    {
+      "source": "aclnnFlashAttentionScoreGetWorkspaceSize@attention/flash_attention_score/op_api/aclnn_flash_attention_score.cpp:100",
+      "path": [
+        "FlashAttentionScore@attention/flash_attention_score/op_api/flash_attention_score.cpp:20",
+        "ADD_TO_LAUNCHER_LIST_AICORE(FlashAttentionScore)@opdev/make_op_executor.h:142",
+        "flash_attention_score_kernel@attention/flash_attention_score/op_kernel/flash_attention_score.cpp:150"
+      ],
+      "sink": "GetUserWorkspace@attention/flash_attention_score/op_kernel/flash_attention_score.cpp:61",
+      "sink_type": "memory_allocation",
+      "description": "外部输入张量数据传递到 Kernel 层进行内存分配和计算，可能存在缓冲区溢出风险"
+    },
+    {
+      "source": "aclnnMatmulAllReduceGetWorkspaceSize@mc2/matmul_all_reduce/op_api/aclnn_matmul_all_reduce.cpp:1",
+      "path": [
+        "MatmulAllReduce@mc2/matmul_all_reduce/op_api",
+        "MatmulAllReduceTilingBase::GetWorkspaceSize@mc2/matmul_all_reduce/op_host/op_tiling/matmul_all_reduce_tiling_base.cpp:476",
+        "bias->GetStorageShape().GetShapeSize@mc2/matmul_all_reduce/op_host/op_tiling/matmul_all_reduce_tiling_base.cpp:749"
+      ],
+      "sink": "static_cast<size_t>(bias->GetStorageShape().GetShapeSize())@mc2/matmul_all_reduce/op_host/op_tiling/matmul_all_reduce_tiling_base.cpp:749",
+      "sink_type": "integer_overflow",
+      "description": "张量形状大小转换为 size_t，可能存在整数溢出风险"
+    },
+    {
+      "source": "npu_moe_distribute_dispatch_v2@torch_extension/npu_ops_transformer/ops/moe_distribute_dispatch_v2.py:1",
+      "path": [
+        "torch_npu.npu_moe_distribute_dispatch_v2",
+        "aclnnMoeDistributeDispatchGetWorkspaceSize@mc2/moe_distribute_dispatch/op_api/aclnn_moe_distribute_dispatch.cpp:1"
+      ],
+      "sink": "MoeDistributeDispatch Kernel@mc2/moe_distribute_dispatch/op_kernel",
+      "sink_type": "memory_operation",
+      "description": "Python API 层接收 PyTorch 模型输入，传递到 C++ ACLNN API 层"
+    },
+    {
+      "source": "Parser::main@cmake/scripts/parse_changed_files.py:141",
+      "path": [
+        "Parser.parse_classify_file@cmake/scripts/parse_changed_files.py:184",
+        "yaml.load@yaml:190"
+      ],
+      "sink": "yaml.load(f, Loader=yaml.SafeLoader)@cmake/scripts/parse_changed_files.py:190",
+      "sink_type": "unsafe_deserialization",
+      "description": "YAML 文件解析，使用 SafeLoader 降低风险但仍需关注输入来源"
+    },
+    {
+      "source": "build.sh:1",
+      "path": [
+        "help_info@build.sh:89",
+        "parse_arguments@build.sh"
+      ],
+      "sink": "cmake command execution@build.sh",
+      "sink_type": "command_injection",
+      "description": "构建脚本接收命令行参数，传递给 cmake，需关注参数验证"
+    }
+  ],
+  "cross_module_flows": [
+    {
+      "source_module": "attention",
+      "target_module": "common",
+      "functions": [
+        "flash_attention_score -> pad_common",
+        "flash_attention_score -> tiling_base"
+      ],
+      "description": "Attention 算子调用公共内存和 Tiling 辅助函数"
+    },
+    {
+      "source_module": "mc2",
+      "target_module": "common",
+      "functions": [
+        "matmul_all_reduce -> kernel_common",
+        "moe_distribute -> tiling_sink"
+      ],
+      "description": "MC2 分布式算子调用公共 Kernel 和 Tiling 函数"
+    },
+    {
+      "source_module": "torch_extension",
+      "target_module": "mc2",
+      "functions": [
+        "npu_moe_distribute_dispatch_v2 -> aclnnMoeDistributeDispatch",
+        "npu_moe_distribute_combine_v2 -> aclnnMoeDistributeCombine"
+      ],
+      "description": "Python API 调用 C++ ACLNN API"
+    },
+    {
+      "source_module": "gmm",
+      "target_module": "moe",
+      "functions": [
+        "grouped_matmul_finalize_routing -> moe_finalize_routing"
+      ],
+      "description": "GMM 算子调用 MoE 路由函数"
+    }
+  ],
+  "summary": {
+    "total_functions_tracked": 14,
+    "total_data_flows": 6,
+    "total_cross_module_flows": 4,
+    "critical_risk_functions": 7,
+    "high_risk_functions": 4,
+    "medium_risk_functions": 3,
+    "entry_points_to_sinks": [
+      "ACLNN API -> Infershape (Integer Overflow)",
+      "ACLNN API -> Kernel (Buffer Overflow)",
+      "Python API -> C++ API (Memory Operation)",
+      "Build Script -> CMake (Command Injection)"
+    ]
+  }
+}

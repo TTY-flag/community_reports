@@ -1,0 +1,310 @@
+{
+  "functions": {
+    "LoadSo@base/common/plugin/plugin_manager.cc": {
+      "defined_at": 674,
+      "calls": [
+        "SplitPath@base/common/plugin/plugin_manager.cc",
+        "RealPath@base/utils/file_utils.cc",
+        "ValidateSo@base/common/plugin/plugin_manager.cc",
+        "mmDlopen@external/mmpa_api.h",
+        "mmDlsym@external/mmpa_api.h",
+        "mmDlclose@external/mmpa_api.h"
+      ],
+      "called_by": [
+        "LoadOpsProtoSo@base/registry/opp_so_manager.cc",
+        "LoadOpMasterSo@base/registry/opp_so_manager.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "Load@base/common/plugin/plugin_manager.cc": {
+      "defined_at": 804,
+      "calls": [
+        "mmRealPath@external/mmpa_api.h",
+        "mmIsDir@external/mmpa_api.h",
+        "mmScandir@external/mmpa_api.h",
+        "ValidateSo@base/common/plugin/plugin_manager.cc",
+        "mmDlopen@external/mmpa_api.h",
+        "mmDlsym@external/mmpa_api.h",
+        "mmDlclose@external/mmpa_api.h"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "GetOppPath@base/common/plugin/plugin_manager.cc": {
+      "defined_at": 156,
+      "calls": [
+        "MM_SYS_GET_ENV@external/mmpa_api.h",
+        "RealPath@base/utils/file_utils.cc",
+        "GetModelPath@external/ge_util.h"
+      ],
+      "called_by": [
+        "GetOpsProtoPath@base/common/plugin/plugin_manager.cc",
+        "GetOpTilingForwardOrderPath@base/common/plugin/plugin_manager.cc",
+        "IsSplitOpp@base/common/plugin/plugin_manager.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "GetPluginPathFromCustomOppPath@base/common/plugin/plugin_manager.cc": {
+      "defined_at": 249,
+      "calls": [
+        "MM_SYS_GET_ENV@external/mmpa_api.h",
+        "mmIsDir@external/mmpa_api.h",
+        "IsVendorVersionValid@base/common/plugin/plugin_manager.cc"
+      ],
+      "called_by": [
+        "GetOpsProtoPath@base/common/plugin/plugin_manager.cc",
+        "GetOpTilingForwardOrderPath@base/common/plugin/plugin_manager.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "LoadSoAndInitDefault@base/registry/opp_so_manager.cc": {
+      "defined_at": 111,
+      "calls": [
+        "DefaultOpImplSpaceRegistryV2::GetInstance@base/registry/op_impl_space_registry_v2.cc",
+        "OpImplSpaceRegistryV2::AddSoToRegistry@base/registry/op_impl_space_registry_v2_impl.cc"
+      ],
+      "called_by": [
+        "LoadOpsProtoPackage@base/registry/opp_so_manager.cc",
+        "LoadOppPackage@base/registry/opp_so_manager.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "LoadOpsProtoPackage@base/registry/opp_so_manager.cc": {
+      "defined_at": 126,
+      "calls": [
+        "IsSplitOpp@base/common/plugin/plugin_manager.cc",
+        "LoadOpsProtoSo@base/registry/opp_so_manager.cc",
+        "LoadSoAndInitDefault@base/registry/opp_so_manager.cc"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "LoadOppPackage@base/registry/opp_so_manager.cc": {
+      "defined_at": 147,
+      "calls": [
+        "IsSplitOpp@base/common/plugin/plugin_manager.cc",
+        "LoadOpsProtoSo@base/registry/opp_so_manager.cc",
+        "LoadOpMasterSo@base/registry/opp_so_manager.cc",
+        "LoadSoAndInitDefault@base/registry/opp_so_manager.cc"
+      ],
+      "called_by": [
+        "OppPackageUtils::LoadAllOppPackage@base/registry/opp_package_utils.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "ParseJsonFile@error_manager/error_manager.cc": {
+      "defined_at": 656,
+      "calls": [
+        "ReadJsonFile@error_manager/error_manager.cc",
+        "ParseJsonFormatString@error_manager/error_manager.cc"
+      ],
+      "called_by": [
+        "Init@error_manager/error_manager.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "ReadJsonFile@error_manager/error_manager.cc": {
+      "defined_at": 725,
+      "calls": [
+        "mmAccess2@external/mmpa_api.h",
+        "std::ifstream::operator>>@external/nlohmann/json.hpp"
+      ],
+      "called_by": [
+        "ParseJsonFile@error_manager/error_manager.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "GetBinFromFile@base/utils/file_utils.cc": {
+      "defined_at": 148,
+      "calls": [
+        "RealPath@base/utils/file_utils.cc",
+        "std::ifstream::read@external/iostream"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "WriteBinToFile@base/utils/file_utils.cc": {
+      "defined_at": 224,
+      "calls": [
+        "SplitFilePath@base/utils/file_utils.cc",
+        "RealPath@base/utils/file_utils.cc",
+        "std::ofstream::write@external/iostream"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "SaveBinToFile@base/utils/file_utils.cc": {
+      "defined_at": 282,
+      "calls": [
+        "SplitFilePath@base/utils/file_utils.cc",
+        "mmAccess@external/mmpa_api.h",
+        "CreateDir@base/utils/file_utils.cc",
+        "RealPath@base/utils/file_utils.cc",
+        "mmOpen2@external/mmpa_api.h",
+        "WriteBinToFile@base/utils/file_utils.cc",
+        "mmClose@external/mmpa_api.h"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "RealPath@base/utils/file_utils.cc": {
+      "defined_at": 30,
+      "calls": [
+        "mmRealPath@external/mmpa_api.h"
+      ],
+      "called_by": [
+        "LoadSo@base/common/plugin/plugin_manager.cc",
+        "Load@base/common/plugin/plugin_manager.cc",
+        "GetOppPath@base/common/plugin/plugin_manager.cc",
+        "GetBinFromFile@base/utils/file_utils.cc",
+        "WriteBinToFile@base/utils/file_utils.cc",
+        "SaveBinToFile@base/utils/file_utils.cc",
+        "GetFileListWithSuffix@base/common/plugin/plugin_manager.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "ValidateSo@base/common/plugin/plugin_manager.cc": {
+      "defined_at": 775,
+      "calls": [
+        "stat@external/sys/stat.h"
+      ],
+      "called_by": [
+        "LoadSo@base/common/plugin/plugin_manager.cc",
+        "Load@base/common/plugin/plugin_manager.cc"
+      ],
+      "receives_external_input": false,
+      "risk": "Low"
+    },
+    "GetFileListWithSuffix@base/common/plugin/plugin_manager.cc": {
+      "defined_at": 1085,
+      "calls": [
+        "mmRealPath@external/mmpa_api.h",
+        "mmIsDir@external/mmpa_api.h",
+        "mmScandir@external/mmpa_api.h",
+        "mmScandirFree@external/mmpa_api.h"
+      ],
+      "called_by": [
+        "LoadOpsProtoSo@base/registry/opp_so_manager.cc",
+        "LoadOpMasterSo@base/registry/opp_so_manager.cc",
+        "GetOppPkgPath@base/common/plugin/plugin_manager.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "mmDlopen@external/mmpa_api.h": {
+      "defined_at": 0,
+      "calls": [],
+      "called_by": [
+        "LoadSo@base/common/plugin/plugin_manager.cc",
+        "Load@base/common/plugin/plugin_manager.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "mmDlsym@external/mmpa_api.h": {
+      "defined_at": 0,
+      "calls": [],
+      "called_by": [
+        "LoadSo@base/common/plugin/plugin_manager.cc",
+        "Load@base/common/plugin/plugin_manager.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "MM_SYS_GET_ENV@external/mmpa_api.h": {
+      "defined_at": 0,
+      "calls": [],
+      "called_by": [
+        "GetOppPath@base/common/plugin/plugin_manager.cc",
+        "GetPluginPathFromCustomOppPath@base/common/plugin/plugin_manager.cc",
+        "GetUpgradedOppPath@base/common/plugin/plugin_manager.cc",
+        "GetAscendWorkPath@base/utils/file_utils.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "MM_SYS_GET_ENV@external/mmpa_api.h:159",
+      "path": [
+        "GetOppPath@base/common/plugin/plugin_manager.cc:156",
+        "LoadOpsProtoSo@base/registry/opp_so_manager.cc:168",
+        "GetFileListWithSuffix@base/common/plugin/plugin_manager.cc:1085",
+        "mmRealPath@external/mmpa_api.h:1101"
+      ],
+      "sink": "mmDlopen@base/common/plugin/plugin_manager.cc:717",
+      "sink_type": "dynamic_library_loading"
+    },
+    {
+      "source": "MM_SYS_GET_ENV@external/mmpa_api.h:253",
+      "path": [
+        "GetPluginPathFromCustomOppPath@base/common/plugin/plugin_manager.cc:249",
+        "GetOpsProtoPath@base/common/plugin/plugin_manager.cc:608",
+        "LoadOpsProtoSo@base/registry/opp_so_manager.cc:168",
+        "mmDlopen@base/common/plugin/plugin_manager.cc:717"
+      ],
+      "sink": "mmDlopen@base/common/plugin/plugin_manager.cc:717",
+      "sink_type": "dynamic_library_loading"
+    },
+    {
+      "source": "MM_SYS_GET_ENV@external/mmpa_api.h:159",
+      "path": [
+        "GetOppPath@base/common/plugin/plugin_manager.cc:156",
+        "RealPath@base/utils/file_utils.cc:30",
+        "GetOppPluginPathNew@base/common/plugin/plugin_manager.cc:486"
+      ],
+      "sink": "mmRealPath@base/utils/file_utils.cc:43",
+      "sink_type": "path_resolution"
+    },
+    {
+      "source": "file_path@error_manager/error_manager.cc:725",
+      "path": [
+        "ReadJsonFile@error_manager/error_manager.cc:725",
+        "std::ifstream@external/iostream:741"
+      ],
+      "sink": "nlohmann::json::parse@external/nlohmann/json.hpp:748",
+      "sink_type": "json_parse"
+    },
+    {
+      "source": "path@base/utils/file_utils.cc:152",
+      "path": [
+        "GetBinFromFile@base/utils/file_utils.cc:152",
+        "RealPath@base/utils/file_utils.cc:154"
+      ],
+      "sink": "std::ifstream::read@base/utils/file_utils.cc:171",
+      "sink_type": "file_read"
+    },
+    {
+      "source": "file_path@base/utils/file_utils.cc:282",
+      "path": [
+        "SaveBinToFile@base/utils/file_utils.cc:282",
+        "mmOpen2@external/mmpa_api.h:301"
+      ],
+      "sink": "WriteBinToFile@base/utils/file_utils.cc:304",
+      "sink_type": "file_write"
+    },
+    {
+      "source": "so_path@base/registry/opp_so_manager.cc:111",
+      "path": [
+        "LoadSoAndInitDefault@base/registry/opp_so_manager.cc:111",
+        "OpImplSpaceRegistryV2::AddSoToRegistry@base/registry/op_impl_space_registry_v2_impl.cc"
+      ],
+      "sink": "mmDlopen@base/common/plugin/plugin_manager.cc:717",
+      "sink_type": "dynamic_library_loading"
+    }
+  ]
+}

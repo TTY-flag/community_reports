@@ -1,0 +1,371 @@
+{
+  "functions": {
+    "main@src/asys/asys.py": {
+      "defined_at": 73,
+      "calls": [
+        "_check_args_duplicate@src/asys/asys.py",
+        "CommandLineParser.parse@src/asys/cmdline/cmd_parser.py",
+        "ParamDict.get_command@src/asys/params/param_dict.py",
+        "AsysConfigParser.parse@src/asys/config/config_parser.py",
+        "AsysCollect.run@src/asys/collect/asys_collect.py",
+        "AsysLaunch.run@src/asys/launch/asys_launch.py",
+        "AsysAnalyze.run@src/asys/analyze/asys_analyze.py"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "parse@src/asys/cmdline/cmd_parser.py": {
+      "defined_at": 406,
+      "calls": [
+        "CommandLineParser.check_args@src/asys/cmdline/cmd_parser.py",
+        "ArgChecker.check_arg_exist_dir@src/asys/cmdline/arg_checker.py",
+        "ArgChecker.check_arg_executable@src/asys/cmdline/arg_checker.py",
+        "ParamDict.set_args@src/asys/params/param_dict.py"
+      ],
+      "called_by": [
+        "main@src/asys/asys.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "check_arg_executable@src/asys/cmdline/arg_checker.py": {
+      "defined_at": 84,
+      "calls": [
+        "empty_str_check@src/asys/cmdline/arg_checker.py",
+        "re.match@stdlib"
+      ],
+      "called_by": [
+        "parse@src/asys/cmdline/cmd_parser.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "run_command@src/asys/common/cmd_run.py": {
+      "defined_at": 57,
+      "calls": [
+        "subprocess.run@stdlib"
+      ],
+      "called_by": [
+        "AsysLaunch.execute_task@src/asys/launch/asys_launch.py",
+        "AsysDiagnose.run@src/asys/diagnose/asys_diagnose.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "execute_task@src/asys/launch/asys_launch.py": {
+      "defined_at": 71,
+      "calls": [
+        "subprocess.Popen@stdlib",
+        "os.setsid@stdlib",
+        "process.communicate@stdlib"
+      ],
+      "called_by": [
+        "AsysLaunch.launch@src/asys/launch/asys_launch.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "launch@src/asys/launch/asys_launch.py": {
+      "defined_at": 120,
+      "calls": [
+        "prepare_for_launch@src/asys/launch/asys_launch.py",
+        "execute_task@src/asys/launch/asys_launch.py",
+        "task_out_collect@src/asys/launch/asys_launch.py"
+      ],
+      "called_by": [
+        "AsysLaunch.run@src/asys/launch/asys_launch.py"
+      ],
+      "receives_external_input": false,
+      "risk": "High"
+    },
+    "run@src/asys/launch/asys_launch.py": {
+      "defined_at": 142,
+      "calls": [
+        "launch@src/asys/launch/asys_launch.py",
+        "clean_work@src/asys/launch/asys_launch.py"
+      ],
+      "called_by": [
+        "main@src/asys/asys.py"
+      ],
+      "receives_external_input": false,
+      "risk": "High"
+    },
+    "run_linux_cmd@src/asys/common/cmd_run.py": {
+      "defined_at": 46,
+      "calls": [
+        "subprocess.run@stdlib"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "popen_run_cmd@src/asys/common/cmd_run.py": {
+      "defined_at": 107,
+      "calls": [
+        "os.popen@stdlib"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "main@src/msaicerr/msaicerr.py": {
+      "defined_at": 199,
+      "calls": [
+        "parser.parse_known_args@stdlib",
+        "analyse_report_path@src/msaicerr/msaicerr.py",
+        "convert_dump_data@src/msaicerr/msaicerr.py",
+        "extract_tar@src/msaicerr/msaicerr.py",
+        "check_device_valid@src/msaicerr/msaicerr.py"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "extract_tar@src/msaicerr/msaicerr.py": {
+      "defined_at": 53,
+      "calls": [
+        "tarfile.open@stdlib",
+        "tar.extractall@stdlib"
+      ],
+      "called_by": [
+        "analyse_report_path@src/msaicerr/msaicerr.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "analyse_report_path@src/msaicerr/msaicerr.py": {
+      "defined_at": 76,
+      "calls": [
+        "check_device_valid@src/msaicerr/msaicerr.py",
+        "utils.check_path_valid@src/msaicerr/ms_interface/utils.py",
+        "extract_tar@src/msaicerr/msaicerr.py",
+        "Collection.collect@src/msaicerr/ms_interface/collection.py",
+        "AicoreErrorParser.parse@src/msaicerr/ms_interface/aicore_error_parser.py"
+      ],
+      "called_by": [
+        "main@src/msaicerr/msaicerr.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "execute_command@src/msaicerr/ms_interface/utils.py": {
+      "defined_at": 218,
+      "calls": [
+        "subprocess.Popen@stdlib"
+      ],
+      "called_by": [
+        "get_inquire_result@src/msaicerr/ms_interface/utils.py",
+        "Collection.collect_kernel_file@src/msaicerr/ms_interface/collection.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "run_cmd_output@src/msaicerr/ms_interface/utils.py": {
+      "defined_at": 247,
+      "calls": [
+        "subprocess.run@stdlib"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "check_path_valid@src/msaicerr/ms_interface/utils.py": {
+      "defined_at": 178,
+      "calls": [
+        "check_path_special_character@src/msaicerr/ms_interface/utils.py",
+        "os.path.realpath@stdlib",
+        "os.makedirs@stdlib"
+      ],
+      "called_by": [
+        "analyse_report_path@src/msaicerr/msaicerr.py",
+        "Collection.collect@src/msaicerr/ms_interface/collection.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "collect@src/msaicerr/ms_interface/collection.py": {
+      "defined_at": 297,
+      "calls": [
+        "check_argument_valid@src/msaicerr/ms_interface/collection.py",
+        "collect_plog_file@src/msaicerr/ms_interface/collection.py",
+        "get_dump_data_info@src/msaicerr/ms_interface/collection.py",
+        "collect_data_dump@src/msaicerr/ms_interface/collection.py",
+        "collect_kernel_file@src/msaicerr/ms_interface/collection.py",
+        "collect_ge_graph@src/msaicerr/ms_interface/collection.py"
+      ],
+      "called_by": [
+        "analyse_report_path@src/msaicerr/msaicerr.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "MsprofGetOpts@src/msprof/collector/dvvp/msprofbin/src/input_parser.cpp": {
+      "defined_at": 99,
+      "calls": [
+        "Utils.CheckInputArgsLength@src/msprof/collector/dvvp/common/utils/utils.cpp",
+        "SplitApplicationArgv@src/msprof/collector/dvvp/msprofbin/src/input_parser.cpp",
+        "OsalGetOptLong@src/msprof/collector/basic/osal/osal.c",
+        "ProcessOptions@src/msprof/collector/dvvp/msprofbin/src/input_parser.cpp",
+        "ParamsCheck@src/msprof/collector/dvvp/msprofbin/src/input_parser.cpp"
+      ],
+      "called_by": [
+        "main@src/msprof/collector/dvvp/msprofbin/src/msprof_bin.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "Create@src/msprof/collector/dvvp/common/socket/local_socket.cpp": {
+      "defined_at": 40,
+      "calls": [
+        "GetUnixSockAddr@src/msprof/collector/dvvp/common/socket/local_socket.cpp",
+        "OsalSocket@src/msprof/collector/basic/osal/osal_linux.c",
+        "OsalBind@src/msprof/collector/basic/osal/osal_linux.c",
+        "OsalListen@src/msprof/collector/basic/osal/osal_linux.c",
+        "strcpy_s@stdlib"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "Accept@src/msprof/collector/dvvp/common/socket/local_socket.cpp": {
+      "defined_at": 96,
+      "calls": [
+        "OsalAccept@src/msprof/collector/basic/osal/osal_linux.c"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "Recv@src/msprof/collector/dvvp/common/socket/local_socket.cpp": {
+      "defined_at": 149,
+      "calls": [
+        "OsalSocketRecv@src/msprof/collector/basic/osal/osal_linux.c"
+      ],
+      "called_by": [
+        "Run@src/msprof/collector/dvvp/transport/receiver.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "Run@src/msprof/collector/dvvp/transport/receiver.cpp": {
+      "defined_at": 110,
+      "calls": [
+        "transport_->RecvPacket@src/msprof/collector/dvvp/transport",
+        "dispatcher_->OnNewMessage@src/msprof/collector/dvvp/message"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "ProcessOptions@src/msprof/collector/dvvp/msprofbin/src/input_parser.cpp": {
+      "defined_at": 188,
+      "calls": [
+        "OsalGetOptArg@src/msprof/collector/basic/osal/osal.c"
+      ],
+      "called_by": [
+        "MsprofGetOpts@src/msprof/collector/dvvp/msprofbin/src/input_parser.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "dlopen@src/msprof/collector/dvvp/profapi/src/prof_runtime_plugin.cpp": {
+      "defined_at": 50,
+      "calls": [
+        "dlopen@stdlib"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "OsalGetOptLong@src/msprof/collector/basic/osal/osal.c": {
+      "defined_at": 200,
+      "calls": [
+        "getopt_long@stdlib"
+      ],
+      "called_by": [
+        "MsprofGetOpts@src/msprof/collector/dvvp/msprofbin/src/input_parser.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "sys.argv@src/asys/asys.py:44",
+      "path": [
+        "main@src/asys/asys.py:73",
+        "CommandLineParser.parse@src/asys/cmdline/cmd_parser.py:413",
+        "ParamDict.set_args@src/asys/params/param_dict.py:50",
+        "AsysLaunch.run@src/asys/launch/asys_launch.py:142",
+        "execute_task@src/asys/launch/asys_launch.py:80",
+        "subprocess.Popen@stdlib"
+      ],
+      "sink": "subprocess.Popen(shell=True)",
+      "sink_type": "command_execution"
+    },
+    {
+      "source": "sys.argv@src/msaicerr/msaicerr.py:233",
+      "path": [
+        "main@src/msaicerr/msaicerr.py:199",
+        "parser.parse_known_args@stdlib",
+        "args.report_path@src/msaicerr/msaicerr.py:96",
+        "extract_tar@src/msaicerr/msaicerr.py:53",
+        "tar.extractall@stdlib"
+      ],
+      "sink": "tar.extractall(path)",
+      "sink_type": "file_operation"
+    },
+    {
+      "source": "sys.argv@src/msaicerr/msaicerr.py:233",
+      "path": [
+        "main@src/msaicerr/msaicerr.py:199",
+        "args.report_path@src/msaicerr/msaicerr.py:96",
+        "utils.check_path_valid@src/msaicerr/ms_interface/utils.py:178",
+        "os.path.realpath@stdlib"
+      ],
+      "sink": "os.path.realpath(path)",
+      "sink_type": "path_traversal"
+    },
+    {
+      "source": "argc/argv@src/msprof/collector/dvvp/msprofbin/src/msprof_bin.cpp:50",
+      "path": [
+        "MsprofGetOpts@src/msprof/collector/dvvp/msprofbin/src/input_parser.cpp:99",
+        "ProcessOptions@src/msprof/collector/dvvp/msprofbin/src/input_parser.cpp:188",
+        "OsalGetOptArg@src/msprof/collector/basic/osal/osal.c"
+      ],
+      "sink": "params_->output_path",
+      "sink_type": "file_operation"
+    },
+    {
+      "source": "recv@src/msprof/collector/dvvp/common/socket/local_socket.cpp:155",
+      "path": [
+        "LocalSocket.Recv@src/msprof/collector/dvvp/common/socket/local_socket.cpp:149",
+        "Run@src/msprof/collector/dvvp/transport/receiver.cpp:110",
+        "dispatcher_->OnNewMessage@src/msprof/collector/dvvp/message"
+      ],
+      "sink": "packet->value",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "sys.argv@src/asys/cmdline/cmd_parser.py:413",
+      "path": [
+        "CommandLineParser.parse@src/asys/cmdline/cmd_parser.py:406",
+        "CommandLineParser.check_args@src/asys/cmdline/cmd_parser.py:380",
+        "check_arg_exist_dir@src/asys/cmdline/arg_checker.py:65",
+        "os.path.isdir@stdlib"
+      ],
+      "sink": "os.path.isdir(arg_val)",
+      "sink_type": "file_operation"
+    },
+    {
+      "source": "subprocess.run(shell=True)@src/asys/common/cmd_run.py:42",
+      "path": [
+        "check_command@src/asys/common/cmd_run.py:33",
+        "run_linux_cmd@src/asys/common/cmd_run.py:46"
+      ],
+      "sink": "subprocess.run(cmd, shell=True)",
+      "sink_type": "command_execution"
+    }
+  ]
+}

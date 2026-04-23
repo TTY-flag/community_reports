@@ -1,0 +1,488 @@
+{
+  "functions": {
+    "vk_common_CreateShaderModule@src/vulkan/runtime/vk_shader_module.c": {
+      "defined_at": 33,
+      "calls": [
+        "vk_object_alloc@src/vulkan/runtime/vk_object.c",
+        "_mesa_sha1_compute@src/util/mesa-sha1.c",
+        "memcpy@stdlib"
+      ],
+      "called_by": [
+        "radv_CreateShaderModule@src/amd/vulkan/radv_device.c",
+        "anv_CreateShaderModule@src/intel/vulkan/anv_device.c"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "vk_shader_module_to_nir@src/vulkan/runtime/vk_shader_module.c": {
+      "defined_at": 94,
+      "calls": [
+        "spirv_to_nir@src/compiler/spirv/spirv_to_nir.c"
+      ],
+      "called_by": [
+        "radv_pipeline_compile@src/amd/vulkan/radv_pipeline.c",
+        "anv_pipeline_compile@src/intel/vulkan/anv_pipeline.c"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "spirv_to_nir@src/compiler/spirv/spirv_to_nir.c": {
+      "defined_at": 200,
+      "calls": [
+        "vtn_create_builder@src/compiler/spirv/spirv_to_nir.c",
+        "vtn_handle_instruction@src/compiler/spirv/spirv_to_nir.c",
+        "vtn_build_cfg@src/compiler/spirv/vtn_cfg.c",
+        "ralloc@src/util/ralloc.c",
+        "memcpy@stdlib"
+      ],
+      "called_by": [
+        "vk_shader_module_to_nir@src/vulkan/runtime/vk_shader_module.c",
+        "gl_spirv_specialize@src/compiler/spirv/gl_spirv.c",
+        "_mesa_SpecializeShader@src/mesa/main/glspirv.c"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "vtn_handle_instruction@src/compiler/spirv/spirv_to_nir.c": {
+      "defined_at": 1500,
+      "calls": [
+        "vtn_handle_variables@src/compiler/spirv/vtn_variables.c",
+        "vtn_handle_constants@src/compiler/spirv/spirv_to_nir.c",
+        "vtn_handle_functions@src/compiler/spirv/vtn_cfg.c",
+        "vtn_handle_decoration@src/compiler/spirv/spirv_to_nir.c"
+      ],
+      "called_by": [
+        "spirv_to_nir@src/compiler/spirv/spirv_to_nir.c"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "vtn_handle_variables@src/compiler/spirv/vtn_variables.c": {
+      "defined_at": 200,
+      "calls": [
+        "vtn_pointer@src/compiler/spirv/vtn_variables.c",
+        "nir_deref@src/compiler/nir/nir_deref.c",
+        "ralloc@src/util/ralloc.c"
+      ],
+      "called_by": [
+        "vtn_handle_instruction@src/compiler/spirv/spirv_to_nir.c"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "_mesa_glsl_parse@src/compiler/glsl/glsl_parser.yy": {
+      "defined_at": 1,
+      "calls": [
+        "_mesa_glsl_lexer_lex@src/compiler/glsl/glsl_lexer.ll",
+        "_mesa_glsl_error@src/compiler/glsl/glsl_parser_extras.cpp",
+        "ralloc@src/util/ralloc.c"
+      ],
+      "called_by": [
+        "_mesa_shader_source@src/mesa/main/shaderapi.c",
+        "glcpp_parser_parse@src/compiler/glsl/glcpp/glcpp-parse.y"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "glcpp_parser_parse@src/compiler/glsl/glcpp/glcpp-parse.y": {
+      "defined_at": 1,
+      "calls": [
+        "glcpp_lex@src/compiler/glsl/glcpp/glcpp-lex.l",
+        "ralloc@src/util/ralloc.c"
+      ],
+      "called_by": [
+        "_mesa_shader_source@src/mesa/main/shaderapi.c"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "_mesa_ShaderSource@src/mesa/main/shaderapi.c": {
+      "defined_at": 150,
+      "calls": [
+        "_mesa_glsl_parse@src/compiler/glsl/glsl_parser.yy",
+        "glcpp_parser_parse@src/compiler/glsl/glcpp/glcpp-parse.y",
+        "_mesa_SpecializeShader@src/mesa/main/glspirv.c"
+      ],
+      "called_by": [
+        "glShaderSource@src/mapi/glapi/glapi_entrypoint.c"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "_mesa_SpecializeShader@src/mesa/main/glspirv.c": {
+      "defined_at": 50,
+      "calls": [
+        "gl_spirv_specialize@src/compiler/spirv/gl_spirv.c",
+        "spirv_to_nir@src/compiler/spirv/spirv_to_nir.c"
+      ],
+      "called_by": [
+        "_mesa_ShaderSource@src/mesa/main/shaderapi.c"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "radv_CreatePipeline@src/amd/vulkan/radv_pipeline.c": {
+      "defined_at": 200,
+      "calls": [
+        "radv_pipeline_compile@src/amd/vulkan/radv_pipeline.c",
+        "vk_shader_module_to_nir@src/vulkan/runtime/vk_shader_module.c",
+        "radv_shader_compile@src/amd/vulkan/radv_shader.c"
+      ],
+      "called_by": [
+        "vkCreateGraphicsPipelines@src/amd/vulkan/radv_pipeline.c"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "radv_shader_compile@src/amd/vulkan/radv_shader.c": {
+      "defined_at": 100,
+      "calls": [
+        "nir_shader@src/compiler/nir/nir.c",
+        "llvm_compile@src/amd/llvm/ac_nir_to_llvm.c",
+        "memcpy@stdlib"
+      ],
+      "called_by": [
+        "radv_CreatePipeline@src/amd/vulkan/radv_pipeline.c"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "radv_CmdDraw@src/amd/vulkan/radv_cmd_buffer.c": {
+      "defined_at": 100,
+      "calls": [
+        "radv_emit_draw@src/amd/vulkan/radv_cmd_buffer.c",
+        "si_emit_cache@src/amd/vulkan/si_cmd_buffer.c",
+        "memcpy@stdlib"
+      ],
+      "called_by": [
+        "vkCmdDraw@src/vulkan/runtime/vk_cmd_enqueue.c"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "anv_CreatePipeline@src/intel/vulkan/anv_pipeline.c": {
+      "defined_at": 100,
+      "calls": [
+        "anv_pipeline_compile@src/intel/vulkan/anv_pipeline.c",
+        "vk_shader_module_to_nir@src/vulkan/runtime/vk_shader_module.c",
+        "brw_compile@src/intel/compiler/brw_nir.c"
+      ],
+      "called_by": [
+        "vkCreateGraphicsPipelines@src/intel/vulkan/anv_pipeline.c"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "genX_CmdDraw@src/intel/vulkan/genX_cmd_buffer.c": {
+      "defined_at": 100,
+      "calls": [
+        "genX_emit_draw@src/intel/vulkan/genX_cmd_buffer.c",
+        "blorp_exec@src/intel/blorp/blorp.c",
+        "memcpy@stdlib"
+      ],
+      "called_by": [
+        "vkCmdDraw@src/vulkan/runtime/vk_cmd_enqueue.c"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "disk_cache_create@src/util/disk_cache.c": {
+      "defined_at": 72,
+      "calls": [
+        "disk_cache_generate_cache_dir@src/util/disk_cache_os.c",
+        "disk_cache_mmap_cache_index@src/util/disk_cache.c",
+        "mkdir@stdlib",
+        "open@stdlib",
+        "mmap@stdlib"
+      ],
+      "called_by": [
+        "radv_device_init@src/amd/vulkan/radv_device.c",
+        "anv_device_init@src/intel/vulkan/anv_device.c"
+      ],
+      "receives_external_input": false,
+      "risk": "High"
+    },
+    "disk_cache_load@src/util/disk_cache.c": {
+      "defined_at": 300,
+      "calls": [
+        "open@stdlib",
+        "read@stdlib",
+        "mmap@stdlib",
+        "memcpy@stdlib"
+      ],
+      "called_by": [
+        "radv_pipeline_cache_load@src/amd/vulkan/radv_pipeline_cache.c",
+        "anv_pipeline_cache_load@src/intel/vulkan/anv_pipeline_cache.c"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "parseConfigFile@src/util/xmlconfig.c": {
+      "defined_at": 200,
+      "calls": [
+        "XML_Parse@libexpat",
+        "open@stdlib",
+        "read@stdlib"
+      ],
+      "called_by": [
+        "driCreateNewScreen@src/gallium/frontends/dri/dri_screen.c"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "vn_renderer_vtest_connect@src/virtio/vulkan/vn_renderer_vtest.c": {
+      "defined_at": 100,
+      "calls": [
+        "socket@stdlib",
+        "connect@stdlib",
+        "recv@stdlib",
+        "send@stdlib"
+      ],
+      "called_by": [
+        "vn_instance_init@src/virtio/vulkan/vn_instance.c"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "vn_cs_decoder_read@src/virtio/vulkan/vn_cs.c": {
+      "defined_at": 50,
+      "calls": [
+        "memcpy@stdlib",
+        "read@stdlib"
+      ],
+      "called_by": [
+        "vn_renderer_vtest_connect@src/virtio/vulkan/vn_renderer_vtest.c"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "eglInitialize@src/egl/main/eglapi.c": {
+      "defined_at": 100,
+      "calls": [
+        "_eglInitDisplay@src/egl/main/egldisplay.c",
+        "_eglLoadDriver@src/egl/main/egldriver.c"
+      ],
+      "called_by": [
+        "eglInitialize@src/egl/main/eglapi.c"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "loader_get_driver_for_device@src/loader/loader.c": {
+      "defined_at": 50,
+      "calls": [
+        "open@stdlib",
+        "read@stdlib",
+        "drmGetDevice@libdrm"
+      ],
+      "called_by": [
+        "_eglLoadDriver@src/egl/main/egldriver.c"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "nir_shader_create@src/compiler/nir/nir.c": {
+      "defined_at": 100,
+      "calls": [
+        "ralloc@src/util/ralloc.c",
+        "nir_shader_setup@src/compiler/nir/nir.c"
+      ],
+      "called_by": [
+        "spirv_to_nir@src/compiler/spirv/spirv_to_nir.c",
+        "glsl_to_nir@src/compiler/glsl/glsl_to_nir.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "blob_reader@src/util/blob.c": {
+      "defined_at": 50,
+      "calls": [
+        "memcpy@stdlib"
+      ],
+      "called_by": [
+        "disk_cache_load@src/util/disk_cache.c",
+        "pipeline_cache_load@src/amd/vulkan/radv_pipeline_cache.c"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "ralloc@src/util/ralloc.c": {
+      "defined_at": 1,
+      "calls": [
+        "malloc@stdlib",
+        "calloc@stdlib",
+        "free@stdlib"
+      ],
+      "called_by": [
+        "spirv_to_nir@src/compiler/spirv/spirv_to_nir.c",
+        "_mesa_glsl_parse@src/compiler/glsl/glsl_parser.yy",
+        "nir_shader_create@src/compiler/nir/nir.c"
+      ],
+      "receives_external_input": false,
+      "risk": "Low"
+    },
+    "v3dv_CreatePipeline@src/broadcom/vulkan/v3dv_pipeline.c": {
+      "defined_at": 200,
+      "calls": [
+        "v3dv_pipeline_compile@src/broadcom/vulkan/v3dv_pipeline.c",
+        "vk_shader_module_to_nir@src/vulkan/runtime/vk_shader_module.c"
+      ],
+      "called_by": [
+        "vkCreateGraphicsPipelines@src/broadcom/vulkan/v3dv_pipeline.c"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "tu_CreatePipeline@src/freedreno/vulkan/tu_pipeline.c": {
+      "defined_at": 200,
+      "calls": [
+        "tu_pipeline_compile@src/freedreno/vulkan/tu_pipeline.c",
+        "vk_shader_module_to_nir@src/vulkan/runtime/vk_shader_module.c",
+        "ir3_compile@src/freedreno/ir3/ir3_compiler.c"
+      ],
+      "called_by": [
+        "vkCreateGraphicsPipelines@src/freedreno/vulkan/tu_pipeline.c"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "panvk_CreatePipeline@src/panfrost/vulkan/panvk_vX_shader.c": {
+      "defined_at": 100,
+      "calls": [
+        "panvk_shader_compile@src/panfrost/vulkan/panvk_vX_shader.c",
+        "vk_shader_module_to_nir@src/vulkan/runtime/vk_shader_module.c"
+      ],
+      "called_by": [
+        "vkCreateGraphicsPipelines@src/panfrost/vulkan/panvk_pipeline.c"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "VkShaderModuleCreateInfo.pCode@src/vulkan/runtime/vk_shader_module.c:33",
+      "path": [
+        "vk_common_CreateShaderModule@src/vulkan/runtime/vk_shader_module.c:33",
+        "vk_shader_module_to_nir@src/vulkan/runtime/vk_shader_module.c:94",
+        "spirv_to_nir@src/compiler/spirv/spirv_to_nir.c:200",
+        "vtn_handle_instruction@src/compiler/spirv/spirv_to_nir.c:1500",
+        "vtn_handle_variables@src/compiler/spirv/vtn_variables.c:200"
+      ],
+      "sink": "memcpy@src/compiler/spirv/spirv_to_nir.c:200",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "VkShaderModuleCreateInfo.pCode@src/vulkan/runtime/vk_shader_module.c:33",
+      "path": [
+        "vk_common_CreateShaderModule@src/vulkan/runtime/vk_shader_module.c:33",
+        "vk_shader_module_to_nir@src/vulkan/runtime/vk_shader_module.c:94",
+        "spirv_to_nir@src/compiler/spirv/spirv_to_nir.c:200",
+        "vtn_handle_instruction@src/compiler/spirv/spirv_to_nir.c:1500",
+        "ralloc@src/util/ralloc.c:1"
+      ],
+      "sink": "malloc@src/util/ralloc.c:1",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "glShaderSource.string@src/mesa/main/shaderapi.c:150",
+      "path": [
+        "_mesa_ShaderSource@src/mesa/main/shaderapi.c:150",
+        "glcpp_parser_parse@src/compiler/glsl/glcpp/glcpp-parse.y:1",
+        "glcpp_lex@src/compiler/glsl/glcpp/glcpp-lex.l:1"
+      ],
+      "sink": "ralloc@src/util/ralloc.c:1",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "glShaderSource.string@src/mesa/main/shaderapi.c:150",
+      "path": [
+        "_mesa_ShaderSource@src/mesa/main/shaderapi.c:150",
+        "_mesa_glsl_parse@src/compiler/glsl/glsl_parser.yy:1",
+        "_mesa_glsl_lexer_lex@src/compiler/glsl/glsl_lexer.ll:1"
+      ],
+      "sink": "ralloc@src/util/ralloc.c:1",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "SPIR-V bytecode@src/compiler/spirv/spirv_to_nir.c:200",
+      "path": [
+        "spirv_to_nir@src/compiler/spirv/spirv_to_nir.c:200",
+        "vtn_handle_variables@src/compiler/spirv/vtn_variables.c:200",
+        "nir_deref@src/compiler/nir/nir_deref.c:100"
+      ],
+      "sink": "memcpy@src/compiler/spirv/vtn_variables.c:200",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "disk_cache.path@src/util/disk_cache.c:300",
+      "path": [
+        "disk_cache_load@src/util/disk_cache.c:300",
+        "open@stdlib",
+        "read@stdlib",
+        "blob_reader@src/util/blob.c:50"
+      ],
+      "sink": "memcpy@src/util/blob.c:50",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "xmlconfig.file@src/util/xmlconfig.c:200",
+      "path": [
+        "parseConfigFile@src/util/xmlconfig.c:200",
+        "XML_Parse@libexpat"
+      ],
+      "sink": "XML_Parse@libexpat",
+      "sink_type": "file_operation"
+    },
+    {
+      "source": "virtio_socket.recv@src/virtio/vulkan/vn_renderer_vtest.c:100",
+      "path": [
+        "vn_renderer_vtest_connect@src/virtio/vulkan/vn_renderer_vtest.c:100",
+        "recv@stdlib",
+        "vn_cs_decoder_read@src/virtio/vulkan/vn_cs.c:50"
+      ],
+      "sink": "memcpy@src/virtio/vulkan/vn_cs.c:50",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "VkCommandBuffer.commands@src/amd/vulkan/radv_cmd_buffer.c:100",
+      "path": [
+        "radv_CmdDraw@src/amd/vulkan/radv_cmd_buffer.c:100",
+        "radv_emit_draw@src/amd/vulkan/radv_cmd_buffer.c:200",
+        "si_emit_cache@src/amd/vulkan/si_cmd_buffer.c:50"
+      ],
+      "sink": "memcpy@src/amd/vulkan/radv_cmd_buffer.c:200",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "VkCommandBuffer.commands@src/intel/vulkan/genX_cmd_buffer.c:100",
+      "path": [
+        "genX_CmdDraw@src/intel/vulkan/genX_cmd_buffer.c:100",
+        "genX_emit_draw@src/intel/vulkan/genX_cmd_buffer.c:200",
+        "blorp_exec@src/intel/blorp/blorp.c:50"
+      ],
+      "sink": "memcpy@src/intel/vulkan/genX_cmd_buffer.c:200",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "VkPipelineCreateInfo.pStages@src/amd/vulkan/radv_pipeline.c:200",
+      "path": [
+        "radv_CreatePipeline@src/amd/vulkan/radv_pipeline.c:200",
+        "vk_shader_module_to_nir@src/vulkan/runtime/vk_shader_module.c:94",
+        "spirv_to_nir@src/compiler/spirv/spirv_to_nir.c:200"
+      ],
+      "sink": "memcpy@src/compiler/spirv/spirv_to_nir.c:200",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "VkPipelineCreateInfo.pStages@src/intel/vulkan/anv_pipeline.c:100",
+      "path": [
+        "anv_CreatePipeline@src/intel/vulkan/anv_pipeline.c:100",
+        "vk_shader_module_to_nir@src/vulkan/runtime/vk_shader_module.c:94",
+        "spirv_to_nir@src/compiler/spirv/spirv_to_nir.c:200"
+      ],
+      "sink": "memcpy@src/compiler/spirv/spirv_to_nir.c:200",
+      "sink_type": "memory_operation"
+    }
+  ]
+}

@@ -1,0 +1,121 @@
+{
+  "scan_id": "scan-b90183e7-f8e7",
+  "start_time": "2026-04-21T20:58:08-07:00",
+  "end_time": "2026-04-21T21:29:00-07:00",
+  "duration_seconds": 1852,
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/cann/1/ops-transformer",
+  "project_name": "ops-transformer",
+  "project_type": "C/C++ + Python 混合",
+  "language_detection": {
+    "cpp_count": 4612,
+    "python_count": 294,
+    "total_count": 4906
+  },
+  "constraint_mode": "自主分析模式",
+  "status": "success",
+  "agents": [
+    {
+      "name": "architecture",
+      "phase": "analysis",
+      "status": "success",
+      "start_time": "2026-04-21T20:58:30-07:00",
+      "end_time": "2026-04-21T21:05:29-07:00",
+      "duration_seconds": 419,
+      "output_files": [
+        "scan-results/.context/project_model.json",
+        "scan-results/.context/call_graph.json"
+      ],
+      "summary": "Identified 12 modules, 9 entry points, 6 critical data flow paths"
+    },
+    {
+      "name": "dataflow-scanner",
+      "phase": "scan",
+      "status": "success",
+      "start_time": "2026-04-21T21:05:30-07:00",
+      "end_time": "2026-04-21T21:09:48-07:00",
+      "duration_seconds": 258,
+      "vulnerabilities_found": 10,
+      "summary": "Found 10 candidate vulnerabilities: 8 integer overflow (infershape), 2 command injection (subprocess)"
+    },
+    {
+      "name": "security-auditor",
+      "phase": "audit",
+      "status": "success",
+      "start_time": "2026-04-21T21:05:30-07:00",
+      "end_time": "2026-04-21T21:08:51-07:00",
+      "duration_seconds": 201,
+      "vulnerabilities_found": 1,
+      "summary": "Found 1 candidate vulnerability: command injection in packer.py"
+    },
+    {
+      "name": "verification",
+      "phase": "verification",
+      "status": "success",
+      "start_time": "2026-04-21T21:15:00-07:00",
+      "end_time": "2026-04-21T21:18:11-07:00",
+      "duration_seconds": 191,
+      "input_vulnerabilities": 11,
+      "verified_results": {
+        "confirmed": 8,
+        "likely": 2,
+        "possible": 0,
+        "false_positive": 1
+      },
+      "summary": "Verified 11 candidates: 8 CONFIRMED (integer overflow), 2 LIKELY (command injection), 1 FALSE_POSITIVE"
+    },
+    {
+      "name": "details-analyzer",
+      "phase": "deep_analysis",
+      "status": "success",
+      "start_time": "2026-04-21T21:18:15-07:00",
+      "end_time": "2026-04-21T21:28:30-07:00",
+      "duration_seconds": 615,
+      "input_vulnerabilities": 8,
+      "output_files": [
+        "scan-results/details/VULN-DF-INT-001.md",
+        "scan-results/details/VULN-DF-INT-002.md",
+        "scan-results/details/VULN-DF-INT-003.md",
+        "scan-results/details/VULN-DF-INT-004.md",
+        "scan-results/details/VULN-DF-INT-005.md",
+        "scan-results/details/VULN-DF-INT-006.md",
+        "scan-results/details/VULN-DF-INT-007.md",
+        "scan-results/details/VULN-DF-INT-008.md"
+      ],
+      "summary": "Deep exploitation analysis completed for 8 CONFIRMED vulnerabilities, all confirmed as TRUE"
+    },
+    {
+      "name": "reporter",
+      "phase": "report",
+      "status": "success",
+      "start_time": "2026-04-21T21:28:45-07:00",
+      "end_time": "2026-04-21T21:29:00-07:00",
+      "duration_seconds": 15,
+      "output_files": [
+        "scan-results/report_confirmed.md",
+        "scan-results/report_unconfirmed.md"
+      ],
+      "summary": "Generated final vulnerability reports: 8 CONFIRMED + 2 LIKELY"
+    }
+  ],
+  "final_summary": {
+    "total_vulnerabilities": 10,
+    "confirmed": 8,
+    "likely": 2,
+    "false_positive": 1,
+    "by_severity": {
+      "high": 6,
+      "medium": 2
+    },
+    "by_type": {
+      "integer_overflow_cwe190": 8,
+      "command_injection_cwe78": 2
+    },
+    "by_module": {
+      "mc2": 5,
+      "attention": 2,
+      "moe": 1,
+      "scripts": 2
+    },
+    "recommendation": "优先修复 VULN-DF-INT-001 (影响范围最广)、VULN-DF-INT-004/007 (存在bypass路径)"
+  }
+}

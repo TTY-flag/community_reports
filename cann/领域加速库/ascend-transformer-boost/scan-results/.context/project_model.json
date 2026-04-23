@@ -1,0 +1,472 @@
+{
+  "project_name": "ascend-transformer-boost",
+  "project_version": "unknown",
+  "language": "C++",
+  "languages": ["C++", "Python"],
+  "description": "Huawei Ascend Transformer Boost (ATB) library for Transformer model inference and training acceleration on NPU",
+  "total_source_files": 716,
+  "total_header_files": 686,
+  "total_lines_of_code": 128505,
+  
+  "modules": {
+    "include/atb": {
+      "name": "Public API Headers",
+      "path": "include/atb",
+      "type": "header-only",
+      "description": "Public API interface definitions for ATB library",
+      "entry_points": [
+        "atb_infer.h",
+        "context.h",
+        "operation.h",
+        "types.h",
+        "graph_op_builder.h",
+        "infer_op_params.h",
+        "train_op_params.h",
+        "common_op_params.h",
+        "utils.h",
+        "svector.h",
+        "comm.h",
+        "atb_acl.h",
+        "operation_infra.h"
+      ],
+      "risk_level": "high",
+      "security_notes": [
+        "Primary external API entry point - all user inputs flow through these headers",
+        "Defines tensor structures (Tensor, TensorDesc, Dims) with user-controllable sizes",
+        "VariantPack contains input/output tensors - potential buffer overflow if sizes mismatch",
+        "GraphParam allows user-defined graph structure with up to 1024 nodes",
+        "InferShapeFunc is a user-provided callback - potential code injection",
+        "ReshapeFunc is a user-provided callback - potential code injection"
+      ]
+    },
+    
+    "src/atb/context": {
+      "name": "Context Management",
+      "path": "src/atb/context",
+      "type": "implementation",
+      "description": "Context management for operation execution, stream handling, memory allocation",
+      "entry_points": [
+        "CreateContext",
+        "DestroyContext",
+        "SetExecuteStream",
+        "GetExecuteStream"
+      ],
+      "risk_level": "high",
+      "security_notes": [
+        "Manages device/host memory allocation",
+        "Controls stream execution for NPU operations",
+        "Tiling buffer pool management - potential memory corruption",
+        "Custom allocator/deallocator support - arbitrary code execution risk",
+        "asyncTilingCopyStatus enables async copy operations"
+      ],
+      "dependencies": ["allocator", "tiling_buffer_pool"]
+    },
+    
+    "src/atb/operation": {
+      "name": "Operation Implementation",
+      "path": "src/atb/operation",
+      "type": "implementation",
+      "description": "Core operation implementation including Setup, Execute, InferShape",
+      "entry_points": [
+        "CreateOperation",
+        "DestroyOperation",
+        "Operation::Setup",
+        "Operation::Execute",
+        "Operation::InferShape",
+        "UpdateOperationParam",
+        "CloneOperationParam"
+      ],
+      "risk_level": "critical",
+      "security_notes": [
+        "Execute() processes user-provided VariantPack with tensors",
+        "Setup() calculates workspace size based on user input",
+        "workspace allocation uses user-influenced size - potential integer overflow",
+        "InferShape() validates tensor dimensions - bounds check required",
+        "VariantPack.inTensors/outTensors sizes user-controlled",
+        "Graph operation with up to 1024 nodes - complex validation needed"
+      ],
+      "files": ["operation_base.cpp", "operation.cpp", "graph_operation.cpp", "if_operation.cpp", "plugin_operation.cpp"]
+    },
+    
+    "src/atb/runner": {
+      "name": "Runner/Dispatcher",
+      "path": "src/atb/runner",
+      "type": "implementation",
+      "description": "Operation dispatchers including HCCL runner, ACLNN runner, graph runner",
+      "entry_points": [
+        "OpsRunner::Run",
+        "HcclRunner::Run",
+        "AclnnRunner::Run",
+        "GraphRunner::Run"
+      ],
+      "risk_level": "high",
+      "security_notes": [
+        "HCCL runner handles distributed communication - network input",
+        "ACLNN runner interfaces with CANN ACLNN library - external dependency",
+        "Graph runner executes multi-node operations - validation complexity",
+        "RunnerVariantPack contains tensor data - buffer handling risks"
+      ],
+      "files": ["ops_runner.cpp", "hccl_runner.cpp", "aclnn_runner.cpp", "graph_runner.cpp", "lcal_runner.cpp"]
+    },
+    
+    "src/atb/utils": {
+      "name": "Utilities",
+      "path": "src/atb/utils",
+      "type": "implementation",
+      "description": "Utility functions for memory, config, tensor operations, communication",
+      "entry_points": [
+        "Config::Config",
+        "comm utilities"
+      ],
+      "risk_level": "high",
+      "security_notes": [
+        "Config reads multiple environment variables (getenv)",
+        "ATB_HOME_PATH, ATB_WORKSPACE_MEM_ALLOC_ALG_TYPE, etc.",
+        "MAX_ENV_STRING_LEN check at 12800 - potential truncation",
+        "comm.cpp handles HCCL root info via shared memory",
+        "Shared memory operations with semaphore locking - race conditions",
+        "disk_util.cpp for file operations",
+        "Memory allocation solver with multiple algorithms"
+      ],
+      "files": ["config.cpp", "comm.cpp", "disk_util.cpp", "utils.cpp", "tensor_util.cpp", "aclnn_util.cpp"]
+    },
+    
+    "src/atb/kernel_cache": {
+      "name": "Kernel Cache",
+      "path": "src/atb/kernel_cache",
+      "type": "implementation",
+      "description": "Kernel compilation cache management",
+      "risk_level": "medium",
+      "security_notes": [
+        "Kernel caching on disk - potential cache poisoning",
+        "Local and global cache configuration via env vars"
+      ]
+    },
+    
+    "src/torch_atb": {
+      "name": "PyTorch Bindings",
+      "path": "src/torch_atb",
+      "type": "python-bindings",
+      "description": "Python bindings for ATB library via pybind11",
+      "entry_points": [
+        "PYBIND11_MODULE(_C)",
+        "torch_atb/__init__.py",
+        "OperationWrapper::Forward",
+        "GraphBuilder::Build",
+        "set_buffer_size"
+      ],
+      "risk_level": "critical",
+      "security_notes": [
+        "Direct Python interface - arbitrary input from Python code",
+        "pybind11 bindings expose all operation parameters",
+        "OperationWrapper accepts Python tensors - no validation",
+        "GraphBuilder allows arbitrary graph construction from Python",
+        "set_buffer_size accepts arbitrary uint64_t - integer overflow risk",
+        "Memory manager controls workspace buffer sizes",
+        "Python can manipulate tensor shapes, types, and memory addresses"
+      ],
+      "files": ["bindings.cpp", "operation_wrapper.cpp", "graph_operation_builder.cpp", "enger_graph_builder.cpp", "graph_node.cpp"]
+    },
+    
+    "src/torch_atb/resource": {
+      "name": "Memory Manager",
+      "path": "src/torch_atb/resource",
+      "type": "implementation",
+      "description": "Memory management for PyTorch integration",
+      "risk_level": "high",
+      "security_notes": [
+        "MemoryManager::SetBufferSize controls workspace allocation",
+        "Buffer device management for NPU memory",
+        "Potential for memory exhaustion attacks"
+      ]
+    },
+    
+    "src/ops/ops_infer": {
+      "name": "Inference Operations",
+      "path": "src/ops/ops_infer",
+      "type": "implementation",
+      "description": "71 inference operation implementations",
+      "submodules": [
+        "self_attention", "paged_attention", "linear", "linear_parallel",
+        "all_gather", "all_reduce", "reduce_scatter", "all_to_all",
+        "rope", "rms_norm", "layer_norm", "activation", "elewise",
+        "softmax", "gather", "scatter_elements_v2", "concat", "split",
+        "slice", "transpose", "fill", "gating", "multinomial", "sort",
+        "kv_cache", "reshape_and_cache", "multi_latent_attention",
+        "relay_attention", "razor_fusion_attention", "faupdate"
+      ],
+      "risk_level": "high",
+      "security_notes": [
+        "71 different operation implementations - validation complexity",
+        "Attention operations process user-controlled tensor dimensions",
+        "Communication ops (all_gather, all_reduce) handle distributed data",
+        "KV cache operations with memory management",
+        "Quantization operations with user-controlled parameters"
+      ]
+    },
+    
+    "src/ops/ops_train": {
+      "name": "Training Operations",
+      "path": "src/ops/ops_train",
+      "type": "implementation",
+      "description": "10 training operation implementations",
+      "risk_level": "medium",
+      "security_notes": [
+        "Training-specific operations for gradient computation",
+        "Backward pass operations with additional validation needs"
+      ]
+    },
+    
+    "src/ops/ops_common": {
+      "name": "Common Operations",
+      "path": "src/ops/ops_common",
+      "type": "implementation",
+      "description": "Shared operation utilities and event operations",
+      "risk_level": "medium"
+    },
+    
+    "src/kernels/mixkernels": {
+      "name": "Mixed Kernel Operations",
+      "path": "src/kernels/mixkernels",
+      "type": "implementation",
+      "description": "35 fused kernel implementations for AscendC",
+      "submodules": [
+        "rope", "rope_grad", "kvcache", "pagedattention", "attention",
+        "rms_norm_and_rope_and_reshape_and_cache", "mla_preprocess",
+        "multi_latent_attention", "gating", "moe_gmm", "fusion",
+        "pad", "blockcopy", "toppsample", "genattentionmask",
+        "laser_attention", "laser_attention_grad", "ring_mla",
+        "fused_add_topk_div", "reshape_and_cache", "paged_cache_load"
+      ],
+      "risk_level": "high",
+      "security_notes": [
+        "AscendC kernel implementations - direct hardware access",
+        "Tiling calculations based on user input dimensions",
+        "Memory operations within kernels - bounds checking critical",
+        "Fused operations combine multiple ops - validation complexity"
+      ]
+    },
+    
+    "src/kernels/kernels": {
+      "name": "Base Kernels",
+      "path": "src/kernels/kernels",
+      "type": "implementation",
+      "description": "40 individual kernel implementations",
+      "submodules": [
+        "matmul", "elewise", "reduce", "softmax", "activation",
+        "norm", "quantization", "transpose", "scatter", "gather"
+      ],
+      "risk_level": "high",
+      "security_notes": [
+        "Base kernel implementations for fundamental operations",
+        "Dynamic quantization kernels with user-controlled parameters"
+      ]
+    },
+    
+    "src/kernels/lcal": {
+      "name": "LCAL Communication Layer",
+      "path": "src/kernels/lcal",
+      "type": "implementation",
+      "description": "Low-level communication abstraction layer",
+      "entry_points": [
+        "lcal_comm.cpp",
+        "lccl.cpp",
+        "lcal_wrap.cpp"
+      ],
+      "risk_level": "critical",
+      "security_notes": [
+        "Socket communication in tools/socket/",
+        "Collective communication kernels (AllGather, AllReduce)",
+        "LCCL (Lightweight Collective Communication Library)",
+        "Network data handling - input validation critical",
+        "Profiling and timing with external synchronization"
+      ]
+    },
+    
+    "src/kernels/tbe_adapter": {
+      "name": "TBE Adapter",
+      "path": "src/kernels/tbe_adapter",
+      "type": "implementation",
+      "description": "Tensor Boost Engine adapter and platform abstraction",
+      "risk_level": "medium"
+    },
+    
+    "torch_atb": {
+      "name": "Python Package Entry",
+      "path": "torch_atb",
+      "type": "python",
+      "description": "Python package initialization and library loading",
+      "entry_points": [
+        "__init__.py"
+      ],
+      "risk_level": "high",
+      "security_notes": [
+        "Loads shared libraries via ctypes.CDLL with RTLD_GLOBAL",
+        "Sets ATB_HOME_PATH environment variable",
+        "Library loading failures raise RuntimeError",
+        "Dynamic library path from package_dir - path traversal risk"
+      ]
+    },
+    
+    "scripts": {
+      "name": "Build Scripts",
+      "path": "scripts",
+      "type": "python",
+      "description": "Build utility scripts",
+      "risk_level": "medium",
+      "security_notes": [
+        "build_util.py - build configuration",
+        "update_tbe_tactic_json.py - JSON file manipulation",
+        "build_attribute_utils.py - attribute handling"
+      ]
+    }
+  },
+  
+  "attack_surface": {
+    "primary_entry_points": [
+      {
+        "name": "Python API",
+        "location": "src/torch_atb/bindings.cpp",
+        "type": "external_input",
+        "risk": "critical",
+        "description": "Python bindings expose all operations and parameters to arbitrary user input"
+      },
+      {
+        "name": "Public C++ API",
+        "location": "include/atb/*.h",
+        "type": "external_input",
+        "risk": "high",
+        "description": "C++ headers define entry points for tensor operations"
+      },
+      {
+        "name": "HCCL Communication",
+        "location": "src/atb/runner/hccl_runner.cpp",
+        "type": "network_input",
+        "risk": "critical",
+        "description": "Distributed communication receives data from other nodes"
+      },
+      {
+        "name": "Environment Variables",
+        "location": "src/atb/utils/config.cpp",
+        "type": "external_input",
+        "risk": "high",
+        "description": "Configuration loaded from environment variables"
+      },
+      {
+        "name": "Shared Memory IPC",
+        "location": "src/atb/utils/comm.cpp",
+        "type": "ipc_input",
+        "risk": "high",
+        "description": "HCCL root info exchanged via shared memory"
+      }
+    ],
+    
+    "data_flow_paths": [
+      {
+        "source": "Python API",
+        "sink": "Operation::Execute",
+        "description": "User tensors from Python -> Operation execution"
+      },
+      {
+        "source": "Python API",
+        "sink": "GraphBuilder::Build",
+        "description": "User graph definition -> Graph operation creation"
+      },
+      {
+        "source": "HCCL Communication",
+        "sink": "Runner::Execute",
+        "description": "Network data -> Distributed operation execution"
+      },
+      {
+        "source": "Environment Variables",
+        "sink": "Config initialization",
+        "description": "ENV vars -> Library configuration"
+      }
+    ],
+    
+    "high_value_targets": [
+      {
+        "name": "Tensor device memory",
+        "location": "Tensor.deviceData",
+        "risk": "memory_corruption",
+        "description": "User-controlled pointer to device memory"
+      },
+      {
+        "name": "Tensor host memory",
+        "location": "Tensor.hostData",
+        "risk": "memory_corruption",
+        "description": "User-controlled pointer to host memory"
+      },
+      {
+        "name": "Workspace memory",
+        "location": "Operation::Execute workspace",
+        "risk": "buffer_overflow",
+        "description": "Workspace allocated based on user-influenced size"
+      },
+      {
+        "name": "Graph structure",
+        "location": "GraphParam.nodes",
+        "risk": "graph_manipulation",
+        "description": "User-defined operation graph with up to 1024 nodes"
+      }
+    ]
+  },
+  
+  "security_patterns": {
+    "memory_operations": {
+      "count": 1619,
+      "high_risk_functions": ["memcpy", "malloc", "free", "aclrtMemcpy"],
+      "files_with_most_occurrences": [
+        "src/atb/runner/graph_runner.cpp (16)",
+        "src/atb/runner/ops_runner.cpp (16)",
+        "src/kernels/tbe_adapter/tiling_runner/tbe_tiling_runner.cpp (10)"
+      ]
+    },
+    
+    "communication_operations": {
+      "count": 158,
+      "high_risk_functions": ["HcclAllGather", "HcclAllReduce", "HcclBroadcast", "aclrtMemcpy"],
+      "files_with_most_occurrences": [
+        "src/atb/utils/comm.cpp (47)",
+        "src/atb/runner/hccl_runner.cpp (35)",
+        "src/torch_atb/bindings.cpp (7)"
+      ]
+    },
+    
+    "file_io_operations": {
+      "count": 517,
+      "high_risk_functions": ["ifstream", "ofstream", "getline", "getenv"],
+      "files_with_most_occurrences": [
+        "src/torch_atb/bindings.cpp (225)",
+        "src/kernels/lcal/src/ascendc_kernels/collectives.h (22)"
+      ]
+    }
+  },
+  
+  "external_dependencies": {
+    "acl": {
+      "name": "Ascend Computing Library",
+      "type": "system_library",
+      "risk": "medium",
+      "description": "NPU runtime and tensor operations"
+    },
+    "hccl": {
+      "name": "Huawei Collective Communication Library",
+      "type": "system_library",
+      "risk": "high",
+      "description": "Distributed training/inference communication"
+    },
+    "pybind11": {
+      "name": "pybind11",
+      "type": "third_party",
+      "risk": "medium",
+      "description": "Python/C++ binding library"
+    },
+    "torch_npu": {
+      "name": "PyTorch NPU Backend",
+      "type": "third_party",
+      "risk": "medium",
+      "description": "PyTorch integration for NPU"
+    }
+  }
+}

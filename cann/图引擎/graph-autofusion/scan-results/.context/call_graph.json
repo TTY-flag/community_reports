@@ -1,0 +1,397 @@
+{
+  "functions": {
+    "aclskOptimize@super_kernel.cpp:77": {
+      "defined_at": 77,
+      "calls": [
+        "PrepareGraphDumpEnv@super_kernel.cpp:62",
+        "DumpGraphJson@super_kernel.cpp:45",
+        "InitSkLogger@sk_log.cpp",
+        "aclrtSetExceptionInfoCallback@acl",
+        "SuperKernelGraph::InitSKGraph@sk_graph.cpp",
+        "LockDetector::GetDeviceCores@sk_lock_detector.cpp",
+        "SkEventRecorder::Instance().Init@sk_event_recorder.cpp",
+        "SuperKernelOptionsManager::ParseOptions@sk_options_manager.cpp",
+        "SuperKernelOptimizer::Process@sk_optimizer.cpp",
+        "SuperKernelGraph::Update@sk_graph.cpp",
+        "DumpKernelBinaries@super_kernel.cpp"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "主入口点，接收外部模型句柄和配置选项，触发完整的图优化流程"
+    },
+    "aclskScopeBegin@super_kernel.cpp:148": {
+      "defined_at": 148,
+      "calls": [
+        "LaunchScopeKernel@sk_scope_launch.cpp"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "Scope 开始入口，接收 scopeName 字符串参数"
+    },
+    "aclskScopeEnd@super_kernel.cpp:156": {
+      "defined_at": 156,
+      "calls": [
+        "LaunchScopeKernel@sk_scope_launch.cpp"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "Scope 结束入口，接收 scopeName 字符串参数"
+    },
+    "SkTaskBuilder::Build@sk_task_builder.cpp:1690": {
+      "defined_at": 1690,
+      "calls": [
+        "SkTask::Init@sk_types.h",
+        "memset_s@securec",
+        "PrecomputeSyncRelationsFromGraph@sk_task_builder.cpp:523",
+        "OptimizeSyncRelations@sk_task_builder.cpp:655",
+        "DispatchFuncTask@sk_task_builder.cpp:1302",
+        "DispatchSyncTasks@sk_task_builder.cpp:1406",
+        "DispatchEventTask@sk_task_builder.cpp:1369",
+        "GenEntryInfo@sk_task_builder.cpp:1544",
+        "GenEntryArgs@sk_task_builder.cpp:980"
+      ],
+      "called_by": [
+        "SuperKernelOptimizer::Process@sk_optimizer.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "构建 Super Kernel 任务队列，使用 memset_s 和 memcpy_s 操作内存"
+    },
+    "GenEntryArgs@sk_task_builder.cpp:980": {
+      "defined_at": 980,
+      "calls": [
+        "memcpy_s@securec",
+        "memset_s@securec"
+      ],
+      "called_by": [
+        "SkTaskBuilder::Build@sk_task_builder.cpp:1690"
+      ],
+      "receives_external_input": false,
+      "risk": "High",
+      "description": "生成设备入口参数，使用 memcpy_s 复制任务队列数据"
+    },
+    "GenEntryInfo@sk_task_builder.cpp:1544": {
+      "defined_at": 1544,
+      "calls": [
+        "std::getenv@stdlib",
+        "TryGenerateConstantFuncHandle@sk_constant_codegen.cpp",
+        "ResolveSkEntryFunc@sk_task_builder.cpp:57"
+      ],
+      "called_by": [
+        "SkTaskBuilder::Build@sk_task_builder.cpp:1690"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "读取环境变量 ASCEND_PROF_SK_ON 和 ASCEND_SK_OP_TRACE_ON"
+    },
+    "SuperKernelOptionsManager::ParseOptions@sk_options_manager.cpp:487": {
+      "defined_at": 487,
+      "calls": [
+        "SetOptOptionValue@sk_options_manager.cpp:306",
+        "ParseAndValidateExtendOptionValue@sk_options_manager.cpp:74"
+      ],
+      "called_by": [
+        "aclskOptimize@super_kernel.cpp:77"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "解析外部配置选项，处理字符串列表和扩展选项"
+    },
+    "ParseAndValidateExtendOptionValue@sk_options_manager.cpp:74": {
+      "defined_at": 74,
+      "calls": [
+        "TrimString@sk_options_manager.cpp:27",
+        "SplitString@sk_options_manager.cpp:40",
+        "IsValidExtendOptionToken@sk_options_manager.cpp:56"
+      ],
+      "called_by": [
+        "SuperKernelOptionsManager::SetOptOptionValue@sk_options_manager.cpp:306"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "解析和验证扩展选项字符串，包含格式验证"
+    },
+    "SuperKernelOptionsManager::MatchRegex@sk_options_manager.cpp:247": {
+      "defined_at": 247,
+      "calls": [],
+      "called_by": [
+        "JudgeDisableKernelDcci@sk_options_manager.cpp:235"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "正则表达式匹配，处理用户提供的模式字符串"
+    },
+    "GetFuncSymbolInfo@sk_common.cpp:90": {
+      "defined_at": 90,
+      "calls": [
+        "BuildFuncSymbolTable@sk_common.cpp:35"
+      ],
+      "called_by": [
+        "ProcessCoreFuncSize@sk_task_builder.cpp:1127"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "解析 ELF 二进制文件获取符号信息"
+    },
+    "BuildFuncSymbolTable@sk_common.cpp:35": {
+      "defined_at": 35,
+      "calls": [],
+      "called_by": [
+        "GetFuncSymbolInfo@sk_common.cpp:90"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "解析 ELF 文件头和符号表，直接操作二进制数据"
+    },
+    "SuperKernelGraph::Update@sk_graph.cpp:34": {
+      "defined_at": 34,
+      "calls": [
+        "aclmdlRIUpdate@acl"
+      ],
+      "called_by": [
+        "aclskOptimize@super_kernel.cpp:77"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "更新模型图，调用 ACL runtime API"
+    },
+    "LaunchScopeKernel@sk_scope_launch.cpp:43": {
+      "defined_at": 43,
+      "calls": [
+        "memcpy_s@securec"
+      ],
+      "called_by": [
+        "aclskScopeBegin@super_kernel.cpp:148",
+        "aclskScopeEnd@super_kernel.cpp:156"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "使用 memcpy_s 复制 scope 名称"
+    },
+    "FileLogger::Initialize@sk_log.cpp:226": {
+      "defined_at": 226,
+      "calls": [
+        "std::getenv@stdlib",
+        "CreateSkMetaDirectory@sk_common.h",
+        "FileHandleManager::RegisterFile@sk_log.cpp:49"
+      ],
+      "called_by": [
+        "InitSkLogger@sk_log.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "初始化文件日志系统，读取环境变量控制"
+    },
+    "gen_super_kernel_file@super_kernel.py:904": {
+      "defined_at": 904,
+      "calls": [
+        "gen_2_real_stream_super_kernel_file@super_kernel.py:613",
+        "os.fdopen@python",
+        "os.open@python"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "生成内核源文件并写入磁盘"
+    },
+    "gen_2_real_stream_super_kernel_file@super_kernel.py:613": {
+      "defined_at": 613,
+      "calls": [
+        "gen_file_header@super_kernel_compile_base.py:58",
+        "gen_profling_func_code@super_kernel.py:513",
+        "gen_notify_wait_func@super_kernel.py:90",
+        "os.fdopen@python",
+        "os.open@python"
+      ],
+      "called_by": [
+        "gen_super_kernel_file@super_kernel.py:904"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "生成双流内核文件，使用 os.open 创建文件"
+    },
+    "parse_super_kernel_options@super_kernel_option_parse.py:171": {
+      "defined_at": 171,
+      "calls": [
+        "setup_super_kernel_option_parsers@super_kernel_option_parse.py:122",
+        "ParserFactory::get_parse_func@super_kernel_option_parse.py:38"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "解析用户提供的编译选项字符串"
+    },
+    "SuperOperatorInfos.compile_sub_kernel@super_kernel_op_infos.py:69": {
+      "defined_at": 69,
+      "calls": [
+        "subprocess.run@python",
+        "open@python"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "调用 subprocess.run 执行编译命令"
+    },
+    "SubOperatorInfos.extract_bin_file@super_kernel_sub_op_infos.py:651": {
+      "defined_at": 651,
+      "calls": [
+        "subprocess.run@python"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "调用 subprocess.run 执行 ar 命令解压二进制文件"
+    },
+    "execute_repack_process@package.py:398": {
+      "defined_at": 398,
+      "calls": [
+        "subprocess.run@python",
+        "open@python"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "执行重新打包流程，调用 subprocess.run"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "aclskOptions.options@super_kernel.cpp:77",
+      "path": [
+        "aclskOptimize@super_kernel.cpp:77",
+        "SuperKernelOptionsManager::ParseOptions@sk_options_manager.cpp:487",
+        "ParseAndValidateExtendOptionValue@sk_options_manager.cpp:74"
+      ],
+      "sink": "optValue@sk_options_manager.cpp",
+      "sink_type": "config_storage",
+      "description": "外部配置选项被解析并存储在内存中"
+    },
+    {
+      "source": "std::getenv(\"ASCEND_PROF_SK_ON\")@sk_task_builder.cpp:1551",
+      "path": [
+        "GenEntryInfo@sk_task_builder.cpp:1544"
+      ],
+      "sink": "enableProfiling@sk_task_builder.cpp:1552",
+      "sink_type": "env_variable",
+      "description": "环境变量控制 profiling 功能"
+    },
+    {
+      "source": "std::getenv(\"ASCEND_SK_OP_TRACE_ON\")@sk_task_builder.cpp:1555",
+      "path": [
+        "GenEntryInfo@sk_task_builder.cpp:1544"
+      ],
+      "sink": "enableOpTrace@sk_task_builder.cpp:1556",
+      "sink_type": "env_variable",
+      "description": "环境变量控制 op_trace 功能"
+    },
+    {
+      "source": "aclmdlRI model@super_kernel.cpp:77",
+      "path": [
+        "aclskOptimize@super_kernel.cpp:77",
+        "SuperKernelGraph::InitSKGraph@sk_graph.cpp",
+        "SuperKernelOptimizer::Process@sk_optimizer.cpp",
+        "SkTaskBuilder::Build@sk_task_builder.cpp:1690"
+      ],
+      "sink": "GenEntryArgs@sk_task_builder.cpp:980",
+      "sink_type": "memory_operation",
+      "description": "模型图数据流经优化流程最终生成设备参数"
+    },
+    {
+      "source": "SkTask::GetTaskQue()@sk_task_builder.cpp:1015",
+      "path": [
+        "GenEntryArgs@sk_task_builder.cpp:980"
+      ],
+      "sink": "memcpy_s@sk_task_builder.cpp:1015",
+      "sink_type": "memory_operation",
+      "description": "任务队列数据通过 memcpy_s 复制到设备参数结构"
+    },
+    {
+      "source": "rtGetBinBuffer@sk_task_builder.cpp:1180",
+      "path": [
+        "UpdateDfxInfo@sk_task_builder.cpp:1160",
+        "GetFuncSymbolInfo@sk_common.cpp:90",
+        "BuildFuncSymbolTable@sk_common.cpp:35"
+      ],
+      "sink": "ELF parsing@sk_common.cpp:43",
+      "sink_type": "binary_parse",
+      "description": "内核二进制被解析以获取符号信息"
+    },
+    {
+      "source": "scopeName@super_kernel.cpp:148",
+      "path": [
+        "aclskScopeBegin@super_kernel.cpp:148",
+        "LaunchScopeKernel@sk_scope_launch.cpp:43",
+        "memcpy_s@sk_scope_launch.cpp:43"
+      ],
+      "sink": "args.name@sk_scope_launch.cpp",
+      "sink_type": "memory_operation",
+      "description": "Scope 名称通过 memcpy_s 复制到参数结构"
+    },
+    {
+      "source": "super_operator.kernel_file@super_kernel.py:691",
+      "path": [
+        "gen_2_real_stream_super_kernel_file@super_kernel.py:613",
+        "os.fdopen/os.open@super_kernel.py:691"
+      ],
+      "sink": "kernel source file write@super_kernel.py:693",
+      "sink_type": "file_write",
+      "description": "生成的内核源代码写入文件"
+    },
+    {
+      "source": "compile options string@super_kernel_option_parse.py:171",
+      "path": [
+        "parse_super_kernel_options@super_kernel_option_parse.py:171",
+        "parser.parse_option@super_kernel_option_parse.py:193"
+      ],
+      "sink": "result_options dict@super_kernel_option_parse.py:176",
+      "sink_type": "config_storage",
+      "description": "编译选项字符串被解析为字典"
+    },
+    {
+      "source": "cmds list@super_kernel_op_infos.py:69",
+      "path": [
+        "compile_sub_kernel@super_kernel_op_infos.py",
+        "subprocess.run@super_kernel_op_infos.py:69"
+      ],
+      "sink": "shell command execution@subprocess.run",
+      "sink_type": "command_execution",
+      "description": "编译命令通过 subprocess.run 执行"
+    },
+    {
+      "source": "['ar', 'x', bin_path]@super_kernel_sub_op_infos.py:651",
+      "path": [
+        "extract_bin_file@super_kernel_sub_op_infos.py",
+        "subprocess.run@super_kernel_sub_op_infos.py:651"
+      ],
+      "sink": "ar command execution@subprocess.run",
+      "sink_type": "command_execution",
+      "description": "ar 命令通过 subprocess.run 执行以解压二进制"
+    }
+  ],
+  "cross_language_boundaries": [
+    {
+      "boundary": "Python JIT → C/C++ AOT",
+      "python_side": "super_kernel.py",
+      "cpp_side": "super_kernel.cpp",
+      "description": "Python JIT 编译器生成内核源文件，C/C++ AOT 引擎加载并执行",
+      "risk": "Medium"
+    },
+    {
+      "boundary": "Python subprocess → Shell",
+      "python_side": "super_kernel_op_infos.py, super_kernel_sub_op_infos.py",
+      "shell_side": "ar, compiler tools",
+      "description": "Python 通过 subprocess.run 调用外部编译工具",
+      "risk": "High"
+    },
+    {
+      "boundary": "Shell scripts → Shell eval",
+      "script_side": "common_func.inc, install_common_parser.sh",
+      "eval_target": "Shell commands and variables",
+      "description": "Shell 脚本使用 eval 执行命令和变量赋值",
+      "risk": "High"
+    }
+  ]
+}

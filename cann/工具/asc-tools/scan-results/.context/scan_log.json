@@ -1,0 +1,84 @@
+{
+  "scan_id": "16bc535d-db2c-46d5-8f1f-c1eb657953e7",
+  "project_name": "asc-tools",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/cann/6/asc-tools",
+  "start_time": "2026-04-22T18:28:00+08:00",
+  "end_time": "2026-04-22T18:56:00+08:00",
+  "duration_seconds": 1680,
+  "status": "success",
+  "constraint_mode": false,
+  "agents": [
+    {
+      "name": "architecture",
+      "start_time": "2026-04-22T18:30:00+08:00",
+      "end_time": "2026-04-22T18:36:00+08:00",
+      "duration_seconds": 360,
+      "status": "success",
+      "output_files": [
+        "project_model.json",
+        "call_graph.json",
+        "threat_analysis_report.md"
+      ]
+    },
+    {
+      "name": "dataflow-scanner",
+      "start_time": "2026-04-22T18:37:00+08:00",
+      "end_time": "2026-04-22T18:41:00+08:00",
+      "duration_seconds": 247,
+      "status": "success",
+      "item_count": 10
+    },
+    {
+      "name": "security-auditor",
+      "start_time": "2026-04-22T18:37:00+08:00",
+      "end_time": "2026-04-22T18:41:00+08:00",
+      "duration_seconds": 264,
+      "status": "success",
+      "item_count": 0,
+      "note": "No in-scope security logic vulnerabilities found (project type not applicable)"
+    },
+    {
+      "name": "verification",
+      "start_time": "2026-04-22T18:45:00+08:00",
+      "end_time": "2026-04-22T18:48:00+08:00",
+      "duration_seconds": 170,
+      "status": "success",
+      "item_count": 10,
+      "summary": "CONFIRMED:2, LIKELY:3, POSSIBLE:2, FALSE_POSITIVE:3"
+    },
+    {
+      "name": "details-analyzer",
+      "start_time": "2026-04-22T18:49:00+08:00",
+      "end_time": "2026-04-22T18:53:00+08:00",
+      "duration_seconds": 239,
+      "status": "success",
+      "item_count": 2,
+      "output_files": [
+        "details/VULN-DF-PY-001.md",
+        "details/VULN-DF-PY-002.md"
+      ]
+    },
+    {
+      "name": "reporter",
+      "start_time": "2026-04-22T18:53:00+08:00",
+      "end_time": "2026-04-22T18:56:00+08:00",
+      "duration_seconds": 170,
+      "status": "success",
+      "output_files": [
+        "report_confirmed.md",
+        "report_unconfirmed.md"
+      ]
+    }
+  ],
+  "summary": {
+    "total_candidates": 10,
+    "confirmed": 2,
+    "likely": 3,
+    "possible": 2,
+    "false_positive": 3,
+    "critical": 2,
+    "high": 2,
+    "medium": 3,
+    "low": 3
+  }
+}

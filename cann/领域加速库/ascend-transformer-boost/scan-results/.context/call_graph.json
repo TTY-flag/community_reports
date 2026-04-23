@@ -1,0 +1,409 @@
+{
+  "project_name": "ascend-transformer-boost",
+  "generated_at": "2026-04-21",
+  "call_chains": [
+    {
+      "name": "Python Entry to Operation Execute",
+      "description": "Main data flow from Python API through operation execution",
+      "chain": [
+        {
+          "function": "PYBIND11_MODULE(_C)",
+          "file": "src/torch_atb/bindings.cpp",
+          "line": 38,
+          "type": "entry_point",
+          "signature": "pybind11 module initialization",
+          "risk": "critical",
+          "tainted_input": true,
+          "description": "Python module entry point, all bindings exposed"
+        },
+        {
+          "function": "OperationWrapper::Forward",
+          "file": "src/torch_atb/operation_wrapper.cpp",
+          "type": "public_api",
+          "signature": "std::vector<torch::Tensor> Forward(const std::vector<torch::Tensor> &inTensors)",
+          "risk": "critical",
+          "tainted_input": true,
+          "description": "Python tensor input converted to ATB tensors"
+        },
+        {
+          "function": "Operation::Execute",
+          "file": "include/atb/operation.h",
+          "line": 97,
+          "type": "virtual_method",
+          "signature": "Status Execute(const VariantPack &variantPack, uint8_t *workspace, uint64_t workspaceSize, Context *context)",
+          "risk": "high",
+          "tainted_input": true,
+          "description": "Virtual execute method, processes user tensors"
+        },
+        {
+          "function": "OperationBase::Execute",
+          "file": "src/atb/operation/operation_base.cpp",
+          "type": "implementation",
+          "signature": "Status Execute(VariantPack &variantPack, uint8_t *workspace, uint64_t workspaceSize, Context *context)",
+          "risk": "high",
+          "tainted_input": true,
+          "description": "Base implementation calls runner"
+        },
+        {
+          "function": "OpsRunner::Run",
+          "file": "src/atb/runner/ops_runner.cpp",
+          "type": "dispatcher",
+          "signature": "Status Run(RunnerVariantPack &runnerVariantPack)",
+          "risk": "high",
+          "tainted_input": true,
+          "description": "Dispatches to specific runner type"
+        }
+      ]
+    },
+    {
+      "name": "Context Creation and Memory Allocation",
+      "description": "Context initialization with custom allocators",
+      "chain": [
+        {
+          "function": "CreateContext",
+          "file": "include/atb/context.h",
+          "line": 153,
+          "type": "public_api",
+          "signature": "Status CreateContext(Context **context)",
+          "risk": "medium",
+          "description": "Public API for context creation"
+        },
+        {
+          "function": "CreateContext (with allocators)",
+          "file": "include/atb/context.h",
+          "line": 168,
+          "type": "public_api",
+          "signature": "Status CreateContext(Context **context, const std::function<void*(size_t)>& alloc, const std::function<void(void*)>& dealloc)",
+          "risk": "high",
+          "tainted_input": true,
+          "description": "Allows custom allocator - potential arbitrary code execution"
+        },
+        {
+          "function": "ContextBase::Init",
+          "file": "src/atb/context/context_base.cpp",
+          "line": 51,
+          "type": "implementation",
+          "signature": "Status Init(const std::function<void *(size_t)> &alloc, const std::function<void(void *)> &dealloc, uint32_t hostTilingBlockNum, uint32_t deviceTilingBlockNum)",
+          "risk": "high",
+          "description": "Creates tiling buffer pools with allocators"
+        },
+        {
+          "function": "DefaultDeviceAllocator::Allocate",
+          "file": "src/atb/context/allocator/default_device_allocator.cpp",
+          "type": "allocator",
+          "signature": "void *Allocate(size_t bufferSize)",
+          "risk": "medium",
+          "description": "aclrtMalloc wrapper with alignment"
+        },
+        {
+          "function": "aclrtMalloc",
+          "file": "external",
+          "type": "external_api",
+          "signature": "aclError aclrtMalloc(void **devPtr, size_t size, aclrtMemMallocPolicy policy)",
+          "risk": "low",
+          "description": "CANN NPU memory allocation"
+        }
+      ]
+    },
+    {
+      "name": "HCCL Distributed Communication",
+      "description": "Network-based collective communication operations",
+      "chain": [
+        {
+          "function": "HcclRunner::HcclRunner",
+          "file": "src/atb/runner/hccl_runner.cpp",
+          "line": 24,
+          "type": "constructor",
+          "signature": "HcclRunner(const std::string &name, int rank, int rankSize, int rankRoot, const std::string &commDomain)",
+          "risk": "high",
+          "tainted_input": true,
+          "description": "Creates HCCL runner with network parameters"
+        },
+        {
+          "function": "HcclRunner::CreateHcclCommInMulitProcessByRankFile",
+          "file": "src/atb/runner/hccl_runner.cpp",
+          "line": 100,
+          "type": "implementation",
+          "signature": "HcclCommSharedPtr CreateHcclCommInMulitProcessByRankFile() const",
+          "risk": "critical",
+          "tainted_input": true,
+          "description": "Uses rank table file for HCCL initialization"
+        },
+        {
+          "function": "HcclCommInitClusterInfo",
+          "file": "external (hccl/hccl.h)",
+          "type": "external_api",
+          "signature": "HcclResult HcclCommInitClusterInfo(const char* rankTableFile, int rank, HcclComm* comm)",
+          "risk": "high",
+          "tainted_input": true,
+          "description": "HCCL library initialization from rank table"
+        },
+        {
+          "function": "HcclAllReduce",
+          "file": "src/ops/ops_infer/all_reduce/all_reduce_hccl_runner.cpp",
+          "line": 47,
+          "type": "external_api",
+          "signature": "HcclAllReduce(void* sendBuf, void* recvBuf, int64_t count, HcclDataType dataType, HcclReduceOp op, HcclComm comm, aclrtStream stream)",
+          "risk": "critical",
+          "tainted_input": true,
+          "description": "Network data exchange - receives data from other ranks"
+        }
+      ]
+    },
+    {
+      "name": "Graph Operation Execution",
+      "description": "Multi-node graph execution chain",
+      "chain": [
+        {
+          "function": "GraphBuilder::Build",
+          "file": "src/torch_atb/bindings.cpp",
+          "line": 177,
+          "type": "public_api",
+          "signature": "GraphOperation Build()",
+          "risk": "high",
+          "tainted_input": true,
+          "description": "Python graph builder build method"
+        },
+        {
+          "function": "GraphOperation::Execute",
+          "file": "src/atb/operation/graph_operation.cpp",
+          "type": "implementation",
+          "signature": "Status Execute(const VariantPack &variantPack, uint8_t *workspace, uint64_t workspaceSize, Context *context)",
+          "risk": "high",
+          "tainted_input": true,
+          "description": "Executes multi-node graph"
+        },
+        {
+          "function": "GraphRunner::Run",
+          "file": "src/atb/runner/graph_runner.cpp",
+          "type": "dispatcher",
+          "signature": "Status Run(RunnerVariantPack &runnerVariantPack)",
+          "risk": "high",
+          "description": "Iterates over nodes and executes"
+        },
+        {
+          "function": "Node execution loop",
+          "file": "src/atb/runner/graph_runner.cpp",
+          "type": "internal",
+          "signature": "for (auto &nodeVariantPack : runnerVariantPack.nodeVariantPacks)",
+          "risk": "medium",
+          "description": "Sequential node execution"
+        }
+      ]
+    },
+    {
+      "name": "Memory Copy Operations",
+      "description": "Device-host memory transfer chain",
+      "chain": [
+        {
+          "function": "aclrtMemcpy",
+          "file": "src/atb/utils/store_util.cpp",
+          "line": 121,
+          "type": "external_api",
+          "signature": "aclError aclrtMemcpy(void *dst, size_t destMax, const void *src, size_t count, aclrtMemcpyKind kind)",
+          "risk": "high",
+          "tainted_input": true,
+          "description": "Copies user tensor data between host/device"
+        },
+        {
+          "function": "Tensor::deviceData",
+          "file": "include/atb/types.h",
+          "line": 122,
+          "type": "member",
+          "signature": "void *deviceData",
+          "risk": "critical",
+          "tainted_input": true,
+          "description": "User-provided device memory pointer"
+        },
+        {
+          "function": "Tensor::hostData",
+          "file": "include/atb/types.h",
+          "line": 124,
+          "type": "member",
+          "signature": "void *hostData",
+          "risk": "critical",
+          "tainted_input": true,
+          "description": "User-provided host memory pointer"
+        }
+      ]
+    },
+    {
+      "name": "Socket Bootstrap Communication",
+      "description": "Network bootstrap for HCCL initialization",
+      "chain": [
+        {
+          "function": "LcalGetUniqueId",
+          "file": "src/kernels/lcal/src/lcal_comm.cpp",
+          "type": "entry_point",
+          "signature": "int LcalGetUniqueId(LcalUniqueId *uniqueId, int commDomain)",
+          "risk": "high",
+          "description": "Bootstrap unique ID generation"
+        },
+        {
+          "function": "BootstrapGetUniqueId",
+          "file": "src/kernels/lcal/src/tools/socket/lcal_sock_exchange.cpp",
+          "line": 386,
+          "type": "implementation",
+          "signature": "int BootstrapGetUniqueId(LcalUniqueId *uniqueId, int domain)",
+          "risk": "critical",
+          "tainted_input": true,
+          "description": "Reads LCAL_COMM_ID env for network address"
+        },
+        {
+          "function": "LcalSockExchange::Listen",
+          "file": "src/kernels/lcal/src/tools/socket/lcal_sock_exchange.cpp",
+          "line": 169,
+          "type": "network",
+          "signature": "int Listen()",
+          "risk": "high",
+          "description": "Creates TCP socket server"
+        },
+        {
+          "function": "LcalSockExchange::Connect",
+          "file": "src/kernels/lcal/src/tools/socket/lcal_sock_exchange.cpp",
+          "line": 273,
+          "type": "network",
+          "signature": "int Connect()",
+          "risk": "critical",
+          "tainted_input": true,
+          "description": "Connects to bootstrap server with 30-min retry"
+        },
+        {
+          "function": "LcalSockExchange::AllGather",
+          "file": "src/kernels/lcal/src/tools/socket/lcal_sock_exchange.h",
+          "line": 63,
+          "type": "template",
+          "signature": "template<typename T> int AllGather(const T *sendBuf, size_t sendCount, T *recvBuf)",
+          "risk": "high",
+          "tainted_input": true,
+          "description": "AllGather via sockets before HCCL init"
+        }
+      ]
+    }
+  ],
+  
+  "function_index": {
+    "CreateContext": {
+      "file": "include/atb/context.h",
+      "signature": "Status CreateContext(Context **context)",
+      "callers": ["User code", "Python bindings"],
+      "callees": ["ContextBase::Init", "DefaultDeviceAllocator::Allocate"]
+    },
+    "DestroyContext": {
+      "file": "include/atb/context.h",
+      "signature": "Status DestroyContext(Context *context)",
+      "callers": ["User code", "Python bindings"],
+      "callees": ["ContextBase::Destroy"]
+    },
+    "CreateOperation": {
+      "file": "include/atb/operation.h",
+      "signature": "template <typename OpParam> Status CreateOperation(const OpParam &opParam, Operation **operation)",
+      "callers": ["User code", "OperationWrapper constructor"],
+      "callees": ["Operation-specific factory"]
+    },
+    "DestroyOperation": {
+      "file": "include/atb/operation.h",
+      "signature": "Status DestroyOperation(Operation *operation)",
+      "callers": ["User code", "Python bindings"]
+    },
+    "Operation::Setup": {
+      "file": "include/atb/operation.h",
+      "signature": "Status Setup(const VariantPack &variantPack, uint64_t &workspaceSize, Context *context)",
+      "callers": ["User code"],
+      "callees": ["OperationBase::Setup", "workspace size calculation"]
+    },
+    "Operation::Execute": {
+      "file": "include/atb/operation.h",
+      "signature": "Status Execute(const VariantPack &variantPack, uint8_t *workspace, uint64_t workspaceSize, Context *context)",
+      "callers": ["User code", "OperationWrapper::Forward"],
+      "callees": ["OperationBase::Execute", "OpsRunner::Run"]
+    },
+    "Operation::InferShape": {
+      "file": "include/atb/operation.h",
+      "signature": "Status InferShape(const SVector<TensorDesc> &inTensorDescs, SVector<TensorDesc> &outTensorDescs)",
+      "callers": ["User code"],
+      "callees": ["Operation-specific inferShape"]
+    },
+    "HcclAllReduce": {
+      "file": "src/ops/ops_infer/all_reduce/all_reduce_hccl_runner.cpp",
+      "signature": "HcclAllReduce(void* sendBuf, void* recvBuf, int64_t count, HcclDataType dataType, HcclReduceOp op, HcclComm comm, aclrtStream stream)",
+      "callers": ["AllReduceHcclRunner::ExecuteImpl"],
+      "callees": ["HCCL library"],
+      "risk": "network_input"
+    },
+    "HcclAllGather": {
+      "file": "src/ops/ops_infer/all_gather/all_gather_hccl_runner.cpp",
+      "signature": "HcclAllGather(void* sendBuf, void* recvBuf, int64_t sendCount, HcclDataType dataType, HcclComm comm, aclrtStream stream)",
+      "callers": ["AllGatherHcclRunner::ExecuteImpl"],
+      "callees": ["HCCL library"],
+      "risk": "network_input"
+    },
+    "HcclBroadcast": {
+      "file": "src/ops/ops_infer/broadcast/broadcast_hccl_runner.cpp",
+      "signature": "HcclBroadcast(void* buf, int64_t count, HcclDataType dataType, int root, HcclComm comm, aclrtStream stream)",
+      "callers": ["BroadcastHcclRunner::ExecuteImpl"],
+      "callees": ["HCCL library"],
+      "risk": "network_input"
+    },
+    "aclrtMemcpy": {
+      "file": "external (acl/acl_rt.h)",
+      "signature": "aclError aclrtMemcpy(void *dst, size_t destMax, const void *src, size_t count, aclrtMemcpyKind kind)",
+      "callers": ["store_util.cpp", "operation_base.cpp", "ops_runner.cpp"],
+      "callees": ["CANN runtime"],
+      "risk": "buffer_overflow"
+    },
+    "memcpy_s": {
+      "file": "system",
+      "signature": "errno_t memcpy_s(void *dest, size_t destSize, const void *src, size_t count)",
+      "callers": ["tbe_tiling_runner.cpp", "kernel_cache.cpp"],
+      "callees": ["system library"],
+      "risk": "buffer_overflow"
+    },
+    "std::getenv": {
+      "file": "system",
+      "signature": "char* getenv(const char* name)",
+      "callers": ["config.cpp", "lcal_sock_exchange.cpp"],
+      "callees": ["system library"],
+      "risk": "external_input"
+    }
+  },
+  
+  "tainted_functions": [
+    {
+      "function": "OperationWrapper::Forward",
+      "file": "src/torch_atb/operation_wrapper.cpp",
+      "taint_source": "Python inTensors",
+      "propagation": "Tensor.hostData -> aclrtMemcpy"
+    },
+    {
+      "function": "AllGathervHcclRunner::ExecuteImpl",
+      "file": "src/ops/ops_infer/all_gatherv/all_gatherv_hccl_runner.cpp",
+      "taint_source": "hostData recvCounts/rdispls",
+      "propagation": "Direct pointer cast to int64_t* -> HcclAllGatherV"
+    },
+    {
+      "function": "HcclRunner::CreateHcclCommInMulitProcessByRankFile",
+      "file": "src/atb/runner/hccl_runner.cpp",
+      "taint_source": "rankTableFile string",
+      "propagation": "PathCheckAndRegular -> HcclCommInitClusterInfo"
+    },
+    {
+      "function": "BootstrapGetUniqueId",
+      "file": "src/kernels/lcal/src/tools/socket/lcal_sock_exchange.cpp",
+      "taint_source": "LCAL_COMM_ID environment",
+      "propagation": "GetAddrFromString -> socket connection"
+    },
+    {
+      "function": "Config::InitAtbHomePath",
+      "file": "src/atb/utils/config.cpp",
+      "taint_source": "ATB_HOME_PATH environment",
+      "propagation": "atbHomePath_ string"
+    },
+    {
+      "function": "LcalSockExchange::Connect",
+      "file": "src/kernels/lcal/src/tools/socket/lcal_sock_exchange.cpp",
+      "taint_source": "Network socket data",
+      "propagation": "recv() -> rank ID -> clientFds_ array index"
+    }
+  ]
+}

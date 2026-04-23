@@ -1,0 +1,401 @@
+{
+  "project_name": "ATVOSS",
+  "scan_time": "2026-04-22T02:00:00Z",
+  "lsp_available": true,
+  "total_files": 49,
+  "total_lines": 8193,
+  "project_profile": {
+    "project_type": "library",
+    "deployment_model": "作为 C/C++ 头文件库被集成到 Ascend NPU 算子开发项目中，通过 PyTorch C++ extension 提供 Python 绑定。主要部署场景是 AI 推理/训练框架的后端算子实现。",
+    "trust_boundaries": [
+      {
+        "boundary": "Application/Library Interface",
+        "trusted_side": "Library internal logic (ATVOSS templates)",
+        "untrusted_side": "Calling application code (user-provided tensor data, expressions)",
+        "risk": "High"
+      },
+      {
+        "boundary": "Host/Device Interface",
+        "trusted_side": "Host-side control logic",
+        "untrusted_side": "Device-side kernel execution",
+        "risk": "High"
+      },
+      {
+        "boundary": "Python/C++ Extension Interface",
+        "trusted_side": "Python extension module (_C)",
+        "untrusted_side": "Python runtime and PyTorch tensors",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Build Environment",
+        "trusted_side": "Build scripts and CMake configuration",
+        "untrusted_side": "Environment variables (NPU_ARCH, TORCH_NPU_PATH)",
+        "risk": "Low"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "operators",
+      "path": "include/operators",
+      "language": "c_cpp",
+      "components": [
+        "math_expression.h",
+        "math_evaluator.h",
+        "transcendental_expression.h",
+        "transcendental_evaluator.h",
+        "tensor_expression.h",
+        "tile_shape.h"
+      ],
+      "description": "数学表达式和张量表达式定义，包含操作符重载（+, -, *, /, Power, Sqrt, Exp, Abs, Cast, Max）",
+      "risk_level": "Critical",
+      "risk_reason": "操作符重载可能导致表达式数据流安全问题，恶意构造的表达式可能导致编译期或运行时问题"
+    },
+    {
+      "name": "evaluator",
+      "path": "include/evaluator",
+      "language": "c_cpp",
+      "components": [
+        "eval_base.h"
+      ],
+      "description": "表达式评估器基类，负责执行表达式计算",
+      "risk_level": "High",
+      "risk_reason": "表达式执行逻辑，处理数据流转换"
+    },
+    {
+      "name": "graph",
+      "path": "include/graph",
+      "language": "c_cpp",
+      "components": [
+        "expr_linearizer.h",
+        "compute_preproc.h",
+        "flatten_expr_recursively.h",
+        "expr_remove_redundant_cast.h"
+      ],
+      "description": "表达式线性化和优化模块，负责将表达式树转换为可执行的线性序列",
+      "risk_level": "High",
+      "risk_reason": "表达式处理逻辑，涉及类型转换和优化"
+    },
+    {
+      "name": "elewise",
+      "path": "include/elewise",
+      "language": "c_cpp",
+      "components": [
+        "device/device_adapter.h",
+        "device/device_tensor.h",
+        "device/tiling.h",
+        "kernel/builder.h",
+        "kernel/schedule.h",
+        "block/builder.h",
+        "block/schedule.h",
+        "block/block_info_tile.h",
+        "tile/tile_evaluate.h",
+        "tile/tensor_evaluator.h",
+        "graph/buffer.h",
+        "graph/dag.h",
+        "graph/bind.h",
+        "graph/node.h"
+      ],
+      "description": "分层架构核心实现（Device/Kernel/Block/Tile/Graph 五层）",
+      "risk_level": "Critical",
+      "risk_reason": "直接与 Ascend NPU 硬件交互，涉及 ACL 资源管理、kernel 启动、内存管理"
+    },
+    {
+      "name": "expression",
+      "path": "include/expression",
+      "language": "c_cpp",
+      "components": [
+        "expr_template.h"
+      ],
+      "description": "表达式模板基础设施，定义 Expression、Param、LocalVar、UnaryOp、BinaryOp",
+      "risk_level": "Medium",
+      "risk_reason": "表达式模板核心，影响数据流处理"
+    },
+    {
+      "name": "utils",
+      "path": "include/utils",
+      "language": "c_cpp",
+      "components": [
+        "utility.h",
+        "arguments/arguments.h",
+        "buf_pool/block_buf_pool.h",
+        "buf_pool/loopbuf.h",
+        "layout/layout.h",
+        "layout/shape.h",
+        "tensor.h",
+        "patterns.h",
+        "log.h"
+      ],
+      "description": "工具函数集合，包含类型列表操作、内存池、张量包装",
+      "risk_level": "Low",
+      "risk_reason": "辅助工具，不直接处理外部数据"
+    },
+    {
+      "name": "common",
+      "path": "include/common",
+      "language": "c_cpp",
+      "components": [
+        "type_def.h",
+        "arch.h",
+        "compile_info.h",
+        "tuple_tool.h"
+      ],
+      "description": "公共类型定义和编译信息",
+      "risk_level": "Low",
+      "risk_reason": "类型定义，不涉及数据处理逻辑"
+    },
+    {
+      "name": "examples",
+      "path": "examples",
+      "language": "mixed",
+      "components": [
+        "python_extension/setup.py",
+        "python_extension/csrc/extension.cpp",
+        "python_extension/ascend_ops/__init__.py",
+        "python_extension/tests/abs/test_abs.py",
+        "abs/abs.cpp",
+        "rms_norm/rms_norm.cpp",
+        "muls/muls.cpp",
+        "common/command_line.h",
+        "common/example_common.h"
+      ],
+      "description": "示例代码和 Python 扩展绑定",
+      "risk_level": "Medium",
+      "risk_reason": "Python 扩展入口点和示例算子实现"
+    }
+  ],
+  "files": [
+    {
+      "path": "include/operators/math_expression.h",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "operators",
+      "lines": 203,
+      "priority": 1,
+      "description": "数学操作符定义，包含 +, -, *, /, Power, Sqrt, Exp, Abs, Cast, Max"
+    },
+    {
+      "path": "include/elewise/device/device_adapter.h",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "elewise",
+      "lines": 281,
+      "priority": 2,
+      "description": "Device 层适配器，Kernel 启动入口，ACL 资源管理"
+    },
+    {
+      "path": "include/graph/expr_linearizer.h",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "graph",
+      "lines": 464,
+      "priority": 3,
+      "description": "表达式线性化器，将表达式树转换为执行序列"
+    },
+    {
+      "path": "include/expression/expr_template.h",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "expression",
+      "lines": 660,
+      "priority": 4,
+      "description": "表达式模板核心，定义 Expression、Param、LocalVar、操作符基类"
+    },
+    {
+      "path": "include/evaluator/eval_base.h",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "evaluator",
+      "lines": 111,
+      "priority": 5,
+      "description": "评估器基类，执行表达式计算"
+    },
+    {
+      "path": "include/utils/utility.h",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "utils",
+      "lines": 972,
+      "priority": 6,
+      "description": "工具函数，包含 TypeList、压缩存储、类型萃取"
+    },
+    {
+      "path": "include/elewise/device/device_tensor.h",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "elewise",
+      "lines": 56,
+      "priority": 7,
+      "description": "设备张量包装类，管理设备内存指针"
+    },
+    {
+      "path": "include/elewise/kernel/builder.h",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "elewise",
+      "lines": 71,
+      "priority": 8,
+      "description": "Kernel 层构建器，多核任务分解"
+    },
+    {
+      "path": "include/elewise/block/builder.h",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "elewise",
+      "lines": 63,
+      "priority": 9,
+      "description": "Block 层构建器，单核 Tile 分解"
+    },
+    {
+      "path": "examples/python_extension/setup.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "examples",
+      "lines": 158,
+      "priority": 10,
+      "description": "Python 扩展构建脚本，包含环境变量处理（NPU_ARCH, TORCH_NPU_PATH）"
+    },
+    {
+      "path": "examples/python_extension/csrc/extension.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "examples",
+      "lines": 35,
+      "priority": 11,
+      "description": "Python C 扩展初始化入口"
+    },
+    {
+      "path": "include/common/type_def.h",
+      "language": "c_cpp",
+      "risk": "Low",
+      "module": "common",
+      "lines": 31,
+      "priority": 12,
+      "description": "公共类型定义（ContextData）"
+    },
+    {
+      "path": "include/atvoss.h",
+      "language": "c_cpp",
+      "risk": "Low",
+      "module": "root",
+      "lines": 18,
+      "priority": 13,
+      "description": "主头文件，聚合所有模块入口"
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "include/elewise/device/device_adapter.h",
+      "line": 98,
+      "function": "DeviceAdapter::Run",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "作为库的主要入口点，由调用方应用程序控制。调用方需要提供 tensor 数据和参数，如果调用方处理不当可能导致安全问题，但攻击者无法直接触达此入口。",
+      "description": "Device 层主入口，完成 kernel 启动、ACL 资源管理、数据传输"
+    },
+    {
+      "file": "examples/python_extension/csrc/extension.cpp",
+      "line": 23,
+      "function": "PyInit__C",
+      "type": "decorator",
+      "trust_level": "semi_trusted",
+      "justification": "Python C 扩展初始化入口，由 Python runtime 调用。攻击者需要能够控制 Python 环境才能触达，属于本地攻击场景。",
+      "description": "Python C 扩展模块初始化函数"
+    },
+    {
+      "file": "examples/python_extension/setup.py",
+      "line": 113,
+      "function": "CMakeBuildCommand.run",
+      "type": "cmdline",
+      "trust_level": "trusted_admin",
+      "justification": "构建脚本入口，由开发者/部署人员执行。环境变量（NPU_ARCH）由管理员控制，不属于运行时攻击面。",
+      "description": "Python 扩展构建命令，使用环境变量配置编译"
+    }
+  ],
+  "attack_surfaces": [
+    "Python C Extension API: PyInit__C() - 本地攻击场景",
+    "DeviceAdapter Run Interface - 由调用方应用程序控制",
+    "Environment Variable Injection: NPU_ARCH, TORCH_NPU_PATH - 构建时风险",
+    "Expression Template Processing - 编译期数据流处理"
+  ],
+  "dependencies": {
+    "external": [
+      {
+        "name": "ACL (Ascend Computing Language)",
+        "version": "CANN 8.5.0+",
+        "purpose": "Ascend NPU 硬件接口",
+        "risk": "High",
+        "files": ["device_adapter.h"]
+      },
+      {
+        "name": "Ascend C",
+        "version": "kernel_basic_intf.h",
+        "purpose": "Kernel 开发基础设施",
+        "risk": "High",
+        "files": ["expr_template.h", "eval_base.h"]
+      },
+      {
+        "name": "PyTorch",
+        "version": "3.8+",
+        "purpose": "Python 绑定框架",
+        "risk": "Medium",
+        "files": ["setup.py"]
+      },
+      {
+        "name": "torch_npu",
+        "version": "NPU 扩展",
+        "purpose": "PyTorch NPU 支持",
+        "risk": "Medium",
+        "files": ["setup.py"]
+      }
+    ],
+    "internal": [
+      {
+        "from": "atvoss.h",
+        "to": ["elewise/tile/tile_evaluate.h", "elewise/block/builder.h", "elewise/kernel/builder.h", "elewise/device/device_adapter.h"],
+        "description": "主头文件聚合所有模块"
+      },
+      {
+        "from": "elewise/device/device_adapter.h",
+        "to": ["device_tensor.h", "common/compile_info.h", "utils/utility.h", "utils/arguments/arguments.h", "tiling.h"],
+        "description": "Device 层依赖"
+      },
+      {
+        "from": "elewise/kernel/builder.h",
+        "to": ["schedule.h"],
+        "description": "Kernel 层依赖 Block 层"
+      },
+      {
+        "from": "elewise/block/builder.h",
+        "to": ["utils/layout/shape.h", "common/arch.h", "schedule.h"],
+        "description": "Block 层依赖 Tile 层"
+      },
+      {
+        "from": "evaluator/eval_base.h",
+        "to": ["utils/layout/layout.h", "common/type_def.h", "expression/expr_template.h"],
+        "description": "评估器依赖表达式模板"
+      },
+      {
+        "from": "graph/expr_linearizer.h",
+        "to": ["expression/expr_template.h", "utils/utility.h", "expr_remove_redundant_cast.h"],
+        "description": "表达式线性化依赖表达式模板和工具"
+      },
+      {
+        "from": "operators/math_expression.h",
+        "to": ["expression/expr_template.h"],
+        "description": "数学操作符依赖表达式模板"
+      },
+      {
+        "from": "expression/expr_template.h",
+        "to": ["utils/utility.h", "utils/patterns.h"],
+        "description": "表达式模板依赖工具函数"
+      }
+    ]
+  },
+  "notes": {
+    "analysis_mode": "自主分析模式（threat.md 不存在）",
+    "library_characteristics": "Header-only C++ template library，编译期优化，零运行时开销",
+    "primary_threat_source": "调用方应用程序，而非直接的网络/用户输入",
+    "recommended_focus": "数据流处理逻辑（表达式线性化、评估器）、内存管理（DeviceTensor）、操作符重载安全性"
+  }
+}

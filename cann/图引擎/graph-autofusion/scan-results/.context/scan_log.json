@@ -1,0 +1,86 @@
+{
+  "scan_id": "scan_20260422_005100",
+  "start_time": "2026-04-22T00:51:00Z",
+  "end_time": "2026-04-22T01:30:00Z",
+  "duration_seconds": 2340,
+  "project_name": "graph-autofusion",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/cann/4/graph-autofusion",
+  "status": "success",
+  "language_composition": {
+    "cpp": 38,
+    "python": 25
+  },
+  "constraint_mode": false,
+  "agents": [
+    {
+      "name": "architecture",
+      "status": "success",
+      "start_time": "2026-04-22T00:52:00Z",
+      "end_time": "2026-04-22T01:01:00Z",
+      "duration_seconds": 564,
+      "output_files": [
+        "scan-results/.context/project_model.json",
+        "scan-results/.context/call_graph.json",
+        "scan-results/threat_analysis_report.md"
+      ]
+    },
+    {
+      "name": "dataflow-scanner",
+      "status": "success",
+      "start_time": "2026-04-22T01:02:00Z",
+      "end_time": "2026-04-22T01:14:00Z",
+      "duration_seconds": 709,
+      "vulnerabilities_found": 11
+    },
+    {
+      "name": "security-auditor",
+      "status": "success",
+      "start_time": "2026-04-22T01:02:00Z",
+      "end_time": "2026-04-22T01:08:00Z",
+      "duration_seconds": 334,
+      "vulnerabilities_found": 5
+    },
+    {
+      "name": "verification",
+      "status": "success",
+      "start_time": "2026-04-22T01:16:00Z",
+      "end_time": "2026-04-22T01:22:00Z",
+      "duration_seconds": 344,
+      "verified_count": 15,
+      "result": {
+        "CONFIRMED": 0,
+        "LIKELY": 3,
+        "POSSIBLE": 5,
+        "FALSE_POSITIVE": 7
+      }
+    },
+    {
+      "name": "reporter",
+      "status": "success",
+      "start_time": "2026-04-22T01:24:00Z",
+      "end_time": "2026-04-22T01:30:00Z",
+      "duration_seconds": 301,
+      "output_files": [
+        "scan-results/report_confirmed.md",
+        "scan-results/report_unconfirmed.md"
+      ]
+    }
+  ],
+  "details_analyzer_skipped": true,
+  "details_analyzer_reason": "No CONFIRMED vulnerabilities found",
+  "summary": {
+    "total_candidates": 15,
+    "verified": {
+      "CONFIRMED": 0,
+      "LIKELY": 3,
+      "POSSIBLE": 5,
+      "FALSE_POSITIVE": 7
+    },
+    "highest_risk_module": "Package Scripts",
+    "key_findings": [
+      "Shell eval command injection in install scripts (2 High)",
+      "Dynamic function execution without validation (1 Medium)",
+      "Python subprocess uses safe list form (7 FALSE_POSITIVE)"
+    ]
+  }
+}

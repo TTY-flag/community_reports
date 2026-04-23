@@ -1,0 +1,293 @@
+{
+  "functions": {
+    "TRITONBACKEND_Initialize@src/npu_ge.cpp": {
+      "defined_at": 63,
+      "calls": ["TRITONBACKEND_BackendName@triton_api", "TRITONBACKEND_ApiVersion@triton_api"],
+      "called_by": [],
+      "receives_external_input": false,
+      "risk": "Low"
+    },
+    "TRITONBACKEND_ModelInitialize@src/npu_ge.cpp": {
+      "defined_at": 91,
+      "calls": ["ModelState::Create@src/model_state.cpp:1040"],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "TRITONBACKEND_ModelInstanceInitialize@src/npu_ge.cpp": {
+      "defined_at": 123,
+      "calls": ["ModelInstanceState::Create@src/model_instance_state.cpp:549"],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "TRITONBACKEND_ModelInstanceExecute@src/npu_ge.cpp": {
+      "defined_at": 165,
+      "calls": ["ModelInstanceState::ProcessRequests@src/model_instance_state.cpp:577"],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "ModelState::Create@src/model_state.cpp": {
+      "defined_at": 1040,
+      "calls": ["ModelState::ModelState@src/model_state.cpp:678", "ModelState::CheckModelMode@src/model_state.cpp:924", "ModelState::InputdimToOutputdimMap@src/model_state.cpp:933"],
+      "called_by": ["TRITONBACKEND_ModelInitialize@src/npu_ge.cpp:91"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "ModelState::ModelState@src/model_state.cpp": {
+      "defined_at": 678,
+      "calls": ["InitializeBackendConfig@src/model_state.cpp:514", "DisposeConfig@src/model_state.cpp:381", "ParseModelConfig@src/model_state.cpp:278", "ParseInstanceGroupConfig@src/model_state.cpp:389", "ParseModelParametersConfig@src/model_state.cpp:404", "FindModelFile@src/model_state.cpp:478", "DetermineInferMode@src/model_state.cpp:502", "ParseOnnxInfo@src/model_state.cpp:1174", "SetModelMode@src/model_state.cpp:618"],
+      "called_by": ["ModelState::Create@src/model_state.cpp:1040"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "InitializeBackendConfig@src/model_state.cpp": {
+      "defined_at": 514,
+      "calls": ["ParseGeConfig@src/model_state.cpp:121"],
+      "called_by": ["ModelState::ModelState@src/model_state.cpp:678"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "ParseGeConfig@src/model_state.cpp": {
+      "defined_at": 121,
+      "calls": ["ParseCmdlineConfig@src/model_state.cpp:151"],
+      "called_by": ["InitializeBackendConfig@src/model_state.cpp:539"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "ParseCmdlineConfig@src/model_state.cpp": {
+      "defined_at": 151,
+      "calls": ["SetDumpGraph@src/model_state.cpp:66", "SetProfiling@src/model_state.cpp:96", "SetOptions@src/model_state.cpp:138"],
+      "called_by": ["ParseGeConfig@src/model_state.cpp:129"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "SetDumpGraph@src/model_state.cpp": {
+      "defined_at": 66,
+      "calls": ["setenv@stdlib", "system@stdlib"],
+      "called_by": ["ParseCmdlineConfig@src/model_state.cpp:169"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "ParseModelConfig@src/model_state.cpp": {
+      "defined_at": 278,
+      "calls": ["ParseInputTensors@src/model_state.cpp:215", "ParseOutputTensors@src/model_state.cpp:230", "ParseDynamicBatching@src/model_state.cpp:244"],
+      "called_by": ["ModelState::ModelState@src/model_state.cpp:684"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "FindModelFile@src/model_state.cpp": {
+      "defined_at": 478,
+      "calls": ["FindFirstFile@src/model_state.cpp:743"],
+      "called_by": ["ModelState::ModelState@src/model_state.cpp:687"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "FindFirstFile@src/model_state.cpp": {
+      "defined_at": 743,
+      "calls": ["SearchFileInDirectory@src/model_state.cpp:706"],
+      "called_by": ["FindModelFile@src/model_state.cpp:480", "FindModelFile@src/model_state.cpp:486"],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "ModelInstanceState::Create@src/model_instance_state.cpp": {
+      "defined_at": 549,
+      "calls": ["ModelInstanceState::ModelInstanceState@src/model_instance_state.cpp:561", "Init@src/model_instance_state.cpp:459"],
+      "called_by": ["TRITONBACKEND_ModelInstanceInitialize@src/npu_ge.cpp:136"],
+      "receives_external_input": false,
+      "risk": "High"
+    },
+    "ModelInstanceState::Init@src/model_instance_state.cpp": {
+      "defined_at": 459,
+      "calls": ["InitializeGlobalResources@src/model_instance_state.cpp:474"],
+      "called_by": ["ModelInstanceState::Create@src/model_instance_state.cpp:554"],
+      "receives_external_input": false,
+      "risk": "High"
+    },
+    "InitializeGlobalResources@src/model_instance_state.cpp": {
+      "defined_at": 474,
+      "calls": ["InitGEEnvironment@src/model_instance_state.cpp:105", "InitDevices@src/model_instance_state.cpp:147", "InitializeDeviceThreads@src/model_instance_state.cpp:509"],
+      "called_by": ["Init@src/model_instance_state.cpp:468"],
+      "receives_external_input": false,
+      "risk": "High"
+    },
+    "InitGEEnvironment@src/model_instance_state.cpp": {
+      "defined_at": 105,
+      "calls": ["aclInit@ascend_api", "GetEnvVar@src/model_instance_state.cpp:20", "LoadGeConfig@src/model_instance_state.cpp:26", "GEInitialize@ge_api"],
+      "called_by": ["InitializeGlobalResources@src/model_instance_state.cpp:485"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "GetEnvVar@src/model_instance_state.cpp": {
+      "defined_at": 20,
+      "calls": ["getenv@stdlib"],
+      "called_by": ["InitGEEnvironment@src/model_instance_state.cpp:119"],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "LoadGeConfig@src/model_instance_state.cpp": {
+      "defined_at": 26,
+      "calls": ["json::parse@nlohmann_json"],
+      "called_by": ["InitGEEnvironment@src/model_instance_state.cpp:122"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "InitGraphSession@src/model_instance_state.cpp": {
+      "defined_at": 174,
+      "calls": ["ParseGraph@src/model_instance_state.cpp:225", "AddAndCompileGraph@src/model_instance_state.cpp:260", "CreateAndLoadStream@src/model_instance_state.cpp:286"],
+      "called_by": ["InitializeGraphSession@src/model_instance_state.cpp:421"],
+      "receives_external_input": false,
+      "risk": "High"
+    },
+    "ParseGraph@src/model_instance_state.cpp": {
+      "defined_at": 225,
+      "calls": ["aclgrphParseONNX@ge_api", "aclgrphParseTensorFlow@ge_api"],
+      "called_by": ["InitGraphSession@src/model_instance_state.cpp:190"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "ProcessRequests@src/model_instance_state.cpp": {
+      "defined_at": 577,
+      "calls": ["Inference::HandleRequest@src/inference.cpp:1341"],
+      "called_by": ["TRITONBACKEND_ModelInstanceExecute@src/npu_ge.cpp:175"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "Inference::HandleRequest@src/inference.cpp": {
+      "defined_at": 1341,
+      "calls": ["SetBatchTaskAndResult@src/inference.cpp:1319", "BatchSplicTasks@src/inference.cpp:1309"],
+      "called_by": ["ProcessRequests@src/model_instance_state.cpp:580"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "BatchSplicTasks@src/inference.cpp": {
+      "defined_at": 1309,
+      "calls": ["Scheduler::GetIdleInstances@src/scheduler.cpp:247", "ProcessCombineRequestV2@src/inference.cpp:881"],
+      "called_by": ["HandleRequest@src/inference.cpp:1351", "HandleRequest@src/inference.cpp:1361"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "ProcessCombineRequestV2@src/inference.cpp": {
+      "defined_at": 881,
+      "calls": ["SetInferenceContext@src/inference.cpp:810", "PrepareInferenceData@src/inference.cpp:821", "DispatchInference@src/inference.cpp:845", "BuildCombineResponses@src/inference.cpp:864"],
+      "called_by": ["BatchSplicTasks@src/inference.cpp:1313"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "PrepareInferenceData@src/inference.cpp": {
+      "defined_at": 821,
+      "calls": ["ExtractCombineInputInfoV2@src/inference.cpp:362", "CalcNegativeOne@src/inference.cpp:1223", "PrepareOutputBuffersV2@src/inference.cpp:375"],
+      "called_by": ["ProcessCombineRequestV2@src/inference.cpp:900"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "ExtractCombineInputInfoV2@src/inference.cpp": {
+      "defined_at": 362,
+      "calls": ["CalculateCombineBatchDistribution@src/inference.cpp:140", "AllocateCombinedMemoryV2@src/inference.cpp:330", "ProcessInputBuffersV2@src/inference.cpp:319"],
+      "called_by": ["PrepareInferenceData@src/inference.cpp:828"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "ProcessInputBuffersV2@src/inference.cpp": {
+      "defined_at": 319,
+      "calls": ["ProcessRequestInputsV2@src/inference.cpp:275"],
+      "called_by": ["ExtractCombineInputInfoV2@src/inference.cpp:371"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "ProcessRequestInputsV2@src/inference.cpp": {
+      "defined_at": 275,
+      "calls": ["TRITONBACKEND_RequestInput@triton_api", "TRITONBACKEND_InputProperties@triton_api", "TRITONBACKEND_InputBuffer@triton_api", "AllocateSingleMemoryV2@src/inference.cpp:229", "aclrtMemcpy@ascend_api"],
+      "called_by": ["ProcessInputBuffersV2@src/inference.cpp:325"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "AllocateSingleMemoryV2@src/inference.cpp": {
+      "defined_at": 229,
+      "calls": ["aclrtMalloc@ascend_api", "aclrtMemcpy@ascend_api"],
+      "called_by": ["ProcessRequestInputsV2@src/inference.cpp:312"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "ExecuteInferenceCycleV2@src/inference.cpp": {
+      "defined_at": 525,
+      "calls": ["aclrtMemcpy@ascend_api", "ExecuteGraphWithStreamAsync@ge_api", "aclrtSynchronizeStream@ascend_api"],
+      "called_by": ["ExecuteSingleInferenceV2@src/inference.cpp:694"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "BuildCombineResponses@src/inference.cpp": {
+      "defined_at": 864,
+      "calls": ["BuildComblineResponse@src/inference.cpp:932"],
+      "called_by": ["ProcessCombineRequestV2@src/inference.cpp:921"],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "BuildComblineResponse@src/inference.cpp": {
+      "defined_at": 932,
+      "calls": ["TRITONBACKEND_ResponseNew@triton_api", "BuildSingleCombineOutput@src/inference.cpp:960", "TRITONBACKEND_ResponseSend@triton_api", "TRITONBACKEND_RequestRelease@triton_api"],
+      "called_by": ["BuildCombineResponses@src/inference.cpp:873"],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "Scheduler::GetIdleInstances@src/scheduler.cpp": {
+      "defined_at": 247,
+      "calls": ["WaitForIdleInstances@src/scheduler.cpp:182", "SelectInstancesWithLoadBalance@src/scheduler.cpp:217"],
+      "called_by": ["BatchSplicTasks@src/inference.cpp:1312"],
+      "receives_external_input": false,
+      "risk": "Medium"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "TRITONBACKEND_Request@src/npu_ge.cpp:166",
+      "path": ["TRITONBACKEND_ModelInstanceExecute@src/npu_ge.cpp:165", "ProcessRequests@src/model_instance_state.cpp:577", "HandleRequest@src/inference.cpp:1341", "ProcessRequestInputsV2@src/inference.cpp:275"],
+      "sink": "aclrtMemcpy@src/inference.cpp:253",
+      "sink_type": "memory_operation",
+      "description": "推理请求输入数据 -> Triton Backend API -> ProcessRequests -> HandleRequest -> 内存复制到设备"
+    },
+    {
+      "source": "json_str@src/model_state.cpp:127",
+      "path": ["ParseGeConfig@src/model_state.cpp:121", "json::parse@src/model_state.cpp:127"],
+      "sink": "ParseCmdlineConfig@src/model_state.cpp:151",
+      "sink_type": "config_processing",
+      "description": "Backend 配置 JSON 字符串 -> JSON 解析 -> 命令行配置解析"
+    },
+    {
+      "source": "path@src/model_state.cpp:69",
+      "path": ["SetDumpGraph@src/model_state.cpp:66", "setenv@src/model_state.cpp:76", "system@src/model_state.cpp:85"],
+      "sink": "system@src/model_state.cpp:85",
+      "sink_type": "command_execution",
+      "description": "Dump graph 路径参数 -> 环境变量设置 -> system() 命令执行"
+    },
+    {
+      "source": "GE_NPU_CONFIG@src/model_instance_state.cpp:119",
+      "path": ["GetEnvVar@src/model_instance_state.cpp:20", "LoadGeConfig@src/model_instance_state.cpp:26"],
+      "sink": "json::parse@src/model_instance_state.cpp:30",
+      "sink_type": "config_processing",
+      "description": "环境变量 GE_NPU_CONFIG -> JSON 解析 -> GE 配置加载"
+    },
+    {
+      "source": "model_file_@src/model_state.cpp:480",
+      "path": ["FindModelFile@src/model_state.cpp:478", "FindFirstFile@src/model_state.cpp:743", "aclgrphParseONNX@src/model_instance_state.cpp:233"],
+      "sink": "aclgrphParseONNX@src/model_instance_state.cpp:233",
+      "sink_type": "model_loading",
+      "description": "模型文件路径 -> 文件系统遍历 -> ONNX 模型解析"
+    },
+    {
+      "source": "buffer@src/inference.cpp:292",
+      "path": ["TRITONBACKEND_InputBuffer@src/inference.cpp:292", "AllocateSingleMemoryV2@src/inference.cpp:229", "aclrtMemcpy@src/inference.cpp:253"],
+      "sink": "aclrtMemcpy@src/inference.cpp:253",
+      "sink_type": "memory_operation",
+      "description": "请求输入缓冲区 -> 内存分配 -> 设备内存复制"
+    },
+    {
+      "source": "config.pbtxt@src/model_state.cpp:282",
+      "path": ["ParseModelConfig@src/model_state.cpp:278", "ParseInputTensors@src/model_state.cpp:215", "ParseTensorInfo@src/model_state.cpp:183"],
+      "sink": "input_client_tensor_@src/model_state.cpp:289",
+      "sink_type": "config_processing",
+      "description": "模型配置文件 -> 输入张量解析 -> 张量信息存储"
+    }
+  ]
+}

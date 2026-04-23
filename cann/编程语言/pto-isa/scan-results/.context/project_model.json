@@ -1,0 +1,311 @@
+{
+  "project_name": "pto-isa",
+  "scan_time": "2026-04-22T00:00:00Z",
+  "lsp_available": true,
+  "total_files": 569,
+  "total_lines": 150000,
+  "project_profile": {
+    "project_type": "library",
+    "deployment_model": "作为 Ascend CANN 工具链的一部分，被上层框架（PyPTO、TileLang）和编译器（PTOAS）集成使用。开发者在本地或 Ascend 服务器上编译和运行。",
+    "trust_boundaries": [
+      {
+        "boundary": "Test Script Interface",
+        "trusted_side": "Project Test Scripts",
+        "untrusted_side": "Command Line Arguments / Environment Variables",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Data File Interface",
+        "trusted_side": "CPU/NPU Simulator",
+        "untrusted_side": "Test Data Files (numpy binary)",
+        "risk": "Low"
+      },
+      {
+        "boundary": "Network Download Interface",
+        "trusted_side": "Install Scripts",
+        "untrusted_side": "Remote Package Servers",
+        "risk": "Medium"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "common",
+      "path": "include/pto/common",
+      "language": "c_cpp",
+      "components": [
+        "pto_tile.hpp",
+        "pto_instr.hpp",
+        "pto_instr_impl.hpp",
+        "memory.hpp",
+        "type.hpp",
+        "constants.hpp",
+        "utils.hpp",
+        "event.hpp",
+        "fifo.hpp",
+        "debug.h",
+        "cpu_stub.hpp",
+        "arch_macro.hpp",
+        "buffer_limits.hpp",
+        "tassign_check.hpp"
+      ]
+    },
+    {
+      "name": "cpu_simulator",
+      "path": "include/pto/cpu",
+      "language": "c_cpp",
+      "components": [
+        "TAdd.hpp",
+        "TMul.hpp",
+        "TMatmul.hpp",
+        "TLoad.hpp",
+        "TStore.hpp",
+        "TGather.hpp",
+        "TScatter.hpp",
+        "ElementOp.h",
+        "ElementTileOp.h",
+        "NPUMemoryModel.hpp",
+        "parallel.hpp"
+      ]
+    },
+    {
+      "name": "npu_a2a3",
+      "path": "include/pto/npu/a2a3",
+      "language": "c_cpp",
+      "components": [
+        "TAdd.hpp",
+        "TMatmul.hpp",
+        "TGEMV.hpp",
+        "TLoad.hpp",
+        "TStore.hpp",
+        "TQuant.hpp",
+        "TDequant.hpp",
+        "common.hpp"
+      ]
+    },
+    {
+      "name": "npu_a5",
+      "path": "include/pto/npu/a5",
+      "language": "c_cpp",
+      "components": [
+        "TAdd.hpp",
+        "TMatmul.hpp",
+        "TGEMV.hpp",
+        "TRandom.hpp",
+        "TQuant.hpp",
+        "TDequant.hpp",
+        "common.hpp",
+        "datatype.hpp"
+      ]
+    },
+    {
+      "name": "communication",
+      "path": "include/pto/comm",
+      "language": "c_cpp",
+      "components": [
+        "TPut.hpp",
+        "TGet.hpp",
+        "TWait.hpp",
+        "TNotify.hpp",
+        "TReduce.hpp",
+        "TGather.hpp",
+        "TScatter.hpp",
+        "TBroadCast.hpp",
+        "TTest.hpp",
+        "comm_types.hpp",
+        "pto_comm_inst.hpp"
+      ]
+    },
+    {
+      "name": "costmodel",
+      "path": "include/pto/costmodel",
+      "language": "c_cpp",
+      "components": [
+        "pto_instr.hpp",
+        "runtime_stub.hpp",
+        "trace.hpp",
+        "arch_config.hpp"
+      ]
+    },
+    {
+      "name": "kernels_manual",
+      "path": "kernels/manual",
+      "language": "mixed",
+      "components": [
+        "gemm_performance",
+        "flash_atten",
+        "gemm_ar",
+        "conv2d_forward",
+        "allgather_gemm",
+        "tget_bandwidth",
+        "topk"
+      ]
+    },
+    {
+      "name": "test_scripts",
+      "path": "tests",
+      "language": "python",
+      "components": [
+        "run_cpu.py",
+        "run_costmodel.py",
+        "validate_testcase_names.py",
+        "run_st.sh",
+        "run_pipeline.sh"
+      ]
+    },
+    {
+      "name": "install_scripts",
+      "path": "scripts",
+      "language": "python",
+      "components": [
+        "install_pto.sh",
+        "check_build_dependencies.py",
+        "generate_version_info.py"
+      ]
+    }
+  ],
+  "files": [
+    {
+      "path": "tests/run_cpu.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "test_scripts",
+      "lines": 748,
+      "priority": 1
+    },
+    {
+      "path": "tests/run_costmodel.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "test_scripts",
+      "lines": 693,
+      "priority": 2
+    },
+    {
+      "path": "scripts/install_pto.sh",
+      "language": "python",
+      "risk": "High",
+      "module": "install_scripts",
+      "lines": 203,
+      "priority": 1
+    },
+    {
+      "path": "build.sh",
+      "language": "python",
+      "risk": "Low",
+      "module": "build_scripts",
+      "lines": 312,
+      "priority": 3
+    },
+    {
+      "path": "include/pto/common/pto_instr.hpp",
+      "language": "c_cpp",
+      "risk": "Low",
+      "module": "common",
+      "lines": 1500,
+      "priority": 4
+    },
+    {
+      "path": "include/pto/common/pto_tile.hpp",
+      "language": "c_cpp",
+      "risk": "Low",
+      "module": "common",
+      "lines": 1200,
+      "priority": 4
+    },
+    {
+      "path": "include/pto/cpu/TMatmul.hpp",
+      "language": "c_cpp",
+      "risk": "Low",
+      "module": "cpu_simulator",
+      "lines": 200,
+      "priority": 5
+    },
+    {
+      "path": "include/pto/npu/a2a3/TMatmul.hpp",
+      "language": "c_cpp",
+      "risk": "Low",
+      "module": "npu_a2a3",
+      "lines": 150,
+      "priority": 5
+    },
+    {
+      "path": "include/pto/npu/a5/TMatmul.hpp",
+      "language": "c_cpp",
+      "risk": "Low",
+      "module": "npu_a5",
+      "lines": 180,
+      "priority": 5
+    },
+    {
+      "path": "include/pto/comm/TPut.hpp",
+      "language": "c_cpp",
+      "risk": "Low",
+      "module": "communication",
+      "lines": 100,
+      "priority": 6
+    },
+    {
+      "path": "kernels/manual/a2a3/gemm_performance/kernel.cpp",
+      "language": "c_cpp",
+      "risk": "Low",
+      "module": "kernels_manual",
+      "lines": 500,
+      "priority": 7
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "tests/run_cpu.py",
+      "line": 47,
+      "function": "run_command",
+      "type": "cmdline",
+      "trust_level": "semi_trusted",
+      "justification": "Python 测试脚本入口，接收命令行参数并执行 subprocess.run",
+      "description": "测试框架主入口，执行 cmake 编译和 gtest 运行"
+    },
+    {
+      "file": "tests/run_costmodel.py",
+      "line": 47,
+      "function": "run_command",
+      "type": "cmdline",
+      "trust_level": "semi_trusted",
+      "justification": "CostModel 测试脚本入口，接收命令行参数并执行 subprocess.run",
+      "description": "CostModel 测试框架主入口"
+    },
+    {
+      "file": "scripts/install_pto.sh",
+      "line": 96,
+      "function": "download_pto_isa_run",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "从远程服务器下载软件包，使用 wget --no-check-certificate",
+      "description": "网络下载入口点，下载 PTO ISA 安装包"
+    },
+    {
+      "file": "scripts/install_pto.sh",
+      "line": 149,
+      "function": "install_gtest",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "使用 git clone 从 GitHub 下载 googletest",
+      "description": "网络下载入口点，克隆 googletest 源码"
+    },
+    {
+      "file": "tests/run_cpu.py",
+      "line": 272,
+      "function": "generate_golden",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "复制和执行 gen_data.py 脚本，读取测试数据文件",
+      "description": "测试数据生成入口点"
+    }
+  ],
+  "attack_surfaces": [
+    "Command Line Arguments: tests/run_cpu.py, tests/run_costmodel.py 接收命令行参数",
+    "Network Downloads: scripts/install_pto.sh 从远程服务器下载软件包",
+    "Git Clone: scripts/install_pto.sh 从 GitHub 克隆代码",
+    "Subprocess Execution: Python 测试脚本执行外部命令（cmake, gtest）",
+    "File I/O: 测试数据文件读写（numpy 二进制格式）"
+  ]
+}

@@ -1,0 +1,359 @@
+{
+  "project_name": "asc-tools",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/cann/6/asc-tools",
+  "languages": ["C++", "C", "Python"],
+  "language_stats": {
+    "cpp": 80,
+    "c": 40,
+    "python": 50
+  },
+  "modules": [
+    {
+      "name": "cpudebug",
+      "path": "cpudebug/",
+      "language": "C++",
+      "description": "CPU Debug Library - AscendC kernel debugging and simulation framework",
+      "risk_level": "high",
+      "risk_reasons": [
+        "ELF binary parsing",
+        "Dynamic library loading (dlopen/dlsym)",
+        "Memory allocation/deallocation",
+        "Subprocess execution (addr2line, c++filt)",
+        "File operations (log files)"
+      ],
+      "entry_points": [
+        {
+          "type": "library_api",
+          "name": "aclrtBinaryLoadFromData",
+          "file": "cpudebug/src/acl_stub/ascendc_acl_stub.cpp",
+          "line": 300,
+          "description": "Loads ELF binary from external data buffer"
+        },
+        {
+          "type": "library_api",
+          "name": "RegisterKernelElf",
+          "file": "cpudebug/include/kernel_elf_parser.h",
+          "line": 349,
+          "description": "Registers kernel ELF for mode detection"
+        },
+        {
+          "type": "library_api",
+          "name": "StubInit",
+          "file": "cpudebug/src/regfwk/stub_reg.cpp",
+          "line": 39,
+          "description": "Initializes stub registration with dlsym"
+        }
+      ],
+      "sensitive_operations": [
+        {
+          "type": "memory_ops",
+          "name": "GmAlloc/GmFree",
+          "file": "cpudebug/src/acl_stub/ascendc_acl_stub.cpp",
+          "description": "Global memory allocation"
+        },
+        {
+          "type": "binary_parsing",
+          "name": "ParseElfHeader/GetSectionHeader",
+          "file": "cpudebug/include/kernel_elf_parser.h",
+          "description": "ELF header and section parsing"
+        },
+        {
+          "type": "dynamic_loading",
+          "name": "dlsym",
+          "file": "cpudebug/src/regfwk/stub_reg.cpp",
+          "line": 62,
+          "description": "Dynamic symbol lookup"
+        }
+      ]
+    },
+    {
+      "name": "scripts/package",
+      "path": "scripts/package/",
+      "language": "Python",
+      "description": "Package building and deployment scripts",
+      "risk_level": "high",
+      "risk_reasons": [
+        "Command injection via shell=True",
+        "File system operations",
+        "XML parsing",
+        "External tool execution (makeself)"
+      ],
+      "entry_points": [
+        {
+          "type": "cli",
+          "name": "package.py",
+          "file": "scripts/package/package.py",
+          "line": 791,
+          "description": "Main CLI entry point for packaging",
+          "cli_args": ["-c", "-n", "-o", "-t", "-i", "-v", "-e", "-b", "-x"]
+        }
+      ],
+      "sensitive_operations": [
+        {
+          "type": "command_execution",
+          "name": "exec_pack_cmd",
+          "file": "scripts/package/common/py/packer.py",
+          "line": 213,
+          "description": "Shell command execution with shell=True"
+        },
+        {
+          "type": "file_ops",
+          "name": "do_copy/do_chmod",
+          "file": "scripts/package/package.py",
+          "description": "File copy and permission modification"
+        }
+      ]
+    },
+    {
+      "name": "utils/msobjdump",
+      "path": "utils/msobjdump/",
+      "language": "Python",
+      "description": "MSOBJ dump tool for Ascend C ELF files",
+      "risk_level": "medium",
+      "risk_reasons": [
+        "ELF binary parsing",
+        "Subprocess execution (readelf, llvm-objcopy)",
+        "File operations"
+      ],
+      "entry_points": [
+        {
+          "type": "cli",
+          "name": "msobjdump_main.py",
+          "file": "utils/msobjdump/msobjdump/msobjdump_main.py",
+          "line": 763,
+          "description": "CLI entry for ELF dump/extraction",
+          "cli_args": ["--dump-elf", "--extract-elf", "--list-elf", "--verbose"]
+        }
+      ],
+      "sensitive_operations": [
+        {
+          "type": "subprocess",
+          "name": "get_section_headers_in_file/get_symbols_in_file",
+          "file": "utils/msobjdump/msobjdump/utils.py",
+          "line": 47,
+          "description": "readelf subprocess execution"
+        },
+        {
+          "type": "binary_parsing",
+          "name": "_get_segment_content",
+          "file": "utils/msobjdump/msobjdump/msobjdump_main.py",
+          "line": 655,
+          "description": "Binary segment content extraction via mmap"
+        }
+      ]
+    },
+    {
+      "name": "utils/show_kernel_debug_data",
+      "path": "utils/show_kernel_debug_data/",
+      "language": "Python",
+      "description": "Kernel debug data parser and converter",
+      "risk_level": "high",
+      "risk_reasons": [
+        "Binary dump parsing",
+        "Command injection via shell=True",
+        "File operations",
+        "External msaccucmp.py execution"
+      ],
+      "entry_points": [
+        {
+          "type": "cli",
+          "name": "__main__.py",
+          "file": "utils/show_kernel_debug_data/show_kernel_debug_data/__main__.py",
+          "line": 18,
+          "description": "CLI entry for debug data parsing"
+        }
+      ],
+      "sensitive_operations": [
+        {
+          "type": "command_execution",
+          "name": "_pre_process",
+          "file": "utils/show_kernel_debug_data/show_kernel_debug_data/dump_parser.py",
+          "line": 875,
+          "description": "Subprocess with shell=True for msaccucmp"
+        },
+        {
+          "type": "binary_parsing",
+          "name": "TLV.parse/DumpTensor.parse_from",
+          "file": "utils/show_kernel_debug_data/show_kernel_debug_data/dump_parser.py",
+          "description": "TLV structure parsing from binary dumps"
+        }
+      ]
+    },
+    {
+      "name": "npuchk",
+      "path": "npuchk/",
+      "language": "Python",
+      "description": "NPU check error report generator",
+      "risk_level": "medium",
+      "risk_reasons": [
+        "Log file parsing",
+        "Subprocess execution (addr2line, c++filt)",
+        "Path manipulation from arguments"
+      ],
+      "entry_points": [
+        {
+          "type": "cli",
+          "name": "ascendc_npuchk_report.py",
+          "file": "npuchk/ascendc_npuchk_report.py",
+          "line": 101,
+          "description": "CLI entry for NPU error report generation"
+        }
+      ],
+      "sensitive_operations": [
+        {
+          "type": "subprocess",
+          "name": "execute_cmd/addr_to_line",
+          "file": "npuchk/ascendc_npuchk_report.py",
+          "line": 88,
+          "description": "addr2line and c++filt execution"
+        },
+        {
+          "type": "file_ops",
+          "name": "parse_log",
+          "file": "npuchk/ascendc_npuchk_report.py",
+          "line": 33,
+          "description": "Log file reading"
+        }
+      ]
+    },
+    {
+      "name": "utils/templates/op_project_templates",
+      "path": "utils/templates/op_project_templates/",
+      "language": "Python",
+      "description": "Operator project templates and build utilities",
+      "risk_level": "medium",
+      "risk_reasons": [
+        "os.system usage",
+        "subprocess.run for compilation",
+        "INI/JSON file parsing",
+        "File generation"
+      ],
+      "entry_points": [
+        {
+          "type": "cli",
+          "name": "ascendc_compile_kernel.py",
+          "file": "utils/templates/op_project_templates/ascendc/common/util/ascendc_compile_kernel.py",
+          "line": 207,
+          "description": "CLI for kernel compilation"
+        },
+        {
+          "type": "cli",
+          "name": "ascendc_pack_kernel.py",
+          "file": "utils/templates/op_project_templates/ascendc/common/util/ascendc_pack_kernel.py",
+          "line": 190,
+          "description": "CLI for kernel packaging"
+        }
+      ],
+      "sensitive_operations": [
+        {
+          "type": "command_execution",
+          "name": "os.system",
+          "file": "utils/templates/op_project_templates/ascendc/common/util/ascendc_compile_kernel.py",
+          "line": 161,
+          "description": "Make command execution via os.system"
+        },
+        {
+          "type": "subprocess",
+          "name": "subprocess.run(llvm-objcopy)",
+          "file": "utils/templates/op_project_templates/ascendc/common/util/ascendc_pack_kernel.py",
+          "line": 46,
+          "description": "llvm-objcopy for binary conversion"
+        }
+      ]
+    },
+    {
+      "name": "install_dep_tar",
+      "path": "install_dep_tar.py",
+      "language": "Python",
+      "description": "Dependency downloader from URLs",
+      "risk_level": "medium",
+      "risk_reasons": [
+        "URL downloading",
+        "File system operations"
+      ],
+      "entry_points": [
+        {
+          "type": "cli",
+          "name": "install_dep_tar.py",
+          "file": "install_dep_tar.py",
+          "line": 38,
+          "description": "CLI for downloading dependencies"
+        }
+      ],
+      "sensitive_operations": [
+        {
+          "type": "network_download",
+          "name": "urllib.request.urlretrieve",
+          "file": "install_dep_tar.py",
+          "line": 31,
+          "description": "File download from URLs"
+        }
+      ]
+    }
+  ],
+  "entry_points_summary": {
+    "cli_tools": [
+      "scripts/package/package.py",
+      "utils/msobjdump/msobjdump/msobjdump_main.py",
+      "utils/show_kernel_debug_data/show_kernel_debug_data/__main__.py",
+      "npuchk/ascendc_npuchk_report.py",
+      "install_dep_tar.py",
+      "utils/templates/op_project_templates/ascendc/common/util/ascendc_compile_kernel.py",
+      "utils/templates/op_project_templates/ascendc/common/util/ascendc_pack_kernel.py",
+      "utils/templates/op_project_templates/ascendc/common/util/ascendc_impl_build.py",
+      "utils/templates/op_project_templates/ascendc/common/util/ascendc_bin_param_build.py",
+      "utils/templates/op_project_templates/ascendc/common/util/ascendc_ops_config.py"
+    ],
+    "library_apis": [
+      "aclrtBinaryLoadFromData",
+      "RegisterKernelElf",
+      "StubInit",
+      "aclrtMalloc",
+      "aclrtFree",
+      "aclrtMemcpy"
+    ],
+    "file_inputs": [
+      "ELF files (.o, .a, .bin)",
+      "Dump binary files (*.bin)",
+      "Log files (*_npuchk.log)",
+      "XML configuration files (*.xml)",
+      "INI configuration files (*.ini)",
+      "JSON files (*.json)",
+      "CSV files (limit.csv)"
+    ]
+  },
+  "attack_surface": {
+    "network": {
+      "present": false,
+      "description": "No network services found. Only URL downloading in install_dep_tar.py"
+    },
+    "command_injection": {
+      "present": true,
+      "locations": [
+        "scripts/package/common/py/packer.py:213",
+        "utils/show_kernel_debug_data/show_kernel_debug_data/dump_parser.py:875",
+        "utils/templates/op_project_templates/ascendc/common/util/ascendc_compile_kernel.py:161"
+      ]
+    },
+    "binary_parsing": {
+      "present": true,
+      "locations": [
+        "cpudebug/include/kernel_elf_parser.h",
+        "utils/msobjdump/msobjdump/msobjdump_main.py",
+        "utils/show_kernel_debug_data/show_kernel_debug_data/dump_parser.py"
+      ]
+    },
+    "file_operations": {
+      "present": true,
+      "locations": "Multiple files across all modules"
+    },
+    "subprocess_execution": {
+      "present": true,
+      "tools": ["readelf", "llvm-objcopy", "ar", "addr2line", "c++filt", "makeself", "make", "chmod", "rm"]
+    },
+    "dynamic_loading": {
+      "present": true,
+      "locations": ["cpudebug/src/regfwk/stub_reg.cpp"]
+    }
+  }
+}

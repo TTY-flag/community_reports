@@ -1,0 +1,510 @@
+{
+  "project_name": "amct_pytorch",
+  "scan_time": "2026-04-22T18:30:00Z",
+  "lsp_available": false,
+  "total_files": 532,
+  "total_lines": 83741,
+  "project_profile": {
+    "project_type": "library",
+    "deployment_model": "Python library for PyTorch model quantization, installed via pip and used in Python scripts by ML researchers/engineers. Runs in user's Python environment, processes user-provided models and configurations.",
+    "trust_boundaries": [
+      {
+        "boundary": "User Input (Configuration)",
+        "trusted_side": "Library Logic",
+        "untrusted_side": "User-provided config dict/JSON files",
+        "risk": "High"
+      },
+      {
+        "boundary": "User Input (Model)",
+        "trusted_side": "Library Logic",
+        "untrusted_side": "User-provided PyTorch models",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "File System",
+        "trusted_side": "Library Logic",
+        "untrusted_side": "User-specified file paths (config files, record files, save paths)",
+        "risk": "High"
+      },
+      {
+        "boundary": "Tensor Data",
+        "trusted_side": "Quantization Algorithms",
+        "untrusted_side": "User-provided tensor data (weights, activations)",
+        "risk": "Medium"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "config",
+      "path": "amct_pytorch/config",
+      "language": "python",
+      "risk": "High",
+      "description": "Configuration parsing module - handles user input config dicts and field validation",
+      "components": ["config.py", "parser.py", "fields.py", "utils.py"]
+    },
+    {
+      "name": "algorithm",
+      "path": "amct_pytorch/algorithm",
+      "language": "python",
+      "risk": "Medium",
+      "description": "Quantization algorithm implementations (AWQ, GPTQ, SmoothQuant, MinMax, etc.)",
+      "components": ["__init__.py", "awq.py", "register_algo.py"]
+    },
+    {
+      "name": "optimizer",
+      "path": "amct_pytorch/optimizer",
+      "language": "python",
+      "risk": "Medium",
+      "description": "Model optimization passes for inserting quantization modules",
+      "components": ["__init__.py", "model_optimizer.py", "insert_quantize_op_pass.py", "replace_npu_quant_pass.py", "base_module_fusion_pass.py"]
+    },
+    {
+      "name": "quantize_op",
+      "path": "amct_pytorch/quantize_op",
+      "language": "python",
+      "risk": "Medium",
+      "description": "Quantization operation modules (LinearAWQuant, GPTQuant, SmoothQuant, etc.)",
+      "components": ["__init__.py", "base_quant_module.py", "linear_awq_module.py", "gptq_module.py", "smooth_quant_module.py", "minmax_module.py", "ofmr_quant_module.py", "quantile_module.py", "utils.py"]
+    },
+    {
+      "name": "deploy_op",
+      "path": "amct_pytorch/deploy_op",
+      "language": "python",
+      "risk": "Medium",
+      "description": "NPU deployment operation modules for quantized inference",
+      "components": ["__init__.py", "npu_quantization_linear.py", "npu_mx_quantization_linear.py", "npu_quantization_conv2d.py", "npu_hif8_cast_quantization_linear.py", "weight_npu_quant_module.py"]
+    },
+    {
+      "name": "utils",
+      "path": "amct_pytorch/utils",
+      "language": "python",
+      "risk": "Medium",
+      "description": "Utility functions for quantization, logging, parameter checking",
+      "components": ["__init__.py", "check_params.py", "data_utils.py", "log.py", "model_util.py", "quant_util.py", "vars.py"]
+    },
+    {
+      "name": "experimental_hifloat8",
+      "path": "amct_pytorch/experimental/hifloat8",
+      "language": "mixed",
+      "risk": "High",
+      "description": "Experimental HiFloat8 casting implementation with C++ extension (pybind11)",
+      "components": ["hifloat8_cast.cpp", "hifloat8_fakequant_linear.py", "utils.py", "setup.py"]
+    },
+    {
+      "name": "experimental_flatquant",
+      "path": "amct_pytorch/experimental/flatquant",
+      "language": "python",
+      "risk": "Medium",
+      "description": "Experimental FlatQuant quantization module",
+      "components": ["__init__.py", "config.py", "reparam_utils.py"]
+    },
+    {
+      "name": "experimental_quantization",
+      "path": "amct_pytorch/experimental/quantization/DeepSeekV3.2",
+      "language": "python",
+      "risk": "Medium",
+      "description": "Experimental DeepSeekV3.2 quantization scripts",
+      "components": ["main.py", "deploy.py", "eval.py", "extract_calib_data.py"]
+    },
+    {
+      "name": "graph_based_compression",
+      "path": "amct_pytorch/graph_based_compression/amct_pytorch",
+      "language": "python",
+      "risk": "High",
+      "description": "Graph-based model compression toolkit with config parsing, file operations, ONNX export",
+      "components": ["quantize_tool.py", "quant_calibration_interface.py", "accuracy_based_auto_calibration.py", "prune_interface.py", "distillation_interface.py"]
+    },
+    {
+      "name": "tensor_decompose",
+      "path": "amct_pytorch/graph_based_compression/amct_tensor_decompose",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "description": "C++ tensor decomposition library for graph-based compression",
+      "components": ["src/tensor_decomposition_api.cpp", "src/tensor_decomposition.cpp", "src/vector.cpp", "inc/tensor_decomposition_api.h", "inc/tensor_decomposition.h", "inc/vector.h", "inc/td_log.h"]
+    },
+    {
+      "name": "examples",
+      "path": "examples",
+      "language": "python",
+      "risk": "Low",
+      "description": "Example scripts demonstrating library usage (awq, gptq, smoothquant, etc.)",
+      "components": ["amct_pytorch/awq", "amct_pytorch/gptq", "amct_pytorch/smoothquant", "amct_pytorch/minmax", "amct_pytorch/ofmr"]
+    },
+    {
+      "name": "tests",
+      "path": "tests",
+      "language": "python",
+      "risk": "Low",
+      "description": "Unit tests for library components",
+      "components": ["amct_pytorch/test_config.py", "amct_pytorch/test_awq.py", "amct_pytorch/test_ofmr.py"]
+    }
+  ],
+  "files": [
+    {
+      "path": "amct_pytorch/config/parser.py",
+      "language": "python",
+      "risk": "High",
+      "module": "config",
+      "lines": 264,
+      "priority": 1
+    },
+    {
+      "path": "amct_pytorch/config/fields.py",
+      "language": "python",
+      "risk": "High",
+      "module": "config",
+      "lines": 424,
+      "priority": 1
+    },
+    {
+      "path": "amct_pytorch/config/config.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "config",
+      "lines": 184,
+      "priority": 2
+    },
+    {
+      "path": "amct_pytorch/config/utils.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "config",
+      "lines": 50,
+      "priority": 2
+    },
+    {
+      "path": "amct_pytorch/quantize.py",
+      "language": "python",
+      "risk": "High",
+      "module": "root",
+      "lines": 73,
+      "priority": 1
+    },
+    {
+      "path": "amct_pytorch/algorithm/awq.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "algorithm",
+      "lines": 123,
+      "priority": 2
+    },
+    {
+      "path": "amct_pytorch/algorithm/register_algo.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "algorithm",
+      "lines": 47,
+      "priority": 2
+    },
+    {
+      "path": "amct_pytorch/optimizer/model_optimizer.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "optimizer",
+      "lines": 58,
+      "priority": 2
+    },
+    {
+      "path": "amct_pytorch/optimizer/insert_quantize_op_pass.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "optimizer",
+      "lines": 80,
+      "priority": 2
+    },
+    {
+      "path": "amct_pytorch/quantize_op/linear_awq_module.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "quantize_op",
+      "lines": 86,
+      "priority": 2
+    },
+    {
+      "path": "amct_pytorch/quantize_op/utils.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "quantize_op",
+      "lines": 100,
+      "priority": 2
+    },
+    {
+      "path": "amct_pytorch/deploy_op/npu_quantization_linear.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "deploy_op",
+      "lines": 226,
+      "priority": 2
+    },
+    {
+      "path": "amct_pytorch/utils/check_params.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "utils",
+      "lines": 78,
+      "priority": 2
+    },
+    {
+      "path": "amct_pytorch/utils/quant_util.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "utils",
+      "lines": 306,
+      "priority": 2
+    },
+    {
+      "path": "amct_pytorch/utils/model_util.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "utils",
+      "lines": 150,
+      "priority": 2
+    },
+    {
+      "path": "amct_pytorch/experimental/hifloat8/hifloat8_cast.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "experimental_hifloat8",
+      "lines": 349,
+      "priority": 1
+    },
+    {
+      "path": "amct_pytorch/experimental/hifloat8/hifloat8_fakequant_linear.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "experimental_hifloat8",
+      "lines": 100,
+      "priority": 2
+    },
+    {
+      "path": "amct_pytorch/graph_based_compression/amct_tensor_decompose/src/tensor_decomposition_api.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "tensor_decompose",
+      "lines": 74,
+      "priority": 2
+    },
+    {
+      "path": "amct_pytorch/graph_based_compression/amct_tensor_decompose/src/tensor_decomposition.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "tensor_decompose",
+      "lines": 200,
+      "priority": 2
+    },
+    {
+      "path": "amct_pytorch/graph_based_compression/amct_pytorch/quantize_tool.py",
+      "language": "python",
+      "risk": "High",
+      "module": "graph_based_compression",
+      "lines": 849,
+      "priority": 1
+    },
+    {
+      "path": "amct_pytorch/graph_based_compression/amct_pytorch/quant_calibration_interface.py",
+      "language": "python",
+      "risk": "High",
+      "module": "graph_based_compression",
+      "lines": 82,
+      "priority": 1
+    },
+    {
+      "path": "amct_pytorch/graph_based_compression/amct_pytorch/configuration/configuration.py",
+      "language": "python",
+      "risk": "High",
+      "module": "graph_based_compression",
+      "lines": 300,
+      "priority": 1
+    },
+    {
+      "path": "amct_pytorch/graph_based_compression/amct_pytorch/parser/parser.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "graph_based_compression",
+      "lines": 150,
+      "priority": 2
+    },
+    {
+      "path": "amct_pytorch/graph_based_compression/amct_pytorch/utils/save.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "graph_based_compression",
+      "lines": 100,
+      "priority": 2
+    },
+    {
+      "path": "amct_pytorch/experimental/quantization/DeepSeekV3.2/main.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "experimental_quantization",
+      "lines": 118,
+      "priority": 2
+    },
+    {
+      "path": "setup.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "root",
+      "lines": 97,
+      "priority": 2
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "amct_pytorch/quantize.py",
+      "line": 30,
+      "function": "quantize",
+      "type": "decorator",
+      "trust_level": "semi_trusted",
+      "justification": "Main public API entry point - user provides PyTorch model and config dict directly",
+      "description": "Quantize a PyTorch model according to config dict"
+    },
+    {
+      "file": "amct_pytorch/quantize.py",
+      "line": 48,
+      "function": "convert",
+      "type": "decorator",
+      "trust_level": "semi_trusted",
+      "justification": "Public API entry point - user provides quantized model",
+      "description": "Convert quantized calibration model to deployment model"
+    },
+    {
+      "file": "amct_pytorch/quantize.py",
+      "line": 64,
+      "function": "algorithm_register",
+      "type": "decorator",
+      "trust_level": "semi_trusted",
+      "justification": "Public API entry point - user provides custom algorithm modules",
+      "description": "Register custom quantization algorithm"
+    },
+    {
+      "file": "amct_pytorch/config/parser.py",
+      "line": 259,
+      "function": "parse_config",
+      "type": "internal",
+      "trust_level": "untrusted_local",
+      "justification": "Called from quantize(), processes user-provided config dict with potential malicious input",
+      "description": "Parse user config dict into layer-specific quant configs"
+    },
+    {
+      "file": "amct_pytorch/config/fields.py",
+      "line": 388,
+      "function": "QuantConfig.__init__",
+      "type": "internal",
+      "trust_level": "untrusted_local",
+      "justification": "Processes user-provided config dict with various fields that need validation",
+      "description": "Initialize QuantConfig from user config dict"
+    },
+    {
+      "file": "amct_pytorch/config/utils.py",
+      "line": 32,
+      "function": "match_fuzzy_pattern",
+      "type": "internal",
+      "trust_level": "untrusted_local",
+      "justification": "Pattern matching with fnmatch - potential wildcard injection if layer_name contains malicious patterns",
+      "description": "Match layer names with fuzzy patterns containing wildcards"
+    },
+    {
+      "file": "amct_pytorch/graph_based_compression/amct_pytorch/quantize_tool.py",
+      "line": 51,
+      "function": "create_quant_config",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "User-provided file path (config_file) - potential path traversal",
+      "description": "Create quantization config file from user-specified path"
+    },
+    {
+      "file": "amct_pytorch/graph_based_compression/amct_pytorch/quantize_tool.py",
+      "line": 96,
+      "function": "quantize_preprocess",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "User-provided file paths (config_file, record_file) - potential path traversal",
+      "description": "Quantize preprocessing with user-specified file paths"
+    },
+    {
+      "file": "amct_pytorch/graph_based_compression/amct_pytorch/quantize_tool.py",
+      "line": 155,
+      "function": "quantize_model",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "User-provided file paths (config_file, modified_onnx_file, record_file) - potential path traversal",
+      "description": "Quantize model with user-specified file paths"
+    },
+    {
+      "file": "amct_pytorch/graph_based_compression/amct_pytorch/quantize_tool.py",
+      "line": 309,
+      "function": "save_model",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "User-provided file paths (modified_onnx_file, record_file, save_path) - potential path traversal",
+      "description": "Save quantized model to user-specified paths"
+    },
+    {
+      "file": "amct_pytorch/graph_based_compression/amct_pytorch/quant_calibration_interface.py",
+      "line": 39,
+      "function": "create_quant_cali_config",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "User-provided file path (config_file) - potential path traversal",
+      "description": "Create quant calibration config file"
+    },
+    {
+      "file": "amct_pytorch/graph_based_compression/amct_pytorch/quant_calibration_interface.py",
+      "line": 62,
+      "function": "create_quant_cali_model",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "User-provided file paths (config_file, record_file) - potential path traversal",
+      "description": "Create quant calibration model"
+    },
+    {
+      "file": "amct_pytorch/experimental/hifloat8/hifloat8_cast.cpp",
+      "line": 285,
+      "function": "FloatToHifloat8",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "Pybind11 exported C++ function - processes tensor data directly from Python, potential buffer overflow if tensor is malformed",
+      "description": "Cast float tensor to hifloat8 tensor"
+    },
+    {
+      "file": "amct_pytorch/experimental/hifloat8/hifloat8_cast.cpp",
+      "line": 301,
+      "function": "Hifloat8ToFloat32",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "Pybind11 exported C++ function - processes tensor data, potential buffer overflow if input is malformed",
+      "description": "Convert hifloat8 tensor to float32 tensor"
+    },
+    {
+      "file": "amct_pytorch/graph_based_compression/amct_tensor_decompose/src/tensor_decomposition_api.cpp",
+      "line": 31,
+      "function": "GetRank",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "extern C exported function - takes ConvInfo struct and double array, potential buffer overflow if length is invalid",
+      "description": "Estimate rank for tensor decomposition"
+    },
+    {
+      "file": "amct_pytorch/experimental/quantization/DeepSeekV3.2/main.py",
+      "line": 97,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "semi_trusted",
+      "justification": "CLI script entry point - takes command line args including file paths",
+      "description": "DeepSeekV3.2 quantization CLI script"
+    }
+  ],
+  "attack_surfaces": [
+    "Configuration Dictionary Input: User-provided config dicts in quantize() and parse_config() with nested fields (batch_num, quant_cfg, algorithm, skip_layers)",
+    "File Path Input: User-specified file paths in graph_based_compression APIs (config_file, record_file, save_path, onnx_file) with os.path.realpath processing",
+    "Pybind11 C++ Extension: hifloat8_cast.cpp tensor conversion functions (FloatToHifloat8, Hifloat8ToFloat32) processing raw tensor data",
+    "extern C Function: tensor_decomposition_api.cpp GetRank() taking array pointer and length",
+    "Fuzzy Pattern Matching: config/utils.py match_fuzzy_pattern() using fnmatch with wildcard patterns",
+    "JSON Configuration Files: Configuration class parsing JSON config files",
+    "ONNX Model Export: Parser.export_onnx() exporting models to user-specified paths",
+    "Model Loading: load_pth_file() loading PyTorch checkpoint files from user-specified paths",
+    "DeepSeekV3.2 CLI: experimental/quantization/DeepSeekV3.2/main.py taking command line arguments for model paths and data directories"
+  ]
+}

@@ -1,0 +1,240 @@
+{
+  "functions": {
+    "uacce_fops_unl_ioctl@KAEKernelDriver/KAEKernelDriver-OLK-6.6/uacce/uacce.c": {
+      "defined_at": 173,
+      "calls": ["uacce_start_queue@uacce.c:35", "uacce_stop_queue@uacce.c:52", "uacce_get_ss_dma@uacce.c:82", "hisi_qm_uacce_ioctl@qm.c:2704"],
+      "called_by": ["uacce_fops_compat_ioctl@uacce.c:214"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "uacce_fops_mmap@KAEKernelDriver/KAEKernelDriver-OLK-6.6/uacce/uacce.c": {
+      "defined_at": 586,
+      "calls": ["uacce_create_region@uacce.c:561", "uacce_alloc_dma_buffers@uacce.c:457", "uacce_mmap_dma_buffers@uacce.c:521"],
+      "called_by": ["file_operations.mmap"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "uacce_get_ss_dma@KAEKernelDriver/KAEKernelDriver-OLK-6.6/uacce/uacce.c": {
+      "defined_at": 82,
+      "calls": ["copy_from_user@kernel", "copy_to_user@kernel"],
+      "called_by": ["uacce_fops_unl_ioctl@uacce.c:199"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "uacce_fops_open@KAEKernelDriver/KAEKernelDriver-OLK-6.6/uacce/uacce.c": {
+      "defined_at": 254,
+      "calls": ["uacce_bind_queue@uacce.c:223", "iommu_sva_bind_device@kernel"],
+      "called_by": ["file_operations.open"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "hisi_qm_uacce_ioctl@KAEKernelDriver/KAEKernelDriver-OLK-6.6/hisilicon/qm.c": {
+      "defined_at": 2704,
+      "calls": ["copy_from_user@kernel", "copy_to_user@kernel", "hisi_qp_ctx_param_check@qm.c", "hisi_qp_set_info_check@qm.c"],
+      "called_by": ["uacce_fops_unl_ioctl@uacce.c:204"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "hisi_acc_vfio_pci_ioctl@KAEKernelDriver/KAEKernelDriver-OLK-6.6/hisilicon/vfio/hisi_acc_vfio_pci.c": {
+      "defined_at": 1385,
+      "calls": ["vfio_pci_core_ioctl@kernel", "hisi_acc_vf_precopy_ioctl@vfio.c:828"],
+      "called_by": ["vfio_device_ops.ioctl"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "sec_req_cb@KAEKernelDriver/KAEKernelDriver-OLK-6.6/hisilicon/sec2/sec_crypto.c": {
+      "defined_at": 289,
+      "calls": ["sec_cb_status_check@sec_crypto.c:174", "sec_cipher_unmap@sec_crypto.c:1278"],
+      "called_by": ["hisi_qp.req_cb"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "sec_skcipher_setkey@KAEKernelDriver/KAEKernelDriver-OLK-6.6/hisilicon/sec2/sec_crypto.c": {
+      "defined_at": 896,
+      "calls": ["memcpy@libc", "xts_verify_key@crypto", "crypto_sync_skcipher_setkey@crypto"],
+      "called_by": ["crypto_skcipher.setkey"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "sec_cipher_map@KAEKernelDriver/KAEKernelDriver-OLK-6.6/hisilicon/sec2/sec_crypto.c": {
+      "defined_at": 1212,
+      "calls": ["dma_map_single@kernel", "dma_map_sg@kernel", "hisi_acc_sg_buf_map_to_hw_sgl@sgl.c"],
+      "called_by": ["sec_skcipher_sgl_map@sec_crypto.c:1317"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "uadk_engine_ctrl@KAEOpensslEngine/src/e_uadk.c": {
+      "defined_at": 231,
+      "calls": ["uadk_e_set_env_enabled@e_uadk.c:186", "kae_enable_async@async.c", "sec_digests_set_enabled@digests.c", "sec_ciphers_set_enabled@ciphers.c"],
+      "called_by": ["ENGINE.ctrl_function"],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "wd_do_cipher_sync@uadk/wd_cipher.c": {
+      "defined_at": 730,
+      "calls": ["wd_cipher_check_params@wd_cipher.c:661", "fill_request_msg@wd_cipher.c:563", "send_recv_sync@wd_cipher.c:713"],
+      "called_by": ["application"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "wd_do_cipher_async@uadk/wd_cipher.c": {
+      "defined_at": 765,
+      "calls": ["wd_cipher_check_params@wd_cipher.c:661", "fill_request_msg@wd_cipher.c:563", "wd_alg_driver_send@drv.c", "wd_add_task_to_async_queue@async.c"],
+      "called_by": ["application"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "wd_cipher_set_key@uadk/wd_cipher.c": {
+      "defined_at": 229,
+      "calls": ["cipher_key_len_check@wd_cipher.c:169", "is_des_weak_key@wd_cipher.c:145", "memcpy@libc"],
+      "called_by": ["application"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "wd_cipher_alloc_sess@uadk/wd_cipher.c": {
+      "defined_at": 280,
+      "calls": ["malloc@libc", "wd_drv_alg_support@drv.c", "cipher_setup_memory_and_buffers@wd_cipher.c:255", "wd_cipher_setting.sched.sched_init"],
+      "called_by": ["application"],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "kz_deflate@KAEZlib/src/kaezip_adapter.c": {
+      "defined_at": 87,
+      "calls": ["kz_deflate_v1@kaezip_deflate.c", "kz_deflate_v2@kaezip_comp.c"],
+      "called_by": ["application"],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "kz_inflate@KAEZlib/src/kaezip_adapter.c": {
+      "defined_at": 190,
+      "calls": ["kz_inflate_v1@kaezip_inflate.c", "kz_inflate_v2@kaezip_comp.c"],
+      "called_by": ["application"],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "qp_send_message@KAEKernelDriver/KAEKernelDriver-OLK-6.6/hisilicon/sec2/sec_crypto.c": {
+      "defined_at": 204,
+      "calls": ["hisi_qp_send@qm.c", "atomic_read@kernel"],
+      "called_by": ["sec_alg_send_message_retry@sec_crypto.c:336"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "sec_alloc_civ_resource@KAEKernelDriver/KAEKernelDriver-OLK-6.6/hisilicon/sec2/sec_crypto.c": {
+      "defined_at": 387,
+      "calls": ["dma_alloc_coherent@kernel"],
+      "called_by": ["sec_alg_resource_alloc@sec_crypto.c:510"],
+      "receives_external_input": false,
+      "risk": "Low"
+    },
+    "sec_cipher_pbuf_map@KAEKernelDriver/KAEKernelDriver-OLK-6.6/hisilicon/sec2/sec_crypto.c": {
+      "defined_at": 966,
+      "calls": ["sg_copy_to_buffer@kernel", "dma_map_single@kernel", "memcpy@libc"],
+      "called_by": ["sec_cipher_map_inner@sec_crypto.c:1140"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "hisi_qp_send@KAEKernelDriver/KAEKernelDriver-OLK-6.6/hisilicon/qm.c": {
+      "defined_at": 100,
+      "calls": ["qm_db@qm.c:853", "writeq@kernel"],
+      "called_by": ["qp_send_message@sec_crypto.c:204"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "qm_mb_write@KAEKernelDriver/KAEKernelDriver-OLK-6.6/hisilicon/qm.c": {
+      "defined_at": 720,
+      "calls": ["qm_mb_pre_init@qm.c:588", "qm_mb_nolock@qm.c:699", "qm_mb_write@qm.c:601"],
+      "called_by": ["hisi_qm_mb_write@qm.c:720"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "uacce_alloc_dma_buffers@KAEKernelDriver/KAEKernelDriver-OLK-6.6/uacce/uacce.c": {
+      "defined_at": 457,
+      "calls": ["dma_alloc_coherent@kernel", "kcalloc@kernel", "uacce_sort_dma_buffers@uacce.c:411"],
+      "called_by": ["uacce_create_region@uacce.c:561"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "hisi_acc_vf_precopy_ioctl@KAEKernelDriver/KAEKernelDriver-OLK-6.6/hisilicon/vfio/hisi_acc_vfio_pci.c": {
+      "defined_at": 828,
+      "calls": ["copy_from_user@kernel", "copy_to_user@kernel", "hisi_acc_vf_load_state@vfio.c", "hisi_acc_vf_save_state@vfio.c"],
+      "called_by": ["hisi_acc_vfio_pci_ioctl@vfio.c:1385"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "hpre_rsa_crypto@KAEKernelDriver/KAEKernelDriver-OLK-6.6/hisilicon/hpre/hpre_crypto.c": {
+      "defined_at": 100,
+      "calls": ["hpre_ctx_set@hpre_crypto.c", "hpre_rsa_set_key@hpre_crypto.c", "hpre_send@hpre_crypto.c"],
+      "called_by": ["crypto_akcipher.encrypt/decrypt"],
+      "receives_external_input": true,
+      "risk": "High"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "ioctl cmd@uacce_fops_unl_ioctl/uacce.c:173",
+      "path": ["uacce_fops_unl_ioctl@uacce.c:173", "hisi_qm_uacce_ioctl@qm.c:2704", "copy_from_user@kernel"],
+      "sink": "struct hisi_qp_ctx/hisi_qp_info@qm.c:2704",
+      "sink_type": "memory_copy"
+    },
+    {
+      "source": "ioctl arg@uacce_get_ss_dma/uacce.c:82",
+      "path": ["uacce_fops_unl_ioctl@uacce.c:173", "uacce_get_ss_dma@uacce.c:82", "copy_from_user@kernel:91"],
+      "sink": "slice_idx@uacce.c:86",
+      "sink_type": "integer_input"
+    },
+    {
+      "source": "mmap vma@uacce_fops_mmap/uacce.c:586",
+      "path": ["uacce_fops_mmap@uacce.c:586", "uacce_create_region@uacce.c:561", "uacce_alloc_dma_buffers@uacce.c:457", "dma_alloc_coherent@kernel"],
+      "sink": "qfr->dma_list@uacce.c:484",
+      "sink_type": "dma_allocation"
+    },
+    {
+      "source": "cipher key@wd_cipher_set_key/wd_cipher.c:229",
+      "path": ["wd_cipher_set_key@wd_cipher.c:229", "cipher_key_len_check@wd_cipher.c:169", "memcpy@wd_cipher.c:250"],
+      "sink": "sess->key@wd_cipher.c:250",
+      "sink_type": "key_storage"
+    },
+    {
+      "source": "cipher req@wd_do_cipher_sync/wd_cipher.c:730",
+      "path": ["wd_do_cipher_sync@wd_cipher.c:730", "fill_request_msg@wd_cipher.c:563", "send_recv_sync@wd_cipher.c:713", "wd_cipher_setting.driver->send@drv.c"],
+      "sink": "hardware queue@drv.c",
+      "sink_type": "hardware_operation"
+    },
+    {
+      "source": "sk_req->src@sec_cipher_map/sec_crypto.c:1212",
+      "path": ["sec_skcipher_sgl_map@sec_crypto.c:1317", "sec_cipher_map@sec_crypto.c:1212", "dma_map_sg@kernel"],
+      "sink": "req->in_dma@sec_crypto.c:1120",
+      "sink_type": "dma_mapping"
+    },
+    {
+      "source": "sk_req->iv@sec_skcipher_copy_iv/sec_crypto.c:1513",
+      "path": ["sec_request_transfer@sec_crypto.c:1487", "sec_skcipher_copy_iv@sec_crypto.c:1513", "memcpy@sec_crypto.c:1518"],
+      "sink": "c_req->c_ivin@sec_crypto.c:1518",
+      "sink_type": "iv_copy"
+    },
+    {
+      "source": "rsa key@hpre_rsa_crypto/hpre_crypto.c",
+      "path": ["hpre_rsa_crypto@hpre_crypto.c", "hpre_rsa_set_key@hpre_crypto.c", "memcpy@hpre_crypto.c"],
+      "sink": "ctx->rsa_key@hpre_crypto.c",
+      "sink_type": "key_storage"
+    },
+    {
+      "source": "VFIO ioctl@hisi_acc_vfio_pci_ioctl/vfio.c:1385",
+      "path": ["hisi_acc_vfio_pci_ioctl@vfio.c:1385", "hisi_acc_vf_precopy_ioctl@vfio.c:828", "copy_from_user@kernel"],
+      "sink": "migration_data@vfio.c",
+      "sink_type": "memory_copy"
+    },
+    {
+      "source": "deflate strm@kz_deflate/kaezip_adapter.c:87",
+      "path": ["kz_deflate@kaezip_adapter.c:87", "kz_deflate_v2@kaezip_comp.c", "wd_comp_send@wd_comp.c"],
+      "sink": "hardware compression queue@drv.c",
+      "sink_type": "hardware_operation"
+    },
+    {
+      "source": "inflate strm@kz_inflate/kaezip_adapter.c:190",
+      "path": ["kz_inflate@kaezip_adapter.c:190", "kz_inflate_v2@kaezip_comp.c", "wd_comp_recv@wd_comp.c"],
+      "sink": "output buffer@kaezip_adapter.c",
+      "sink_type": "output_buffer"
+    }
+  ]
+}

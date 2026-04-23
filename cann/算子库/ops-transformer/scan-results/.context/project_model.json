@@ -1,0 +1,322 @@
+{
+  "project_name": "ops-transformer",
+  "scan_time": "2026-04-21T21:00:00Z",
+  "lsp_available": true,
+  "total_files": 4906,
+  "total_lines": 250000,
+  "project_profile": {
+    "project_type": "library",
+    "deployment_model": "华为昇腾 CANN Transformer 算子库，作为共享库被 AI 框架调用，运行在 NPU 设备上",
+    "trust_boundaries": [
+      {
+        "boundary": "API Interface",
+        "trusted_side": "AI Framework (PyTorch/TensorFlow)",
+        "untrusted_side": "External User Input (模型输入数据)",
+        "risk": "High"
+      },
+      {
+        "boundary": "Kernel Execution",
+        "trusted_side": "算子实现代码",
+        "untrusted_side": "NPU 硬件",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Build System",
+        "trusted_side": "构建脚本",
+        "untrusted_side": "开发者输入",
+        "risk": "Low"
+      }
+    ]
+  },
+  "language_distribution": {
+    "cpp": 4617,
+    "python": 107
+  },
+  "modules": [
+    {
+      "name": "attention",
+      "path": "attention",
+      "language": "c_cpp",
+      "components": ["flash_attention_score", "prompt_flash_attention", "incre_flash_attention", "fused_infer_attention_score", "mla_prolog", "sparse_flash_attention", "block_sparse_attention"],
+      "risk": "High",
+      "risk_factors": ["复杂张量形状推理", "大量内存操作", "ACLNN API 入口点", "FP8/INT8 量化处理"]
+    },
+    {
+      "name": "moe",
+      "path": "moe",
+      "language": "c_cpp",
+      "components": ["moe_init_routing", "moe_gating_top_k", "moe_token_permute", "moe_finalize_routing", "moe_fused_topk"],
+      "risk": "High",
+      "risk_factors": ["动态路由计算", "Token 分发/收集", "整数索引计算", "ACLNN API 入口点"]
+    },
+    {
+      "name": "mc2",
+      "path": "mc2",
+      "language": "c_cpp",
+      "components": ["matmul_all_reduce", "matmul_reduce_scatter", "all_gather_matmul", "moe_distribute_dispatch", "moe_distribute_combine", "quant_all_reduce"],
+      "risk": "High",
+      "risk_factors": ["分布式通信算子", "量化处理", "复杂内存布局转换", "ACLNN API 入口点"]
+    },
+    {
+      "name": "ffn",
+      "path": "ffn",
+      "language": "c_cpp",
+      "components": ["ffn", "swin_attention_ffn", "swin_transformer_ln_qkv"],
+      "risk": "Medium",
+      "risk_factors": ["FFN 计算", "量化处理", "ACLNN API 入口点"]
+    },
+    {
+      "name": "gmm",
+      "path": "gmm",
+      "language": "c_cpp",
+      "components": ["grouped_matmul", "grouped_matmul_finalize_routing", "quant_grouped_matmul", "grouped_matmul_swiglu_quant"],
+      "risk": "High",
+      "risk_factors": ["分组矩阵乘法", "量化处理", "动态形状处理", "ACLNN API 入口点"]
+    },
+    {
+      "name": "mhc",
+      "path": "mhc",
+      "language": "c_cpp",
+      "components": ["mhc_pre", "mhc_post", "mhc_sinkhorn"],
+      "risk": "Medium",
+      "risk_factors": ["混合专家计算", "Sinkhorn 算法", "ACLNN API 入口点"]
+    },
+    {
+      "name": "posembedding",
+      "path": "posembedding",
+      "language": "c_cpp",
+      "components": ["rotary_position_embedding", "apply_rotary_pos_emb", "rope_with_sin_cos_cache", "interleave_rope", "norm_rope_concat"],
+      "risk": "Medium",
+      "risk_factors": ["位置编码计算", "形状转换", "ACLNN API 入口点"]
+    },
+    {
+      "name": "experimental",
+      "path": "experimental",
+      "language": "mixed",
+      "components": ["mamba", "npu_ops_transformer_ext", "select_attention_operators"],
+      "risk": "Medium",
+      "risk_factors": ["实验性功能", "Python 扩展", "不稳定的 API"]
+    },
+    {
+      "name": "common",
+      "path": "common",
+      "language": "c_cpp",
+      "components": ["include/common", "include/kernel", "include/tiling_base", "src"],
+      "risk": "High",
+      "risk_factors": ["公共基础库", "内存管理辅助函数", "Tiling 数据结构"]
+    },
+    {
+      "name": "scripts",
+      "path": "scripts",
+      "language": "python",
+      "components": ["check_build_dependencies.py", "generate_version_info.py", "opgen", "ci", "package", "tools"],
+      "risk": "Medium",
+      "risk_factors": ["构建脚本", "版本检查", "代码生成工具"]
+    },
+    {
+      "name": "torch_extension",
+      "path": "torch_extension",
+      "language": "python",
+      "components": ["npu_ops_transformer/ops", "npu_ops_transformer/op_builder"],
+      "risk": "High",
+      "risk_factors": ["PyTorch 扩展接口", "Python API 入口点", "模型数据接收"]
+    },
+    {
+      "name": "cmake",
+      "path": "cmake",
+      "language": "mixed",
+      "components": ["scripts/util", "scripts/utest", "scripts/examples"],
+      "risk": "Medium",
+      "risk_factors": ["构建系统脚本", "yaml.load 使用", "文件路径处理"]
+    }
+  ],
+  "files": [
+    {
+      "path": "attention/flash_attention_score/op_api/aclnn_flash_attention_score.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "attention",
+      "lines": 2034,
+      "priority": 1
+    },
+    {
+      "path": "attention/flash_attention_score/op_host/flash_attention_score_infershape.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "attention",
+      "lines": 199,
+      "priority": 1
+    },
+    {
+      "path": "attention/flash_attention_score/op_kernel/flash_attention_score.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "attention",
+      "lines": 697,
+      "priority": 1
+    },
+    {
+      "path": "attention/prompt_flash_attention/op_api/aclnn_prompt_flash_attention.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "attention",
+      "lines": 1200,
+      "priority": 2
+    },
+    {
+      "path": "mc2/matmul_all_reduce/op_api/aclnn_matmul_all_reduce.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "mc2",
+      "lines": 800,
+      "priority": 2
+    },
+    {
+      "path": "mc2/moe_distribute_dispatch/op_api/aclnn_moe_distribute_dispatch.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "mc2",
+      "lines": 600,
+      "priority": 2
+    },
+    {
+      "path": "moe/moe_init_routing/op_host/moe_init_routing_infershape.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "moe",
+      "lines": 200,
+      "priority": 3
+    },
+    {
+      "path": "gmm/grouped_matmul/op_host/grouped_matmul_infershape.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "gmm",
+      "lines": 300,
+      "priority": 3
+    },
+    {
+      "path": "build.sh",
+      "language": "bash",
+      "risk": "High",
+      "module": "scripts",
+      "lines": 1983,
+      "priority": 4
+    },
+    {
+      "path": "torch_extension/npu_ops_transformer/ops/__init__.py",
+      "language": "python",
+      "risk": "High",
+      "module": "torch_extension",
+      "lines": 16,
+      "priority": 5
+    },
+    {
+      "path": "cmake/scripts/parse_changed_files.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "cmake",
+      "lines": 352,
+      "priority": 6
+    },
+    {
+      "path": "scripts/check_build_dependencies.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "scripts",
+      "lines": 194,
+      "priority": 6
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "attention/flash_attention_score/op_api/aclnn_flash_attention_score.cpp",
+      "line": 1,
+      "function": "aclnnFlashAttentionScoreGetWorkspaceSize",
+      "type": "算子API",
+      "trust_level": "untrusted_network",
+      "justification": "ACLNN API 入口，接收外部框架传入的张量数据和参数",
+      "description": "Flash Attention 算子入口，处理 query/key/value 等输入张量"
+    },
+    {
+      "file": "attention/flash_attention_score/op_api/flash_attention_score.cpp",
+      "line": 20,
+      "function": "FlashAttentionScore",
+      "type": "算子API",
+      "trust_level": "untrusted_network",
+      "justification": "L0OP 层入口，直接处理用户传入的张量参数",
+      "description": "Flash Attention L0 算子函数"
+    },
+    {
+      "file": "attention/prompt_flash_attention/op_api/aclnn_prompt_flash_attention.cpp",
+      "line": 1,
+      "function": "aclnnPromptFlashAttentionGetWorkspaceSize",
+      "type": "算子API",
+      "trust_level": "untrusted_network",
+      "justification": "Prompt Flash Attention API 入口，处理 KV cache 数据",
+      "description": "Prompt Flash Attention 算子入口"
+    },
+    {
+      "file": "mc2/matmul_all_reduce/op_api/aclnn_matmul_all_reduce.cpp",
+      "line": 1,
+      "function": "aclnnMatmulAllReduceGetWorkspaceSize",
+      "type": "算子API",
+      "trust_level": "untrusted_network",
+      "justification": "Matmul All Reduce API 入口，分布式通信算子",
+      "description": "Matmul All Reduce 算子入口"
+    },
+    {
+      "file": "mc2/moe_distribute_dispatch/op_api/aclnn_moe_distribute_dispatch.cpp",
+      "line": 1,
+      "function": "aclnnMoeDistributeDispatchGetWorkspaceSize",
+      "type": "算子API",
+      "trust_level": "untrusted_network",
+      "justification": "MoE 分布式分发算子入口",
+      "description": "MoE Distribute Dispatch 算子入口"
+    },
+    {
+      "file": "torch_extension/npu_ops_transformer/ops/__init__.py",
+      "line": 10,
+      "function": "npu_moe_distribute_dispatch_v2",
+      "type": "web_route",
+      "trust_level": "untrusted_network",
+      "justification": "Python API 入口，接收 PyTorch 模型的输入数据",
+      "description": "PyTorch 扩展 MoE 分发算子"
+    },
+    {
+      "file": "build.sh",
+      "line": 1,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "semi_trusted",
+      "justification": "构建脚本入口，接收命令行参数",
+      "description": "项目构建脚本，处理编译参数"
+    },
+    {
+      "file": "cmake/scripts/parse_changed_files.py",
+      "line": 141,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "semi_trusted",
+      "justification": "CI 脚本入口，解析文件路径",
+      "description": "CI 文件解析脚本，使用 yaml.load"
+    },
+    {
+      "file": "scripts/check_build_dependencies.py",
+      "line": 165,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "semi_trusted",
+      "justification": "构建依赖检查脚本，读取配置文件",
+      "description": "构建依赖检查脚本"
+    }
+  ],
+  "attack_surfaces": [
+    "ACLNN API 接口 (op_api/*.cpp) - 接收外部框架传入的张量数据",
+    "Infershape 函数 (op_host/*_infershape.cpp) - 处理形状参数，可能存在整数溢出",
+    "Kernel 实现 (op_kernel/*.cpp) - 内存分配和拷贝操作",
+    "PyTorch 扩展 (torch_extension/) - Python API 入口",
+    "构建脚本 (build.sh, cmake/scripts/*.py) - 命令行参数处理"
+  ],
+  "architecture_summary": "华为昇腾 CANN Transformer 算子库是一个 C/C++ + Python 混合项目，包含 12 个主要模块。核心架构分为三层：ACLNN API 层（op_api）负责接收外部输入，Infershape 层（op_host）负责形状推理和参数验证，Kernel 层（op_kernel）负责 NPU 设备上的实际计算。主要攻击面为 ACLNN API 入口点，这些接口接收来自 AI 框架（如 PyTorch）的用户输入数据，包括张量形状、数值和配置参数。潜在风险包括：形状推理中的整数溢出（infershape 函数）、内存操作中的缓冲区溢出（kernel 实现）、以及 Python 脚本中的 yaml.load 使用。项目规模大（约 4900 文件），建议优先扫描 attention、mc2、moe、gmm 四个高风险模块的 op_api 和 op_host 目录。"
+}

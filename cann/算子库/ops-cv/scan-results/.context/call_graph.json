@@ -1,0 +1,225 @@
+{
+  "functions": {
+    "aclnnGridSampler2DGetWorkspaceSize@image/grid_sample/op_api/aclnn_grid_sampler2d.cpp": {
+      "defined_at": 1,
+      "calls": [
+        "CheckParams@image/grid_sample/op_api/aclnn_grid_sampler2d.cpp",
+        "l0op::Contiguous@common/inc/external/aclnn_kernels/contiguous.h",
+        "l0op::GridSampler2D@image/grid_sample/op_host/grid_sample_tiling.cpp"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "aclnnGridSampler3DGetWorkspaceSize@image/grid_sample/op_api/aclnn_grid_sampler3d.cpp": {
+      "defined_at": 1,
+      "calls": [
+        "CheckParams@image/grid_sample/op_api/aclnn_grid_sampler3d.cpp",
+        "l0op::Contiguous@common/inc/external/aclnn_kernels/contiguous.h",
+        "l0op::GridSampler3D@image/grid_sample/op_host/grid_sample_tiling.cpp"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "aclnnIm2colBackwardGetWorkspaceSize@image/col2im/op_api/aclnn_im2col_backward.cpp": {
+      "defined_at": 242,
+      "calls": [
+        "CheckParams@image/col2im/op_api/aclnn_im2col_backward.cpp",
+        "CheckNotNull@image/col2im/op_api/aclnn_im2col_backward.cpp",
+        "CheckDtype@image/col2im/op_api/aclnn_im2col_backward.cpp",
+        "CheckShape@image/col2im/op_api/aclnn_im2col_backward.cpp",
+        "CheckArray@image/col2im/op_api/aclnn_im2col_backward.cpp",
+        "l0op::Contiguous@common/inc/external/aclnn_kernels/contiguous.h",
+        "l0op::UnsqueezeNd@common/inc/external/level0/unsqueeze.h",
+        "l0op::Reshape@common/inc/external/aclnn_kernels/reshape.h",
+        "l0op::Col2im@image/col2im/op_kernel/col2im_apt.cpp"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "aclnnRoiAlignV2GetWorkspaceSize@objdetect/roi_align/op_host/op_api/aclnn_roi_align_v2.cpp": {
+      "defined_at": 158,
+      "calls": [
+        "CheckParams@objdetect/roi_align/op_host/op_api/aclnn_roi_align_v2.cpp",
+        "CheckNotNull@objdetect/roi_align/op_host/op_api/aclnn_roi_align_v2.cpp",
+        "CheckDtypeValid@objdetect/roi_align/op_host/op_api/aclnn_roi_align_v2.cpp",
+        "CheckFormatValid@objdetect/roi_align/op_host/op_api/aclnn_roi_align_v2.cpp",
+        "CheckShape@objdetect/roi_align/op_host/op_api/aclnn_roi_align_v2.cpp",
+        "l0op::Contiguous@common/inc/external/aclnn_kernels/contiguous.h",
+        "l0op::TransDataSpecial@common/inc/external/aclnn_kernels/transdata.h",
+        "l0op::ROIAlignV2@objdetect/roi_align/op_kernel/roi_align.cpp"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "aclnnNonMaxSuppressionGetWorkspaceSize@objdetect/non_max_suppression_v6/op_host/op_api/aclnn_non_max_suppression.cpp": {
+      "defined_at": 1,
+      "calls": [
+        "CheckParams@objdetect/non_max_suppression_v6/op_host/op_api/aclnn_non_max_suppression.cpp",
+        "l0op::Contiguous@common/inc/external/aclnn_kernels/contiguous.h",
+        "l0op::NonMaxSuppressionV6@objdetect/non_max_suppression_v6/op_kernel/non_max_suppression.cpp"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "aclnnIouGetWorkspaceSize@objdetect/iou_v2/op_api/aclnn_iou.cpp": {
+      "defined_at": 1,
+      "calls": [
+        "CheckParams@objdetect/iou_v2/op_api/aclnn_iou.cpp",
+        "l0op::IouV2@objdetect/iou_v2/op_kernel/iou_v2.cpp"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "NonMaxSuppressionV3CpuKernel::Compute@image/non_max_suppression_v3/op_kernel_aicpu/non_max_suppression_v3_aicpu.cpp": {
+      "defined_at": 263,
+      "calls": [
+        "GetInputAndCheck@image/non_max_suppression_v3/op_kernel_aicpu/non_max_suppression_v3_aicpu.cpp",
+        "DoCompute@image/non_max_suppression_v3/op_kernel_aicpu/non_max_suppression_v3_aicpu.cpp",
+        "IOUSimilarity@image/non_max_suppression_v3/op_kernel_aicpu/non_max_suppression_v3_aicpu.cpp"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "NonMaxSuppressionV3CpuKernel::GetInputAndCheck@image/non_max_suppression_v3/op_kernel_aicpu/non_max_suppression_v3_aicpu.cpp": {
+      "defined_at": 31,
+      "calls": [],
+      "called_by": [
+        "NonMaxSuppressionV3CpuKernel::Compute@image/non_max_suppression_v3/op_kernel_aicpu/non_max_suppression_v3_aicpu.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "grid_sample@image/grid_sample/op_kernel/grid_sample.cpp": {
+      "defined_at": 38,
+      "calls": [
+        "GridSampler2D::Init@image/grid_sample/op_kernel/grid_sampler_2d.h",
+        "GridSampler2D::Process@image/grid_sample/op_kernel/grid_sampler_2d.h",
+        "GridSampler3D::Init@image/grid_sample/op_kernel/grid_sampler_3d.h",
+        "GridSampler3D::Process@image/grid_sample/op_kernel/grid_sampler_3d.h",
+        "GET_TILING_DATA@common/inc/op_host/tiling_base.h"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "CheckParams@image/col2im/op_api/aclnn_im2col_backward.cpp": {
+      "defined_at": 218,
+      "calls": [
+        "CheckNotNull@image/col2im/op_api/aclnn_im2col_backward.cpp",
+        "CheckFormat@image/col2im/op_api/aclnn_im2col_backward.cpp",
+        "CheckDtype@image/col2im/op_api/aclnn_im2col_backward.cpp",
+        "CheckShape@image/col2im/op_api/aclnn_im2col_backward.cpp",
+        "CheckArray@image/col2im/op_api/aclnn_im2col_backward.cpp",
+        "CheckOutShape@image/col2im/op_api/aclnn_im2col_backward.cpp"
+      ],
+      "called_by": [
+        "aclnnIm2colBackwardGetWorkspaceSize@image/col2im/op_api/aclnn_im2col_backward.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "CheckNotNull@image/col2im/op_api/aclnn_im2col_backward.cpp": {
+      "defined_at": 50,
+      "calls": [],
+      "called_by": [
+        "CheckParams@image/col2im/op_api/aclnn_im2col_backward.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Low"
+    },
+    "CheckShape@objdetect/roi_align/op_host/op_api/aclnn_roi_align_v2.cpp": {
+      "defined_at": 70,
+      "calls": [
+        "aclTensor::GetViewShape@common/inc/op_api/level2_base.h"
+      ],
+      "called_by": [
+        "CheckParams@objdetect/roi_align/op_host/op_api/aclnn_roi_align_v2.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "CheckArrayValue@image/col2im/op_api/aclnn_im2col_backward.cpp": {
+      "defined_at": 99,
+      "calls": [],
+      "called_by": [
+        "CheckArray@image/col2im/op_api/aclnn_im2col_backward.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "IOUSimilarity@image/non_max_suppression_v3/op_kernel_aicpu/non_max_suppression_v3_aicpu.cpp": {
+      "defined_at": 122,
+      "calls": [],
+      "called_by": [
+        "DoCompute@image/non_max_suppression_v3/op_kernel_aicpu/non_max_suppression_v3_aicpu.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "DoCompute@image/non_max_suppression_v3/op_kernel_aicpu/non_max_suppression_v3_aicpu.cpp": {
+      "defined_at": 151,
+      "calls": [
+        "IOUSimilarity@image/non_max_suppression_v3/op_kernel_aicpu/non_max_suppression_v3_aicpu.cpp"
+      ],
+      "called_by": [
+        "NonMaxSuppressionV3CpuKernel::Compute@image/non_max_suppression_v3/op_kernel_aicpu/non_max_suppression_v3_aicpu.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "aclTensor::GetData@image/non_max_suppression_v3/op_kernel_aicpu/non_max_suppression_v3_aicpu.cpp:35",
+      "path": [
+        "GetInputAndCheck@image/non_max_suppression_v3/op_kernel_aicpu/non_max_suppression_v3_aicpu.cpp:31",
+        "NonMaxSuppressionV3CpuKernel::Compute@image/non_max_suppression_v3/op_kernel_aicpu/non_max_suppression_v3_aicpu.cpp:263"
+      ],
+      "sink": "boxes_map(reinterpret_cast<T*>(boxes_->GetData()))@image/non_max_suppression_v3/op_kernel_aicpu/non_max_suppression_v3_aicpu.cpp:155",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "aclTensor* gradOutput@image/col2im/op_api/aclnn_im2col_backward.cpp:242",
+      "path": [
+        "CheckParams@image/col2im/op_api/aclnn_im2col_backward.cpp:218",
+        "l0op::Contiguous@image/col2im/op_api/aclnn_im2col_backward.cpp:266"
+      ],
+      "sink": "l0op::Col2im(gradOutputReshape, ...)@image/col2im/op_api/aclnn_im2col_backward.cpp:288",
+      "sink_type": "kernel_dispatch"
+    },
+    {
+      "source": "aclTensor* self@objdetect/roi_align/op_host/op_api/aclnn_roi_align_v2.cpp:158",
+      "path": [
+        "CheckParams@objdetect/roi_align/op_host/op_api/aclnn_roi_align_v2.cpp:169",
+        "l0op::Contiguous@objdetect/roi_align/op_host/op_api/aclnn_roi_align_v2.cpp:187"
+      ],
+      "sink": "l0op::ROIAlignV2(selfTransData, boxesContiguous, ...)@objdetect/roi_align/op_host/op_api/aclnn_roi_align_v2.cpp:202",
+      "sink_type": "kernel_dispatch"
+    },
+    {
+      "source": "GM_ADDR x@image/grid_sample/op_kernel/grid_sample.cpp:38",
+      "path": [
+        "GridSampler2D::Init@image/grid_sample/op_kernel/grid_sample.cpp:56",
+        "GridSampler2D::Process@image/grid_sample/op_kernel/grid_sample.cpp:57"
+      ],
+      "sink": "GM_ADDR userWS@image/grid_sample/op_kernel/grid_sample.cpp:44",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "GM_ADDR grid@image/grid_sample/op_kernel/grid_sample.cpp:38",
+      "path": [
+        "GridSampler2D::Init@image/grid_sample/op_kernel/grid_sample.cpp:56",
+        "GridSampler2D::Process@image/grid_sample/op_kernel/grid_sample.cpp:57"
+      ],
+      "sink": "GM_ADDR y@image/grid_sample/op_kernel/grid_sample.cpp:38",
+      "sink_type": "memory_operation"
+    }
+  ]
+}

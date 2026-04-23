@@ -1,0 +1,126 @@
+{
+  "scan_id": "triton-ge-backend-20250422",
+  "start_time": "2026-04-22T00:52:00Z",
+  "end_time": "2026-04-22T01:31:00Z",
+  "duration_seconds": 2340,
+  "project_name": "triton-inference-server-ge-backend",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/cann/4/triton-inference-server-ge-backend",
+  "status": "success",
+  "agents": [
+    {
+      "name": "architecture",
+      "phase": 2,
+      "start_time": "2026-04-22T00:52:00Z",
+      "end_time": "2026-04-22T01:05:00Z",
+      "duration_seconds": 780,
+      "status": "success",
+      "output_files": [
+        "scan-results/.context/project_model.json",
+        "scan-results/.context/call_graph.json",
+        "scan-results/threat_analysis_report.md"
+      ],
+      "summary": {
+        "total_files": 11,
+        "total_modules": 5,
+        "entry_points": 7,
+        "high_risk_files": 4,
+        "lsp_available": false
+      }
+    },
+    {
+      "name": "dataflow-scanner",
+      "phase": 3,
+      "start_time": "2026-04-22T01:05:00Z",
+      "end_time": "2026-04-22T01:07:09Z",
+      "duration_seconds": 129,
+      "status": "success",
+      "modules_scanned": ["model_management", "inference_engine", "backend_api", "scheduler"],
+      "modules_excluded": ["example_client"],
+      "summary": {
+        "vulnerabilities_found": 8,
+        "scan_mode": "module_distributed"
+      }
+    },
+    {
+      "name": "security-auditor",
+      "phase": 3,
+      "start_time": "2026-04-22T01:05:00Z",
+      "end_time": "2026-04-22T01:08:54Z",
+      "duration_seconds": 234,
+      "status": "success",
+      "modules_scanned": ["model_management", "backend_api", "inference_engine", "scheduler", "example_client"],
+      "summary": {
+        "vulnerabilities_found": 7,
+        "cross_module_vulnerabilities": 1,
+        "audit_mode": "module_distributed"
+      }
+    },
+    {
+      "name": "verification",
+      "phase": 4,
+      "start_time": "2026-04-22T01:10:00Z",
+      "end_time": "2026-04-22T01:19:16Z",
+      "duration_seconds": 556,
+      "status": "success",
+      "summary": {
+        "total_candidates": 29,
+        "confirmed": 1,
+        "likely": 10,
+        "possible": 5,
+        "false_positive": 13,
+        "modules_verified": ["model_management", "scheduler", "inference_engine", "backend_api"]
+      }
+    },
+    {
+      "name": "details-analyzer",
+      "phase": 4.5,
+      "start_time": "2026-04-22T01:22:00Z",
+      "end_time": "2026-04-22T01:25:30Z",
+      "duration_seconds": 210,
+      "status": "success",
+      "summary": {
+        "confirmed_vulnerabilities": 1,
+        "reports_generated": 1,
+        "false_positive_skipped": 0
+      },
+      "output_files": [
+        "scan-results/details/SCHED-LOGIC-001.md"
+      ]
+    },
+    {
+      "name": "reporter",
+      "phase": 5,
+      "start_time": "2026-04-22T01:27:00Z",
+      "end_time": "2026-04-22T01:29:16Z",
+      "duration_seconds": 136,
+      "status": "success",
+      "output_files": [
+        "scan-results/report_confirmed.md",
+        "scan-results/report_unconfirmed.md"
+      ],
+      "summary": {
+        "confirmed_vulnerabilities": 1,
+        "unconfirmed_vulnerabilities": 15,
+        "executive_summary_added": true,
+        "deep_analysis_added": true,
+        "remediation_added": true
+      }
+    }
+  ],
+  "final_summary": {
+    "total_vulnerabilities": 16,
+    "confirmed": 1,
+    "likely": 10,
+    "possible": 5,
+    "false_positive": 13,
+    "severity_distribution": {
+      "critical": 0,
+      "high": 0,
+      "medium": 1,
+      "low": 0
+    },
+    "modules_analyzed": 5,
+    "files_analyzed": 11,
+    "total_lines": 4746
+  }
+}

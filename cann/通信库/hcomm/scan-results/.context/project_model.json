@@ -1,0 +1,442 @@
+{
+  "project_name": "hcomm",
+  "scan_time": "2026-04-22T05:18:53Z",
+  "lsp_available": false,
+  "total_files": 311,
+  "total_lines": 185048,
+  "project_profile": {
+    "project_type": "network_service",
+    "deployment_model": "部署于昇腾AI芯片服务器，作为分布式训练通信的基础库，通过RDMA/RoCE/TCP网络与集群内其他节点通信，支持HCCS芯片间通信和PCIe通信",
+    "trust_boundaries": [
+      {
+        "boundary": "Network Interface (RDMA/RoCE/TCP)",
+        "trusted_side": "HCCL Library / Application Logic",
+        "untrusted_side": "Remote Training Nodes / Network",
+        "risk": "Critical"
+      },
+      {
+        "boundary": "Configuration File Input",
+        "trusted_side": "HCCL Library",
+        "untrusted_side": "Rank Table JSON File / Environment Variables",
+        "risk": "High"
+      },
+      {
+        "boundary": "HCCS/PCIe Interface",
+        "trusted_side": "HCCL Library",
+        "untrusted_side": "Other NPU Devices on Same Server",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "AICPU Kernel Interface",
+        "trusted_side": "HCCL Library",
+        "untrusted_side": "AICPU Kernel Execution",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Python API Interface",
+        "trusted_side": "HCCL Library",
+        "untrusted_side": "Python Training Scripts",
+        "risk": "Low"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "algorithm",
+      "path": "src/algorithm",
+      "language": "c_cpp",
+      "components": [
+        "src/algorithm/base/alg_template",
+        "src/algorithm/impl/coll_executor",
+        "src/algorithm/impl/operator",
+        "src/algorithm/impl/resource_manager"
+      ]
+    },
+    {
+      "name": "framework",
+      "path": "src/framework",
+      "language": "c_cpp",
+      "components": [
+        "src/framework/communicator",
+        "src/framework/op_base",
+        "src/framework/hcom",
+        "src/framework/device",
+        "src/framework/cluster_maintenance",
+        "src/framework/common",
+        "src/framework/next"
+      ]
+    },
+    {
+      "name": "platform",
+      "path": "src/platform",
+      "language": "c_cpp",
+      "components": [
+        "src/platform/hccp/rdma_service",
+        "src/platform/hccp/rdma_agent",
+        "src/platform/hccp/netco",
+        "src/platform/resource",
+        "src/platform/common",
+        "src/platform/task",
+        "src/platform/comm_primitive"
+      ]
+    },
+    {
+      "name": "hccd",
+      "path": "src/hccd",
+      "language": "c_cpp",
+      "components": [
+        "src/hccd/hccd.cc",
+        "src/hccd/hccl_raw.cc",
+        "src/hccd/hccl_comm_conn.cc"
+      ]
+    },
+    {
+      "name": "legacy",
+      "path": "src/legacy",
+      "language": "c_cpp",
+      "components": [
+        "src/legacy/unified_platform",
+        "src/legacy/framework",
+        "src/legacy/common"
+      ]
+    },
+    {
+      "name": "common",
+      "path": "src/common",
+      "language": "c_cpp",
+      "components": [
+        "src/common/error_code",
+        "src/common/debug",
+        "src/common/launch_device",
+        "src/common/stream"
+      ]
+    }
+  ],
+  "files": [
+    {
+      "path": "src/platform/hccp/rdma_service/rs_rdma.c",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "platform",
+      "lines": 3092,
+      "priority": 1
+    },
+    {
+      "path": "src/platform/hccp/rdma_service/rs_socket.c",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "platform",
+      "lines": 2411,
+      "priority": 1
+    },
+    {
+      "path": "src/framework/op_base/src/op_base.cc",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "framework",
+      "lines": 5271,
+      "priority": 1
+    },
+    {
+      "path": "src/framework/hcom/hcom.cc",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "framework",
+      "lines": 4247,
+      "priority": 1
+    },
+    {
+      "path": "src/legacy/framework/misc/json_parser/json_parser.cc",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "legacy",
+      "lines": 96,
+      "priority": 2
+    },
+    {
+      "path": "src/framework/common/src/config/env_config.cc",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "framework",
+      "lines": 856,
+      "priority": 2
+    },
+    {
+      "path": "src/framework/common/src/topo/topoinfo_ranktableParser.cc",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "framework",
+      "lines": 400,
+      "priority": 2
+    },
+    {
+      "path": "src/platform/resource/socket/hccl_socket.cc",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "platform",
+      "lines": 500,
+      "priority": 1
+    },
+    {
+      "path": "src/platform/hccp/rdma_service/rs_drv_rdma.c",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "platform",
+      "lines": 800,
+      "priority": 1
+    },
+    {
+      "path": "src/platform/hccp/rdma_service/rs_drv_socket.c",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "platform",
+      "lines": 600,
+      "priority": 1
+    },
+    {
+      "path": "src/platform/hccp/rdma_agent/peer/ra_peer.c",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "platform",
+      "lines": 500,
+      "priority": 2
+    },
+    {
+      "path": "src/platform/hccp/rdma_agent/adapter/ra_adp.c",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "platform",
+      "lines": 400,
+      "priority": 2
+    },
+    {
+      "path": "src/hccd/hccd.cc",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "hccd",
+      "lines": 418,
+      "priority": 2
+    },
+    {
+      "path": "src/hccd/hccl_comm_conn.cc",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "hccd",
+      "lines": 500,
+      "priority": 2
+    },
+    {
+      "path": "src/platform/hccp/netco/net_adapt/init/net_co.c",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "platform",
+      "lines": 300,
+      "priority": 2
+    },
+    {
+      "path": "src/framework/common/src/json_utils.cc",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "framework",
+      "lines": 200,
+      "priority": 2
+    },
+    {
+      "path": "src/platform/common/externalinput.cc",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "platform",
+      "lines": 300,
+      "priority": 2
+    },
+    {
+      "path": "src/platform/common/adapter/adapter_hccp.cc",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "platform",
+      "lines": 400,
+      "priority": 2
+    },
+    {
+      "path": "src/framework/communicator/hccl_comm.cc",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "framework",
+      "lines": 800,
+      "priority": 2
+    },
+    {
+      "path": "src/algorithm/impl/operator/all_reduce_operator.cc",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "algorithm",
+      "lines": 500,
+      "priority": 3
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "src/framework/op_base/src/op_base.cc",
+      "line": 175,
+      "function": "GetDeviceComm",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "通过HcclCommInitRootInfo初始化通信域，接收远程节点的root_info数据，该数据来自网络交换",
+      "description": "HCCL通信域初始化入口，接收远程节点信息"
+    },
+    {
+      "file": "src/framework/hcom/hcom.cc",
+      "line": 68,
+      "function": "HcomInit",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "解析rankTableM配置文件路径，该文件由训练框架或用户提供，可能被篡改",
+      "description": "HCOM初始化入口，解析配置文件"
+    },
+    {
+      "file": "src/framework/hcom/hcom.cc",
+      "line": 165,
+      "function": "HcomInitByString",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "接收字符串形式的rank table配置，数据来源可能不可信",
+      "description": "通过字符串初始化HCOM"
+    },
+    {
+      "file": "src/hccd/hccd.cc",
+      "line": 52,
+      "function": "HcclInitComm",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "解析rankTableM JSON配置文件，该文件定义集群拓扑，可能包含恶意数据",
+      "description": "HCCL通信初始化，解析配置文件"
+    },
+    {
+      "file": "src/platform/hccp/rdma_service/rs_socket.c",
+      "line": 42,
+      "function": "RsSocketInit",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "初始化VNIC IP地址列表，用于网络通信，数据来自外部配置",
+      "description": "Socket通信初始化"
+    },
+    {
+      "file": "src/platform/hccp/rdma_service/rs_socket.c",
+      "line": 173,
+      "function": "RsServerValidAsync",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "验证白名单连接，接收来自远程节点的连接请求",
+      "description": "服务器端连接验证"
+    },
+    {
+      "file": "src/platform/hccp/rdma_service/rs_rdma.c",
+      "line": 200,
+      "function": "RsEpollRecvQpHandle",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "处理RDMA接收队列事件，数据来自远程节点通过RDMA网络传输",
+      "description": "RDMA接收事件处理"
+    },
+    {
+      "file": "src/hccd/hccl_raw.cc",
+      "line": 57,
+      "function": "HcclRawConnect",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "建立到远程地址的TCP连接，远程地址来自配置文件",
+      "description": "原始连接建立"
+    },
+    {
+      "file": "src/hccd/hccl_raw.cc",
+      "line": 108,
+      "function": "HcclRawAccept",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "接受远程节点的连接请求",
+      "description": "原始连接接受"
+    },
+    {
+      "file": "src/legacy/framework/misc/json_parser/json_parser.cc",
+      "line": 73,
+      "function": "ParseFileToJson",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "解析JSON配置文件，文件路径由用户提供，内容可能包含恶意数据",
+      "description": "JSON配置文件解析"
+    },
+    {
+      "file": "src/framework/common/src/config/env_config.cc",
+      "line": 112,
+      "function": "InitEnvParam",
+      "type": "env",
+      "trust_level": "semi_trusted",
+      "justification": "解析HCCL环境变量配置，环境变量可被恶意设置",
+      "description": "环境变量配置解析"
+    },
+    {
+      "file": "src/platform/hccp/netco/net_adapt/init/net_co.c",
+      "line": 1,
+      "function": "net_co_init",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "NetCo网络通信初始化，处理网络数据收发",
+      "description": "NetCo网络初始化"
+    },
+    {
+      "file": "src/platform/hccp/rdma_agent/peer/ra_peer.c",
+      "line": 1,
+      "function": "RaPeerInit",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "RDMA Agent Peer初始化，管理远程节点通信",
+      "description": "RDMA Agent Peer初始化"
+    },
+    {
+      "file": "include/hccl/hccl_comm.h",
+      "line": 34,
+      "function": "HcclCommInitClusterInfo",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "HCCL主要API入口，接收集群配置文件路径作为参数",
+      "description": "HCCL集群初始化API"
+    },
+    {
+      "file": "include/hccl/hccl_comm.h",
+      "line": 83,
+      "function": "HcclCommInitRootInfo",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "接收root_info结构体进行初始化，该结构体内容来自网络交换",
+      "description": "HCCL Root Info初始化API"
+    },
+    {
+      "file": "include/hcomm_primitives.h",
+      "line": 167,
+      "function": "HcommWriteOnThread",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "单边写操作，数据通过channel写入远程节点内存",
+      "description": "通信原语写操作"
+    },
+    {
+      "file": "include/hcomm_primitives.h",
+      "line": 226,
+      "function": "HcommReadOnThread",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "单边读操作，从远程节点内存读取数据",
+      "description": "通信原语读操作"
+    }
+  ],
+  "attack_surfaces": [
+    "RDMA/RoCE网络接口: ibv_post_send/recv, QP状态管理",
+    "TCP Socket网络接口: bind/listen/accept/connect",
+    "配置文件解析: JSON rank table解析, 环境变量解析",
+    "HCCS芯片间通信: 设备内部通信",
+    "PCIe通信: 主机与设备通信",
+    "AICPU内核加载: 动态加载内核模块",
+    "白名单验证: 连接白名单校验",
+    "Root Info交换: 集群初始化时交换的身份信息"
+  ]
+}

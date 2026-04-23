@@ -1,0 +1,344 @@
+{
+  "project": {
+    "name": "ops-math",
+    "description": "华为 CANN 算子库 - 数学运算算子实现",
+    "language": "C/C++ + Python",
+    "vendor": "Huawei Technologies Co., Ltd.",
+    "version": "CANN Open Software License Agreement Version 2.0"
+  },
+  "statistics": {
+    "total_cpp_files": 3544,
+    "total_c_files": 0,
+    "total_header_files": 2279,
+    "total_python_files": 47,
+    "total_entry_points": 300,
+    "total_modules": 5
+  },
+  "modules": {
+    "math": {
+      "path": "math/",
+      "file_count": 2294,
+      "description": "数学运算算子 (178个算子)",
+      "operators": [
+        "abs", "acos", "acosh", "add", "addcdiv", "addcmul", "asin", "asinh", "atan", "atanh",
+        "arg_max_v2", "arg_min", "bincount", "bitwise_and", "bitwise_or", "bitwise_xor",
+        "cast", "cdist", "ceil", "cos", "cosh", "cross", "cummax", "cummin", "cumprod", "cumsum",
+        "div", "dot", "exp", "floor", "gcd", "greater", "hypot", "invert", "lerp", "log",
+        "logical_and", "logical_or", "logical_not", "matmul", "max", "min", "mul", "neg",
+        "pow", "reduce_any", "reduce_max", "reduce_min", "reduce_sum", "rsqrt", "sin", "sinh",
+        "sqrt", "sub", "tan", "tanh", "xor"
+      ],
+      "entry_points": [
+        "math/*/op_api/aclnn_*.cpp"
+      ],
+      "risk_level": "medium",
+      "security_notes": "大量数学运算，输入验证依赖框架层检查宏(OP_CHECK_*)"
+    },
+    "conversion": {
+      "path": "conversion/",
+      "file_count": 966,
+      "description": "数据转换和形状操作算子",
+      "operators": [
+        "broadcast_to", "chunk_cat", "concat", "contiguous", "depth_to_space",
+        "flatten", "im2col", "masked_fill", "masked_select_v3", "npu_format_cast",
+        "pad", "reshape", "slice", "split", "squeeze", "tile", "transpose", "unsqueeze"
+      ],
+      "entry_points": [
+        "conversion/*/op_api/aclnn_*.cpp"
+      ],
+      "risk_level": "medium",
+      "security_notes": "形状变换算子，潜在内存重分配风险"
+    },
+    "experimental": {
+      "path": "experimental/",
+      "file_count": 1267,
+      "description": "实验性算子 (math + conversion + random)",
+      "sub_modules": ["experimental/math/", "experimental/conversion/", "experimental/random/"],
+      "operators": [
+        "accumulate_nv2", "add_v2", "axpy_v2", "axpy_v3", "bitwise_and", "cast_v2",
+        "broadcast_v2", "clip_by_value_v2", "concat_v2", "fill_v2", "pad_v2", "slice_v3"
+      ],
+      "risk_level": "high",
+      "security_notes": "实验性代码，可能存在不稳定或未经充分测试的安全边界"
+    },
+    "random": {
+      "path": "random/",
+      "file_count": 230,
+      "description": "随机数生成算子 (22个算子)",
+      "operators": [
+        "random_uniform_v2",
+        "random_uniform_int_v2",
+        "random_standard_normal_v2",
+        "stateless_random_uniform_v2",
+        "stateless_random_uniform_v3",
+        "stateless_random_normal_v2",
+        "stateless_random_normal_v3",
+        "stateless_randperm",
+        "stateless_random_choice_with_mask",
+        "stateless_bernoulli",
+        "stateless_drop_out_gen_mask",
+        "drop_out_v3",
+        "drop_out_do_mask",
+        "drop_out_do_mask_v3",
+        "dsa_random_uniform",
+        "dsa_random_normal",
+        "dsa_gen_bit_mask",
+        "multinomial_with_replacement",
+        "truncated_normal_v2",
+        "sim_thread_exponential"
+      ],
+      "entry_points": [
+        "random/*/op_api/aclnn_*.cpp",
+        "random/*/op_host/op_api/aclnn_*.cpp"
+      ],
+      "risk_level": "critical",
+      "security_notes": "PRNG实现使用Philox算法，种子处理为关键攻击面。自动种子生成使用时间戳熵源，可能可预测。"
+    },
+    "common": {
+      "path": "common/",
+      "file_count": 59,
+      "description": "公共基础设施代码",
+      "key_files": [
+        "common/inc/op_api/aclnn_check.h",
+        "common/inc/op_api/level2_base.h",
+        "common/src/framework/multinomial_onnx_plugin.cpp"
+      ],
+      "risk_level": "high",
+      "security_notes": "包含框架核心检查宏和ONNX插件实现"
+    },
+    "scripts": {
+      "path": "scripts/",
+      "file_count": 47,
+      "description": "Python构建和代码生成脚本",
+      "language": "Python",
+      "sub_modules": [
+        "scripts/opgen/",
+        "scripts/util/",
+        "scripts/package/",
+        "scripts/kernel/",
+        "scripts/torch_extension/",
+        "scripts/ci/"
+      ],
+      "risk_level": "critical",
+      "security_notes": "包含eval()调用、shell注入风险、动态代码生成等高危模式"
+    }
+  },
+  "entry_points": {
+    "type": "aclnn_api",
+    "pattern": "**/op_api/aclnn_*.cpp",
+    "count": 300,
+    "description": "用户调用入口点，两段式API: GetWorkspaceSize + Execute",
+    "api_pattern": {
+      "phase1": "aclnnXXXGetWorkspaceSize(input, output, workspaceSize, executor)",
+      "phase2": "aclnnXXX(workspace, workspaceSize, executor, stream)"
+    },
+    "parameter_flow": [
+      "aclTensor* - 输入/输出张量",
+      "aclIntArray* - 形状/索引数组",
+      "aclScalar* - 标量参数",
+      "aclOpExecutor* - 执行器对象"
+    ]
+  },
+  "high_risk_files": {
+    "critical": [
+      {
+        "file": "conversion/fill_diagonal_v2/tests/ut/op_kernel/fill_diagonal_v2_data/gen_data.py",
+        "line": 21,
+        "vulnerability": "eval()代码执行",
+        "description": "eval(shape)直接执行sys.argv[1]传入的字符串，可导致任意Python代码执行",
+        "cwe": "CWE-95",
+        "severity": "critical"
+      },
+      {
+        "file": "scripts/util/modify_gen_aclnn_static.py",
+        "line": "20, 45-50",
+        "vulnerability": "Shell注入",
+        "description": "subprocess.Popen(cmd, shell)使用f-string插值，shell元字符可注入命令",
+        "cwe": "CWE-78",
+        "severity": "critical"
+      },
+      {
+        "file": "scripts/util/build_opp_kernel_static.py",
+        "line": "38, 94-107, 132-136",
+        "vulnerability": "Shell注入",
+        "description": "多处subprocess.Popen(cmd, shell)调用存在shell注入风险",
+        "cwe": "CWE-78",
+        "severity": "critical"
+      },
+      {
+        "file": "scripts/package/common/py/packer.py",
+        "line": 215,
+        "vulnerability": "Shell注入",
+        "description": "subprocess.run(cmd, shell=True)处理用户提供的路径",
+        "cwe": "CWE-78",
+        "severity": "high"
+      },
+      {
+        "file": "random/random_common/op_host/arch35/random_tiling_base.h",
+        "line": "41",
+        "vulnerability": "弱熵源种子生成",
+        "description": "New64()使用std::mt19937_64 + 时间戳熵源，自动种子可能可预测",
+        "cwe": "CWE-338",
+        "severity": "high"
+      }
+    ],
+    "high": [
+      {
+        "file": "experimental/math/not_equal/tests/ut/op_kernel/not_equal_data/gen_data.py",
+        "line": "17, 20",
+        "vulnerability": "不安全getattr调用",
+        "description": "getattr(torch, x1_type)从CLI输入访问torch模块属性",
+        "cwe": "CWE-669",
+        "severity": "medium"
+      },
+      {
+        "file": "scripts/torch_extension/torch_extension_ut_runner.py",
+        "line": "43-44",
+        "vulnerability": "动态模块加载",
+        "description": "importlib.util.spec_from_file_location()动态加载Python文件",
+        "cwe": "CWE-669",
+        "severity": "medium"
+      },
+      {
+        "file": "scripts/kernel/binary_script/parser_ini.py",
+        "line": "52-73",
+        "vulnerability": "配置文件解析",
+        "description": "INI文件解析无输入验证，可能解析恶意配置",
+        "cwe": "CWE-20",
+        "severity": "medium"
+      },
+      {
+        "file": "random/dsa_random_uniform/op_host/op_api/aclnn_multinomial.cpp",
+        "line": "54-55",
+        "vulnerability": "种子参数处理",
+        "description": "Multinomial采样接收int64_t seed参数，种子可预测时输出可预测",
+        "cwe": "CWE-338",
+        "severity": "medium"
+      }
+    ],
+    "medium": [
+      {
+        "file": "scripts/util/parse_ini_to_json.py",
+        "line": "85-115",
+        "vulnerability": "JSON/INI解析无验证",
+        "description": "配置文件解析缺少schema验证和大小限制",
+        "cwe": "CWE-20",
+        "severity": "low"
+      },
+      {
+        "file": "math/*/tests/ut/op_kernel/*_data/gen_data.py",
+        "line": "various",
+        "vulnerability": "os.system()通配符",
+        "description": "40+文件使用os.system('rm -rf *.bin')，通配符可能被利用",
+        "cwe": "CWE-78",
+        "severity": "low"
+      }
+    ]
+  },
+  "attack_surfaces": {
+    "external_input": [
+      {
+        "category": "API调用入口",
+        "entry_point": "aclnnXXXGetWorkspaceSize/aclnnXXX",
+        "data_type": "aclTensor, aclIntArray, aclScalar",
+        "risk": "输入验证依赖框架宏(OP_CHECK_*)，需确保边界检查完整性"
+      },
+      {
+        "category": "Python构建脚本",
+        "entry_point": "sys.argv, argparse, ConfigParser, json.load",
+        "data_type": "命令行参数, 配置文件, JSON文件",
+        "risk": "eval()代码执行、shell注入、配置注入"
+      },
+      {
+        "category": "配置文件",
+        "entry_point": "*.ini文件",
+        "data_type": "算子配置(simplified_key.ini等)",
+        "risk": "配置篡改可能影响算子行为"
+      }
+    ],
+    "crypto_relevant": [
+      {
+        "category": "PRNG种子处理",
+        "entry_point": "New64(), PhiloxAlgParsInit(), GetKeyAndCounter()",
+        "location": "random/random_common/op_host/arch35/random_tiling_base.h",
+        "risk": "时间戳熵源可预测，种子值可泄露RNG状态"
+      },
+      {
+        "category": "Philox RNG算法",
+        "entry_point": "Philox4x32Round(), PhiloxRandomSimt()",
+        "location": "random/random_common/op_kernel/arch35/random_kernel_base.h",
+        "risk": "确定性PRNG，种子已知时输出完全可预测"
+      },
+      {
+        "category": "Multinomial采样",
+        "entry_point": "MultinomialWithReplacement()",
+        "location": "random/dsa_random_uniform/op_host/op_api/multinomial_with_replacement.cpp",
+        "risk": "概率采样可预测可影响安全应用"
+      }
+    ],
+    "memory_operations": [
+      {
+        "category": "张量内存分配",
+        "entry_point": "executor->AllocTensor()",
+        "location": "op_api层",
+        "risk": "内存分配失败处理需检查"
+      },
+      {
+        "category": "数据拷贝",
+        "entry_point": "l0op::ViewCopy, DataCopyPad",
+        "location": "op_kernel层",
+        "risk": "缓冲区边界需验证"
+      }
+    ]
+  },
+  "data_flow": {
+    "description": "用户API调用数据流",
+    "flow": [
+      {
+        "step": 1,
+        "layer": "op_api",
+        "operation": "参数验证(OP_CHECK_*)",
+        "files": "aclnn_*.cpp"
+      },
+      {
+        "step": 2,
+        "layer": "op_api",
+        "operation": "Contiguous/Cast预处理",
+        "files": "aclnn_*.cpp调用l0op::"
+      },
+      {
+        "step": 3,
+        "layer": "op_host",
+        "operation": "Tiling计算(形状分解)",
+        "files": "*_tiling.cpp, *_def.cpp"
+      },
+      {
+        "step": 4,
+        "layer": "op_kernel",
+        "operation": "NPU内核执行",
+        "files": "*.cpp, *.h (AscendC模板)"
+      },
+      {
+        "step": 5,
+        "layer": "op_api",
+        "operation": "ViewCopy输出",
+        "files": "aclnn_*.cpp"
+      }
+    ]
+  },
+  "security_checks": {
+    "framework_macros": [
+      "OP_CHECK_NULL - 空指针检查",
+      "OP_CHECK_DTYPE_NOT_SUPPORT - 数据类型验证",
+      "OP_CHECK_SHAPE_NOT_EQUAL - 形状验证",
+      "OP_CHECK_MAX_DIM - 维度上限检查"
+    ],
+    "location": "common/inc/op_api/aclnn_check.h",
+    "gaps": [
+      "缺少张量数据内容验证(值范围检查)",
+      "缺少内存大小上限验证",
+      "缺少整数溢出检查",
+      "缺少并发访问保护"
+    ]
+  }
+}

@@ -1,0 +1,121 @@
+{
+  "scan_id": "scan_sip_20260421",
+  "start_time": "2026-04-21T15:30:00Z",
+  "end_time": "2026-04-21T17:00:00Z",
+  "duration_seconds": 5400,
+  "project_name": "sip",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/cann/3/sip",
+  "status": "success",
+  "agents": [
+    {
+      "name": "architecture",
+      "start_time": "2026-04-21T15:30:00Z",
+      "end_time": "2026-04-21T15:45:00Z",
+      "duration_seconds": 900,
+      "status": "success",
+      "outputs": [
+        "scan-results/.context/project_model.json",
+        "scan-results/.context/call_graph.json",
+        "scan-results/threat_analysis_report.md"
+      ],
+      "error": null,
+      "summary": {
+        "total_files": 617,
+        "total_lines": 59178,
+        "modules_identified": 5,
+        "entry_points_found": 12,
+        "high_risk_files": 9,
+        "critical_vulnerabilities": 3
+      }
+    },
+    {
+      "name": "dataflow-scanner",
+      "start_time": "2026-04-21T15:45:00Z",
+      "end_time": "2026-04-21T16:05:00Z",
+      "duration_seconds": 1200,
+      "status": "success",
+      "outputs": [],
+      "error": null,
+      "summary": {
+        "modules_scanned": 5,
+        "vulnerabilities_found": 8,
+        "cross_module_flows": 4
+      }
+    },
+    {
+      "name": "security-auditor",
+      "start_time": "2026-04-21T15:45:00Z",
+      "end_time": "2026-04-21T16:05:00Z",
+      "duration_seconds": 1200,
+      "status": "success",
+      "outputs": [],
+      "error": null,
+      "summary": {
+        "modules_scanned": 6,
+        "vulnerabilities_found": 47,
+        "critical_issues": 8
+      }
+    },
+    {
+      "name": "verification",
+      "start_time": "2026-04-21T16:05:00Z",
+      "end_time": "2026-04-21T16:30:00Z",
+      "duration_seconds": 1500,
+      "status": "success",
+      "outputs": [],
+      "error": null,
+      "summary": {
+        "total_candidates": 55,
+        "confirmed": 4,
+        "likely": 13,
+        "possible": 15,
+        "false_positive": 23,
+        "false_positive_rate": 41.8
+      }
+    },
+    {
+      "name": "details-analyzer",
+      "start_time": "2026-04-21T16:30:00Z",
+      "end_time": "2026-04-21T16:40:00Z",
+      "duration_seconds": 600,
+      "status": "success",
+      "outputs": [
+        "scan-results/details/OPS-DDD-SEP-001.md",
+        "scan-results/details/OPS-CMATINV-001.md",
+        "scan-results/details/SCRIPTS-CMD-INJ-001.md",
+        "scan-results/details/SIP_PTA_CSRC-002.md"
+      ],
+      "error": null,
+      "summary": {
+        "confirmed_analyzed": 4,
+        "reports_generated": 4
+      }
+    },
+    {
+      "name": "reporter",
+      "start_time": "2026-04-21T16:40:00Z",
+      "end_time": "2026-04-21T17:00:00Z",
+      "duration_seconds": 1200,
+      "status": "success",
+      "outputs": [
+        "scan-results/report_confirmed.md",
+        "scan-results/report_unconfirmed.md"
+      ],
+      "error": null,
+      "summary": {
+        "confirmed_report_size": 18033,
+        "unconfirmed_report_size": 28667
+      }
+    }
+  ],
+  "summary": {
+    "total_vulnerabilities": 55,
+    "confirmed": 4,
+    "critical": 3,
+    "high": 1,
+    "likely": 13,
+    "possible": 15,
+    "false_positive": 23,
+    "false_positive_rate": 41.8
+  }
+}

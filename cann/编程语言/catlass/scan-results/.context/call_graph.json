@@ -1,0 +1,334 @@
+{
+  "functions": {
+    "main@tools/tuner/src/main.cpp": {
+      "defined_at": 15,
+      "calls": [
+        "CommandLineParser::Parse@tools/tuner/src/command_line_parser.cpp",
+        "CatlassTuner::Run@tools/tuner/src/catlass_tuner.cpp"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "CommandLineParser::Parse@tools/tuner/src/command_line_parser.cpp": {
+      "defined_at": 177,
+      "calls": [],
+      "called_by": [
+        "main@tools/tuner/src/main.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "CommandLineParser::Get<std::string>@tools/tuner/src/command_line_parser.cpp": {
+      "defined_at": 19,
+      "calls": [],
+      "called_by": [
+        "CatlassTuner::Run@tools/tuner/src/catlass_tuner.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "CommandLineParser::Get<int32_t>@tools/tuner/src/command_line_parser.cpp": {
+      "defined_at": 90,
+      "calls": [
+        "CommandLineParser::Get<int64_t>@tools/tuner/src/command_line_parser.cpp"
+      ],
+      "called_by": [
+        "CatlassTuner::Run@tools/tuner/src/catlass_tuner.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "SetDeviceId@tools/tuner/src/profiler.cpp": {
+      "defined_at": 389,
+      "calls": [
+        "getenv@stdlib",
+        "rtGetVisibleDeviceIdByLogicDeviceId@cann_runtime"
+      ],
+      "called_by": [
+        "CatlassTuner::Run@tools/tuner/src/catlass_tuner.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Low"
+    },
+    "CatlassTuner::Run@tools/tuner/src/catlass_tuner.cpp": {
+      "defined_at": 50,
+      "calls": [
+        "CommandLineParser::Get@tools/tuner/src/command_line_parser.cpp",
+        "Profiler::SetDeviceId@tools/tuner/src/profiler.cpp",
+        "Profiler::Run@tools/tuner/src/profiler.cpp"
+      ],
+      "called_by": [
+        "main@tools/tuner/src/main.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "RunBasicMatmul@examples/python_extension/src/wrapper/catlass_kernel_wrapper.cpp": {
+      "defined_at": 36,
+      "calls": [
+        "MatmulLike::GetKernelInfo@examples/python_extension/src/wrapper/matmul.cpp",
+        "MatmulLike::AllocOutput@examples/python_extension/src/wrapper/matmul.cpp",
+        "BasicMatmul@examples/shared_lib/src/kernels/basic_matmul.cpp"
+      ],
+      "called_by": [
+        "pybind_bindings@examples/python_extension/src/bindings/pybind_bindings.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "RunGroupedMatmul@examples/python_extension/src/wrapper/catlass_kernel_wrapper.cpp": {
+      "defined_at": 46,
+      "calls": [
+        "GroupedMatmulLike::GetKernelInfo@examples/python_extension/src/wrapper/grouped_matmul.cpp",
+        "GroupedMatmulLike::AllocOutput@examples/python_extension/src/wrapper/grouped_matmul.cpp",
+        "GroupedMatmul@examples/shared_lib/src/kernels/grouped_matmul.cpp"
+      ],
+      "called_by": [
+        "pybind_bindings@examples/python_extension/src/bindings/pybind_bindings.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "RunOptimizedMatmul@examples/python_extension/src/wrapper/catlass_kernel_wrapper.cpp": {
+      "defined_at": 64,
+      "calls": [
+        "MatmulLike::GetKernelInfo@examples/python_extension/src/wrapper/matmul.cpp",
+        "MatmulLike::AllocOutput@examples/python_extension/src/wrapper/matmul.cpp",
+        "OptimizedMatmul@examples/shared_lib/src/kernels/optimized_matmul.cpp"
+      ],
+      "called_by": [
+        "pybind_bindings@examples/python_extension/src/bindings/pybind_bindings.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "RunConvBias@examples/python_extension/src/wrapper/catlass_kernel_wrapper.cpp": {
+      "defined_at": 74,
+      "calls": [
+        "ConvLike::GetKernelInfo@examples/python_extension/src/wrapper/conv.cpp",
+        "ConvLike::AllocOutput@examples/python_extension/src/wrapper/conv.cpp",
+        "ConvBias@examples/shared_lib/src/kernels/conv_bias.cpp"
+      ],
+      "called_by": [
+        "pybind_bindings@examples/python_extension/src/bindings/pybind_bindings.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "BasicMatmul@examples/shared_lib/src/kernels/basic_matmul.cpp": {
+      "defined_at": 30,
+      "calls": [
+        "basic_matmul_kernel@include/catlass/gemm/kernel/basic_matmul.hpp"
+      ],
+      "called_by": [
+        "RunBasicMatmul@examples/python_extension/src/wrapper/catlass_kernel_wrapper.cpp",
+        "basic_matmul_shared_lib.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "GroupedMatmul@examples/shared_lib/src/kernels/grouped_matmul.cpp": {
+      "defined_at": 30,
+      "calls": [
+        "grouped_matmul_kernel@include/catlass/gemm/kernel/grouped_matmul.hpp"
+      ],
+      "called_by": [
+        "RunGroupedMatmul@examples/python_extension/src/wrapper/catlass_kernel_wrapper.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "OptimizedMatmul@examples/shared_lib/src/kernels/optimized_matmul.cpp": {
+      "defined_at": 30,
+      "calls": [
+        "optimized_matmul_kernel@include/catlass/gemm/kernel/optimized_matmul_tla.hpp"
+      ],
+      "called_by": [
+        "RunOptimizedMatmul@examples/python_extension/src/wrapper/catlass_kernel_wrapper.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "ConvBias@examples/shared_lib/src/kernels/conv_bias.cpp": {
+      "defined_at": 30,
+      "calls": [
+        "conv2d_kernel@include/catlass/conv/block/block_conv.hpp"
+      ],
+      "called_by": [
+        "RunConvBias@examples/python_extension/src/wrapper/catlass_kernel_wrapper.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "MatmulLike::GetKernelInfo@examples/python_extension/src/wrapper/matmul.cpp": {
+      "defined_at": 20,
+      "calls": [],
+      "called_by": [
+        "RunBasicMatmul@examples/python_extension/src/wrapper/catlass_kernel_wrapper.cpp",
+        "RunOptimizedMatmul@examples/python_extension/src/wrapper/catlass_kernel_wrapper.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "main@examples/00_basic_matmul/basic_matmul.cpp": {
+      "defined_at": 142,
+      "calls": [
+        "Options::Parse@examples/common/options.hpp",
+        "aclrtSetDevice@cann_runtime",
+        "basic_matmul_kernel@include/catlass/gemm/kernel/basic_matmul.hpp"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "Options::Parse@examples/common/options.hpp": {
+      "defined_at": 40,
+      "calls": [
+        "std::atoi@stdlib"
+      ],
+      "called_by": [
+        "main@examples/00_basic_matmul/basic_matmul.cpp",
+        "main@examples/01_batched_matmul/batched_matmul.cpp",
+        "main@examples/02_grouped_matmul_slice_m/grouped_matmul_slice_m.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "main@examples/102_dynamic_optimized_matmul/dynamic_optimized_matmul.cpp": {
+      "defined_at": 105,
+      "calls": [
+        "std::atoi@stdlib",
+        "aclrtSetDevice@cann_runtime",
+        "dynamic_matmul_kernel@include/catlass/gemm/kernel/dynamic_common_matmul.hpp"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "main@examples/103_dynamic_optimized_quant_matmul_per_token_basic/dynamic_optimized_quant_matmul_per_token_basic.cpp": {
+      "defined_at": 143,
+      "calls": [
+        "std::atoi@stdlib",
+        "aclrtSetDevice@cann_runtime",
+        "dynamic_quant_matmul_kernel@include/catlass/gemm/kernel/dynamic_w8a8_matmul_per_token_per_channel_dequant.hpp"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "basic_matmul_kernel@include/catlass/gemm/kernel/basic_matmul.hpp": {
+      "defined_at": 1,
+      "calls": [
+        "CopyGMToL1@include/catlass/gemm/tile/copy_gm_to_l1.hpp",
+        "CopyL1ToL0A@include/catlass/gemm/tile/copy_l1_to_l0a.hpp",
+        "CopyL1ToL0B@include/catlass/gemm/tile/copy_l1_to_l0b.hpp",
+        "Mmad@include/catlass/gemm/tile/tile_mmad.hpp",
+        "CopyL0CToUB@include/catlass/gemm/tile/copy_l0c_to_ub.hpp",
+        "CopyUBToGM@include/catlass/gemm/tile/copy_ub_to_gm.hpp"
+      ],
+      "called_by": [
+        "BasicMatmul@examples/shared_lib/src/kernels/basic_matmul.cpp",
+        "main@examples/00_basic_matmul/basic_matmul.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "CopyGMToL1@include/catlass/gemm/tile/copy_gm_to_l1.hpp": {
+      "defined_at": 1,
+      "calls": [],
+      "called_by": [
+        "basic_matmul_kernel@include/catlass/gemm/kernel/basic_matmul.hpp",
+        "dynamic_matmul_kernel@include/catlass/gemm/kernel/dynamic_common_matmul.hpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "Mmad@include/catlass/gemm/tile/tile_mmad.hpp": {
+      "defined_at": 1,
+      "calls": [],
+      "called_by": [
+        "basic_matmul_kernel@include/catlass/gemm/kernel/basic_matmul.hpp",
+        "optimized_matmul_kernel@include/catlass/gemm/kernel/optimized_matmul_tla.hpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "_load_depend_libs@examples/python_extension/torch_catlass/__init__.py": {
+      "defined_at": 23,
+      "calls": [
+        "sysconfig.get_paths@stdlib",
+        "os.environ.get@stdlib",
+        "os.path.join@stdlib",
+        "os.path.isfile@stdlib",
+        "ctypes.CDLL@stdlib"
+      ],
+      "called_by": [],
+      "receives_external_input": false,
+      "risk": "Low"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "argv@tools/tuner/src/main.cpp:15",
+      "path": [
+        "CommandLineParser::Parse@tools/tuner/src/command_line_parser.cpp:177",
+        "CommandLineParser::Get@tools/tuner/src/command_line_parser.cpp:90",
+        "CatlassTuner::Run@tools/tuner/src/catlass_tuner.cpp:50"
+      ],
+      "sink": "Profiler::SetDeviceId@tools/tuner/src/profiler.cpp:389",
+      "sink_type": "configuration"
+    },
+    {
+      "source": "argv@examples/00_basic_matmul/basic_matmul.cpp:142",
+      "path": [
+        "Options::Parse@examples/common/options.hpp:40",
+        "std::atoi@stdlib"
+      ],
+      "sink": "aclrtSetDevice@cann_runtime",
+      "sink_type": "device_operation"
+    },
+    {
+      "source": "mat1/mat2 tensors@examples/python_extension/src/wrapper/catlass_kernel_wrapper.cpp:36",
+      "path": [
+        "MatmulLike::GetKernelInfo@examples/python_extension/src/wrapper/matmul.cpp:20",
+        "BasicMatmul@examples/shared_lib/src/kernels/basic_matmul.cpp:30"
+      ],
+      "sink": "basic_matmul_kernel@include/catlass/gemm/kernel/basic_matmul.hpp",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "kernelInfo.inputAddr@examples/shared_lib/include/catlass_kernel.h:40",
+      "path": [
+        "BasicMatmul@examples/shared_lib/src/kernels/basic_matmul.cpp:30"
+      ],
+      "sink": "CopyGMToL1@include/catlass/gemm/tile/copy_gm_to_l1.hpp",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "kernelInfo.outputAddr@examples/shared_lib/include/catlass_kernel.h:41",
+      "path": [
+        "BasicMatmul@examples/shared_lib/src/kernels/basic_matmul.cpp:30"
+      ],
+      "sink": "CopyUBToGM@include/catlass/gemm/tile/copy_ub_to_gm.hpp",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "ASCEND_RT_VISIBLE_DEVICES@tools/tuner/src/profiler.cpp:393",
+      "path": [
+        "getenv@stdlib",
+        "rtGetVisibleDeviceIdByLogicDeviceId@cann_runtime"
+      ],
+      "sink": "deviceId_@tools/tuner/src/profiler.cpp",
+      "sink_type": "configuration"
+    },
+    {
+      "source": "argc/argv@examples/102_dynamic_optimized_matmul/dynamic_optimized_matmul.cpp:105",
+      "path": [
+        "std::atoi@stdlib"
+      ],
+      "sink": "aclrtSetDevice@cann_runtime",
+      "sink_type": "device_operation"
+    }
+  ]
+}

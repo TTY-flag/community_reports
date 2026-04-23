@@ -1,0 +1,279 @@
+{
+  "functions": {
+    "asdBlasCreate@core/blas/blas_api.cpp": {
+      "defined_at": 25,
+      "calls": ["BlasPlanCache::makePlan"],
+      "called_by": ["external_user_code"],
+      "receives_external_input": false,
+      "risk": "Low"
+    },
+    "asdBlasDestroy@core/blas/blas_api.cpp": {
+      "defined_at": 45,
+      "calls": ["BlasPlanCache::destroyPlan"],
+      "called_by": ["external_user_code"],
+      "receives_external_input": false,
+      "risk": "Low"
+    },
+    "asdBlasCgemm@core/blas/cgemm.cpp": {
+      "defined_at": 68,
+      "calls": ["RunAsdOpsV2", "aclGetStorageShape", "aclGetDataType", "ASDSIP_ECHECK"],
+      "called_by": ["external_user_code", "sip_pta/csrc/blas/asd_blas_cgemm.cpp"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "asdBlasCgemv@core/blas/cgemv.cpp": {
+      "defined_at": 15,
+      "calls": ["RunAsdOpsV2", "aclGetStorageShape", "aclGetDataType"],
+      "called_by": ["external_user_code"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "asdBlasCaxpy@core/blas/caxpy.cpp": {
+      "defined_at": 15,
+      "calls": ["RunAsdOpsV2", "aclGetStorageShape"],
+      "called_by": ["external_user_code"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "asdBlasStrmm@core/blas/strmm.cpp": {
+      "defined_at": 15,
+      "calls": ["RunAsdOpsV2", "aclGetStorageShape"],
+      "called_by": ["external_user_code"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "asdBlasStrmv@core/blas/strmv.cpp": {
+      "defined_at": 15,
+      "calls": ["RunAsdOpsV2", "aclGetStorageShape"],
+      "called_by": ["external_user_code"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "asdBlasCtrmv@core/blas/ctrmv.cpp": {
+      "defined_at": 15,
+      "calls": ["RunAsdOpsV2", "aclGetStorageShape"],
+      "called_by": ["external_user_code"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "asdBlasSsyr@core/blas/ssyr.cpp": {
+      "defined_at": 15,
+      "calls": ["RunAsdOpsV2", "aclGetStorageShape"],
+      "called_by": ["external_user_code"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "asdBlasSsyr2@core/blas/ssyr2.cpp": {
+      "defined_at": 15,
+      "calls": ["RunAsdOpsV2", "aclGetStorageShape"],
+      "called_by": ["external_user_code"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "asdBlasSasum@core/blas/asum.cpp": {
+      "defined_at": 15,
+      "calls": ["RunAsdOpsV2", "aclGetStorageShape"],
+      "called_by": ["external_user_code"],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "asdBlasIcamax@core/blas/iamax.cpp": {
+      "defined_at": 15,
+      "calls": ["RunAsdOpsV2", "aclGetStorageShape"],
+      "called_by": ["external_user_code"],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "asdBlasScopy@core/blas/copy.cpp": {
+      "defined_at": 15,
+      "calls": ["RunAsdOpsV2", "aclGetStorageShape"],
+      "called_by": ["external_user_code"],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "asdBlasSswap@core/blas/swap.cpp": {
+      "defined_at": 15,
+      "calls": ["RunAsdOpsV2", "aclGetStorageShape"],
+      "called_by": ["external_user_code"],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "asdBlasCgemmBatched@core/blas/gemm_batched.cpp": {
+      "defined_at": 15,
+      "calls": ["RunAsdOpsV2", "aclGetStorageShape", "aclrtMemcpy"],
+      "called_by": ["external_user_code"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "asdBlasCmatinvBatched@core/blas/cmatinv_batched.cpp": {
+      "defined_at": 15,
+      "calls": ["RunAsdOpsV2", "aclGetStorageShape"],
+      "called_by": ["external_user_code"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "asdFftCreate@core/fft/fft_api.cpp": {
+      "defined_at": 766,
+      "calls": ["FFTPlanCache::makePlan"],
+      "called_by": ["external_user_code"],
+      "receives_external_input": false,
+      "risk": "Low"
+    },
+    "asdFftDestroy@core/fft/fft_api.cpp": {
+      "defined_at": 806,
+      "calls": ["FFTPlanCache::destroyPlan"],
+      "called_by": ["external_user_code"],
+      "receives_external_input": false,
+      "risk": "Low"
+    },
+    "asdFftExecC2C@core/fft/fft_api.cpp": {
+      "defined_at": 1178,
+      "calls": ["FFTPlanCache::getPlan", "Mki::GetStorageAddr", "RunAsdOpsV2"],
+      "called_by": ["external_user_code"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "asdFftExecC2R@core/fft/fft_api.cpp": {
+      "defined_at": 1200,
+      "calls": ["FFTPlanCache::getPlan", "Mki::GetStorageAddr", "RunAsdOpsV2"],
+      "called_by": ["external_user_code"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "asdFftExecR2C@core/fft/fft_api.cpp": {
+      "defined_at": 1222,
+      "calls": ["FFTPlanCache::getPlan", "Mki::GetStorageAddr", "RunAsdOpsV2"],
+      "called_by": ["external_user_code"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "asdFftExecIstft@core/fft/fft_api.cpp": {
+      "defined_at": 1266,
+      "calls": ["FFTPlanCache::getPlan", "Mki::GetStorageAddr", "RunAsdOpsV2"],
+      "called_by": ["external_user_code"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "asdConvolve@core/filter/convolve.cpp": {
+      "defined_at": 27,
+      "calls": ["aclGetStorageShape", "RunAsdOpsV2", "GetTensorNum"],
+      "called_by": ["external_user_code", "sip_pta/csrc/filter/asd_convolve.cpp"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "asdInterpWithCoeff@core/interpolation/asdInterpWithCoeff.cpp": {
+      "defined_at": 89,
+      "calls": ["aclGetStorageShape", "RunAsdOpsV2", "GetTensorNum"],
+      "called_by": ["external_user_code"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "RunAsdOpsV2@core/utils/ops_base.cpp": {
+      "defined_at": 263,
+      "calls": ["Ops::Instance", "GetOperationByName", "LaunchParam::AddInputTensor", "LaunchParam::AddOutputTensor", "MallocTensorInDevice", "MkiRtMemCopy"],
+      "called_by": ["core/blas/*.cpp", "core/fft/*.cpp", "core/filter/*.cpp"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "MallocTensorImpl@core/blas/blasplan/BlasCgemmPlan.cpp": {
+      "defined_at": 33,
+      "calls": ["new float[]", "MallocTensorInDevice", "toAclTensor"],
+      "called_by": ["BlasCgemmPlan::CreateTensor"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "aclGetStorageShape@external_acl_api": {
+      "defined_at": 0,
+      "calls": [],
+      "called_by": ["core/blas/*.cpp", "core/fft/*.cpp", "core/utils/common_check.cpp"],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "aclrtMemcpy@external_acl_api": {
+      "defined_at": 0,
+      "calls": [],
+      "called_by": ["core/blas/blasplan/BlasCgemvPlan.cpp", "core/blas/blasplan/BlasGemmBatchedPlan.cpp"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "MkiRtMemCopy@core/utils/ops_base.cpp": {
+      "defined_at": 184,
+      "calls": [],
+      "called_by": ["RunAsdOpsV2"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "memcpy_s@ops/blas/iamax/iamax/tiling/iamax_tiling.cpp": {
+      "defined_at": 181,
+      "calls": [],
+      "called_by": ["IamaxTiling"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "AsdTensorDtypeCheck@core/utils/common_check.cpp": {
+      "defined_at": 28,
+      "calls": ["aclGetDataType"],
+      "called_by": ["core/blas/cgemm.cpp", "core/fft/fft_api.cpp"],
+      "receives_external_input": true,
+      "risk": "Low"
+    },
+    "AsdTensorShapeCheck@core/utils/common_check.cpp": {
+      "defined_at": 40,
+      "calls": ["aclGetStorageShape"],
+      "called_by": ["core/blas/*.cpp", "core/fft/*.cpp"],
+      "receives_external_input": true,
+      "risk": "Low"
+    },
+    "Workspace::allocate@core/fft/utils/workspace.cpp": {
+      "defined_at": 39,
+      "calls": [],
+      "called_by": ["core/fft/fftcore/*.cpp"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "aclTensor@external_input",
+      "path": ["asdBlasCgemm@core/blas/cgemm.cpp:68", "aclGetStorageShape@external_acl_api", "RunAsdOpsV2@core/utils/ops_base.cpp:263", "MkiRtMemCopy@core/utils/ops_base.cpp:184"],
+      "sink": "tensor.data@device_memory",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "aclTensor@external_input",
+      "path": ["asdFftExecC2C@core/fft/fft_api.cpp:1178", "Mki::GetStorageAddr", "RunAsdOpsV2@core/utils/ops_base.cpp:263"],
+      "sink": "tensor.data@device_memory",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "user_params(m,n,k,lda,ldb,ldc)@external_input",
+      "path": ["asdBlasMakeCgemmPlan@blas_api.h:45", "BlasCgemmPlan@core/blas/blasplan/BlasCgemmPlan.cpp:31", "MallocTensorImpl@core/blas/blasplan/BlasCgemmPlan.cpp:33"],
+      "sink": "new float[tensorSize]@heap_allocation",
+      "sink_type": "memory_allocation"
+    },
+    {
+      "source": "fftSize@external_input",
+      "path": ["asdFftMakePlan1D@fft_api.h:55", "FFTPlan@core/fft/fftplan/fft_plan.cpp", "dft_core@core/fft/fftcore/dft_core.cpp"],
+      "sink": "new float[outSize*inSize]@heap_allocation",
+      "sink_type": "memory_allocation"
+    },
+    {
+      "source": "tilingData@kernel_tiling",
+      "path": ["IamaxTiling@ops/blas/iamax/iamax/tiling/iamax_tiling.cpp", "memcpy_s@ops/blas/iamax/iamax/tiling/iamax_tiling.cpp:181"],
+      "sink": "tilingDataAddr@device_memory",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "storageDims@aclGetStorageShape",
+      "path": ["BlasCgemvPlan@core/blas/blasplan/BlasCgemvPlan.cpp", "ySize_calculation@line:107"],
+      "sink": "ySize@size_variable",
+      "sink_type": "size_calculation"
+    },
+    {
+      "source": "problemDesc.nDoing@fft_config",
+      "path": ["dft_core@core/fft/fftcore/dft_core.cpp:75", "rotationMatrixHost_allocation"],
+      "sink": "new float[outSize*inSize]@heap_allocation",
+      "sink_type": "memory_allocation"
+    }
+  ]
+}

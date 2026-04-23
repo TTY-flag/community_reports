@@ -1,0 +1,96 @@
+{
+  "project_name": "asc-devkit",
+  "generated_at": "2026-04-22T00:00:00Z",
+  "call_graph": {
+    "tools/build/asc_pack_kernel/ascendc_pack_kernel.c": {
+      "main": {
+        "calls": ["GetFileSize", "malloc", "free", "ReadFile", "memset_s", "strtol", "ElfAddSection", "WriteFile"],
+        "called_by": [],
+        "risk": "high",
+        "vulnerability_types": ["memory_leak", "buffer_overflow", "command_injection"]
+      },
+      "GetFileSize": {
+        "calls": ["fopen", "fseek", "ftell", "fclose"],
+        "called_by": ["main"],
+        "risk": "medium",
+        "vulnerability_types": ["path_traversal"]
+      },
+      "ReadFile": {
+        "calls": ["open", "read", "close"],
+        "called_by": ["main"],
+        "risk": "medium",
+        "vulnerability_types": ["path_traversal", "buffer_overflow"]
+      },
+      "WriteFile": {
+        "calls": ["open", "write", "close"],
+        "called_by": ["main"],
+        "risk": "medium",
+        "vulnerability_types": ["path_traversal"]
+      }
+    },
+    "tools/build/elf_tool/ascendc_elf_tool.c": {
+      "ElfHeaderCheck": {
+        "calls": [],
+        "called_by": ["ElfAddSection", "ElfGetSymbolOffset"],
+        "risk": "medium",
+        "vulnerability_types": ["buffer_overflow", "type_confusion"]
+      },
+      "ElfAddSection": {
+        "calls": ["ElfHeaderCheck", "memcpy_s", "strncmp"],
+        "called_by": ["main"],
+        "risk": "high",
+        "vulnerability_types": ["buffer_overflow", "integer_overflow"]
+      },
+      "ElfGetSymbolOffset": {
+        "calls": ["ElfHeaderCheck", "strnlen", "strncmp"],
+        "called_by": [],
+        "risk": "medium",
+        "vulnerability_types": ["buffer_overflow", "integer_overflow"]
+      }
+    },
+    "tools/build/asc_op_compile_base": {
+      "compile_op.py": {
+        "calls": ["subprocess.run", "subprocess.Popen"],
+        "called_by": [],
+        "risk": "high",
+        "vulnerability_types": ["command_injection"]
+      },
+      "ascendc_compile_base.py": {
+        "calls": ["subprocess.run", "os.path.join", "open"],
+        "called_by": [],
+        "risk": "high",
+        "vulnerability_types": ["command_injection", "path_traversal"]
+      }
+    },
+    "impl/c_api/instr_impl": {
+      "note": "NPU指令实现，主要涉及内存操作和数据传输",
+      "functions": ["asc_copy_gm2ub", "asc_copy_ub2gm", "asc_mmad", "asc_load", "asc_store"],
+      "risk": "medium",
+      "vulnerability_types": ["buffer_overflow", "memory_corruption"]
+    },
+    "impl/adv_api/tiling": {
+      "note": "算子tiling实现，计算分块参数",
+      "risk": "low",
+      "vulnerability_types": ["integer_overflow"]
+    }
+  },
+  "cross_module_calls": [
+    {
+      "caller": "tools/build/asc_pack_kernel/ascendc_pack_kernel.c:main",
+      "callee": "tools/build/elf_tool/ascendc_elf_tool.c:ElfAddSection",
+      "risk": "high"
+    }
+  ],
+  "summary": {
+    "total_functions": 50,
+    "high_risk_functions": 10,
+    "external_api_calls": {
+      "malloc/free": 2,
+      "memcpy": 1,
+      "fopen/fclose": 1,
+      "open/close": 2,
+      "subprocess": 39,
+      "system/exec": 0
+    }
+  }
+}

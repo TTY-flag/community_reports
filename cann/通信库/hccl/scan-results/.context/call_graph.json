@@ -1,0 +1,976 @@
+{
+  "call_graph": {
+    "description": "HCCL核心数据流调用图，从入口点到数据处理关键路径",
+    "generated_by": "static_analysis",
+    "nodes": [
+      {
+        "id": "HcclAllReduce",
+        "name": "HcclAllReduce",
+        "file": "src/ops/all_reduce/all_reduce_op.cc",
+        "line": 23,
+        "type": "entry_point",
+        "category": "public_api",
+        "risk_level": "high"
+      },
+      {
+        "id": "AllReduceInitAndCheck",
+        "name": "AllReduceInitAndCheck",
+        "file": "src/ops/all_reduce/all_reduce_op.cc",
+        "line": 103,
+        "type": "internal_function",
+        "category": "validation",
+        "risk_level": "medium"
+      },
+      {
+        "id": "AllReduceOutPlace",
+        "name": "AllReduceOutPlace",
+        "file": "src/ops/all_reduce/all_reduce_op.cc",
+        "line": 237,
+        "type": "internal_function",
+        "category": "execution",
+        "risk_level": "high"
+      },
+      {
+        "id": "FillAllReduceOpParam",
+        "name": "FillAllReduceOpParam",
+        "file": "src/ops/all_reduce/all_reduce_op.cc",
+        "line": 148,
+        "type": "internal_function",
+        "category": "parameter_handling",
+        "risk_level": "medium"
+      },
+      {
+        "id": "Selector",
+        "name": "Selector",
+        "file": "src/ops/op_common/selector/",
+        "type": "internal_function",
+        "category": "algorithm_selection",
+        "risk_level": "low"
+      },
+      {
+        "id": "HcclExecOp",
+        "name": "HcclExecOp",
+        "file": "src/ops/op_common/op_common.cc",
+        "type": "internal_function",
+        "category": "execution_orchestration",
+        "risk_level": "medium"
+      },
+      {
+        "id": "HcclLaunchAicpuKernel",
+        "name": "HcclLaunchAicpuKernel",
+        "file": "src/ops/op_common/template/aicpu/kernel_launch.cc",
+        "line": 218,
+        "type": "internal_function",
+        "category": "kernel_launch",
+        "risk_level": "high"
+      },
+      {
+        "id": "InitEnvConfig",
+        "name": "InitEnvConfig",
+        "file": "src/common/alg_env_config.cc",
+        "line": 111,
+        "type": "internal_function",
+        "category": "configuration",
+        "risk_level": "medium"
+      },
+      {
+        "id": "CheckAllReduceInputPara",
+        "name": "CheckAllReduceInputPara",
+        "file": "src/ops/all_reduce/all_reduce_op.cc",
+        "line": 129,
+        "type": "internal_function",
+        "category": "validation",
+        "risk_level": "medium"
+      },
+      {
+        "id": "HcomCheckUserRank",
+        "name": "HcomCheckUserRank",
+        "file": "src/common/param_check.cc",
+        "line": 130,
+        "type": "internal_function",
+        "category": "validation",
+        "risk_level": "medium"
+      },
+      {
+        "id": "CheckCount",
+        "name": "CheckCount",
+        "file": "src/common/param_check.cc",
+        "line": 75,
+        "type": "internal_function",
+        "category": "validation",
+        "risk_level": "medium"
+      },
+      {
+        "id": "CheckDataType",
+        "name": "CheckDataType",
+        "file": "src/common/param_check.cc",
+        "line": 85,
+        "type": "internal_function",
+        "category": "validation",
+        "risk_level": "low"
+      },
+      {
+        "id": "HcclAllGatherV",
+        "name": "HcclAllGatherV",
+        "file": "src/ops/all_gather_v/all_gather_v_op.cc",
+        "line": 22,
+        "type": "entry_point",
+        "category": "public_api",
+        "risk_level": "high"
+      },
+      {
+        "id": "CheckAllGatherVInputPara",
+        "name": "CheckAllGatherVInputPara",
+        "file": "src/ops/all_gather_v/all_gather_v_op.cc",
+        "line": 119,
+        "type": "internal_function",
+        "category": "validation",
+        "risk_level": "medium"
+      },
+      {
+        "id": "AllGatherVOutPlace",
+        "name": "AllGatherVOutPlace",
+        "file": "src/ops/all_gather_v/all_gather_v_op.cc",
+        "line": 140,
+        "type": "internal_function",
+        "category": "execution",
+        "risk_level": "high"
+      },
+      {
+        "id": "memcpy_s",
+        "name": "memcpy_s",
+        "file": "runtime",
+        "type": "external_function",
+        "category": "memory_operation",
+        "risk_level": "high"
+      },
+      {
+        "id": "malloc",
+        "name": "malloc",
+        "file": "runtime",
+        "type": "external_function",
+        "category": "memory_operation",
+        "risk_level": "high"
+      },
+      {
+        "id": "HcclAlltoAllV",
+        "name": "HcclAlltoAllV",
+        "file": "src/ops/all_to_all_v/",
+        "type": "entry_point",
+        "category": "public_api",
+        "risk_level": "high"
+      },
+      {
+        "id": "HcclSend",
+        "name": "HcclSend",
+        "file": "src/ops/send/send_op.cc",
+        "line": 23,
+        "type": "entry_point",
+        "category": "public_api",
+        "risk_level": "high"
+      },
+      {
+        "id": "GetAndCheckSendPara",
+        "name": "GetAndCheckSendPara",
+        "file": "src/ops/send/send_op.cc",
+        "line": 110,
+        "type": "internal_function",
+        "category": "validation",
+        "risk_level": "medium"
+      },
+      {
+        "id": "SendExec",
+        "name": "SendExec",
+        "file": "src/ops/send/send_op.cc",
+        "line": 177,
+        "type": "internal_function",
+        "category": "execution",
+        "risk_level": "high"
+      },
+      {
+        "id": "GenerateSendOpParam",
+        "name": "GenerateSendOpParam",
+        "file": "src/ops/send/send_op.cc",
+        "line": 143,
+        "type": "internal_function",
+        "category": "parameter_handling",
+        "risk_level": "medium"
+      },
+      {
+        "id": "HcclRecv",
+        "name": "HcclRecv",
+        "file": "src/ops/recv/",
+        "type": "entry_point",
+        "category": "public_api",
+        "risk_level": "high"
+      },
+      {
+        "id": "HcclBatchSendRecv",
+        "name": "HcclBatchSendRecv",
+        "file": "src/ops/batch_send_recv/batch_send_recv_op.cc",
+        "line": 23,
+        "type": "entry_point",
+        "category": "public_api",
+        "risk_level": "high"
+      },
+      {
+        "id": "CheckBatchSendRecvInputPara",
+        "name": "CheckBatchSendRecvInputPara",
+        "file": "src/ops/batch_send_recv/batch_send_recv_op.cc",
+        "line": 72,
+        "type": "internal_function",
+        "category": "validation",
+        "risk_level": "medium"
+      },
+      {
+        "id": "BatchSendRecvOutPlace",
+        "name": "BatchSendRecvOutPlace",
+        "file": "src/ops/batch_send_recv/batch_send_recv_op.cc",
+        "line": 88,
+        "type": "internal_function",
+        "category": "execution",
+        "risk_level": "high"
+      },
+      {
+        "id": "HcclReduceScatterV",
+        "name": "HcclReduceScatterV",
+        "file": "src/ops/reduce_scatter_v/",
+        "type": "entry_point",
+        "category": "public_api",
+        "risk_level": "high"
+      },
+      {
+        "id": "HcommDlInit",
+        "name": "HcommDlInit",
+        "file": "src/common/hcomm_dlsym/hcomm_dlsym.cc",
+        "line": 57,
+        "type": "internal_function",
+        "category": "library_loading",
+        "risk_level": "high"
+      },
+      {
+        "id": "dlopen",
+        "name": "dlopen",
+        "file": "runtime",
+        "type": "external_function",
+        "category": "dynamic_library",
+        "risk_level": "high"
+      },
+      {
+        "id": "RestoreVarDataAllGatherV",
+        "name": "RestoreVarDataAllGatherV",
+        "file": "src/ops/op_common/template/aicpu/kernel_launch.cc",
+        "line": 561,
+        "type": "internal_function",
+        "category": "data_restoration",
+        "risk_level": "medium"
+      },
+      {
+        "id": "RestoreVarDataAlltoAllV",
+        "name": "RestoreVarDataAlltoAllV",
+        "file": "src/ops/op_common/template/aicpu/kernel_launch.cc",
+        "line": 516,
+        "type": "internal_function",
+        "category": "data_restoration",
+        "risk_level": "medium"
+      },
+      {
+        "id": "RestoreVarDataBatchSendRecv",
+        "name": "RestoreVarDataBatchSendRecv",
+        "file": "src/ops/op_common/template/aicpu/kernel_launch.cc",
+        "line": 500,
+        "type": "internal_function",
+        "category": "data_restoration",
+        "risk_level": "medium"
+      },
+      {
+        "id": "AlgResourceCtxSerializable_DeSerialize",
+        "name": "AlgResourceCtxSerializable::DeSerialize",
+        "file": "src/ops/op_common/inc/alg_param.h",
+        "line": 413,
+        "type": "internal_function",
+        "category": "serialization",
+        "risk_level": "medium"
+      },
+      {
+        "id": "BinaryStream_operator_read",
+        "name": "BinaryStream::operator>>",
+        "file": "src/common/binary_stream.h",
+        "line": 64,
+        "type": "internal_function",
+        "category": "serialization",
+        "risk_level": "medium"
+      },
+      {
+        "id": "GetAivOpBinaryPath",
+        "name": "GetAivOpBinaryPath",
+        "file": "src/ops/op_common/template/aiv/hccl_aiv_utils.cc",
+        "line": 140,
+        "type": "internal_function",
+        "category": "binary_loading",
+        "risk_level": "high"
+      },
+      {
+        "id": "LoadBinaryFromFile",
+        "name": "LoadBinaryFromFile",
+        "file": "src/ops/op_common/template/aiv/hccl_aiv_utils.cc",
+        "line": 211,
+        "type": "internal_function",
+        "category": "binary_loading",
+        "risk_level": "high"
+      },
+      {
+        "id": "CalcChannelRequestMesh1D",
+        "name": "CalcChannelRequestMesh1D",
+        "file": "src/ops/op_common/executor/channel/channel.cc",
+        "line": 205,
+        "type": "internal_function",
+        "category": "channel_setup",
+        "risk_level": "medium"
+      },
+      {
+        "id": "HcclRankGraphGetLinks",
+        "name": "HcclRankGraphGetLinks",
+        "file": "external/hcomm",
+        "type": "external_function",
+        "category": "topology_query",
+        "risk_level": "medium"
+      },
+      {
+        "id": "ParseOpExpansion",
+        "name": "ParseOpExpansion",
+        "file": "src/common/alg_env_config.cc",
+        "line": 678,
+        "type": "internal_function",
+        "category": "configuration_parsing",
+        "risk_level": "medium"
+      },
+      {
+        "id": "ParseHcclAlgo",
+        "name": "ParseHcclAlgo",
+        "file": "src/common/alg_env_config.cc",
+        "line": 234,
+        "type": "internal_function",
+        "category": "configuration_parsing",
+        "risk_level": "medium"
+      },
+      {
+        "id": "ParseIntraLinkType",
+        "name": "ParseIntraLinkType",
+        "file": "src/common/alg_env_config.cc",
+        "line": 555,
+        "type": "internal_function",
+        "category": "configuration_parsing",
+        "risk_level": "medium"
+      },
+      {
+        "id": "GetEnv",
+        "name": "GetEnv",
+        "file": "src/common/alg_env_config.cc",
+        "line": 28,
+        "type": "internal_function",
+        "category": "environment_access",
+        "risk_level": "medium"
+      },
+      {
+        "id": "MM_SYS_GET_ENV",
+        "name": "MM_SYS_GET_ENV",
+        "file": "external/mmpa",
+        "type": "external_function",
+        "category": "environment_access",
+        "risk_level": "medium"
+      },
+      {
+        "id": "ExecuteKernelLaunch",
+        "name": "ExecuteKernelLaunch",
+        "file": "src/ops/op_common/template/aiv/hccl_aiv_utils.cc",
+        "line": 294,
+        "type": "internal_function",
+        "category": "kernel_launch",
+        "risk_level": "high"
+      },
+      {
+        "id": "aclrtLaunchKernelWithHostArgs",
+        "name": "aclrtLaunchKernelWithHostArgs",
+        "file": "external/acl",
+        "type": "external_function",
+        "category": "kernel_launch",
+        "risk_level": "high"
+      }
+    ],
+    "edges": [
+      {
+        "source": "HcclAllReduce",
+        "target": "AllReduceInitAndCheck",
+        "type": "call",
+        "data_flow": "sendBuf, recvBuf, count -> param initialization"
+      },
+      {
+        "source": "AllReduceInitAndCheck",
+        "target": "InitEnvConfig",
+        "type": "call",
+        "data_flow": "environment variables -> configuration"
+      },
+      {
+        "source": "AllReduceInitAndCheck",
+        "target": "CheckAllReduceInputPara",
+        "type": "call",
+        "data_flow": "comm, sendBuf, recvBuf, stream -> validation"
+      },
+      {
+        "source": "AllReduceInitAndCheck",
+        "target": "HcomCheckUserRank",
+        "type": "call",
+        "data_flow": "rankSize, userRank -> validation"
+      },
+      {
+        "source": "AllReduceInitAndCheck",
+        "target": "CheckCount",
+        "type": "call",
+        "data_flow": "count -> validation"
+      },
+      {
+        "source": "AllReduceInitAndCheck",
+        "target": "CheckDataType",
+        "type": "call",
+        "data_flow": "dataType -> validation"
+      },
+      {
+        "source": "HcclAllReduce",
+        "target": "AllReduceOutPlace",
+        "type": "call",
+        "data_flow": "sendBuf, recvBuf, count, dataType, op -> execution"
+      },
+      {
+        "source": "AllReduceOutPlace",
+        "target": "FillAllReduceOpParam",
+        "type": "call",
+        "data_flow": "sendBuf, recvBuf, count -> OpParam structure"
+      },
+      {
+        "source": "AllReduceOutPlace",
+        "target": "Selector",
+        "type": "call",
+        "data_flow": "param -> algorithm selection"
+      },
+      {
+        "source": "AllReduceOutPlace",
+        "target": "HcclExecOp",
+        "type": "call",
+        "data_flow": "param, topoInfo -> execution orchestration"
+      },
+      {
+        "source": "HcclExecOp",
+        "target": "HcclLaunchAicpuKernel",
+        "type": "call",
+        "data_flow": "OpParam -> device kernel launch"
+      },
+      {
+        "source": "HcclAllGatherV",
+        "target": "InitEnvConfig",
+        "type": "call",
+        "data_flow": "environment -> configuration"
+      },
+      {
+        "source": "HcclAllGatherV",
+        "target": "CheckAllGatherVInputPara",
+        "type": "call",
+        "data_flow": "comm, recvBuf, recvCounts, recvDispls -> validation"
+      },
+      {
+        "source": "HcclAllGatherV",
+        "target": "AllGatherVOutPlace",
+        "type": "call",
+        "data_flow": "sendBuf, recvBuf, recvCounts, recvDispls -> execution"
+      },
+      {
+        "source": "AllGatherVOutPlace",
+        "target": "malloc",
+        "type": "call",
+        "data_flow": "userRankSize -> memory allocation for OpParam"
+      },
+      {
+        "source": "AllGatherVOutPlace",
+        "target": "memcpy_s",
+        "type": "call",
+        "data_flow": "recvCounts, recvDispls -> param.varData"
+      },
+      {
+        "source": "AllGatherVOutPlace",
+        "target": "Selector",
+        "type": "call",
+        "data_flow": "param -> algorithm selection"
+      },
+      {
+        "source": "AllGatherVOutPlace",
+        "target": "HcclExecOp",
+        "type": "call",
+        "data_flow": "param -> execution"
+      },
+      {
+        "source": "HcclSend",
+        "target": "InitEnvConfig",
+        "type": "call",
+        "data_flow": "environment -> configuration"
+      },
+      {
+        "source": "HcclSend",
+        "target": "GetAndCheckSendPara",
+        "type": "call",
+        "data_flow": "comm, sendBuf, count, dataType, destRank -> validation"
+      },
+      {
+        "source": "HcclSend",
+        "target": "SendExec",
+        "type": "call",
+        "data_flow": "sendBuf, count, dataType, destRank -> execution"
+      },
+      {
+        "source": "GetAndCheckSendPara",
+        "target": "HcomCheckUserRank",
+        "type": "call",
+        "data_flow": "rankSize, userRank, destRank -> validation"
+      },
+      {
+        "source": "SendExec",
+        "target": "GenerateSendOpParam",
+        "type": "call",
+        "data_flow": "sendBuf, count, dataType, destRank -> OpParam"
+      },
+      {
+        "source": "SendExec",
+        "target": "Selector",
+        "type": "call",
+        "data_flow": "param -> algorithm selection"
+      },
+      {
+        "source": "SendExec",
+        "target": "HcclExecOp",
+        "type": "call",
+        "data_flow": "param -> execution"
+      },
+      {
+        "source": "HcclBatchSendRecv",
+        "target": "InitEnvConfig",
+        "type": "call",
+        "data_flow": "environment -> configuration"
+      },
+      {
+        "source": "HcclBatchSendRecv",
+        "target": "CheckBatchSendRecvInputPara",
+        "type": "call",
+        "data_flow": "comm, sendRecvInfo, stream -> validation"
+      },
+      {
+        "source": "HcclBatchSendRecv",
+        "target": "BatchSendRecvOutPlace",
+        "type": "call",
+        "data_flow": "sendRecvInfo array -> execution"
+      },
+      {
+        "source": "BatchSendRecvOutPlace",
+        "target": "malloc",
+        "type": "call",
+        "data_flow": "itemNum * sizeof(HcclSendRecvItem) -> memory"
+      },
+      {
+        "source": "BatchSendRecvOutPlace",
+        "target": "memcpy_s",
+        "type": "call",
+        "data_flow": "sendRecvInfo -> param.varData"
+      },
+      {
+        "source": "BatchSendRecvOutPlace",
+        "target": "HcclExecOp",
+        "type": "call",
+        "data_flow": "param -> execution"
+      },
+      {
+        "source": "HcclLaunchAicpuKernel",
+        "target": "AlgResourceCtxSerializable_DeSerialize",
+        "type": "call",
+        "data_flow": "param.resCtx -> resCtx structure"
+      },
+      {
+        "source": "HcclLaunchAicpuKernel",
+        "target": "RestoreVarDataAllGatherV",
+        "type": "call",
+        "data_flow": "param.varData -> counts/displs pointers"
+      },
+      {
+        "source": "HcclLaunchAicpuKernel",
+        "target": "RestoreVarDataAlltoAllV",
+        "type": "call",
+        "data_flow": "param.varData -> sendCounts/recvCounts pointers"
+      },
+      {
+        "source": "HcclLaunchAicpuKernel",
+        "target": "RestoreVarDataBatchSendRecv",
+        "type": "call",
+        "data_flow": "param.varData -> sendRecvItemsPtr"
+      },
+      {
+        "source": "AlgResourceCtxSerializable_DeSerialize",
+        "target": "BinaryStream_operator_read",
+        "type": "call",
+        "data_flow": "serialized data -> structure fields"
+      },
+      {
+        "source": "HcommDlInit",
+        "target": "dlopen",
+        "type": "call",
+        "data_flow": "\"libhcomm.so\" -> library handle"
+      },
+      {
+        "source": "InitEnvConfig",
+        "target": "ParseOpExpansion",
+        "type": "call",
+        "data_flow": "HCCL_OP_EXPANSION_MODE -> mode flags"
+      },
+      {
+        "source": "InitEnvConfig",
+        "target": "ParseHcclAlgo",
+        "type": "call",
+        "data_flow": "HCCL_ALGO -> algorithm config"
+      },
+      {
+        "source": "InitEnvConfig",
+        "target": "ParseIntraLinkType",
+        "type": "call",
+        "data_flow": "HCCL_INTRA_PCIE_ENABLE/ROCE_ENABLE -> protocol selection"
+      },
+      {
+        "source": "ParseOpExpansion",
+        "target": "GetEnv",
+        "type": "call",
+        "data_flow": "MM_ENV_HCCL_OP_EXPANSION_MODE -> string value"
+      },
+      {
+        "source": "GetEnv",
+        "target": "MM_SYS_GET_ENV",
+        "type": "call",
+        "data_flow": "env_id -> env_value"
+      },
+      {
+        "source": "CalcChannelRequestMesh1D",
+        "target": "HcclRankGraphGetLinks",
+        "type": "call",
+        "data_flow": "myRank, remoteRank -> linkList"
+      },
+      {
+        "source": "GetAivOpBinaryPath",
+        "target": "MM_SYS_GET_ENV",
+        "type": "call",
+        "data_flow": "ASCEND_HOME_PATH -> binary path"
+      },
+      {
+        "source": "ExecuteKernelLaunch",
+        "target": "aclrtLaunchKernelWithHostArgs",
+        "type": "call",
+        "data_flow": "kernel args -> device execution"
+      }
+    ],
+    "data_flow_paths": [
+      {
+        "path_id": "allreduce_data_flow",
+        "description": "AllReduce数据流路径",
+        "nodes": ["HcclAllReduce", "AllReduceInitAndCheck", "FillAllReduceOpParam", "HcclExecOp", "HcclLaunchAicpuKernel"],
+        "taint_sources": [
+          {
+            "node": "HcclAllReduce",
+            "parameter": "sendBuf",
+            "type": "external_buffer",
+            "description": "用户传入的发送缓冲区指针"
+          },
+          {
+            "node": "HcclAllReduce",
+            "parameter": "recvBuf",
+            "type": "external_buffer",
+            "description": "用户传入的接收缓冲区指针"
+          },
+          {
+            "node": "HcclAllReduce",
+            "parameter": "count",
+            "type": "external_count",
+            "description": "用户传入的数据计数"
+          }
+        ],
+        "taint_sinks": [
+          {
+            "node": "HcclLaunchAicpuKernel",
+            "operation": "network_transmission",
+            "description": "数据通过网络传输到其他Rank"
+          }
+        ]
+      },
+      {
+        "path_id": "allgatherv_data_flow",
+        "description": "AllGatherV变长参数数据流路径",
+        "nodes": ["HcclAllGatherV", "CheckAllGatherVInputPara", "AllGatherVOutPlace", "memcpy_s", "HcclExecOp", "RestoreVarDataAllGatherV"],
+        "taint_sources": [
+          {
+            "node": "HcclAllGatherV",
+            "parameter": "recvCounts",
+            "type": "external_array",
+            "description": "用户传入的接收计数数组，影响缓冲区偏移计算"
+          },
+          {
+            "node": "HcclAllGatherV",
+            "parameter": "recvDispls",
+            "type": "external_array",
+            "description": "用户传入的接收位移数组，直接影响内存访问偏移"
+          }
+        ],
+        "taint_sinks": [
+          {
+            "node": "AllGatherVOutPlace",
+            "operation": "buffer_offset_calculation",
+            "description": "使用recvCounts计算outputSize，可能导致整数溢出"
+          },
+          {
+            "node": "RestoreVarDataAllGatherV",
+            "operation": "pointer_restoration",
+            "description": "将varData恢复为counts/displs指针"
+          }
+        ],
+        "risk_factors": [
+          "recvCounts数组直接影响缓冲区大小计算",
+          "recvDispls数组影响内存访问偏移",
+          "恶意值可能导致缓冲区越界或整数溢出"
+        ]
+      },
+      {
+        "path_id": "alltoallv_data_flow",
+        "description": "AlltoAllV复杂变长参数数据流路径",
+        "nodes": ["HcclAlltoAllV", "HcclExecOp", "RestoreVarDataAlltoAllV"],
+        "taint_sources": [
+          {
+            "node": "HcclAlltoAllV",
+            "parameter": "sendCounts",
+            "type": "external_array",
+            "description": "发送计数数组"
+          },
+          {
+            "node": "HcclAlltoAllV",
+            "parameter": "sdispls",
+            "type": "external_array",
+            "description": "发送位移数组"
+          },
+          {
+            "node": "HcclAlltoAllV",
+            "parameter": "recvCounts",
+            "type": "external_array",
+            "description": "接收计数数组"
+          },
+          {
+            "node": "HcclAlltoAllV",
+            "parameter": "rdispls",
+            "type": "external_array",
+            "description": "接收位移数组"
+          }
+        ],
+        "taint_sinks": [
+          {
+            "node": "RestoreVarDataAlltoAllV",
+            "operation": "pointer_restoration",
+            "description": "恢复4个数组指针用于数据分发"
+          }
+        ],
+        "risk_factors": [
+          "4个变长数组参数，复杂的偏移计算",
+          "数组内容直接决定数据读写位置",
+          "潜在的整数溢出和缓冲区越界风险"
+        ]
+      },
+      {
+        "path_id": "send_recv_data_flow",
+        "description": "点对点通信数据流路径",
+        "nodes": ["HcclSend", "GetAndCheckSendPara", "SendExec", "HcclExecOp"],
+        "taint_sources": [
+          {
+            "node": "HcclSend",
+            "parameter": "sendBuf",
+            "type": "external_buffer",
+            "description": "发送数据缓冲区"
+          },
+          {
+            "node": "HcclSend",
+            "parameter": "destRank",
+            "type": "external_rank",
+            "description": "目标Rank ID"
+          }
+        ],
+        "taint_sinks": [
+          {
+            "node": "SendExec",
+            "operation": "network_transmission",
+            "description": "数据发送到destRank指定的节点"
+          }
+        ],
+        "risk_factors": [
+          "destRank控制数据发送目标",
+          "跨节点数据传输可能被篡改"
+        ]
+      },
+      {
+        "path_id": "batch_sendrecv_data_flow",
+        "description": "批量通信数据流路径",
+        "nodes": ["HcclBatchSendRecv", "CheckBatchSendRecvInputPara", "BatchSendRecvOutPlace", "memcpy_s", "HcclExecOp", "RestoreVarDataBatchSendRecv"],
+        "taint_sources": [
+          {
+            "node": "HcclBatchSendRecv",
+            "parameter": "sendRecvInfo",
+            "type": "external_array_struct",
+            "description": "包含多个Send/Recv项的数组结构"
+          },
+          {
+            "node": "HcclBatchSendRecv",
+            "parameter": "itemNum",
+            "type": "external_count",
+            "description": "数组项数量"
+          }
+        ],
+        "taint_sinks": [
+          {
+            "node": "BatchSendRecvOutPlace",
+            "operation": "array_copy",
+            "description": "将sendRecvInfo数组复制到OpParam"
+          },
+          {
+            "node": "RestoreVarDataBatchSendRecv",
+            "operation": "pointer_restoration",
+            "description": "恢复sendRecvItemsPtr指针"
+          }
+        ],
+        "risk_factors": [
+          "sendRecvInfo数组包含多个通信项",
+          "每个项的destRank/srcRank/buffer/count都由外部控制",
+          "itemNum控制数组遍历边界"
+        ]
+      },
+      {
+        "path_id": "env_config_data_flow",
+        "description": "环境变量配置数据流",
+        "nodes": ["InitEnvConfig", "ParseOpExpansion", "ParseHcclAlgo", "ParseIntraLinkType", "GetEnv", "MM_SYS_GET_ENV"],
+        "taint_sources": [
+          {
+            "node": "MM_SYS_GET_ENV",
+            "source": "environment_variable",
+            "type": "external_config",
+            "description": "系统环境变量"
+          }
+        ],
+        "taint_sinks": [
+          {
+            "node": "ParseOpExpansion",
+            "operation": "mode_flag_setting",
+            "description": "设置算子展开模式标志"
+          },
+          {
+            "node": "ParseIntraLinkType",
+            "operation": "protocol_selection",
+            "description": "选择通信协议（HCCS/RoCE/PCIe）"
+          }
+        ],
+        "risk_factors": [
+          "环境变量可被外部进程设置",
+          "错误的配置可能导致通信失败或安全问题"
+        ]
+      },
+      {
+        "path_id": "binary_load_data_flow",
+        "description": "AIV Kernel二进制加载路径",
+        "nodes": ["GetAivOpBinaryPath", "MM_SYS_GET_ENV", "LoadBinaryFromFile", "aclrtLaunchKernelWithHostArgs"],
+        "taint_sources": [
+          {
+            "node": "MM_SYS_GET_ENV",
+            "parameter": "ASCEND_HOME_PATH",
+            "type": "external_path",
+            "description": "用户可配置的CANN安装路径"
+          }
+        ],
+        "taint_sinks": [
+          {
+            "node": "LoadBinaryFromFile",
+            "operation": "file_read",
+            "description": "读取并加载kernel二进制文件"
+          },
+          {
+            "node": "aclrtLaunchKernelWithHostArgs",
+            "operation": "kernel_execution",
+            "description": "执行加载的kernel代码"
+          }
+        ],
+        "risk_factors": [
+          "ASCEND_HOME_PATH控制binary文件搜索路径",
+          "恶意路径可能导致加载篡改的二进制文件",
+          "二进制文件可能包含恶意代码"
+        ]
+      },
+      {
+        "path_id": "serialization_data_flow",
+        "description": "序列化/反序列化数据流",
+        "nodes": ["HcclLaunchAicpuKernel", "AlgResourceCtxSerializable_DeSerialize", "BinaryStream_operator_read"],
+        "taint_sources": [
+          {
+            "node": "HcclLaunchAicpuKernel",
+            "parameter": "param.resCtx",
+            "type": "serialized_data",
+            "description": "从Host传递到Device的序列化上下文"
+          }
+        ],
+        "taint_sinks": [
+          {
+            "node": "AlgResourceCtxSerializable_DeSerialize",
+            "operation": "structure_reconstruction",
+            "description": "反序列化为结构体"
+          },
+          {
+            "node": "BinaryStream_operator_read",
+            "operation": "stream_read",
+            "description": "从二进制流读取数据"
+          }
+        ],
+        "risk_factors": [
+          "序列化数据在Host-Device边界传递",
+          "反序列化过程缺少边界检查",
+          "潜在的数据篡改或结构破坏"
+        ]
+      },
+      {
+        "path_id": "dynamic_library_data_flow",
+        "description": "动态库加载路径",
+        "nodes": ["HcommDlInit", "dlopen"],
+        "taint_sources": [
+          {
+            "node": "HcommDlInit",
+            "source": "library_path",
+            "type": "hardcoded_path",
+            "description": "硬编码的libhcomm.so路径"
+          }
+        ],
+        "taint_sinks": [
+          {
+            "node": "dlopen",
+            "operation": "library_load",
+            "description": "动态加载共享库"
+          }
+        ],
+        "risk_factors": [
+          "依赖系统库搜索路径",
+          "同名库可能被替换",
+          "符号劫持风险"
+        ]
+      }
+    ]
+  },
+  "statistics": {
+    "total_nodes": 46,
+    "total_edges": 44,
+    "data_flow_paths": 9,
+    "entry_points": 9,
+    "high_risk_functions": 18,
+    "taint_sources": 15,
+    "taint_sinks": 12
+  }
+}

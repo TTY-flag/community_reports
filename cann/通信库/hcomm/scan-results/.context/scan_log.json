@@ -1,0 +1,93 @@
+{
+  "scan_id": "680b14cb-376f-4298-b736-e1b002e02d9c",
+  "start_time": "2026-04-21T22:15:08-07:00",
+  "end_time": "2026-04-22T00:09:30-07:00",
+  "duration_seconds": 5062,
+  "project_name": "hcomm",
+  "status": "completed",
+  "agents": [
+    {
+      "name": "architecture",
+      "start_time": "2026-04-21T22:15:30-07:00",
+      "end_time": "2026-04-21T22:23:06-07:00",
+      "duration_seconds": 456,
+      "status": "success",
+      "outputs": [
+        "scan-results/.context/project_model.json",
+        "scan-results/.context/call_graph.json",
+        "scan-results/threat_analysis_report.md"
+      ],
+      "error": null
+    },
+    {
+      "name": "dataflow-scanner",
+      "start_time": "2026-04-21T22:23:30-07:00",
+      "end_time": "2026-04-21T22:35:33-07:00",
+      "duration_seconds": 723,
+      "status": "success",
+      "outputs": [
+        "scan-results/.context/scan.db"
+      ],
+      "error": null
+    },
+    {
+      "name": "security-auditor",
+      "start_time": "2026-04-21T22:23:30-07:00",
+      "end_time": "2026-04-21T22:31:06-07:00",
+      "duration_seconds": 456,
+      "status": "success",
+      "outputs": [
+        "scan-results/.context/scan.db"
+      ],
+      "error": null
+    },
+    {
+      "name": "verification",
+      "start_time": "2026-04-21T22:35:45-07:00",
+      "end_time": "2026-04-21T23:13:51-07:00",
+      "duration_seconds": 2286,
+      "status": "success",
+      "outputs": [
+        "scan-results/.context/scan.db"
+      ],
+      "error": null
+    },
+    {
+      "name": "details-analyzer",
+      "start_time": "2026-04-21T23:30:00-07:00",
+      "end_time": "2026-04-22T00:09:30-07:00",
+      "duration_seconds": 2370,
+      "status": "success",
+      "outputs": [
+        "scan-results/details/VULN-DF-NET-002.md",
+        "scan-results/details/VULN-DF-NET-003.md",
+        "scan-results/details/VULN-DF-NUM-001_VULN-SEC-003.md"
+      ],
+      "error": null
+    },
+    {
+      "name": "reporter",
+      "start_time": "2026-04-21T23:14:00-07:00",
+      "end_time": "2026-04-21T23:27:12-07:00",
+      "duration_seconds": 792,
+      "status": "success",
+      "outputs": [
+        "scan-results/report_confirmed.md",
+        "scan-results/report_unconfirmed.md"
+      ],
+      "error": null
+    }
+  ],
+  "summary": {
+    "project_type": "network_service",
+    "total_files_scanned": 311,
+    "total_lines": 185048,
+    "candidates_found": 23,
+    "confirmed_vulnerabilities": 4,
+    "likely_vulnerabilities": 11,
+    "possible_vulnerabilities": 5,
+    "false_positives": 3,
+    "lsp_available": false,
+    "details_reports_generated": 3
+  }
+}

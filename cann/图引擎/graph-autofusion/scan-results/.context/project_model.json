@@ -1,0 +1,375 @@
+{
+  "project_name": "graph-autofusion",
+  "scan_time": "2026-04-22T00:00:00Z",
+  "lsp_available": true,
+  "total_files": 63,
+  "total_lines": 15000,
+  "project_profile": {
+    "project_type": "library",
+    "deployment_model": "作为 CANN (Compute Architecture for Neural Networks) 框架的编译优化库，部署在 Ascend NPU 服务器上。被 AI 推理框架（如 TensorFlow/PyTorch 的 Ascend 后端）作为底层编译组件调用，处理模型图优化和内核融合。",
+    "trust_boundaries": [
+      {
+        "boundary": "Python JIT Compiler → C/C++ AOT Engine",
+        "trusted_side": "Python Compiler (semi-trusted)",
+        "untrusted_side": "AOT Engine (processes graph data from Python)",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "External AI Framework → ACL API",
+        "trusted_side": "AI Framework User",
+        "untrusted_side": "graph-autofusion Library",
+        "risk": "Low"
+      },
+      {
+        "boundary": "Environment Variables",
+        "trusted_side": "System Administrator",
+        "untrusted_side": "Library Code",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Configuration Options (aclskOptions)",
+        "trusted_side": "Application Developer",
+        "untrusted_side": "Library Code",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Binary/ELF Files",
+        "trusted_side": "Library Internal",
+        "untrusted_side": "Kernel Binaries (loaded from disk)",
+        "risk": "Medium"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "AOT Core Engine",
+      "path": "super_kernel/src/aot",
+      "language": "c_cpp",
+      "components": [
+        "super_kernel.cpp",
+        "sk_task_builder.cpp",
+        "sk_graph.cpp",
+        "sk_scope_split.cpp",
+        "sk_node.cpp",
+        "sk_constant_codegen.cpp",
+        "sk_event_recorder.cpp",
+        "sk_dfx_exception_handler.cpp",
+        "sk_log.cpp",
+        "sk_options_manager.cpp",
+        "sk_optimizer.cpp",
+        "sk_common.cpp"
+      ]
+    },
+    {
+      "name": "JIT Compiler",
+      "path": "super_kernel/src/jit/superkernel",
+      "language": "python",
+      "components": [
+        "super_kernel.py",
+        "super_kernel_compile_base.py",
+        "super_kernel_op_infos.py",
+        "super_kernel_option_parse.py",
+        "super_kernel_feature_manager.py",
+        "super_kernel_sub_op_infos.py"
+      ]
+    },
+    {
+      "name": "Package Scripts",
+      "path": "scripts/package",
+      "language": "mixed",
+      "components": [
+        "package.py",
+        "common/py/packer.py",
+        "common/py/pkg_parser.py",
+        "common/sh/*.sh",
+        "common/sh/*.inc",
+        "common/sh/*.bash"
+      ]
+    },
+    {
+      "name": "Tests",
+      "path": "super_kernel/tests",
+      "language": "mixed",
+      "components": [
+        "aot/ut/*.cpp",
+        "ut/*.py",
+        "st/*.py"
+      ]
+    }
+  ],
+  "files": [
+    {
+      "path": "super_kernel/src/aot/sk_task_builder.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "AOT Core Engine",
+      "lines": 1946,
+      "priority": 1,
+      "reason": "核心任务构建器，处理内核任务调度，使用 memcpy_s 操作设备内存，读取环境变量配置"
+    },
+    {
+      "path": "super_kernel/src/aot/sk_options_manager.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "AOT Core Engine",
+      "lines": 501,
+      "priority": 2,
+      "reason": "选项管理器，解析外部配置选项，包含正则匹配和字符串处理"
+    },
+    {
+      "path": "super_kernel/src/aot/sk_graph.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "AOT Core Engine",
+      "lines": 995,
+      "priority": 3,
+      "reason": "图处理引擎，管理节点关联和图更新"
+    },
+    {
+      "path": "super_kernel/src/aot/sk_scope_split.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "AOT Core Engine",
+      "lines": 1251,
+      "priority": 4,
+      "reason": "Scope 分割器，执行图优化 passes"
+    },
+    {
+      "path": "super_kernel/src/aot/super_kernel.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "AOT Core Engine",
+      "lines": 166,
+      "priority": 5,
+      "reason": "主入口点，暴露 aclskOptimize/aclskScopeBegin/aclskScopeEnd API"
+    },
+    {
+      "path": "super_kernel/src/aot/sk_constant_codegen.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "AOT Core Engine",
+      "lines": 900,
+      "priority": 6,
+      "reason": "常量代码生成器，生成设备侧代码，读取 SK_CONSTANT 环境变量"
+    },
+    {
+      "path": "super_kernel/src/aot/sk_log.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "AOT Core Engine",
+      "lines": 506,
+      "priority": 7,
+      "reason": "日志模块，文件写入操作，读取环境变量 ASCEND_OP_COMPILE_SAVE_KERNEL_META"
+    },
+    {
+      "path": "super_kernel/src/aot/sk_event_recorder.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "AOT Core Engine",
+      "lines": 752,
+      "priority": 8,
+      "reason": "事件记录器，使用 memcpy_s，读取 ENV_SK_EVENT_RECORD 环境变量"
+    },
+    {
+      "path": "super_kernel/src/aot/sk_common.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "AOT Core Engine",
+      "lines": 117,
+      "priority": 9,
+      "reason": "ELF 符号解析，直接解析二进制文件格式"
+    },
+    {
+      "path": "super_kernel/src/aot/sk_file_guard.h",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "AOT Core Engine",
+      "lines": 87,
+      "priority": 10,
+      "reason": "文件操作封装，使用 fopen 打开文件"
+    },
+    {
+      "path": "super_kernel/src/jit/superkernel/super_kernel.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "JIT Compiler",
+      "lines": 1300,
+      "priority": 11,
+      "reason": "JIT 编译主入口，生成内核源文件并写入磁盘"
+    },
+    {
+      "path": "super_kernel/src/jit/superkernel/super_kernel_op_infos.py",
+      "language": "python",
+      "risk": "High",
+      "module": "JIT Compiler",
+      "lines": 1500,
+      "priority": 12,
+      "reason": "操作信息处理，调用 subprocess.run 执行编译命令"
+    },
+    {
+      "path": "super_kernel/src/jit/superkernel/super_kernel_sub_op_infos.py",
+      "language": "python",
+      "risk": "High",
+      "module": "JIT Compiler",
+      "lines": 1500,
+      "priority": 13,
+      "reason": "子操作信息处理，调用 subprocess.run 执行 ar 命令解压二进制"
+    },
+    {
+      "path": "super_kernel/src/jit/superkernel/super_kernel_option_parse.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "JIT Compiler",
+      "lines": 194,
+      "priority": 14,
+      "reason": "选项解析器，解析用户提供的编译选项字符串"
+    },
+    {
+      "path": "scripts/package/package.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "Package Scripts",
+      "lines": 700,
+      "priority": 15,
+      "reason": "打包脚本入口，调用 subprocess.run 执行打包命令"
+    },
+    {
+      "path": "scripts/package/common/sh/common_func.inc",
+      "language": "mixed",
+      "risk": "High",
+      "module": "Package Scripts",
+      "lines": 1100,
+      "priority": 16,
+      "reason": "Shell 脚本函数库，大量使用 eval 进行变量赋值和命令执行"
+    },
+    {
+      "path": "scripts/package/common/sh/install_common_parser.sh",
+      "language": "mixed",
+      "risk": "High",
+      "module": "Package Scripts",
+      "lines": 1300,
+      "priority": 17,
+      "reason": "安装解析脚本，使用 eval 执行函数和命令"
+    },
+    {
+      "path": "scripts/package/common/py/packer.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "Package Scripts",
+      "lines": 170,
+      "priority": 18,
+      "reason": "打包器，创建软链接和组装打包命令"
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "super_kernel/src/aot/super_kernel.cpp",
+      "line": 77,
+      "function": "aclskOptimize",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "C API 入口，接收 aclmdlRI 模型句柄和 aclskOptions 配置选项，来自上层 AI 框架调用",
+      "description": "执行 Super Kernel 图优化，处理模型图并生成融合内核"
+    },
+    {
+      "file": "super_kernel/src/aot/super_kernel.cpp",
+      "line": 148,
+      "function": "aclskScopeBegin",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "C API 入口，接收 scopeName 字符串参数和 stream 句柄",
+      "description": "开始一个 Super Kernel scope 区域"
+    },
+    {
+      "file": "super_kernel/src/aot/super_kernel.cpp",
+      "line": 156,
+      "function": "aclskScopeEnd",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "C API 入口，接收 scopeName 字符串参数和 stream 句柄",
+      "description": "结束一个 Super Kernel scope 区域"
+    },
+    {
+      "file": "super_kernel/src/aot/sk_task_builder.cpp",
+      "line": 1551,
+      "function": "GenEntryInfo",
+      "type": "env",
+      "trust_level": "semi_trusted",
+      "justification": "读取环境变量 ASCEND_PROF_SK_ON 和 ASCEND_SK_OP_TRACE_ON 配置 profiling 功能",
+      "description": "生成 Super Kernel 入口信息，读取环境变量决定功能模式"
+    },
+    {
+      "file": "super_kernel/src/aot/sk_log.h",
+      "line": 423,
+      "function": "InitSkLogger",
+      "type": "env",
+      "trust_level": "semi_trusted",
+      "justification": "读取环境变量 ASCEND_OP_COMPILE_SAVE_KERNEL_META 控制日志输出",
+      "description": "初始化日志系统，由环境变量控制"
+    },
+    {
+      "file": "super_kernel/src/aot/sk_constant_codegen.cpp",
+      "line": 792,
+      "function": "TryGenerateConstantFuncHandle",
+      "type": "env",
+      "trust_level": "semi_trusted",
+      "justification": "读取环境变量 SK_CONSTANT 控制常量代码生成",
+      "description": "尝试生成常量化代码，由环境变量控制"
+    },
+    {
+      "file": "super_kernel/src/aot/sk_event_recorder.cpp",
+      "line": 115,
+      "function": "SkEventRecorder::Init",
+      "type": "env",
+      "trust_level": "semi_trusted",
+      "justification": "读取环境变量 ENV_SK_EVENT_RECORD 控制 profiling",
+      "description": "初始化事件记录器，由环境变量控制"
+    },
+    {
+      "file": "super_kernel/src/jit/superkernel/super_kernel.py",
+      "line": 905,
+      "function": "gen_super_kernel_file",
+      "type": "decorator",
+      "trust_level": "semi_trusted",
+      "justification": "Python JIT 编译入口，接收 super_operator 配置对象，生成内核源文件",
+      "description": "生成 Super Kernel 源代码文件"
+    },
+    {
+      "file": "super_kernel/src/jit/superkernel/super_kernel_option_parse.py",
+      "line": 171,
+      "function": "parse_super_kernel_options",
+      "type": "cmdline",
+      "trust_level": "semi_trusted",
+      "justification": "解析用户提供的编译选项字符串",
+      "description": "解析 Super Kernel 编译选项"
+    },
+    {
+      "file": "super_kernel/src/jit/superkernel/super_kernel_op_infos.py",
+      "line": 69,
+      "function": "compile_sub_kernel",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "调用 subprocess.run 执行编译命令",
+      "description": "编译子内核，调用外部编译工具"
+    },
+    {
+      "file": "scripts/package/package.py",
+      "line": 147,
+      "function": "execute_packaging",
+      "type": "cmdline",
+      "trust_level": "semi_trusted",
+      "justification": "打包脚本入口，接收命令行参数",
+      "description": "执行软件包打包流程"
+    }
+  ],
+  "attack_surfaces": [
+    "ACL C API: aclskOptimize/aclskScopeBegin/aclskScopeEnd - 接收模型句柄和配置选项",
+    "环境变量: ASCEND_PROF_SK_ON, ASCEND_SK_OP_TRACE_ON, ASCEND_OP_COMPILE_SAVE_KERNEL_META, SK_CONSTANT",
+    "配置选项结构体: aclskOptions (包含字符串列表和扩展选项)",
+    "Python 编译选项: 通过 parse_super_kernel_options 解析的选项字符串",
+    "编译工具链调用: subprocess.run 执行的 ar/编译命令",
+    "Shell 脚本 eval: 多处使用 eval 执行命令和赋值",
+    "ELF 二进制解析: sk_common.cpp 直接解析内核二进制文件",
+    "文件写入: 内核源文件、日志文件、JSON dump 文件"
+  ]
+}

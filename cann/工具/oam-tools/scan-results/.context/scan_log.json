@@ -1,0 +1,89 @@
+{
+  "scan_id": "766a4f6796874f1d",
+  "start_time": "2026-04-22T18:30:00Z",
+  "end_time": "2026-04-22T19:00:00Z",
+  "duration_seconds": 1800,
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/cann/6/oam-tools",
+  "project_name": "oam-tools",
+  "status": "success",
+  "summary": {
+    "total_vulnerabilities": 20,
+    "confirmed": 1,
+    "likely": 13,
+    "possible": 5,
+    "false_positive": 1,
+    "critical": 0,
+    "high": 13,
+    "medium": 4,
+    "low": 3
+  },
+  "output_files": [
+    "scan-results/.context/scan.db",
+    "scan-results/.context/project_model.json",
+    "scan-results/.context/call_graph.json",
+    "scan-results/.context/threat_analysis_report.md",
+    "scan-results/report_confirmed.md",
+    "scan-results/report_unconfirmed.md",
+    "scan-results/details/VULN-DF-PATH-001.md"
+  ],
+  "agents": [
+    {
+      "name": "architecture",
+      "start_time": "2026-04-22T18:30:00Z",
+      "end_time": "2026-04-22T18:38:00Z",
+      "status": "success",
+      "output_files": [
+        "project_model.json",
+        "call_graph.json",
+        "threat_analysis_report.md"
+      ],
+      "summary": "识别 4 个模块、多个高风险文件、命令执行入口点"
+    },
+    {
+      "name": "dataflow-scanner",
+      "start_time": "2026-04-22T18:38:00Z",
+      "end_time": "2026-04-22T18:45:00Z",
+      "status": "success",
+      "item_count": 7,
+      "summary": "发现 7 个数据流漏洞：CWE-78 命令注入 6 个，CWE-22 路径遍历 1 个"
+    },
+    {
+      "name": "security-auditor",
+      "start_time": "2026-04-22T18:38:00Z",
+      "end_time": "2026-04-22T18:45:00Z",
+      "status": "success",
+      "item_count": 15,
+      "summary": "发现 15 个安全漏洞：CWE-78 命令注入 13 个，CWE-349 Socket验证 1 个，CWE-306 缺少认证 1 个"
+    },
+    {
+      "name": "verification",
+      "start_time": "2026-04-22T18:45:00Z",
+      "end_time": "2026-04-22T18:50:00Z",
+      "status": "success",
+      "item_count": 20,
+      "summary": "验证 20 个漏洞：CONFIRMED 1, LIKELY 13, POSSIBLE 5, FALSE_POSITIVE 1"
+    },
+    {
+      "name": "details-analyzer",
+      "start_time": "2026-04-22T18:50:00Z",
+      "end_time": "2026-04-22T18:55:00Z",
+      "status": "success",
+      "item_count": 1,
+      "output_files": [
+        "details/VULN-DF-PATH-001.md"
+      ],
+      "summary": "生成 1 个 CONFIRMED 漏洞的深度分析报告"
+    },
+    {
+      "name": "reporter",
+      "start_time": "2026-04-22T18:55:00Z",
+      "end_time": "2026-04-22T19:00:00Z",
+      "status": "success",
+      "output_files": [
+        "report_confirmed.md",
+        "report_unconfirmed.md"
+      ],
+      "summary": "生成完整漏洞扫描报告，添加 Executive Summary、深度分析和修复建议"
+    }
+  ]
+}

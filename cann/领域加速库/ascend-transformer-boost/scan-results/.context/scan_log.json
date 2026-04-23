@@ -1,0 +1,111 @@
+{
+  "scan_id": "scan_20260421_232200",
+  "start_time": "2026-04-21T23:22:00Z",
+  "end_time": "2026-04-22T00:30:00Z",
+  "duration_seconds": 4800,
+  "project_name": "ascend-transformer-boost",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/cann/3/ascend-transformer-boost",
+  "status": "success",
+  "agents": [
+    {
+      "name": "architecture",
+      "start_time": "2026-04-21T23:22:30Z",
+      "end_time": "2026-04-21T23:50:00Z",
+      "duration_seconds": 1650,
+      "status": "success",
+      "output_files": [
+        "scan-results/.context/project_model.json",
+        "scan-results/.context/call_graph.json",
+        "scan-results/threat_analysis_report.md"
+      ],
+      "summary": {
+        "modules_identified": 18,
+        "entry_points": 6,
+        "security_patterns": 5,
+        "threats_documented": 8
+      }
+    },
+    {
+      "name": "dataflow-scanner",
+      "start_time": "2026-04-21T23:53:00Z",
+      "end_time": "2026-04-22T00:00:00Z",
+      "duration_seconds": 420,
+      "status": "success",
+      "modules_scanned": 18,
+      "vulnerabilities_found": 14,
+      "summary": {
+        "critical": 6,
+        "high": 10,
+        "medium": 6,
+        "key_attack_paths": [
+          "Python API tensor pointer → aclrtMemcpy",
+          "Socket bootstrap → rank spoofing → HCCL",
+          "AllGatherV recvCounts/rdispls → buffer overflow",
+          "Custom allocator → arbitrary code execution"
+        ]
+      }
+    },
+    {
+      "name": "security-auditor",
+      "start_time": "2026-04-21T23:53:00Z",
+      "end_time": "2026-04-22T00:00:00Z",
+      "duration_seconds": 245,
+      "status": "success",
+      "modules_scanned": 18,
+      "vulnerabilities_found": 8,
+      "summary": {
+        "critical": 3,
+        "high": 4,
+        "medium": 1,
+        "categories": [
+          "Authentication Bypass",
+          "Arbitrary Code Execution",
+          "Input Validation",
+          "Integer Overflow",
+          "Resource Exhaustion"
+        ]
+      }
+    },
+    {
+      "name": "verification",
+      "start_time": "2026-04-22T00:00:00Z",
+      "end_time": "2026-04-22T00:15:00Z",
+      "duration_seconds": 900,
+      "status": "success",
+      "vulnerabilities_verified": 22,
+      "summary": {
+        "confirmed": 3,
+        "likely": 11,
+        "possible": 1,
+        "false_positive": 7
+      }
+    },
+    {
+      "name": "details-analyzer",
+      "start_time": "2026-04-22T00:15:00Z",
+      "end_time": "2026-04-22T00:30:00Z",
+      "duration_seconds": 900,
+      "status": "success",
+      "output_files": [
+        "scan-results/details/SEC-001.md",
+        "scan-results/details/VULN-DF-TENSOR-001.md",
+        "scan-results/details/VULN-DF-MEM-001.md"
+      ],
+      "summary": {
+        "confirmed_analyzed": 3,
+        "reports_generated": 3
+      }
+    }
+  ],
+  "summary": {
+    "total_vulnerabilities": 22,
+    "confirmed": 3,
+    "likely": 11,
+    "possible": 1,
+    "false_positive": 7,
+    "critical": 2,
+    "high": 7,
+    "medium": 7,
+    "low": 5
+  }
+}

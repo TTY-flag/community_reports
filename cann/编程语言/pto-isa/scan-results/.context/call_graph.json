@@ -1,0 +1,229 @@
+{
+  "functions": {
+    "run_command@tests/run_cpu.py": {
+      "defined_at": 31,
+      "calls": [
+        "subprocess.run@stdlib",
+        "_format_cmd@tests/run_cpu.py",
+        "logging.info@stdlib"
+      ],
+      "called_by": [
+        "ensure_cmake_tools@tests/run_cpu.py",
+        "cmake_build@tests/run_cpu.py",
+        "generate_golden@tests/run_cpu.py",
+        "run_gtest_binary@tests/run_cpu.py",
+        "build_and_run_demo@tests/run_cpu.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "subprocess.run@stdlib": {
+      "defined_at": 0,
+      "calls": [],
+      "called_by": [
+        "run_command@tests/run_cpu.py",
+        "get_compiler_major_version@tests/run_cpu.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "generate_golden@tests/run_cpu.py": {
+      "defined_at": 272,
+      "calls": [
+        "shutil.copyfile@stdlib",
+        "run_command@tests/run_cpu.py"
+      ],
+      "called_by": [
+        "run_selected_tests@tests/run_cpu.py"
+      ],
+      "receives_external_input": false,
+      "risk": "Low"
+    },
+    "download_pto_isa_run@scripts/install_pto.sh": {
+      "defined_at": 96,
+      "calls": [
+        "wget@external",
+        "mkdir@stdlib"
+      ],
+      "called_by": [
+        "main@scripts/install_pto.sh"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "install_gtest@scripts/install_pto.sh": {
+      "defined_at": 149,
+      "calls": [
+        "git clone@external",
+        "cmake@external",
+        "make@external",
+        "sudo make install@external"
+      ],
+      "called_by": [
+        "main@scripts/install_pto.sh"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "TADD@include/pto/common/pto_instr.hpp": {
+      "defined_at": 73,
+      "calls": [
+        "TSYNC@include/pto/common/pto_instr.hpp",
+        "TADD_IMPL@include/pto/common/pto_instr_impl.hpp"
+      ],
+      "called_by": [
+        "kernel_gemm@kernels/manual/a2a3/gemm_performance"
+      ],
+      "receives_external_input": false,
+      "risk": "Low"
+    },
+    "TMATMUL@include/pto/common/pto_instr.hpp": {
+      "defined_at": 526,
+      "calls": [
+        "TSYNC@include/pto/common/pto_instr.hpp",
+        "TMATMUL_IMPL@include/pto/npu/a2a3/TMatmul.hpp"
+      ],
+      "called_by": [
+        "kernel_gemm@kernels/manual/a2a3/gemm_performance",
+        "flash_attention_kernel@kernels/manual/common/flash_atten"
+      ],
+      "receives_external_input": false,
+      "risk": "Low"
+    },
+    "TLOAD@include/pto/common/pto_instr.hpp": {
+      "defined_at": 154,
+      "calls": [
+        "TSYNC@include/pto/common/pto_instr.hpp",
+        "TLOAD_IMPL@include/pto/cpu/TLoad.hpp"
+      ],
+      "called_by": [
+        "kernel_gemm@kernels/manual/a2a3/gemm_performance"
+      ],
+      "receives_external_input": false,
+      "risk": "Low"
+    },
+    "TSTORE@include/pto/common/pto_instr.hpp": {
+      "defined_at": 219,
+      "calls": [
+        "TSYNC@include/pto/common/pto_instr.hpp",
+        "TSTORE_IMPL@include/pto/cpu/TStore.hpp"
+      ],
+      "called_by": [
+        "kernel_gemm@kernels/manual/a2a3/gemm_performance"
+      ],
+      "receives_external_input": false,
+      "risk": "Low"
+    },
+    "TPUT@include/pto/comm/TPut.hpp": {
+      "defined_at": 1,
+      "calls": [
+        "TPUT_IMPL@include/pto/npu/comm"
+      ],
+      "called_by": [
+        "gemm_ar_kernel@kernels/manual/a2a3/gemm_ar"
+      ],
+      "receives_external_input": false,
+      "risk": "Low"
+    },
+    "TGET@include/pto/comm/TGet.hpp": {
+      "defined_at": 1,
+      "calls": [
+        "TGET_IMPL@include/pto/npu/comm"
+      ],
+      "called_by": [
+        "gemm_ar_kernel@kernels/manual/a2a3/gemm_ar",
+        "tget_bandwidth_kernel@kernels/manual/a2a3/tget_bandwidth"
+      ],
+      "receives_external_input": false,
+      "risk": "Low"
+    },
+    "TASSIGN@include/pto/common/pto_instr.hpp": {
+      "defined_at": 28,
+      "calls": [
+        "TASSIGN_IMPL@include/pto/common/pto_instr_impl.hpp"
+      ],
+      "called_by": [
+        "kernel_gemm@kernels/manual/a2a3/gemm_performance"
+      ],
+      "receives_external_input": false,
+      "risk": "Low"
+    },
+    "detect_compilers@tests/run_cpu.py": {
+      "defined_at": 224,
+      "calls": [
+        "_auto_detect_compilers@tests/run_cpu.py",
+        "_derive_cc_from_cxx@tests/run_cpu.py",
+        "shutil.which@stdlib",
+        "cmake_friendly_path@tests/run_cpu.py"
+      ],
+      "called_by": [
+        "main@tests/run_cpu.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "parse_arguments@tests/run_cpu.py": {
+      "defined_at": 440,
+      "calls": [
+        "argparse.ArgumentParser@stdlib"
+      ],
+      "called_by": [
+        "main@tests/run_cpu.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "argparse.ArgumentParser@tests/run_cpu.py:440",
+      "path": [
+        "parse_arguments@tests/run_cpu.py:440",
+        "main@tests/run_cpu.py:729",
+        "detect_compilers@tests/run_cpu.py:224",
+        "shutil.which@stdlib"
+      ],
+      "sink": "shutil.which@stdlib",
+      "sink_type": "environment_access"
+    },
+    {
+      "source": "argparse.ArgumentParser@tests/run_cpu.py:440",
+      "path": [
+        "parse_arguments@tests/run_cpu.py:440",
+        "main@tests/run_cpu.py:729",
+        "run_command@tests/run_cpu.py:31",
+        "subprocess.run@stdlib"
+      ],
+      "sink": "subprocess.run@stdlib",
+      "sink_type": "process_execution"
+    },
+    {
+      "source": "wget@scripts/install_pto.sh:96",
+      "path": [
+        "download_pto_isa_run@scripts/install_pto.sh:96",
+        "wget@external"
+      ],
+      "sink": "wget@external",
+      "sink_type": "network_download"
+    },
+    {
+      "source": "git clone@scripts/install_pto.sh:149",
+      "path": [
+        "install_gtest@scripts/install_pto.sh:149",
+        "git clone@external"
+      ],
+      "sink": "git clone@external",
+      "sink_type": "network_download"
+    },
+    {
+      "source": "gen_data.py@tests/cpu/st",
+      "path": [
+        "generate_golden@tests/run_cpu.py:272",
+        "run_command@tests/run_cpu.py:31",
+        "subprocess.run@stdlib"
+      ],
+      "sink": "subprocess.run@stdlib",
+      "sink_type": "process_execution"
+    }
+  ]
+}

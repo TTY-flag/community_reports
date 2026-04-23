@@ -1,0 +1,446 @@
+{
+  "project_name": "ops-cv",
+  "scan_time": "2026-04-21T23:18:00Z",
+  "lsp_available": false,
+  "total_files": 680,
+  "total_lines": 53278,
+  "project_profile": {
+    "project_type": "library",
+    "deployment_model": "Deployed as shared library (libcv_op_api.so, libcv_aicpu_kernels.so) loaded by ML frameworks (PyTorch/TensorFlow via CANN runtime) on Huawei Ascend NPU servers. Operators process tensor data from user models.",
+    "trust_boundaries": [
+      {
+        "boundary": "User Application ↔ Operator API",
+        "trusted_side": "Operator Library Internal",
+        "untrusted_side": "User Application / ML Framework",
+        "risk": "High"
+      },
+      {
+        "boundary": "Host CPU ↔ NPU AI Core",
+        "trusted_side": "Host-side Code (op_host)",
+        "untrusted_side": "NPU Kernel Code (op_kernel)",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Host CPU ↔ AICPU",
+        "trusted_side": "Host-side Code",
+        "untrusted_side": "AICPU Kernel Code",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Model Input Data ↔ Operator Processing",
+        "trusted_side": "Operator Internal Logic",
+        "untrusted_side": "Input Tensor Data from Model",
+        "risk": "Critical"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "image_resize",
+      "path": "image",
+      "language": "c_cpp",
+      "components": [
+        "resize_bilinear_v2",
+        "resize_bicubic_v2",
+        "resize_linear",
+        "resize_nearest_neighbor_v2",
+        "resize_d",
+        "resize_grad",
+        "resize_grad_d",
+        "resize_upsample_trilinear"
+      ]
+    },
+    {
+      "name": "image_upsample",
+      "path": "image",
+      "language": "c_cpp",
+      "components": [
+        "upsample_bilinear2d",
+        "upsample_bicubic2d",
+        "upsample_nearest",
+        "upsample_linear1d",
+        "upsample_nearest3d",
+        "upsample_nearest_exact2d_grad",
+        "upsample_nearest_exact3d",
+        "upsample_trilinear3d_backward"
+      ]
+    },
+    {
+      "name": "image_grid_sample",
+      "path": "image",
+      "language": "c_cpp",
+      "components": [
+        "grid_sample",
+        "grid_sampler2_d_grad",
+        "grid_sampler3_d_grad",
+        "grid_sample2_d",
+        "grid_sample3_d"
+      ]
+    },
+    {
+      "name": "image_transform",
+      "path": "image",
+      "language": "c_cpp",
+      "components": [
+        "col2im",
+        "crop_and_resize",
+        "spatial_transformer",
+        "image_warp_offsets",
+        "scale_and_translate",
+        "affine_grid"
+      ]
+    },
+    {
+      "name": "image_other",
+      "path": "image",
+      "language": "c_cpp",
+      "components": [
+        "adjust_saturation",
+        "aipp",
+        "rasterizer",
+        "three_interpolate_backward",
+        "non_max_suppression_v3"
+      ]
+    },
+    {
+      "name": "objdetect_roi",
+      "path": "objdetect",
+      "language": "c_cpp",
+      "components": [
+        "roi_align",
+        "roi_align_grad",
+        "roi_align_rotated",
+        "roi_align_rotated_grad",
+        "roi_pooling_with_arg_max",
+        "roi_pooling_grad_with_arg_max"
+      ]
+    },
+    {
+      "name": "objdetect_nms",
+      "path": "objdetect",
+      "language": "c_cpp",
+      "components": [
+        "non_max_suppression_v6",
+        "iou_v2",
+        "ciou"
+      ]
+    },
+    {
+      "name": "objdetect_other",
+      "path": "objdetect",
+      "language": "c_cpp",
+      "components": [
+        "background_replace",
+        "blend_images_custom",
+        "mrgba_custom",
+        "stack_group_points"
+      ]
+    },
+    {
+      "name": "common",
+      "path": "common",
+      "language": "c_cpp",
+      "components": [
+        "src/common",
+        "src/op_host",
+        "src/framework",
+        "inc/op_api",
+        "inc/op_host",
+        "inc/aicpu"
+      ]
+    },
+    {
+      "name": "scripts",
+      "path": "scripts",
+      "language": "python",
+      "components": [
+        "opgen",
+        "kernel",
+        "package",
+        "ci",
+        "tools",
+        "util"
+      ]
+    }
+  ],
+  "files": [
+    {
+      "path": "image/grid_sample/op_kernel/grid_sample.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "image_grid_sample",
+      "lines": 217,
+      "priority": 1
+    },
+    {
+      "path": "image/non_max_suppression_v3/op_kernel_aicpu/non_max_suppression_v3_aicpu.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "image_other",
+      "lines": 290,
+      "priority": 1
+    },
+    {
+      "path": "image/crop_and_resize/op_kernel_aicpu/crop_and_resize_aicpu.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "image_transform",
+      "lines": 200,
+      "priority": 1
+    },
+    {
+      "path": "image/spatial_transformer/op_kernel_aicpu/spatial_transformer_aicpu.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "image_transform",
+      "lines": 250,
+      "priority": 1
+    },
+    {
+      "path": "image/scale_and_translate/op_kernel_aicpu/scale_and_translate_aicpu.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "image_transform",
+      "lines": 200,
+      "priority": 1
+    },
+    {
+      "path": "image/image_warp_offsets/op_kernel_aicpu/image_warp_offsets_aicpu.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "image_transform",
+      "lines": 150,
+      "priority": 1
+    },
+    {
+      "path": "objdetect/roi_align/op_host/op_api/aclnn_roi_align_v2.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "objdetect_roi",
+      "lines": 229,
+      "priority": 2
+    },
+    {
+      "path": "objdetect/roi_pooling_with_arg_max/op_api/aclnn_roi_pooling_with_arg_max.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "objdetect_roi",
+      "lines": 200,
+      "priority": 2
+    },
+    {
+      "path": "objdetect/non_max_suppression_v6/op_host/op_api/aclnn_non_max_suppression.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "objdetect_nms",
+      "lines": 250,
+      "priority": 2
+    },
+    {
+      "path": "objdetect/iou_v2/op_api/aclnn_iou.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "objdetect_nms",
+      "lines": 150,
+      "priority": 2
+    },
+    {
+      "path": "image/col2im/op_api/aclnn_im2col_backward.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "image_transform",
+      "lines": 337,
+      "priority": 2
+    },
+    {
+      "path": "image/grid_sample/op_api/aclnn_grid_sampler2d.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "image_grid_sample",
+      "lines": 250,
+      "priority": 2
+    },
+    {
+      "path": "image/grid_sample/op_api/aclnn_grid_sampler3d.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "image_grid_sample",
+      "lines": 250,
+      "priority": 2
+    },
+    {
+      "path": "image/resize_bilinear_v2/op_api/aclnn_resize.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "image_resize",
+      "lines": 200,
+      "priority": 2
+    },
+    {
+      "path": "image/upsample_bilinear2d/op_host/op_api/aclnn_upsample_bilinear_2d.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "image_upsample",
+      "lines": 200,
+      "priority": 2
+    },
+    {
+      "path": "common/src/op_host/tiling_util.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "common",
+      "lines": 54,
+      "priority": 3
+    },
+    {
+      "path": "common/src/framework/npu_nms_v4_onnx_plugin.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "common",
+      "lines": 150,
+      "priority": 3
+    },
+    {
+      "path": "common/inc/external/aclnn_kernels/common/op_error_check.h",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "common",
+      "lines": 251,
+      "priority": 3
+    },
+    {
+      "path": "common/inc/op_api/level2_base.h",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "common",
+      "lines": 50,
+      "priority": 3
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "image/grid_sample/op_api/aclnn_grid_sampler2d.cpp",
+      "line": 1,
+      "function": "aclnnGridSampler2DGetWorkspaceSize",
+      "type": "rpc",
+      "trust_level": "untrusted_network",
+      "justification": "aclnn API entry point, receives aclTensor pointers from user application via CANN runtime",
+      "description": "Grid sample 2D operator API entry - processes input tensor and grid coordinates from user"
+    },
+    {
+      "file": "image/grid_sample/op_api/aclnn_grid_sampler3d.cpp",
+      "line": 1,
+      "function": "aclnnGridSampler3DGetWorkspaceSize",
+      "type": "rpc",
+      "trust_level": "untrusted_network",
+      "justification": "aclnn API entry point, receives aclTensor pointers from user application via CANN runtime",
+      "description": "Grid sample 3D operator API entry - processes input tensor and grid coordinates from user"
+    },
+    {
+      "file": "image/col2im/op_api/aclnn_im2col_backward.cpp",
+      "line": 242,
+      "function": "aclnnIm2colBackwardGetWorkspaceSize",
+      "type": "rpc",
+      "trust_level": "untrusted_network",
+      "justification": "aclnn API entry point, receives gradOutput tensor and kernel/stride/padding parameters from user",
+      "description": "Col2im backward operator - receives gradient tensor and convolution parameters"
+    },
+    {
+      "file": "objdetect/roi_align/op_host/op_api/aclnn_roi_align_v2.cpp",
+      "line": 158,
+      "function": "aclnnRoiAlignV2GetWorkspaceSize",
+      "type": "rpc",
+      "trust_level": "untrusted_network",
+      "justification": "aclnn API entry point, receives input tensor and ROI boxes from user detection model",
+      "description": "ROI align V2 operator - processes feature map and region proposals from detection model"
+    },
+    {
+      "file": "objdetect/roi_pooling_with_arg_max/op_api/aclnn_roi_pooling_with_arg_max.cpp",
+      "line": 1,
+      "function": "aclnnRoiPoolingWithArgMaxGetWorkspaceSize",
+      "type": "rpc",
+      "trust_level": "untrusted_network",
+      "justification": "aclnn API entry point, receives input tensor and ROI boxes from user",
+      "description": "ROI pooling operator - processes feature map and region proposals"
+    },
+    {
+      "file": "objdetect/non_max_suppression_v6/op_host/op_api/aclnn_non_max_suppression.cpp",
+      "line": 1,
+      "function": "aclnnNonMaxSuppressionGetWorkspaceSize",
+      "type": "rpc",
+      "trust_level": "untrusted_network",
+      "justification": "aclnn API entry point, receives boxes and scores tensors from detection model output",
+      "description": "Non-maximum suppression operator - processes detection boxes and scores"
+    },
+    {
+      "file": "objdetect/iou_v2/op_api/aclnn_iou.cpp",
+      "line": 1,
+      "function": "aclnnIouGetWorkspaceSize",
+      "type": "rpc",
+      "trust_level": "untrusted_network",
+      "justification": "aclnn API entry point, receives bboxes tensors from detection model",
+      "description": "IoU calculation operator - processes bounding box tensors"
+    },
+    {
+      "file": "objdetect/ciou/op_api/aclnn_ciou.cpp",
+      "line": 1,
+      "function": "aclnnCIoUGetWorkspaceSize",
+      "type": "rpc",
+      "trust_level": "untrusted_network",
+      "justification": "aclnn API entry point, receives bboxes tensors from detection model",
+      "description": "CIoU calculation operator - processes bounding box tensors"
+    },
+    {
+      "file": "image/resize_bilinear_v2/op_api/aclnn_resize.cpp",
+      "line": 1,
+      "function": "aclnnResizeGetWorkspaceSize",
+      "type": "rpc",
+      "trust_level": "untrusted_network",
+      "justification": "aclnn API entry point, receives input tensor and size parameters from user",
+      "description": "Resize bilinear operator - processes input image tensor"
+    },
+    {
+      "file": "image/non_max_suppression_v3/op_kernel_aicpu/non_max_suppression_v3_aicpu.cpp",
+      "line": 263,
+      "function": "NonMaxSuppressionV3CpuKernel::Compute",
+      "type": "rpc",
+      "trust_level": "untrusted_network",
+      "justification": "AICPU kernel entry point, called via kernel dispatch from host code",
+      "description": "AICPU NMS implementation - directly processes tensor data"
+    },
+    {
+      "file": "image/crop_and_resize/op_kernel_aicpu/crop_and_resize_aicpu.cpp",
+      "line": 1,
+      "function": "CropAndResizeCpuKernel::Compute",
+      "type": "rpc",
+      "trust_level": "untrusted_network",
+      "justification": "AICPU kernel entry point, processes image tensor and crop boxes",
+      "description": "AICPU crop and resize implementation"
+    },
+    {
+      "file": "image/spatial_transformer/op_kernel_aicpu/spatial_transformer_aicpu.cpp",
+      "line": 1,
+      "function": "SpatialTransformerCpuKernel::Compute",
+      "type": "rpc",
+      "trust_level": "untrusted_network",
+      "justification": "AICPU kernel entry point, processes input tensor and transformation parameters",
+      "description": "AICPU spatial transformer implementation"
+    },
+    {
+      "file": "image/grid_sample/op_kernel/grid_sample.cpp",
+      "line": 38,
+      "function": "grid_sample",
+      "type": "rpc",
+      "trust_level": "untrusted_network",
+      "justification": "AI Core kernel entry point, receives GM_ADDR pointers to tensor data",
+      "description": "AI Core grid sample kernel - processes tensor data directly on NPU"
+    }
+  ],
+  "attack_surfaces": [
+    "aclnn API Interface: All aclnn*GetWorkspaceSize functions receive user-controlled tensor data",
+    "AICPU Kernel Dispatch: AICPU kernels process raw tensor data from model inference",
+    "AI Core Kernel Execution: op_kernel/*.cpp files receive GM_ADDR pointers to user tensor data",
+    "ONNX Plugin Interface: common/src/framework/*.cpp files handle ONNX model conversion",
+    "Python Scripts: scripts/ directory contains build/package scripts that may process model files"
+  ]
+}

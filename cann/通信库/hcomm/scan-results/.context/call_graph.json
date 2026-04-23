@@ -1,0 +1,366 @@
+{
+  "functions": {
+    "HcclCommInitClusterInfo@include/hccl/hccl_comm.h": {
+      "defined_at": 34,
+      "calls": [
+        "HcomInit@src/framework/hcom/hcom.cc",
+        "HcclInitComm@src/hccd/hccd.cc",
+        "ParseFileToJson@src/legacy/framework/misc/json_parser/json_parser.cc"
+      ],
+      "called_by": [
+        "Application_Main@external"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "HcomInit@src/framework/hcom/hcom.cc": {
+      "defined_at": 68,
+      "calls": [
+        "InitHcomMiscInfo@src/framework/hcom/hcom.cc",
+        "CfgGetClusterInfo@src/framework/common/src/topo/topoinfo_ranktableParser.cc",
+        "InitExternalInput@src/platform/common/externalinput.cc",
+        "HcomCheckInitClusterInfo@src/framework/hcom/hcom.cc"
+      ],
+      "called_by": [
+        "HcclCommInitClusterInfo@include/hccl/hccl_comm.h"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "ParseFileToJson@src/legacy/framework/misc/json_parser/json_parser.cc": {
+      "defined_at": 73,
+      "calls": [
+        "realpath@stdlib",
+        "std::ifstream@stdlib",
+        "ParseInformation@nlohmann/json"
+      ],
+      "called_by": [
+        "HcomInit@src/framework/hcom/hcom.cc",
+        "HcclInitComm@src/hccd/hccd.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "InitEnvParam@src/framework/common/src/config/env_config.cc": {
+      "defined_at": 112,
+      "calls": [
+        "ParseHostSocketPortRange@src/framework/common/src/config/env_config.cc",
+        "ParseNpuSocketPortRange@src/framework/common/src/config/env_config.cc",
+        "ParseDFSConfig@src/framework/common/src/config/env_config.cc",
+        "MM_SYS_GET_ENV@stdlib"
+      ],
+      "called_by": [
+        "InitEnvConfig@src/framework/common/src/config/env_config.cc",
+        "InitExternalInput@src/platform/common/externalinput.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "RsSocketInit@src/platform/hccp/rdma_service/rs_socket.c": {
+      "defined_at": 42,
+      "calls": [
+        "memcpy_s@securec"
+      ],
+      "called_by": [
+        "RsInit@src/platform/hccp/rdma_service/rs.c"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "RsServerValidAsync@src/platform/hccp/rdma_service/rs_socket.c": {
+      "defined_at": 173,
+      "calls": [
+        "RsServerValidAsyncInit@src/platform/hccp/rdma_service/rs_socket.c",
+        "RsFindWhiteList@src/platform/hccp/rdma_service/rs_socket.c",
+        "RsServerSendWlistCheckResult@src/platform/hccp/rdma_service/rs_socket.c",
+        "RsFindWhiteListNode@src/platform/hccp/rdma_service/rs_socket.c"
+      ],
+      "called_by": [
+        "RsSocketAccept@src/platform/hccp/rdma_service/rs_socket.c"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "RsSocketAccept@src/platform/hccp/rdma_service/rs_socket.c": {
+      "defined_at": 400,
+      "calls": [
+        "accept@libc",
+        "RsServerValidAsync@src/platform/hccp/rdma_service/rs_socket.c",
+        "ssl_adp_write@src/platform/hccp/rdma_service/rs_tls.c"
+      ],
+      "called_by": [
+        "RsEpollDispatch@src/platform/hccp/rdma_service/rs_epoll.c"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "RsSocketRecv@src/platform/hccp/rdma_service/rs_socket.c": {
+      "defined_at": 500,
+      "calls": [
+        "recv@libc",
+        "ssl_adp_read@src/platform/hccp/rdma_service/rs_tls.c"
+      ],
+      "called_by": [
+        "RsEpollRecvHandle@src/platform/hccp/rdma_service/rs_epoll.c"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "RsEpollRecvHandle@src/platform/hccp/rdma_service/rs_epoll.c": {
+      "defined_at": 100,
+      "calls": [
+        "RsSocketRecv@src/platform/hccp/rdma_service/rs_socket.c",
+        "RsRdmaRecv@src/platform/hccp/rdma_service/rs_rdma.c"
+      ],
+      "called_by": [
+        "RsEpollLoop@src/platform/hccp/rdma_service/rs_epoll.c"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "RsQpStateModify@src/platform/hccp/rdma_service/rs_rdma.c": {
+      "defined_at": 142,
+      "calls": [
+        "RsIbvQueryQp@src/platform/hccp/rdma_service/dl_ibverbs_function.c",
+        "RsDrvQpStateModifytoReset@src/platform/hccp/rdma_service/rs_drv_rdma.c",
+        "RsDrvQpStateModifytoInit@src/platform/hccp/rdma_service/rs_drv_rdma.c",
+        "RsDrvQpStateModifytoRtr@src/platform/hccp/rdma_service/rs_drv_rdma.c",
+        "RsDrvQpStateModifytoRts@src/platform/hccp/rdma_service/rs_drv_rdma.c"
+      ],
+      "called_by": [
+        "RsEpollRecvQpHandle@src/platform/hccp/rdma_service/rs_rdma.c"
+      ],
+      "receives_external_input": false,
+      "risk": "High"
+    },
+    "RsEpollRecvQpHandle@src/platform/hccp/rdma_service/rs_rdma.c": {
+      "defined_at": 200,
+      "calls": [
+        "RsNotifyMrListAdd@src/platform/hccp/rdma_service/rs_rdma.c",
+        "RsQpStateModify@src/platform/hccp/rdma_service/rs_rdma.c",
+        "ibv_post_recv@libibverbs"
+      ],
+      "called_by": [
+        "RsEpollRecvHandle@src/platform/hccp/rdma_service/rs_epoll.c"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "ibv_post_recv@src/platform/hccp/rdma_service/rs_rdma.c": {
+      "defined_at": 300,
+      "calls": [
+        "ibv_post_recv@libibverbs"
+      ],
+      "called_by": [
+        "RsEpollRecvQpHandle@src/platform/hccp/rdma_service/rs_rdma.c",
+        "RsRdmaInit@src/platform/hccp/rdma_service/rs_rdma.c"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "ibv_post_send@src/platform/hccp/rdma_service/rs_rdma.c": {
+      "defined_at": 350,
+      "calls": [
+        "ibv_post_send@libibverbs"
+      ],
+      "called_by": [
+        "RsRdmaSend@src/platform/hccp/rdma_service/rs_rdma.c",
+        "RsDrvRdmaWrite@src/platform/hccp/rdma_service/rs_drv_rdma.c"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "HcclRawConnect@src/hccd/hccl_raw.cc": {
+      "defined_at": 57,
+      "calls": [
+        "HcclCommConnMgr::IsExistCommConn@src/hccd/hccl_comm_conn_mgr.cc",
+        "HcclCommConnMgr::IsExceedMaxLinkNum@src/hccd/hccl_comm_conn_mgr.cc",
+        "HcclCommConn::Connect@src/hccd/hccl_comm_conn.cc"
+      ],
+      "called_by": [
+        "HcclRawOpen@src/hccd/hccl_raw.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "HcclRawAccept@src/hccd/hccl_raw.cc": {
+      "defined_at": 108,
+      "calls": [
+        "HcclCommConn::Accept@src/hccd/hccl_comm_conn.cc",
+        "HcclCommConnMgr::AddCommConn@src/hccd/hccl_comm_conn_mgr.cc"
+      ],
+      "called_by": [
+        "HcclRawListen@src/hccd/hccl_raw.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "HcclRawIsend@src/hccd/hccl_raw.cc": {
+      "defined_at": 126,
+      "calls": [
+        "HcclCommConn::Isend@src/hccd/hccl_comm_conn.cc"
+      ],
+      "called_by": [
+        "Application_Send@external"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "GetJsonProperty@src/legacy/framework/misc/json_parser/json_parser.cc": {
+      "defined_at": 16,
+      "calls": [
+        "nlohmann::json::at@nlohmann/json",
+        "nlohmann::json::value@nlohmann/json"
+      ],
+      "called_by": [
+        "ParseFileToJson@src/legacy/framework/misc/json_parser/json_parser.cc",
+        "CfgGetClusterInfo@src/framework/common/src/topo/topoinfo_ranktableParser.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "HcommWriteOnThread@include/hcomm_primitives.h": {
+      "defined_at": 167,
+      "calls": [
+        "HcommChannelWrite@src/platform/comm_primitive/hccl_primitive_remote.cc",
+        "HcommWriteNbi@include/hcomm_primitives.h"
+      ],
+      "called_by": [
+        "CollExecutor::Execute@src/algorithm/impl/coll_executor/coll_comm_executor.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "HcommReadOnThread@include/hcomm_primitives.h": {
+      "defined_at": 226,
+      "calls": [
+        "HcommChannelRead@src/platform/comm_primitive/hccl_primitive_remote.cc"
+      ],
+      "called_by": [
+        "CollExecutor::Execute@src/algorithm/impl/coll_executor/coll_comm_executor.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "RaPeerInit@src/platform/hccp/rdma_agent/peer/ra_peer.c": {
+      "defined_at": 50,
+      "calls": [
+        "RaPeerSocketInit@src/platform/hccp/rdma_agent/peer/ra_peer_socket.c",
+        "RaPeerCtxInit@src/platform/hccp/rdma_agent/peer/ra_peer_ctx.c"
+      ],
+      "called_by": [
+        "RaInit@src/platform/hccp/rdma_agent/client/ra_init.c"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "DlHalGetDeviceInfo@src/platform/hccp/common/dl_hal_function.c": {
+      "defined_at": 100,
+      "calls": [
+        "ascend_hal_query_device_info@libascend_hal"
+      ],
+      "called_by": [
+        "RsSocketNodeid2vnic@src/platform/hccp/rdma_service/rs_socket.c",
+        "RaPeerInit@src/platform/hccp/rdma_agent/peer/ra_peer.c"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "AllReduceOperator::Execute@src/algorithm/impl/operator/all_reduce_operator.cc": {
+      "defined_at": 100,
+      "calls": [
+        "CollAllReduceExecutor::Execute@src/algorithm/impl/coll_executor/coll_all_reduce/coll_all_reduce_executor.cc",
+        "HcommWriteOnThread@include/hcomm_primitives.h",
+        "HcommReadOnThread@include/hcomm_primitives.h"
+      ],
+      "called_by": [
+        "OpBase::ExecuteOp@src/framework/op_base/src/op_base.cc"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "recv@src/platform/hccp/rdma_service/rs_socket.c:500",
+      "path": [
+        "RsEpollRecvHandle@src/platform/hccp/rdma_service/rs_epoll.c:100",
+        "RsServerValidAsync@src/platform/hccp/rdma_service/rs_socket.c:173"
+      ],
+      "sink": "memcpy_s@src/platform/hccp/rdma_service/rs_socket.c:50",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "ibv_post_recv@src/platform/hccp/rdma_service/rs_rdma.c:300",
+      "path": [
+        "RsEpollRecvQpHandle@src/platform/hccp/rdma_service/rs_rdma.c:200",
+        "RsNotifyMrListAdd@src/platform/hccp/rdma_service/rs_rdma.c:116"
+      ],
+      "sink": "memcpy_s@src/platform/hccp/rdma_service/rs_rdma.c:123",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "std::ifstream@src/legacy/framework/misc/json_parser/json_parser.cc:86",
+      "path": [
+        "ParseFileToJson@src/legacy/framework/misc/json_parser/json_parser.cc:73",
+        "GetJsonProperty@src/legacy/framework/misc/json_parser/json_parser.cc:16"
+      ],
+      "sink": "CfgGetClusterInfo@src/framework/common/src/topo/topoinfo_ranktableParser.cc",
+      "sink_type": "config_parsing"
+    },
+    {
+      "source": "MM_SYS_GET_ENV@src/framework/common/src/config/env_config.cc:116",
+      "path": [
+        "InitEnvParam@src/framework/common/src/config/env_config.cc:112",
+        "ParseHostSocketPortRange@src/framework/common/src/config/env_config.cc:114"
+      ],
+      "sink": "bind@src/platform/resource/socket/hccl_socket.cc",
+      "sink_type": "socket_bind"
+    },
+    {
+      "source": "HcclCommInitClusterInfo@include/hccl/hccl_comm.h:34",
+      "path": [
+        "HcomInit@src/framework/hcom/hcom.cc:68",
+        "ParseFileToJson@src/legacy/framework/misc/json_parser/json_parser.cc:73"
+      ],
+      "sink": "realpath@src/legacy/framework/misc/json_parser/json_parser.cc:77",
+      "sink_type": "path_traversal"
+    },
+    {
+      "source": "accept@src/hccd/hccl_raw.cc:108",
+      "path": [
+        "HcclRawAccept@src/hccd/hccl_raw.cc:108",
+        "HcclCommConn::Accept@src/hccd/hccl_comm_conn.cc"
+      ],
+      "sink": "recv@src/hccd/hccl_comm_conn.cc",
+      "sink_type": "network_input"
+    },
+    {
+      "source": "HcclRawConnect@src/hccd/hccl_raw.cc:57",
+      "path": [
+        "HcclCommConn::Connect@src/hccd/hccl_comm_conn.cc",
+        "connect@libc"
+      ],
+      "sink": "send@src/hccd/hccl_comm_conn.cc",
+      "sink_type": "network_output"
+    },
+    {
+      "source": "HcommWriteOnThread@include/hcomm_primitives.h:167",
+      "path": [
+        "HcommChannelWrite@src/platform/comm_primitive/hccl_primitive_remote.cc",
+        "RsDrvRdmaWrite@src/platform/hccp/rdma_service/rs_drv_rdma.c"
+      ],
+      "sink": "ibv_post_send@src/platform/hccp/rdma_service/rs_rdma.c:350",
+      "sink_type": "rdma_write"
+    },
+    {
+      "source": "HcommReadOnThread@include/hcomm_primitives.h:226",
+      "path": [
+        "HcommChannelRead@src/platform/comm_primitive/hccl_primitive_remote.cc",
+        "RsDrvRdmaRead@src/platform/hccp/rdma_service/rs_drv_rdma.c"
+      ],
+      "sink": "ibv_post_recv@src/platform/hccp/rdma_service/rs_rdma.c:300",
+      "sink_type": "rdma_read"
+    }
+  ]
+}

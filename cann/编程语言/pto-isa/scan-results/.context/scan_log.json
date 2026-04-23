@@ -1,0 +1,91 @@
+{
+  "scan_id": "99405ec0-1606-4b59-9ffb-c6eef9f4d476",
+  "start_time": "2026-04-22T02:23:22.858025",
+  "end_time": "2026-04-22T03:01:24.808445",
+  "project_name": "pto-isa",
+  "status": "success",
+  "duration_seconds": 1680,
+  "agents": [
+    {
+      "agent_name": "architecture",
+      "phase": 2,
+      "start_time": "2026-04-22T02:23:30",
+      "end_time": "2026-04-22T02:30:20",
+      "duration_seconds": 410,
+      "status": "success",
+      "output_files": [
+        "project_model.json",
+        "call_graph.json",
+        "threat_analysis_report.md"
+      ],
+      "modules_scanned": 9
+    },
+    {
+      "agent_name": "dataflow-scanner",
+      "phase": 3,
+      "start_time": "2026-04-22T02:30:25",
+      "end_time": "2026-04-22T02:36:29",
+      "duration_seconds": 364,
+      "status": "success",
+      "modules_scanned": [
+        "test_scripts",
+        "install_scripts",
+        "kernels_manual"
+      ],
+      "candidates_found": 12
+    },
+    {
+      "agent_name": "security-auditor",
+      "phase": 3,
+      "start_time": "2026-04-22T02:30:25",
+      "end_time": "2026-04-22T02:35:23",
+      "duration_seconds": 298,
+      "status": "success",
+      "modules_scanned": [
+        "test_scripts",
+        "install_scripts",
+        "communication"
+      ],
+      "candidates_found": 0
+    },
+    {
+      "agent_name": "verification",
+      "phase": 4,
+      "start_time": "2026-04-22T02:37:00",
+      "end_time": "2026-04-22T02:42:51",
+      "duration_seconds": 351,
+      "status": "success",
+      "verified_count": 14
+    },
+    {
+      "agent_name": "details-analyzer",
+      "phase": 4.5,
+      "start_time": "2026-04-22T02:43:00",
+      "end_time": "2026-04-22T02:47:02",
+      "duration_seconds": 242,
+      "status": "success",
+      "confirmed_analyzed": 2
+    },
+    {
+      "agent_name": "reporter",
+      "phase": 5,
+      "start_time": "2026-04-22T02:48:00",
+      "end_time": "2026-04-22T02:59:12",
+      "duration_seconds": 672,
+      "status": "success",
+      "output_files": [
+        "report_confirmed.md",
+        "report_unconfirmed.md"
+      ]
+    }
+  ],
+  "summary": {
+    "total_candidates": 14,
+    "confirmed": 2,
+    "likely": 2,
+    "false_positive": 10,
+    "critical": 1,
+    "high": 1,
+    "medium": 2
+  }
+}

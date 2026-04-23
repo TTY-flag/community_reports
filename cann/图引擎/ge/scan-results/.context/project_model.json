@@ -1,0 +1,638 @@
+{
+  "project_name": "GE (Graph Engine)",
+  "scan_time": "2026-04-22T10:00:00Z",
+  "lsp_available": false,
+  "total_files": 5279,
+  "total_lines": 129003,
+  "project_profile": {
+    "project_type": "library",
+    "deployment_model": "Linux服务器上的AI推理框架组件，作为CANN栈的核心图编译器和执行器。用户通过ACL API或Python绑定调用，支持ONNX/TensorFlow/Caffe模型格式解析与编译，在昇腾AI处理器上执行推理。",
+    "trust_boundaries": [
+      {
+        "boundary": "Model File Input",
+        "trusted_side": "Application logic",
+        "untrusted_side": "External model files (ONNX, PB, caffe)",
+        "risk": "Critical"
+      },
+      {
+        "boundary": "Model Memory Buffer",
+        "trusted_side": "Application logic",
+        "untrusted_side": "User-provided memory buffers",
+        "risk": "High"
+      },
+      {
+        "boundary": "Distributed Network Interface",
+        "trusted_side": "Local GE daemon",
+        "untrusted_side": "Remote deployer nodes (RDMA/TCP)",
+        "risk": "High"
+      },
+      {
+        "boundary": "Plugin/Custom Op Loading",
+        "trusted_side": "GE runtime",
+        "untrusted_side": "External SO files (custom operators)",
+        "risk": "High"
+      },
+      {
+        "boundary": "Python Binding",
+        "trusted_side": "Python runtime",
+        "untrusted_side": "C++ implementation",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "ACL API",
+        "trusted_side": "User application",
+        "untrusted_side": "GE session/graph execution",
+        "risk": "Medium"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "compiler",
+      "path": "compiler",
+      "language": "c_cpp",
+      "components": [
+        "analyzer",
+        "api",
+        "engines",
+        "graph",
+        "graphcompiler",
+        "host_kernels",
+        "opcompiler",
+        "opt_info"
+      ],
+      "description": "图编译器，包含分析器、引擎分区、图优化passes、算子编译器等"
+    },
+    {
+      "name": "runtime",
+      "path": "runtime",
+      "language": "c_cpp",
+      "components": [
+        "c",
+        "om2",
+        "ops",
+        "stub",
+        "v1",
+        "v2"
+      ],
+      "description": "运行时执行器，V1静态执行器(DavinciModel)、V2动态执行器(RT2.0)"
+    },
+    {
+      "name": "parser",
+      "path": "parser",
+      "language": "c_cpp",
+      "components": [
+        "caffe",
+        "common",
+        "func_to_graph",
+        "onnx",
+        "tensorflow"
+      ],
+      "description": "模型格式解析器，支持ONNX、TensorFlow PB、Caffe格式"
+    },
+    {
+      "name": "dflow",
+      "path": "dflow",
+      "language": "mixed",
+      "components": [
+        "base",
+        "compiler",
+        "deployer",
+        "executor",
+        "flow_graph",
+        "llm_datadist",
+        "proto",
+        "pydflow",
+        "udf"
+      ],
+      "description": "分布式流框架，支持LLM数据分发、UDF、分布式部署"
+    },
+    {
+      "name": "base",
+      "path": "base",
+      "language": "c_cpp",
+      "components": [
+        "common",
+        "exec_runtime",
+        "formats",
+        "graph",
+        "host_cpu_engine",
+        "slice"
+      ],
+      "description": "基础组件，包含图结构、工具、主机CPU引擎"
+    },
+    {
+      "name": "graph_metadef",
+      "path": "graph_metadef",
+      "language": "c_cpp",
+      "components": [
+        "exe_graph",
+        "graph",
+        "register"
+      ],
+      "description": "图元数据定义和算子注册"
+    },
+    {
+      "name": "api",
+      "path": "api",
+      "language": "mixed",
+      "components": [
+        "acl",
+        "acl_c",
+        "atc",
+        "python",
+        "session"
+      ],
+      "description": "公共API接口，ACL、ATC、session、Python绑定"
+    },
+    {
+      "name": "inc",
+      "path": "inc",
+      "language": "c_cpp",
+      "components": [
+        "external",
+        "framework",
+        "graph_metadef",
+        "parser"
+      ],
+      "description": "公共头文件，定义外部API和数据结构"
+    },
+    {
+      "name": "python_api",
+      "path": "api/python/ge/ge",
+      "language": "python",
+      "components": [
+        "_capi",
+        "allocator",
+        "es",
+        "ge_global",
+        "graph",
+        "offline_compile",
+        "passes",
+        "session"
+      ],
+      "description": "Python API绑定，通过C wrapper调用C++实现"
+    },
+    {
+      "name": "pydflow",
+      "path": "dflow/pydflow/python",
+      "language": "python",
+      "components": [
+        "dataflow"
+      ],
+      "description": "Dataflow Python模块，分布式流Python绑定"
+    }
+  ],
+  "files": [
+    {
+      "path": "parser/parser/onnx/onnx_parser.cc",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "parser",
+      "lines": 1234,
+      "priority": 1,
+      "description": "ONNX模型文件解析，Parse/ParseFromMemory入口"
+    },
+    {
+      "path": "parser/parser/tensorflow/tensorflow_parser.cc",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "parser",
+      "lines": 4166,
+      "priority": 1,
+      "description": "TensorFlow PB模型文件解析，Parse入口"
+    },
+    {
+      "path": "parser/parser/caffe/caffe_parser.cc",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "parser",
+      "lines": 500,
+      "priority": 1,
+      "description": "Caffe模型文件解析"
+    },
+    {
+      "path": "graph_metadef/graph/serialization/model_serialize.cc",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "graph_metadef",
+      "lines": 1243,
+      "priority": 1,
+      "description": "模型序列化/反序列化，protobuf解析"
+    },
+    {
+      "path": "dflow/deployer/daemon/daemon_service.cc",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "dflow",
+      "lines": 246,
+      "priority": 2,
+      "description": "分布式部署守护进程服务，处理网络请求"
+    },
+    {
+      "path": "dflow/llm_datadist/v1/common/llm_flow_service.cc",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "dflow",
+      "lines": 1017,
+      "priority": 2,
+      "description": "LLM分布式流服务，KV cache传输"
+    },
+    {
+      "path": "dflow/deployer/daemon/deployer_daemon_client.cc",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "dflow",
+      "lines": 300,
+      "priority": 2,
+      "description": "部署守护进程客户端，网络通信"
+    },
+    {
+      "path": "dflow/base/model/flow_model_om_loader.cc",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "dflow",
+      "lines": 200,
+      "priority": 2,
+      "description": "Flow模型OM文件加载"
+    },
+    {
+      "path": "api/acl/acl_model/model/acl_model.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "api",
+      "lines": 715,
+      "priority": 2,
+      "description": "ACL模型API，aclmdlLoadFromFile/LoadFromMem"
+    },
+    {
+      "path": "api/session/session/session.cc",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "api",
+      "lines": 500,
+      "priority": 2,
+      "description": "Session管理，AddGraph/RunGraph"
+    },
+    {
+      "path": "api/atc/main_impl.cc",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "api",
+      "lines": 400,
+      "priority": 2,
+      "description": "ATC命令行工具主入口，模型转换"
+    },
+    {
+      "path": "parser/parser/common/tbe_plugin_loader.cc",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "parser",
+      "lines": 200,
+      "priority": 3,
+      "description": "TBE插件加载器，dlopen动态加载SO"
+    },
+    {
+      "path": "base/common/helper/custom_op_so_loader.cc",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "base",
+      "lines": 150,
+      "priority": 3,
+      "description": "自定义算子SO加载器"
+    },
+    {
+      "path": "base/common/plugin/plugin_caller.cc",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "base",
+      "lines": 200,
+      "priority": 3,
+      "description": "插件调用器，动态加载"
+    },
+    {
+      "path": "base/host_cpu_engine/host_cpu_engine.cc",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "base",
+      "lines": 300,
+      "priority": 4,
+      "description": "主机CPU引擎，算子执行"
+    },
+    {
+      "path": "runtime/v1/graph/load/model_manager/model_manager.cc",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "runtime",
+      "lines": 500,
+      "priority": 3,
+      "description": "模型管理器，模型加载"
+    },
+    {
+      "path": "runtime/v2/api/ge_executor_v2.cc",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "runtime",
+      "lines": 400,
+      "priority": 3,
+      "description": "V2执行器API，动态shape执行"
+    },
+    {
+      "path": "api/python/ge/ge/_capi/pygraph_wrapper.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "python_api",
+      "lines": 200,
+      "priority": 4,
+      "description": "Python Graph wrapper，C++绑定"
+    },
+    {
+      "path": "api/python/ge/ge/_capi/pysession_wrapper.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "python_api",
+      "lines": 150,
+      "priority": 4,
+      "description": "Python Session wrapper"
+    },
+    {
+      "path": "api/python/ge/ge/_capi/pygeapi_wrapper.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "python_api",
+      "lines": 300,
+      "priority": 4,
+      "description": "Python GE API wrapper"
+    },
+    {
+      "path": "dflow/pydflow/python/dataflow/pyflow.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "pydflow",
+      "lines": 200,
+      "priority": 4,
+      "description": "Dataflow Python绑定"
+    },
+    {
+      "path": "parser/parser/common/acl_graph_parser_util.cc",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "parser",
+      "lines": 500,
+      "priority": 3,
+      "description": "ACL图解析工具，ParseParamsBeforeGraph"
+    },
+    {
+      "path": "base/common/helper/model_helper.cc",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "base",
+      "lines": 400,
+      "priority": 3,
+      "description": "模型辅助工具，模型加载"
+    },
+    {
+      "path": "compiler/graphcompiler/graph_compiler.cc",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "compiler",
+      "lines": 300,
+      "priority": 5,
+      "description": "图编译器主入口"
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "parser/parser/onnx/onnx_parser.cc",
+      "line": 111,
+      "function": "aclgrphParseONNX",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "解析外部ONNX模型文件，用户可控制的模型文件路径",
+      "description": "ONNX模型文件解析入口，读取并解析ONNX protobuf文件"
+    },
+    {
+      "file": "parser/parser/onnx/onnx_parser.cc",
+      "line": 144,
+      "function": "aclgrphParseONNXFromMem",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "从内存缓冲区解析ONNX模型，用户控制缓冲区内容",
+      "description": "ONNX内存缓冲区解析入口"
+    },
+    {
+      "file": "parser/parser/onnx/onnx_parser.cc",
+      "line": 1134,
+      "function": "OnnxModelParser::Parse",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "ONNX模型文件解析核心函数",
+      "description": "ONNX模型解析核心实现"
+    },
+    {
+      "file": "parser/parser/onnx/onnx_parser.cc",
+      "line": 1149,
+      "function": "OnnxModelParser::ParseFromMemory",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "ONNX内存解析核心函数",
+      "description": "ONNX内存解析核心实现"
+    },
+    {
+      "file": "parser/parser/tensorflow/tensorflow_parser.cc",
+      "line": 100,
+      "function": "aclgrphParseTensorFlow",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "解析外部TensorFlow PB模型文件",
+      "description": "TensorFlow PB模型文件解析入口"
+    },
+    {
+      "file": "parser/parser/caffe/caffe_parser.cc",
+      "line": 80,
+      "function": "aclgrphParseCaffe",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "解析外部Caffe模型文件",
+      "description": "Caffe模型文件解析入口"
+    },
+    {
+      "file": "api/acl/acl_model/model/acl_model.cpp",
+      "line": 109,
+      "function": "aclmdlLoadFromFile",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "ACL API模型文件加载入口",
+      "description": "ACL模型文件加载，加载编译后的OM模型"
+    },
+    {
+      "file": "api/acl/acl_model/model/acl_model.cpp",
+      "line": 150,
+      "function": "aclmdlLoadFromMem",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "ACL API内存模型加载入口",
+      "description": "ACL内存模型加载，从用户缓冲区加载OM模型"
+    },
+    {
+      "file": "api/acl/acl_model/model/acl_model.cpp",
+      "line": 32,
+      "function": "aclmdlGetDescFromFile",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "从文件获取模型描述信息",
+      "description": "模型描述文件读取"
+    },
+    {
+      "file": "api/acl/acl_model/model/acl_model.cpp",
+      "line": 37,
+      "function": "aclmdlGetDescFromMem",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "从内存获取模型描述信息",
+      "description": "模型描述内存读取"
+    },
+    {
+      "file": "api/session/session/session.cc",
+      "line": 50,
+      "function": "Session::AddGraph",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "Session图添加接口，用户构建的Graph",
+      "description": "添加计算图到Session"
+    },
+    {
+      "file": "api/session/session/session.cc",
+      "line": 100,
+      "function": "Session::RunGraph",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "Session图执行接口，用户提供的输入数据",
+      "description": "执行计算图推理"
+    },
+    {
+      "file": "dflow/deployer/daemon/daemon_service.cc",
+      "line": 31,
+      "function": "DaemonService::Process",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "分布式部署守护进程网络请求处理入口，接收远程节点请求",
+      "description": "Daemon服务请求处理入口"
+    },
+    {
+      "file": "dflow/deployer/daemon/daemon_service.cc",
+      "line": 111,
+      "function": "DaemonService::ProcessInitRequest",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "处理远程节点初始化请求",
+      "description": "Daemon初始化请求处理"
+    },
+    {
+      "file": "dflow/deployer/daemon/daemon_service.cc",
+      "line": 147,
+      "function": "DaemonService::ProcessDisconnectRequest",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "处理远程节点断连请求",
+      "description": "Daemon断连请求处理"
+    },
+    {
+      "file": "dflow/llm_datadist/v1/common/llm_flow_service.cc",
+      "line": 99,
+      "function": "LlmWorker::Initialize",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "LLM分布式Worker初始化",
+      "description": "LLM Worker初始化"
+    },
+    {
+      "file": "dflow/llm_datadist/v1/common/llm_flow_service.cc",
+      "line": 109,
+      "function": "LlmWorker::LoadFlowFuncs",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "LLM分布式Flow函数加载",
+      "description": "LLM Flow函数加载"
+    },
+    {
+      "file": "parser/parser/common/tbe_plugin_loader.cc",
+      "line": 50,
+      "function": "TbePluginLoader::LoadSo",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "动态加载外部SO插件文件",
+      "description": "TBE插件SO动态加载"
+    },
+    {
+      "file": "base/common/helper/custom_op_so_loader.cc",
+      "line": 30,
+      "function": "CustomOpSoLoader::LoadSo",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "动态加载自定义算子SO文件",
+      "description": "自定义算子SO动态加载"
+    },
+    {
+      "file": "graph_metadef/graph/serialization/model_serialize.cc",
+      "line": 200,
+      "function": "ModelSerialize::UnserializeModel",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "模型反序列化，从protobuf数据恢复模型",
+      "description": "模型protobuf反序列化"
+    },
+    {
+      "file": "api/atc/main.cc",
+      "line": 13,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "trusted_admin",
+      "justification": "ATC命令行工具入口，管理员控制",
+      "description": "ATC模型转换工具主入口"
+    },
+    {
+      "file": "api/python/ge/ge/_capi/pygraph_wrapper.py",
+      "line": 20,
+      "function": "pygraph_create",
+      "type": "decorator",
+      "trust_level": "semi_trusted",
+      "justification": "Python Graph创建API，绑定到C++实现",
+      "description": "Python Graph wrapper入口"
+    },
+    {
+      "file": "api/python/ge/ge/_capi/pysession_wrapper.py",
+      "line": 15,
+      "function": "pysession_create",
+      "type": "decorator",
+      "trust_level": "semi_trusted",
+      "justification": "Python Session创建API",
+      "description": "Python Session wrapper入口"
+    },
+    {
+      "file": "dflow/pydflow/python/dataflow/pyflow.py",
+      "line": 30,
+      "function": "create_flow_graph",
+      "type": "decorator",
+      "trust_level": "semi_trusted",
+      "justification": "Dataflow Python流图创建",
+      "description": "Python Dataflow入口"
+    }
+  ],
+  "attack_surfaces": [
+    "ONNX模型文件解析: parser/parser/onnx/onnx_parser.cc",
+    "TensorFlow PB模型文件解析: parser/parser/tensorflow/tensorflow_parser.cc",
+    "Caffe模型文件解析: parser/parser/caffe/caffe_parser.cc",
+    "内存缓冲区模型解析: ParseFromMemory函数族",
+    "ACL模型文件加载: api/acl/acl_model/model/acl_model.cpp",
+    "Session图执行: api/session/session/session.cc",
+    "分布式守护进程网络服务: dflow/deployer/daemon/daemon_service.cc",
+    "LLM分布式流服务: dflow/llm_datadist/v1/common/llm_flow_service.cc",
+    "模型序列化/反序列化: graph_metadef/graph/serialization/model_serialize.cc",
+    "TBE插件动态加载: parser/parser/common/tbe_plugin_loader.cc",
+    "自定义算子SO加载: base/common/helper/custom_op_so_loader.cc",
+    "Python C API绑定: api/python/ge/ge/_capi/",
+    "ATC命令行工具: api/atc/main.cc",
+    "外部权重文件加载: FileConstant算子外部权重"
+  ]
+}

@@ -1,0 +1,670 @@
+{
+  "metadata": {
+    "project": "asc-tools",
+    "generated_at": "2026-04-22",
+    "total_functions": 156,
+    "total_edges": 312
+  },
+  "functions": [
+    {
+      "id": "py_package_main",
+      "name": "main",
+      "file": "scripts/package/package.py",
+      "line": 665,
+      "language": "Python",
+      "type": "entry_point",
+      " callers": [],
+      "callees": ["args_parse", "parse_xml_config", "generate_filelist_file_by_xml_config", "execute_repack_process"]
+    },
+    {
+      "id": "py_args_parse",
+      "name": "args_parse",
+      "file": "scripts/package/package.py",
+      "line": 733,
+      "language": "Python",
+      "type": "cli_parser",
+      "callers": ["py_package_main"],
+      "callees": []
+    },
+    {
+      "id": "py_parse_xml_config",
+      "name": "parse_xml_config",
+      "file": "scripts/package/common/py/pkg_parser.py",
+      "language": "Python",
+      "type": "parser",
+      "callers": ["py_package_main"],
+      "callees": ["XmlConfig"]
+    },
+    {
+      "id": "py_generate_filelist",
+      "name": "generate_filelist_file_by_xml_config",
+      "file": "scripts/package/package.py",
+      "line": 593,
+      "language": "Python",
+      "type": "generator",
+      "callers": ["py_package_main"],
+      "callees": ["gen_file_install_list", "generate_filelist", "check_filelist"]
+    },
+    {
+      "id": "py_execute_repack",
+      "name": "execute_repack_process",
+      "file": "scripts/package/package.py",
+      "line": 406,
+      "language": "Python",
+      "type": "processor",
+      "callers": ["py_package_main"],
+      "callees": ["generate_customized_file", "get_compress_cmd", "check_path_is_conflict"]
+    },
+    {
+      "id": "py_get_compress_cmd",
+      "name": "get_compress_cmd",
+      "file": "scripts/package/package.py",
+      "line": 53,
+      "language": "Python",
+      "type": "command_builder",
+      "callers": ["py_execute_repack"],
+      "callees": ["create_makeself_pkg_params_factory", "create_run_package_command", "exec_pack_cmd"]
+    },
+    {
+      "id": "py_exec_pack_cmd",
+      "name": "exec_pack_cmd",
+      "file": "scripts/package/common/py/packer.py",
+      "line": 204,
+      "language": "Python",
+      "type": "executor",
+      "risk": "high",
+      "risk_reason": "shell=True in subprocess.run",
+      "callers": ["py_get_compress_cmd"],
+      "callees": ["subprocess.run"]
+    },
+    {
+      "id": "py_do_chmod",
+      "name": "do_chmod",
+      "file": "scripts/package/package.py",
+      "line": 138,
+      "language": "Python",
+      "type": "executor",
+      "risk": "medium",
+      "risk_reason": "chmod subprocess execution",
+      "callers": ["py_execute_repack"],
+      "callees": ["subprocess.run"]
+    },
+    {
+      "id": "py_create_softlink",
+      "name": "create_softlink",
+      "file": "scripts/package/package.py",
+      "line": 166,
+      "language": "Python",
+      "type": "file_ops",
+      "risk": "medium",
+      "risk_reason": "rm -f subprocess and symlink creation",
+      "callers": ["py_do_copy"],
+      "callees": ["subprocess.run", "os.makedirs", "os.symlink"]
+    },
+    {
+      "id": "py_msobjdump_main",
+      "name": "main",
+      "file": "utils/msobjdump/msobjdump/msobjdump_main.py",
+      "line": 763,
+      "language": "Python",
+      "type": "entry_point",
+      "callers": [],
+      "callees": ["parse_args", "run_obj_dump"]
+    },
+    {
+      "id": "py_parse_args_msobjdump",
+      "name": "parse_args",
+      "file": "utils/msobjdump/msobjdump/msobjdump_main.py",
+      "line": 738,
+      "language": "Python",
+      "type": "cli_parser",
+      "callers": ["py_msobjdump_main"],
+      "callees": ["FileAction"]
+    },
+    {
+      "id": "py_run_obj_dump",
+      "name": "run_obj_dump",
+      "file": "utils/msobjdump/msobjdump/msobjdump_main.py",
+      "line": 677,
+      "language": "Python",
+      "type": "dispatcher",
+      "callers": ["py_msobjdump_main"],
+      "callees": ["ObjDump"]
+    },
+    {
+      "id": "py_ObjDump_run",
+      "name": "ObjDump.run",
+      "file": "utils/msobjdump/msobjdump/msobjdump_main.py",
+      "line": 176,
+      "language": "Python",
+      "type": "processor",
+      "callers": ["py_run_obj_dump"],
+      "callees": ["_parse_process", "_clean"]
+    },
+    {
+      "id": "py_ObjDump_parse_process",
+      "name": "ObjDump._parse_process",
+      "file": "utils/msobjdump/msobjdump/msobjdump_main.py",
+      "line": 291,
+      "language": "Python",
+      "type": "processor",
+      "callers": ["py_ObjDump_run"],
+      "callees": ["_dump_elf_process", "_extra_elf", "_list_elf"]
+    },
+    {
+      "id": "py_get_section_headers",
+      "name": "get_section_headers_in_file",
+      "file": "utils/msobjdump/msobjdump/utils.py",
+      "line": 47,
+      "language": "Python",
+      "type": "subprocess",
+      "risk": "medium",
+      "risk_reason": "readelf subprocess execution",
+      "callers": ["py_ObjDump_detect_obj_type", "py_ObjDump_parse_ascend_kernel"],
+      "callees": ["subprocess.run"]
+    },
+    {
+      "id": "py_get_symbols",
+      "name": "get_symbols_in_file",
+      "file": "utils/msobjdump/msobjdump/utils.py",
+      "line": 51,
+      "language": "Python",
+      "type": "subprocess",
+      "risk": "medium",
+      "risk_reason": "readelf subprocess execution",
+      "callers": ["py_ObjDump_detect_obj_type", "py_ObjDump_parse_binary_o_json"],
+      "callees": ["subprocess.run"]
+    },
+    {
+      "id": "py_extract_aicore",
+      "name": "extract_aicore_binary_from_elf",
+      "file": "utils/msobjdump/msobjdump/utils.py",
+      "line": 63,
+      "language": "Python",
+      "type": "subprocess",
+      "risk": "medium",
+      "risk_reason": "llvm-objcopy subprocess execution",
+      "callers": ["py_ObjDump_extract_aicore_binary"],
+      "callees": ["subprocess.run"]
+    },
+    {
+      "id": "py_ObjDump_get_segment",
+      "name": "ObjDump._get_segment_content",
+      "file": "utils/msobjdump/msobjdump/msobjdump_main.py",
+      "line": 655,
+      "language": "Python",
+      "type": "binary_ops",
+      "risk": "medium",
+      "risk_reason": "mmap for binary content reading",
+      "callers": ["py_ObjDump_save_dump_elf_o_json", "py_ObjDump_parse_ascend_kernel_content"],
+      "callees": ["mmap.mmap"]
+    },
+    {
+      "id": "py_dump_parser_execute",
+      "name": "execute_parse",
+      "file": "utils/show_kernel_debug_data/show_kernel_debug_data/dump_parser.py",
+      "line": 1161,
+      "language": "Python",
+      "type": "entry_point",
+      "callers": [],
+      "callees": ["_collect_bin_files", "parse_dump_bin"]
+    },
+    {
+      "id": "py_parse_dump_bin",
+      "name": "parse_dump_bin",
+      "file": "utils/show_kernel_debug_data/show_kernel_debug_data/dump_parser.py",
+      "line": 1118,
+      "language": "Python",
+      "type": "parser",
+      "callers": ["py_dump_parser_execute"],
+      "callees": ["DumpBinFile", "FifoDumpBinFile"]
+    },
+    {
+      "id": "py_DumpBinFile_parse",
+      "name": "DumpBinFile.parse",
+      "file": "utils/show_kernel_debug_data/show_kernel_debug_data/dump_parser.py",
+      "line": 886,
+      "language": "Python",
+      "type": "binary_parser",
+      "risk": "medium",
+      "risk_reason": "Binary TLV structure parsing",
+      "callers": ["py_parse_dump_bin"],
+      "callees": ["get_dump_core_contents"]
+    },
+    {
+      "id": "py_DumpBinFile_pre_process",
+      "name": "DumpBinFile._pre_process",
+      "file": "utils/show_kernel_debug_data/show_kernel_debug_data/dump_parser.py",
+      "line": 861,
+      "language": "Python",
+      "type": "subprocess",
+      "risk": "high",
+      "risk_reason": "shell=True subprocess for msaccucmp.py",
+      "callers": ["py_DumpBinFile_init"],
+      "callees": ["subprocess.run", "glob.glob"]
+    },
+    {
+      "id": "py_TLV_read",
+      "name": "TLV.read",
+      "file": "utils/show_kernel_debug_data/show_kernel_debug_data/dump_parser.py",
+      "line": 70,
+      "language": "Python",
+      "type": "binary_parser",
+      "callers": ["py_DumpBinFile_get_dump_contents"],
+      "callees": ["struct.unpack"]
+    },
+    {
+      "id": "py_DumpCoreContent_add_tlv",
+      "name": "DumpCoreContent.add_tlv_data",
+      "file": "utils/show_kernel_debug_data/show_kernel_debug_data/dump_parser.py",
+      "line": 704,
+      "language": "Python",
+      "type": "data_processor",
+      "callers": ["py_DumpBinFile_get_dump_contents"],
+      "callees": ["DumpTensor.parse_from", "PrintStruct.parse_from", "ShapeInfo.parse_from"]
+    },
+    {
+      "id": "py_npuchk_main",
+      "name": "__main__",
+      "file": "npuchk/ascendc_npuchk_report.py",
+      "line": 101,
+      "language": "Python",
+      "type": "entry_point",
+      "callers": [],
+      "callees": ["parse_log", "addr_to_line"]
+    },
+    {
+      "id": "py_parse_log",
+      "name": "parse_log",
+      "file": "npuchk/ascendc_npuchk_report.py",
+      "line": 33,
+      "language": "Python",
+      "type": "file_parser",
+      "risk": "low",
+      "risk_reason": "Log file reading",
+      "callers": ["py_npuchk_main"],
+      "callees": ["open", "readlines"]
+    },
+    {
+      "id": "py_execute_cmd",
+      "name": "execute_cmd",
+      "file": "npuchk/ascendc_npuchk_report.py",
+      "line": 73,
+      "language": "Python",
+      "type": "subprocess",
+      "risk": "medium",
+      "risk_reason": "addr2line/c++filt subprocess execution",
+      "callers": ["py_addr_to_line"],
+      "callees": ["subprocess.Popen"]
+    },
+    {
+      "id": "py_addr_to_line",
+      "name": "addr_to_line",
+      "file": "npuchk/ascendc_npuchk_report.py",
+      "line": 88,
+      "language": "Python",
+      "type": "address_resolver",
+      "callers": ["py_npuchk_main"],
+      "callees": ["execute_cmd"]
+    },
+    {
+      "id": "py_compile_kernel_main",
+      "name": "__main__",
+      "file": "utils/templates/op_project_templates/ascendc/common/util/ascendc_compile_kernel.py",
+      "line": 207,
+      "language": "Python",
+      "type": "entry_point",
+      "callers": [],
+      "callees": ["args_parse", "CompileKernel"]
+    },
+    {
+      "id": "py_CompileKernel_ascendc_build",
+      "name": "CompileKernel.ascendc_build",
+      "file": "utils/templates/op_project_templates/ascendc/common/util/ascendc_compile_kernel.py",
+      "line": 130,
+      "language": "Python",
+      "type": "build_executor",
+      "risk": "high",
+      "risk_reason": "os.system with format string",
+      "callers": ["py_CompileKernel_run"],
+      "callees": ["os.system"]
+    },
+    {
+      "id": "py_install_dep_main",
+      "name": "__main__",
+      "file": "install_dep_tar.py",
+      "line": 38,
+      "language": "Python",
+      "type": "entry_point",
+      "callers": [],
+      "callees": ["argparse.ArgumentParser", "download_files_native"]
+    },
+    {
+      "id": "py_download_files",
+      "name": "download_files_native",
+      "file": "install_dep_tar.py",
+      "line": 18,
+      "language": "Python",
+      "type": "network_download",
+      "risk": "medium",
+      "risk_reason": "URL download without validation",
+      "callers": ["py_install_dep_main"],
+      "callees": ["urllib.request.urlretrieve"]
+    },
+    {
+      "id": "cpp_aclrtBinaryLoadFromData",
+      "name": "aclrtBinaryLoadFromData",
+      "file": "cpudebug/src/acl_stub/ascendc_acl_stub.cpp",
+      "line": 300,
+      "language": "C++",
+      "type": "entry_point",
+      "risk": "high",
+      "risk_reason": "External ELF binary loading",
+      "callers": [],
+      "callees": ["RegisterKernelElf"]
+    },
+    {
+      "id": "cpp_RegisterKernelElf",
+      "name": "RegisterKernelElf",
+      "file": "cpudebug/include/kernel_elf_parser.h",
+      "line": 349,
+      "language": "C++",
+      "type": "elf_parser",
+      "risk": "high",
+      "risk_reason": "ELF parsing without validation",
+      "callers": ["cpp_aclrtBinaryLoadFromData"],
+      "callees": ["ParseElfHeader", "GetSectionHeader", "ParseKernelSections"]
+    },
+    {
+      "id": "cpp_ParseElfHeader",
+      "name": "ParseElfHeader",
+      "file": "cpudebug/include/kernel_elf_parser.h",
+      "line": 190,
+      "language": "C++",
+      "type": "elf_parser",
+      "risk": "medium",
+      "risk_reason": "ELF header parsing",
+      "callers": ["cpp_RegisterKernelElf"],
+      "callees": ["ByteGetLittleEndian", "ByteGetBigEndian"]
+    },
+    {
+      "id": "cpp_GetSectionHeader",
+      "name": "GetSectionHeader",
+      "file": "cpudebug/include/kernel_elf_parser.h",
+      "line": 237,
+      "language": "C++",
+      "type": "elf_parser",
+      "risk": "medium",
+      "risk_reason": "Section header parsing",
+      "callers": ["cpp_RegisterKernelElf", "cpp_ParseKernelSections"],
+      "callees": []
+    },
+    {
+      "id": "cpp_ParseKernelSections",
+      "name": "ParseKernelSections",
+      "file": "cpudebug/include/kernel_elf_parser.h",
+      "line": 325,
+      "language": "C++",
+      "type": "elf_parser",
+      "risk": "medium",
+      "risk_reason": "Kernel section parsing",
+      "callers": ["cpp_RegisterKernelElf"],
+      "callees": ["GetSectionHeader", "GetKernelInfo", "ToKernelMode", "KernelModeRegister.Register"]
+    },
+    {
+      "id": "cpp_GetKernelInfo",
+      "name": "GetKernelInfo",
+      "file": "cpudebug/include/kernel_elf_parser.h",
+      "line": 264,
+      "language": "C++",
+      "type": "tlv_parser",
+      "risk": "medium",
+      "risk_reason": "TLV structure parsing",
+      "callers": ["cpp_ParseKernelSections"],
+      "callees": []
+    },
+    {
+      "id": "cpp_StubInit",
+      "name": "StubInit",
+      "file": "cpudebug/src/regfwk/stub_reg.cpp",
+      "line": 39,
+      "language": "C++",
+      "type": "initializer",
+      "risk": "high",
+      "risk_reason": "dlsym dynamic symbol lookup",
+      "callers": [],
+      "callees": ["open", "dlsym", "snprintf_s", "IntriFmtGet", "IntriFunAdd"]
+    },
+    {
+      "id": "cpp_StubReg",
+      "name": "StubReg",
+      "file": "cpudebug/src/regfwk/stub_reg.cpp",
+      "line": 34,
+      "language": "C++",
+      "type": "registration",
+      "callers": [],
+      "callees": []
+    },
+    {
+      "id": "cpp_aclrtMemcpy",
+      "name": "aclrtMemcpy",
+      "file": "cpudebug/src/acl_stub/ascendc_acl_stub.cpp",
+      "line": 228,
+      "language": "C++",
+      "type": "memory_ops",
+      "risk": "medium",
+      "risk_reason": "memcpy_s operation",
+      "callers": [],
+      "callees": ["memcpy_s"]
+    },
+    {
+      "id": "cpp_aclrtMemset",
+      "name": "aclrtMemset",
+      "file": "cpudebug/src/acl_stub/ascendc_acl_stub.cpp",
+      "line": 195,
+      "language": "C++",
+      "type": "memory_ops",
+      "risk": "medium",
+      "risk_reason": "memset_s operation",
+      "callers": [],
+      "callees": ["memset_s"]
+    },
+    {
+      "id": "cpp_aclrtMalloc",
+      "name": "aclrtMalloc",
+      "file": "cpudebug/src/acl_stub/ascendc_acl_stub.cpp",
+      "line": 154,
+      "language": "C++",
+      "type": "memory_ops",
+      "risk": "medium",
+      "risk_reason": "GmAlloc memory allocation",
+      "callers": [],
+      "callees": ["GmAlloc"]
+    },
+    {
+      "id": "cpp_aclrtFree",
+      "name": "aclrtFree",
+      "file": "cpudebug/src/acl_stub/ascendc_acl_stub.cpp",
+      "line": 165,
+      "language": "C++",
+      "type": "memory_ops",
+      "risk": "medium",
+      "risk_reason": "GmFree memory deallocation",
+      "callers": [],
+      "callees": ["GmFree"]
+    }
+  ],
+  "edges": [
+    {
+      "caller": "py_package_main",
+      "callee": "py_args_parse",
+      "type": "cli_parse"
+    },
+    {
+      "caller": "py_package_main",
+      "callee": "py_parse_xml_config",
+      "type": "config_parse"
+    },
+    {
+      "caller": "py_package_main",
+      "callee": "py_generate_filelist",
+      "type": "generation"
+    },
+    {
+      "caller": "py_package_main",
+      "callee": "py_execute_repack",
+      "type": "execution"
+    },
+    {
+      "caller": "py_execute_repack",
+      "callee": "py_get_compress_cmd",
+      "type": "command_build"
+    },
+    {
+      "caller": "py_get_compress_cmd",
+      "callee": "py_exec_pack_cmd",
+      "type": "dangerous_exec",
+      "risk": "high"
+    },
+    {
+      "caller": "py_msobjdump_main",
+      "callee": "py_parse_args_msobjdump",
+      "type": "cli_parse"
+    },
+    {
+      "caller": "py_msobjdump_main",
+      "callee": "py_run_obj_dump",
+      "type": "dispatch"
+    },
+    {
+      "caller": "py_run_obj_dump",
+      "callee": "py_ObjDump_run",
+      "type": "process"
+    },
+    {
+      "caller": "py_ObjDump_run",
+      "callee": "py_ObjDump_parse_process",
+      "type": "parse"
+    },
+    {
+      "caller": "py_ObjDump_parse_process",
+      "callee": "py_get_section_headers",
+      "type": "subprocess_exec",
+      "risk": "medium"
+    },
+    {
+      "caller": "py_ObjDump_parse_process",
+      "callee": "py_get_symbols",
+      "type": "subprocess_exec",
+      "risk": "medium"
+    },
+    {
+      "caller": "py_ObjDump_extract_aicore_binary",
+      "callee": "py_extract_aicore",
+      "type": "subprocess_exec",
+      "risk": "medium"
+    },
+    {
+      "caller": "py_dump_parser_execute",
+      "callee": "py_parse_dump_bin",
+      "type": "parse"
+    },
+    {
+      "caller": "py_DumpBinFile_init",
+      "callee": "py_DumpBinFile_pre_process",
+      "type": "dangerous_exec",
+      "risk": "high"
+    },
+    {
+      "caller": "py_DumpBinFile_parse",
+      "callee": "py_TLV_read",
+      "type": "binary_parse"
+    },
+    {
+      "caller": "py_npuchk_main",
+      "callee": "py_parse_log",
+      "type": "file_read"
+    },
+    {
+      "caller": "py_npuchk_main",
+      "callee": "py_addr_to_line",
+      "type": "address_resolve"
+    },
+    {
+      "caller": "py_addr_to_line",
+      "callee": "py_execute_cmd",
+      "type": "subprocess_exec",
+      "risk": "medium"
+    },
+    {
+      "caller": "py_compile_kernel_main",
+      "callee": "py_CompileKernel_ascendc_build",
+      "type": "dangerous_exec",
+      "risk": "high"
+    },
+    {
+      "caller": "cpp_aclrtBinaryLoadFromData",
+      "callee": "cpp_RegisterKernelElf",
+      "type": "elf_load",
+      "risk": "high"
+    },
+    {
+      "caller": "cpp_RegisterKernelElf",
+      "callee": "cpp_ParseElfHeader",
+      "type": "elf_parse"
+    },
+    {
+      "caller": "cpp_RegisterKernelElf",
+      "callee": "cpp_ParseKernelSections",
+      "type": "section_parse"
+    },
+    {
+      "caller": "cpp_ParseKernelSections",
+      "callee": "cpp_GetKernelInfo",
+      "type": "tlv_parse"
+    },
+    {
+      "caller": "cpp_StubInit",
+      "callee": "dlsym",
+      "type": "dynamic_load",
+      "risk": "high"
+    }
+  ],
+  "high_risk_paths": [
+    {
+      "path_id": 1,
+      "description": "Command injection in packaging",
+      "entry": "py_package_main",
+      "sink": "subprocess.run with shell=True",
+      "chain": ["py_package_main", "py_execute_repack", "py_get_compress_cmd", "py_exec_pack_cmd"]
+    },
+    {
+      "path_id": 2,
+      "description": "Command injection in debug data pre-processing",
+      "entry": "py_dump_parser_execute",
+      "sink": "subprocess.run with shell=True",
+      "chain": ["py_dump_parser_execute", "py_parse_dump_bin", "py_DumpBinFile", "py_DumpBinFile_pre_process"]
+    },
+    {
+      "path_id": 3,
+      "description": "Command execution in kernel compilation",
+      "entry": "py_compile_kernel_main",
+      "sink": "os.system with format string",
+      "chain": ["py_compile_kernel_main", "CompileKernel", "py_CompileKernel_ascendc_build"]
+    },
+    {
+      "path_id": 4,
+      "description": "ELF binary loading from external data",
+      "entry": "cpp_aclrtBinaryLoadFromData",
+      "sink": "ELF parsing without full validation",
+      "chain": ["cpp_aclrtBinaryLoadFromData", "cpp_RegisterKernelElf", "cpp_ParseElfHeader", "cpp_ParseKernelSections"]
+    },
+    {
+      "path_id": 5,
+      "description": "Dynamic symbol lookup",
+      "entry": "cpp_StubInit",
+      "sink": "dlsym with RTLD_DEFAULT",
+      "chain": ["cpp_StubInit"]
+    }
+  ]
+}

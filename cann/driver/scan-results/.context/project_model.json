@@ -1,0 +1,421 @@
+{
+  "project_name": "cann-driver",
+  "scan_time": "2026-04-22T03:00:00Z",
+  "lsp_available": false,
+  "total_files": 2782,
+  "total_lines": 490617,
+  "project_profile": {
+    "project_type": "kernel_module",
+    "deployment_model": "Linux内核模块驱动，部署于服务器主机侧，通过PCIe与昇腾NPU设备通信，支持容器化环境",
+    "trust_boundaries": [
+      {
+        "boundary": "User Space Interface",
+        "trusted_side": "Kernel Driver",
+        "untrusted_side": "User Applications (AI frameworks, DCMI tools)",
+        "risk": "Critical"
+      },
+      {
+        "boundary": "PCIe Hardware Interface",
+        "trusted_side": "Host Driver",
+        "untrusted_side": "NPU Device Firmware",
+        "risk": "High"
+      },
+      {
+        "boundary": "Container Namespace",
+        "trusted_side": "Host System",
+        "untrusted_side": "Container Processes",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Network/RDMA Interface",
+        "trusted_side": "Host Driver",
+        "untrusted_side": "Remote Network Clients",
+        "risk": "Critical"
+      },
+      {
+        "boundary": "Shared Memory Region",
+        "trusted_side": "Driver Managed Memory",
+        "untrusted_side": "User Process Memory",
+        "risk": "High"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "ascend_hal",
+      "path": "src/ascend_hal",
+      "language": "c_cpp",
+      "components": [
+        "bbox",
+        "buff",
+        "comm",
+        "dmc",
+        "dms",
+        "dpa",
+        "esched",
+        "hdc",
+        "mmpa",
+        "msnpureport",
+        "pbl",
+        "queue",
+        "roce",
+        "svm",
+        "trs"
+      ],
+      "risk": "Critical",
+      "description": "HAL层 - 硬件抽象层，提供主机侧与设备侧的通信接口"
+    },
+    {
+      "name": "sdk_driver",
+      "path": "src/sdk_driver",
+      "language": "c_cpp",
+      "components": [
+        "buff",
+        "comm",
+        "dmc",
+        "dms",
+        "dpa",
+        "dvpp",
+        "esched",
+        "fms",
+        "hdc",
+        "kernel_adapt",
+        "pbl",
+        "platform",
+        "queue",
+        "seclib",
+        "svm",
+        "trsdrv",
+        "ts_agent",
+        "vascend",
+        "vmng",
+        "vnic",
+        "vpc"
+      ],
+      "risk": "Critical",
+      "description": "SDK-driver层 - 驱动软件开发套件层，提供内核模块功能"
+    },
+    {
+      "name": "custom",
+      "path": "src/custom",
+      "language": "c_cpp",
+      "components": [
+        "dev_prod",
+        "lqdrv",
+        "nda",
+        "ndr",
+        "network",
+        "ops_debug"
+      ],
+      "risk": "High",
+      "description": "定制化特性模块 - 包含DCMI管理接口和网络功能"
+    },
+    {
+      "name": "ioctl_handlers",
+      "path": "src/sdk_driver/dms/devmng/drv_devmng/drv_devmng_host/ascend910",
+      "language": "c_cpp",
+      "components": [
+        "devdrv_manager_ioctl.c"
+      ],
+      "risk": "Critical",
+      "description": "ioctl命令处理核心模块 - 用户空间与内核的主要接口"
+    },
+    {
+      "name": "queue_operations",
+      "path": "src/sdk_driver/queue/host",
+      "language": "c_cpp",
+      "components": [
+        "queue_fops.c",
+        "queue_channel.c",
+        "queue_dma.c"
+      ],
+      "risk": "Critical",
+      "description": "队列操作模块 - 任务调度和DMA传输"
+    },
+    {
+      "name": "hdc_communication",
+      "path": "src/sdk_driver/hdc",
+      "language": "c_cpp",
+      "components": [
+        "pcie",
+        "ub"
+      ],
+      "risk": "Critical",
+      "description": "HDC通信模块 - 主机与设备通信核心"
+    },
+    {
+      "name": "svm_memory",
+      "path": "src/sdk_driver/svm",
+      "language": "c_cpp",
+      "components": [
+        "v2",
+        "v3"
+      ],
+      "risk": "High",
+      "description": "SVM共享虚拟内存模块 - 内存管理和共享"
+    },
+    {
+      "name": "roce_network",
+      "path": "src/ascend_hal/roce",
+      "language": "c_cpp",
+      "components": [
+        "host_lite",
+        "roce_hal_api"
+      ],
+      "risk": "Critical",
+      "description": "RoCE网络模块 - RDMA over Converged Ethernet"
+    },
+    {
+      "name": "lqdrv_custom",
+      "path": "src/custom/lqdrv/kernel",
+      "language": "c_cpp",
+      "components": [
+        "pci-dev.c",
+        "ioctl_comm.c"
+      ],
+      "risk": "Critical",
+      "description": "灵渠驱动定制模块 - PCIe和ioctl处理"
+    }
+  ],
+  "files": [
+    {
+      "path": "src/sdk_driver/dms/devmng/drv_devmng/drv_devmng_host/ascend910/devdrv_manager_ioctl.c",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "ioctl_handlers",
+      "lines": 1116,
+      "priority": 1,
+      "description": "设备管理器ioctl主处理函数，100+命令处理入口"
+    },
+    {
+      "path": "src/custom/lqdrv/kernel/ioctl_comm.c",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "lqdrv_custom",
+      "lines": 169,
+      "priority": 2,
+      "description": "灵渠驱动ioctl处理，copy_from_user/copy_to_user操作"
+    },
+    {
+      "path": "src/sdk_driver/queue/host/queue_fops.c",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "queue_operations",
+      "lines": 788,
+      "priority": 3,
+      "description": "队列驱动文件操作入口，open/release/ioctl"
+    },
+    {
+      "path": "src/custom/lqdrv/kernel/pci-dev.c",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "lqdrv_custom",
+      "lines": 650,
+      "priority": 4,
+      "description": "PCIe设备驱动核心，mmap/ioremap操作"
+    },
+    {
+      "path": "src/sdk_driver/hdc/pcie/host/hdcdrv_host_adapt.c",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "hdc_communication",
+      "lines": 300,
+      "priority": 5,
+      "description": "HDC PCIe主机侧适配层"
+    },
+    {
+      "path": "src/sdk_driver/svm/v2/common/svm_module_ops.c",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "svm_memory",
+      "lines": 400,
+      "priority": 6,
+      "description": "SVM模块操作，内核模块入口"
+    },
+    {
+      "path": "src/ascend_hal/roce/host_lite/hns_roce_lite.c",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "roce_network",
+      "lines": 500,
+      "priority": 7,
+      "description": "RoCE Lite主机侧实现"
+    },
+    {
+      "path": "src/sdk_driver/trsdrv/trs/trs_core/trs_fops.c",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "sdk_driver",
+      "lines": 350,
+      "priority": 8,
+      "description": "任务资源调度文件操作"
+    },
+    {
+      "path": "src/sdk_driver/dpa/rmo/rmo_fops.c",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "sdk_driver",
+      "lines": 280,
+      "priority": 9,
+      "description": "RMO内存共享文件操作"
+    },
+    {
+      "path": "src/sdk_driver/dpa/apm/apm_fops.c",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "sdk_driver",
+      "lines": 250,
+      "priority": 10,
+      "description": "APM进程管理文件操作"
+    },
+    {
+      "path": "src/sdk_driver/esched/dc/host_adapt/esched_adapt.c",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "sdk_driver",
+      "lines": 300,
+      "priority": 11,
+      "description": "事件调度主机适配"
+    },
+    {
+      "path": "src/sdk_driver/vnic/host/pcivnic_host.c",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "sdk_driver",
+      "lines": 400,
+      "priority": 12,
+      "description": "虚拟网卡驱动"
+    },
+    {
+      "path": "src/ascend_hal/dms/dc/dms_user_common_adapt.c",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "ascend_hal",
+      "lines": 350,
+      "priority": 13,
+      "description": "设备管理系统用户适配"
+    },
+    {
+      "path": "src/ascend_hal/trs/core/trs_interface.c",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "ascend_hal",
+      "lines": 300,
+      "priority": 14,
+      "description": "任务资源调度接口"
+    },
+    {
+      "path": "src/ascend_hal/bbox/bbox_tools/dump_tool/dump_impl/bbox_dump_interface.c",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "ascend_hal",
+      "lines": 200,
+      "priority": 15,
+      "description": "黑匣子dump接口"
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "src/sdk_driver/dms/devmng/drv_devmng/drv_devmng_host/ascend910/devdrv_manager_ioctl.c",
+      "line": 1094,
+      "function": "devdrv_manager_ioctl",
+      "type": "ioctl",
+      "trust_level": "untrusted_local",
+      "justification": "用户空间通过/dev设备文件调用ioctl，传递命令和数据到内核驱动，任何有设备访问权限的用户进程都可触发",
+      "description": "设备管理器ioctl主入口，处理100+命令类型"
+    },
+    {
+      "file": "src/custom/lqdrv/kernel/ioctl_comm.c",
+      "line": 131,
+      "function": "pcidev_ioctl",
+      "type": "ioctl",
+      "trust_level": "untrusted_local",
+      "justification": "灵渠PCIe设备的ioctl入口，用户空间可直接调用",
+      "description": "PCIe设备ioctl处理"
+    },
+    {
+      "file": "src/sdk_driver/queue/host/queue_fops.c",
+      "line": 62,
+      "function": "queue_drv_open",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "用户进程通过open系统调用打开设备文件，创建队列上下文",
+      "description": "队列驱动open入口"
+    },
+    {
+      "file": "src/sdk_driver/queue/host/queue_fops.c",
+      "line": 97,
+      "function": "queue_drv_host_init",
+      "type": "ioctl",
+      "trust_level": "untrusted_local",
+      "justification": "ioctl命令初始化主机侧队列",
+      "description": "队列ioctl初始化"
+    },
+    {
+      "file": "src/custom/lqdrv/kernel/pci-dev.c",
+      "line": 210,
+      "function": "shared_memory_mmap",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "用户进程通过mmap映射共享内存，直接访问内核内存区域",
+      "description": "共享内存mmap入口"
+    },
+    {
+      "file": "src/custom/lqdrv/kernel/pci-dev.c",
+      "line": 640,
+      "function": "g_bmc_pci_mem.pmap_addr",
+      "type": "file",
+      "trust_level": "internal",
+      "justification": "内核内ioremap BAR空间，非用户直接入口但潜在风险点",
+      "description": "PCIe BAR空间ioremap"
+    },
+    {
+      "file": "src/ascend_hal/roce/host_lite/hns_roce_lite.c",
+      "line": 1,
+      "function": "hns_roce_lite_init",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "RoCE RDMA网络接口，可接收远程网络数据包",
+      "description": "RoCE网络入口"
+    },
+    {
+      "file": "src/ascend_hal/hdc/common/hdc_server.c",
+      "line": 1,
+      "function": "hdc_server_init",
+      "type": "network",
+      "trust_level": "semi_trusted",
+      "justification": "HDC服务器处理主机-设备通信，数据来源为设备侧固件",
+      "description": "HDC服务器入口"
+    },
+    {
+      "file": "src/sdk_driver/svm/v2/common/svm_module_ops.c",
+      "line": 1,
+      "function": "svm_init",
+      "type": "rpc",
+      "trust_level": "untrusted_local",
+      "justification": "SVM共享虚拟内存模块入口，用户通过ioctl调用内存操作",
+      "description": "SVM模块入口"
+    },
+    {
+      "file": "src/sdk_driver/kernel_adapt/ka_module_init.c",
+      "line": 1,
+      "function": "module_init",
+      "type": "file",
+      "trust_level": "trusted_admin",
+      "justification": "内核模块初始化入口，由系统加载触发",
+      "description": "内核模块init入口"
+    }
+  ],
+  "attack_surfaces": [
+    "ioctl接口: 471个文件包含ioctl处理，100+命令类型",
+    "copy_from_user/copy_to_user: 102个文件进行内核-用户数据交换",
+    "网络接口(RoCE/HDC): 579个文件包含socket/network操作",
+    "内存映射(mmap/ioremap): 5个文件直接映射物理内存",
+    "PCIe DMA操作: 多文件处理DMA传输",
+    "文件操作: 957个文件包含文件读写",
+    "缓冲区操作(sprintf/strcpy/memcpy): 50+文件存在潜在溢出风险",
+    "容器接口: 支持容器环境，存在namespace隔离风险",
+    "设备虚拟化: vnic/vmng/vascend虚拟化特性",
+    "共享内存: 进程间共享内存通信"
+  ]
+}

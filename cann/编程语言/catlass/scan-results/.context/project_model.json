@@ -1,0 +1,524 @@
+{
+  "project_name": "catlass",
+  "scan_time": "2026-04-22T02:00:00Z",
+  "lsp_available": false,
+  "total_files": 438,
+  "total_lines": 50000,
+  "project_profile": {
+    "project_type": "library",
+    "deployment_model": "作为昇腾算子模板库被其他应用程序通过 C++ 模板、共享库或 Python 扩展调用。主要部署场景包括：1) 嵌入到深度学习框架中作为算子实现；2) 通过 CLI 工具 (tuner) 进行性能调优；3) 作为示例程序直接运行验证算子功能。",
+    "trust_boundaries": [
+      {
+        "boundary": "API Interface",
+        "trusted_side": "CATLASS Template Library (内部代码)",
+        "untrusted_side": "Calling Application (调用方代码)",
+        "risk": "High"
+      },
+      {
+        "boundary": "CLI Interface",
+        "trusted_side": "Tuner Tool Internal Logic",
+        "untrusted_side": "Local User Command Line Arguments",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Python Extension Interface",
+        "trusted_side": "CATLASS C++ Backend",
+        "untrusted_side": "Python User Code / Torch Tensors",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Environment Variables",
+        "trusted_side": "CATLASS Internal Configuration",
+        "untrusted_side": "System Environment (ASCEND_RT_VISIBLE_DEVICES)",
+        "risk": "Low"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "core_gemm_kernel",
+      "path": "include/catlass/gemm/kernel",
+      "language": "c_cpp",
+      "components": [
+        "basic_matmul.hpp",
+        "basic_matmul_tla.hpp",
+        "basic_matmul_preload.hpp",
+        "batched_matmul.hpp",
+        "dynamic_common_matmul.hpp",
+        "dynamic_aiv_matmul.hpp",
+        "dynamic_small_matmul.hpp",
+        "fp8_matmul.hpp",
+        "gemm.hpp",
+        "group_gemm.hpp",
+        "grouped_matmul.hpp",
+        "grouped_matmul_slice_m.hpp",
+        "grouped_matmul_slice_k.hpp",
+        "matmul_bias.hpp",
+        "matmul_activation.hpp",
+        "optimized_matmul_tla.hpp",
+        "padding_matmul.hpp",
+        "padding_splitk_matmul.hpp",
+        "quant_matmul.hpp",
+        "quant_optimized_matmul_tla.hpp",
+        "splitk_matmul.hpp",
+        "streamk_matmul.hpp",
+        "w8a16_matmul.hpp",
+        "w4a4_matmul_per_token_per_channel_dequant.hpp",
+        "sparse_matmul_tla.hpp",
+        "quant_multi_core_splitk_matmul_tla.hpp",
+        "quant_matmul_per_group_per_block_tla.hpp"
+      ]
+    },
+    {
+      "name": "core_gemm_block",
+      "path": "include/catlass/gemm/block",
+      "language": "c_cpp",
+      "components": [
+        "block_mmad.hpp",
+        "block_mmad_pingpong.hpp",
+        "block_mmad_preload.hpp",
+        "block_mmad_streamk.hpp",
+        "block_swizzle.hpp",
+        "block_scheduler_iterateK.hpp",
+        "block_scheduler_aswt.hpp"
+      ]
+    },
+    {
+      "name": "core_gemm_tile",
+      "path": "include/catlass/gemm/tile",
+      "language": "c_cpp",
+      "components": [
+        "tile_copy.hpp",
+        "tile_copy_tla.hpp",
+        "tile_mmad.hpp",
+        "tile_muls.hpp",
+        "tile_traits.hpp",
+        "copy_gm_to_l1.hpp",
+        "copy_gm_to_ub.hpp",
+        "copy_l1_to_l0a.hpp",
+        "copy_l1_to_l0b.hpp",
+        "copy_l0c_to_ub.hpp",
+        "copy_l0c_to_gm.hpp",
+        "copy_ub_to_gm.hpp",
+        "cast_int8_to_fp16.hpp",
+        "cast_fp8_to_fp16.hpp",
+        "cast_int4_to_int8.hpp"
+      ]
+    },
+    {
+      "name": "core_gemv",
+      "path": "include/catlass/gemv",
+      "language": "c_cpp",
+      "components": [
+        "kernel/kernel_gemv_aiv.hpp",
+        "kernel/kernel_gemv_aic.hpp",
+        "block/block_gemv.hpp",
+        "device/device_gemv.hpp",
+        "helper.hpp"
+      ]
+    },
+    {
+      "name": "core_conv",
+      "path": "include/catlass/conv",
+      "language": "c_cpp",
+      "components": [
+        "block/block_conv.hpp",
+        "block/block_conv2d_pingpong.hpp",
+        "block/block_conv3d_pingpong_bias.hpp",
+        "device/device_conv.hpp"
+      ]
+    },
+    {
+      "name": "core_epilogue",
+      "path": "include/catlass/epilogue",
+      "language": "c_cpp",
+      "components": [
+        "block/block_epilogue.hpp",
+        "block/block_epilogue_gemm.hpp",
+        "block/block_epilogue_fa_softmax.hpp",
+        "block/block_epilogue_per_token_dequant.hpp",
+        "block/block_epilogue_fixpipe.hpp"
+      ]
+    },
+    {
+      "name": "core_arch",
+      "path": "include/catlass/arch",
+      "language": "c_cpp",
+      "components": [
+        "arch.hpp",
+        "resource.hpp",
+        "local_tensor_buffer.hpp",
+        "cross_core_sync.hpp"
+      ]
+    },
+    {
+      "name": "tla",
+      "path": "include/tla",
+      "language": "c_cpp",
+      "components": [
+        "layout.hpp",
+        "tensor.hpp",
+        "int_tuple.hpp",
+        "tuple.hpp",
+        "type_traits.hpp"
+      ]
+    },
+    {
+      "name": "tuner_cli",
+      "path": "tools/tuner",
+      "language": "c_cpp",
+      "components": [
+        "src/main.cpp",
+        "src/catlass_tuner.cpp",
+        "src/command_line_parser.cpp",
+        "src/profiler.cpp",
+        "src/op_launcher.cpp",
+        "src/device_memory_manager.cpp",
+        "include/catlass_tuner.h",
+        "include/command_line_parser.h",
+        "include/profiler.h",
+        "include/op_launcher.h",
+        "include/device_memory_manager.h"
+      ]
+    },
+    {
+      "name": "python_extension",
+      "path": "examples/python_extension",
+      "language": "mixed",
+      "components": [
+        "src/bindings/pybind_bindings.cpp",
+        "src/bindings/torch_bindings.cpp",
+        "src/wrapper/catlass_kernel_wrapper.cpp",
+        "src/wrapper/matmul.cpp",
+        "src/wrapper/grouped_matmul.cpp",
+        "src/wrapper/conv.cpp",
+        "src/wrapper/common.cpp",
+        "torch_catlass/__init__.py",
+        "setup.py"
+      ]
+    },
+    {
+      "name": "shared_lib_api",
+      "path": "examples/shared_lib",
+      "language": "c_cpp",
+      "components": [
+        "include/catlass_kernel.h",
+        "src/kernels/basic_matmul.cpp",
+        "src/kernels/optimized_matmul.cpp",
+        "src/kernels/grouped_matmul.cpp",
+        "src/kernels/conv_bias.cpp",
+        "basic_matmul_shared_lib.cpp"
+      ]
+    },
+    {
+      "name": "library_scripts",
+      "path": "tools/library/scripts",
+      "language": "python",
+      "components": [
+        "library.py",
+        "manifest.py",
+        "gemm_operation.py",
+        "search_space.py",
+        "search_space_config.py",
+        "code_generator.py",
+        "utils.py"
+      ]
+    },
+    {
+      "name": "tests",
+      "path": "tests",
+      "language": "mixed",
+      "components": [
+        "test_python_extension.py",
+        "test_torch_lib.py",
+        "test_mstuner.py",
+        "test_example.py",
+        "unittest/catlass_unittest.cpp",
+        "unittest/catlass/test_gemm_coord.cpp"
+      ]
+    },
+    {
+      "name": "examples_matmul",
+      "path": "examples",
+      "language": "c_cpp",
+      "components": [
+        "00_basic_matmul/basic_matmul.cpp",
+        "01_batched_matmul/batched_matmul.cpp",
+        "02_grouped_matmul_slice_m/grouped_matmul_slice_m.cpp",
+        "06_optimized_matmul/optimized_matmul.cpp",
+        "08_grouped_matmul/grouped_matmul.cpp",
+        "09_splitk_matmul/splitk_matmul.cpp",
+        "12_quant_matmul/quant_matmul.cpp",
+        "13_basic_matmul_tla/basic_matmul_tla.cpp",
+        "14_optimized_matmul_tla/optimized_matmul_tla.cpp",
+        "15_gemm/gemm.cpp",
+        "102_dynamic_optimized_matmul/dynamic_optimized_matmul.cpp",
+        "103_dynamic_optimized_quant_matmul_per_token_basic/dynamic_optimized_quant_matmul_per_token_basic.cpp"
+      ]
+    }
+  ],
+  "files": [
+    {
+      "path": "tools/tuner/src/main.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "tuner_cli",
+      "lines": 26,
+      "priority": 1
+    },
+    {
+      "path": "tools/tuner/src/command_line_parser.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "tuner_cli",
+      "lines": 267,
+      "priority": 2
+    },
+    {
+      "path": "tools/tuner/src/profiler.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "tuner_cli",
+      "lines": 407,
+      "priority": 3
+    },
+    {
+      "path": "tools/tuner/src/catlass_tuner.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "tuner_cli",
+      "lines": 200,
+      "priority": 4
+    },
+    {
+      "path": "examples/python_extension/src/bindings/pybind_bindings.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "python_extension",
+      "lines": 28,
+      "priority": 5
+    },
+    {
+      "path": "examples/python_extension/src/wrapper/catlass_kernel_wrapper.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "python_extension",
+      "lines": 91,
+      "priority": 6
+    },
+    {
+      "path": "examples/shared_lib/include/catlass_kernel.h",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "shared_lib_api",
+      "lines": 66,
+      "priority": 7
+    },
+    {
+      "path": "examples/shared_lib/src/kernels/basic_matmul.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "shared_lib_api",
+      "lines": 150,
+      "priority": 8
+    },
+    {
+      "path": "include/catlass/gemm/kernel/basic_matmul.hpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "core_gemm_kernel",
+      "lines": 400,
+      "priority": 9
+    },
+    {
+      "path": "include/catlass/gemm/kernel/dynamic_common_matmul.hpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "core_gemm_kernel",
+      "lines": 300,
+      "priority": 10
+    },
+    {
+      "path": "include/catlass/gemm/tile/tile_copy.hpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "core_gemm_tile",
+      "lines": 500,
+      "priority": 11
+    },
+    {
+      "path": "include/catlass/gemm/tile/copy_gm_to_l1.hpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "core_gemm_tile",
+      "lines": 200,
+      "priority": 12
+    },
+    {
+      "path": "include/catlass/arch/local_tensor_buffer.hpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "core_arch",
+      "lines": 150,
+      "priority": 13
+    },
+    {
+      "path": "include/tla/tensor.hpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "tla",
+      "lines": 450,
+      "priority": 14
+    },
+    {
+      "path": "examples/python_extension/torch_catlass/__init__.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "python_extension",
+      "lines": 42,
+      "priority": 15
+    },
+    {
+      "path": "tools/library/scripts/library.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "library_scripts",
+      "lines": 200,
+      "priority": 16
+    },
+    {
+      "path": "examples/00_basic_matmul/basic_matmul.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "examples_matmul",
+      "lines": 142,
+      "priority": 17
+    },
+    {
+      "path": "examples/102_dynamic_optimized_matmul/dynamic_optimized_matmul.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "examples_matmul",
+      "lines": 120,
+      "priority": 18
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "tools/tuner/src/main.cpp",
+      "line": 15,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "CLI 工具入口，本地用户可通过命令行参数控制工具行为，参数包括 --output, --device, --m, --n, --k, --group_count, --kernels 等",
+      "description": "Tiling 自动寻优工具的命令行入口，解析用户参数进行性能调优"
+    },
+    {
+      "file": "tools/tuner/src/profiler.cpp",
+      "line": 393,
+      "function": "SetDeviceId",
+      "type": "env",
+      "trust_level": "semi_trusted",
+      "justification": "读取环境变量 ASCEND_RT_VISIBLE_DEVICES 进行设备 ID 转换，该环境变量通常由系统管理员或部署脚本设置",
+      "description": "环境变量读取，用于设备可见性配置"
+    },
+    {
+      "file": "examples/python_extension/src/bindings/pybind_bindings.cpp",
+      "line": 24,
+      "function": "basic_matmul",
+      "type": "decorator",
+      "trust_level": "semi_trusted",
+      "justification": "Python API 入口，通过 pybind11 绑定暴露给 Python 用户代码调用，参数来自 Torch tensor 对象",
+      "description": "Python 扩展 API 入口，基础矩阵乘法算子"
+    },
+    {
+      "file": "examples/python_extension/src/bindings/pybind_bindings.cpp",
+      "line": 25,
+      "function": "grouped_matmul",
+      "type": "decorator",
+      "trust_level": "semi_trusted",
+      "justification": "Python API 入口，通过 pybind11 绑定暴露给 Python 用户代码调用",
+      "description": "Python 扩展 API 入口，分组矩阵乘法算子"
+    },
+    {
+      "file": "examples/python_extension/src/bindings/pybind_bindings.cpp",
+      "line": 26,
+      "function": "optimized_matmul",
+      "type": "decorator",
+      "trust_level": "semi_trusted",
+      "justification": "Python API 入口，通过 pybind11 绑定暴露给 Python 用户代码调用",
+      "description": "Python 扩展 API 入口，优化矩阵乘法算子"
+    },
+    {
+      "file": "examples/python_extension/src/bindings/pybind_bindings.cpp",
+      "line": 27,
+      "function": "conv_bias",
+      "type": "decorator",
+      "trust_level": "semi_trusted",
+      "justification": "Python API 入口，通过 pybind11 绑定暴露给 Python 用户代码调用",
+      "description": "Python 扩展 API 入口，带偏置的卷积算子"
+    },
+    {
+      "file": "examples/shared_lib/include/catlass_kernel.h",
+      "line": 60,
+      "function": "BasicMatmul",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "共享库 API 入口，外部 C/C++ 程序通过此接口调用算子功能，参数由调用方代码控制",
+      "description": "共享库导出函数，基础矩阵乘法"
+    },
+    {
+      "file": "examples/shared_lib/include/catlass_kernel.h",
+      "line": 61,
+      "function": "GroupedMatmul",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "共享库 API 入口，外部程序调用",
+      "description": "共享库导出函数，分组矩阵乘法"
+    },
+    {
+      "file": "examples/shared_lib/include/catlass_kernel.h",
+      "line": 62,
+      "function": "OptimizedMatmul",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "共享库 API 入口，外部程序调用",
+      "description": "共享库导出函数，优化矩阵乘法"
+    },
+    {
+      "file": "examples/shared_lib/include/catlass_kernel.h",
+      "line": 63,
+      "function": "ConvBias",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "共享库 API 入口，外部程序调用",
+      "description": "共享库导出函数，带偏置的卷积"
+    },
+    {
+      "file": "examples/00_basic_matmul/basic_matmul.cpp",
+      "line": 142,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "示例程序入口，本地用户可通过命令行参数控制测试参数（m, n, k, deviceId）",
+      "description": "基础矩阵乘法示例程序的命令行入口"
+    },
+    {
+      "file": "examples/102_dynamic_optimized_matmul/dynamic_optimized_matmul.cpp",
+      "line": 105,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "示例程序入口，本地用户可通过命令行参数控制测试参数",
+      "description": "动态优化矩阵乘法示例程序的命令行入口"
+    }
+  ],
+  "attack_surfaces": [
+    "CLI Tool Arguments: tools/tuner (命令行参数解析)",
+    "Python Extension API: examples/python_extension (Python 调用入口)",
+    "Shared Library API: examples/shared_lib (C API 导出函数)",
+    "Environment Variables: ASCEND_RT_VISIBLE_DEVICES (设备可见性配置)",
+    "Template Library API: include/catlass (C++ 模板接口)",
+    "KernelInfo Structure: inputAddr/outputAddr 指针参数 (内存操作)"
+  ]
+}

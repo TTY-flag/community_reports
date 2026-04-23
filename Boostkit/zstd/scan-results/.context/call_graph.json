@@ -1,0 +1,475 @@
+{
+  "functions": {
+    "main@programs/zstdcli.c": {
+      "defined_at": 859,
+      "calls": [
+        "checkLibVersion@programs/zstdcli.c",
+        "FIO_createPreferences@programs/fileio.c",
+        "FIO_createContext@programs/fileio.c",
+        "FIO_compressFilename@programs/fileio.c",
+        "FIO_decompressFilename@programs/fileio.c",
+        "UTIL_allocateFileNamesTable@programs/util.c",
+        "UTIL_createFileList@programs/util.c"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "ZSTD_decompress@lib/zstd.h": {
+      "defined_at": 173,
+      "calls": [
+        "ZSTD_createDCtx@lib/decompress/zstd_decompress.c",
+        "ZSTD_decompressDCtx@lib/decompress/zstd_decompress.c",
+        "ZSTD_freeDCtx@lib/decompress/zstd_decompress.c"
+      ],
+      "called_by": [
+        "FIO_decompressFilename@programs/fileio.c",
+        "simple_decompression@examples/simple_decompression.c"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "ZSTD_decompressDCtx@lib/decompress/zstd_decompress.c": {
+      "defined_at": 200,
+      "calls": [
+        "ZSTD_getFrameContentSize@lib/decompress/zstd_decompress.c",
+        "ZSTD_decompressStream@lib/decompress/zstd_decompress.c",
+        "ZSTD_DCtx_reset@lib/decompress/zstd_decompress.c"
+      ],
+      "called_by": [
+        "ZSTD_decompress@lib/zstd.h"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "ZSTD_decompressStream@lib/decompress/zstd_decompress.c": {
+      "defined_at": 2500,
+      "calls": [
+        "ZSTD_initDCtx@lib/decompress/zstd_decompress.c",
+        "ZSTD_decompressFrame@lib/decompress/zstd_decompress.c",
+        "ZSTD_refDDict@lib/decompress/zstd_ddict.c"
+      ],
+      "called_by": [
+        "ZSTD_decompressDCtx@lib/decompress/zstd_decompress.c",
+        "streaming_decompression@examples/streaming_decompression.c"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "ZSTD_decompressFrame@lib/decompress/zstd_decompress.c": {
+      "defined_at": 1800,
+      "calls": [
+        "ZSTD_decodeFrameHeader@lib/decompress/zstd_decompress.c",
+        "ZSTD_decompressBlock@lib/decompress/zstd_decompress_block.c",
+        "ZSTD_copyRawBlock@lib/decompress/zstd_decompress.c"
+      ],
+      "called_by": [
+        "ZSTD_decompressStream@lib/decompress/zstd_decompress.c"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "ZSTD_decompressBlock@lib/decompress/zstd_decompress_block.c": {
+      "defined_at": 100,
+      "calls": [
+        "ZSTD_decodeLiteralsBlock@lib/decompress/zstd_decompress_block.c",
+        "ZSTD_decompressSequences@lib/decompress/zstd_decompress_block.c",
+        "ZSTD_checkDelimitedBoundaries@lib/decompress/zstd_decompress_block.c"
+      ],
+      "called_by": [
+        "ZSTD_decompressFrame@lib/decompress/zstd_decompress.c"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "ZSTD_decodeLiteralsBlock@lib/decompress/zstd_decompress_block.c": {
+      "defined_at": 133,
+      "calls": [
+        "HUF_decompress@lib/decompress/huf_decompress.c",
+        "ZSTD_allocateLiteralsBuffer@lib/decompress/zstd_decompress_block.c",
+        "ZSTD_memcpy@lib/common/zstd_deps.h"
+      ],
+      "called_by": [
+        "ZSTD_decompressBlock@lib/decompress/zstd_decompress_block.c"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "ZSTD_decompressSequences@lib/decompress/zstd_decompress_block.c": {
+      "defined_at": 500,
+      "calls": [
+        "ZSTD_decodeSequenceHeaders@lib/decompress/zstd_decompress_block.c",
+        "ZSTD_execSequence@lib/decompress/zstd_decompress_block.c",
+        "ZSTD_memcpy@lib/common/zstd_deps.h"
+      ],
+      "called_by": [
+        "ZSTD_decompressBlock@lib/decompress/zstd_decompress_block.c"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "HUF_decompress@lib/decompress/huf_decompress.c": {
+      "defined_at": 50,
+      "calls": [
+        "HUF_readDTable@lib/decompress/huf_decompress.c",
+        "HUF_decompressUsingDTable@lib/decompress/huf_decompress.c",
+        "HUF_decompress1X@lib/decompress/huf_decompress.c",
+        "HUF_decompress2X@lib/decompress/huf_decompress.c"
+      ],
+      "called_by": [
+        "ZSTD_decodeLiteralsBlock@lib/decompress/zstd_decompress_block.c"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "HUF_readDTable@lib/decompress/huf_decompress.c": {
+      "defined_at": 200,
+      "calls": [
+        "BIT_initDStream@lib/common/bitstream.h",
+        "MEM_readLE@lib/common/mem.h",
+        "ZSTD_highbit32@lib/common/bits.h"
+      ],
+      "called_by": [
+        "HUF_decompress@lib/decompress/huf_decompress.c"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "FSE_decompress@lib/common/fse_decompress.c": {
+      "defined_at": 100,
+      "calls": [
+        "FSE_readNCount@lib/common/entropy_common.c",
+        "FSE_buildDTable@lib/common/fse_decompress.c",
+        "BIT_initDStream@lib/common/bitstream.h"
+      ],
+      "called_by": [
+        "ZSTD_decodeLiteralsBlock@lib/decompress/zstd_decompress_block.c",
+        "ZSTD_decodeSequenceHeaders@lib/decompress/zstd_decompress_block.c"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "FIO_decompressFilename@programs/fileio.c": {
+      "defined_at": 1500,
+      "calls": [
+        "FIO_openSrcFile@programs/fileio.c",
+        "FIO_openDstFile@programs/fileio.c",
+        "ZSTD_decompress@lib/zstd.h",
+        "ZSTD_createDDict@lib/decompress/zstd_ddict.c",
+        "fread@stdio"
+      ],
+      "called_by": [
+        "main@programs/zstdcli.c"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "FIO_openSrcFile@programs/fileio.c": {
+      "defined_at": 500,
+      "calls": [
+        "fopen@stdio",
+        "UTIL_isRegularFile@programs/util.c",
+        "UTIL_getFileSize@programs/util.c"
+      ],
+      "called_by": [
+        "FIO_compressFilename@programs/fileio.c",
+        "FIO_decompressFilename@programs/fileio.c"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "ZSTD_isLegacy@lib/legacy/zstd_legacy.h": {
+      "defined_at": 56,
+      "calls": [
+        "MEM_readLE32@lib/common/mem.h"
+      ],
+      "called_by": [
+        "ZSTD_decompress@lib/decompress/zstd_decompress.c"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "ZSTDv01_decompress@lib/legacy/zstd_v01.c": {
+      "defined_at": 800,
+      "calls": [
+        "ZSTDv01_getFrameParams@lib/legacy/zstd_v01.c",
+        "ZSTDv01_decodeFrame@lib/legacy/zstd_v01.c",
+        "ZSTD_memcpy@lib/common/zstd_deps.h"
+      ],
+      "called_by": [
+        "ZSTD_decompress_legacy@lib/legacy/zstd_legacy.h"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "ZSTDv02_decompress@lib/legacy/zstd_v02.c": {
+      "defined_at": 700,
+      "calls": [
+        "ZSTDv02_getFrameParams@lib/legacy/zstd_v02.c",
+        "ZSTDv02_decodeFrame@lib/legacy/zstd_v02.c"
+      ],
+      "called_by": [
+        "ZSTD_decompress_legacy@lib/legacy/zstd_legacy.h"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "ZSTDv03_decompress@lib/legacy/zstd_v03.c": {
+      "defined_at": 750,
+      "calls": [
+        "ZSTDv03_getFrameParams@lib/legacy/zstd_v03.c",
+        "ZSTDv03_decodeFrame@lib/legacy/zstd_v03.c"
+      ],
+      "called_by": [
+        "ZSTD_decompress_legacy@lib/legacy/zstd_legacy.h"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "ZSTDv04_decompress@lib/legacy/zstd_v04.c": {
+      "defined_at": 800,
+      "calls": [
+        "ZSTDv04_getFrameParams@lib/legacy/zstd_v04.c",
+        "ZSTDv04_decodeFrame@lib/legacy/zstd_v04.c"
+      ],
+      "called_by": [
+        "ZSTD_decompress_legacy@lib/legacy/zstd_legacy.h"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "ZSTDv05_decompress@lib/legacy/zstd_v05.c": {
+      "defined_at": 850,
+      "calls": [
+        "ZSTDv05_getFrameParams@lib/legacy/zstd_v05.c",
+        "ZSTDv05_decodeFrame@lib/legacy/zstd_v05.c"
+      ],
+      "called_by": [
+        "ZSTD_decompress_legacy@lib/legacy/zstd_legacy.h"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "ZSTDv06_decompress@lib/legacy/zstd_v06.c": {
+      "defined_at": 900,
+      "calls": [
+        "ZSTDv06_getFrameParams@lib/legacy/zstd_v06.c",
+        "ZSTDv06_decodeFrame@lib/legacy/zstd_v06.c"
+      ],
+      "called_by": [
+        "ZSTD_decompress_legacy@lib/legacy/zstd_legacy.h"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "ZSTDv07_decompress@lib/legacy/zstd_v07.c": {
+      "defined_at": 1000,
+      "calls": [
+        "ZSTDv07_getFrameParams@lib/legacy/zstd_v07.c",
+        "ZSTDv07_decodeFrame@lib/legacy/zstd_v07.c"
+      ],
+      "called_by": [
+        "ZSTD_decompress_legacy@lib/legacy/zstd_legacy.h"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "gzread@zlibWrapper/gzread.c": {
+      "defined_at": 50,
+      "calls": [
+        "gz_read@zlibWrapper/gzread.c",
+        "gz_decomp@zlibWrapper/gzread.c",
+        "ZSTD_decompress@lib/zstd.h"
+      ],
+      "called_by": [
+        "gzgetc@zlibWrapper/gzread.c",
+        "gzgets@zlibWrapper/gzread.c"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "ZSTD_seekable_decompress@contrib/seekable_format/zstdseek_decompress.c": {
+      "defined_at": 200,
+      "calls": [
+        "ZSTD_seekable_readFrame@contrib/seekable_format/zstdseek_decompress.c",
+        "ZSTD_decompress@lib/zstd.h",
+        "ZSTD_seekable_init@contrib/seekable_format/zstdseek_decompress.c"
+      ],
+      "called_by": [
+        "seekable_decompression@contrib/seekable_format/examples/seekable_decompression.c"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "ZSTD_createDDict@lib/decompress/zstd_ddict.c": {
+      "defined_at": 50,
+      "calls": [
+        "ZSTD_malloc@lib/common/allocations.h",
+        "ZSTD_memcpy@lib/common/zstd_deps.h",
+        "ZSTD_loadEntropy@lib/decompress/zstd_ddict.c"
+      ],
+      "called_by": [
+        "FIO_decompressFilename@programs/fileio.c",
+        "dictionary_decompression@examples/dictionary_decompression.c"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "ZDICT_trainFromBuffer@lib/dictBuilder/zdict.c": {
+      "defined_at": 100,
+      "calls": [
+        "COVER_trainFromBuffer@lib/dictBuilder/cover.c",
+        "FASTCOVER_trainFromBuffer@lib/dictBuilder/fastcover.c",
+        "ZSTD_malloc@lib/common/allocations.h"
+      ],
+      "called_by": [
+        "DiB_trainFromFiles@programs/dibio.c"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "MEM_readLE32@lib/common/mem.h": {
+      "defined_at": 200,
+      "calls": [],
+      "called_by": [
+        "ZSTD_isLegacy@lib/legacy/zstd_legacy.h",
+        "ZSTD_decodeFrameHeader@lib/decompress/zstd_decompress.c"
+      ],
+      "receives_external_input": true,
+      "risk": "Low"
+    },
+    "ZSTD_memcpy@lib/common/zstd_deps.h": {
+      "defined_at": 50,
+      "calls": [
+        "memcpy@string.h"
+      ],
+      "called_by": [
+        "ZSTD_decodeLiteralsBlock@lib/decompress/zstd_decompress_block.c",
+        "ZSTD_decompressSequences@lib/decompress/zstd_decompress_block.c",
+        "HUF_decompress@lib/decompress/huf_decompress.c"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "ZSTD_checkDelimitedBoundaries@lib/decompress/zstd_decompress_block.c": {
+      "defined_at": 800,
+      "calls": [],
+      "called_by": [
+        "ZSTD_decompressBlock@lib/decompress/zstd_decompress_block.c"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "argv@programs/zstdcli.c:860",
+      "path": [
+        "main@programs/zstdcli.c:859",
+        "FIO_decompressFilename@programs/fileio.c:1500",
+        "FIO_openSrcFile@programs/fileio.c:500",
+        "fopen@programs/fileio.c:520"
+      ],
+      "sink": "fopen@programs/fileio.c:520",
+      "sink_type": "file_operation"
+    },
+    {
+      "source": "fread@programs/fileio.c:600",
+      "path": [
+        "FIO_decompressFilename@programs/fileio.c:1500",
+        "ZSTD_decompress@lib/zstd.h:173",
+        "ZSTD_decompressDCtx@lib/decompress/zstd_decompress.c:200",
+        "ZSTD_decompressStream@lib/decompress/zstd_decompress.c:2500",
+        "ZSTD_decompressFrame@lib/decompress/zstd_decompress.c:1800",
+        "ZSTD_decompressBlock@lib/decompress/zstd_decompress_block.c:100"
+      ],
+      "sink": "ZSTD_memcpy@lib/common/zstd_deps.h:50",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "compressed_data@lib/zstd.h:173",
+      "path": [
+        "ZSTD_decompress@lib/zstd.h:173",
+        "ZSTD_decompressDCtx@lib/decompress/zstd_decompress.c:200",
+        "ZSTD_decompressFrame@lib/decompress/zstd_decompress.c:1800",
+        "ZSTD_decodeLiteralsBlock@lib/decompress/zstd_decompress_block.c:133",
+        "HUF_decompress@lib/decompress/huf_decompress.c:50",
+        "HUF_readDTable@lib/decompress/huf_decompress.c:200"
+      ],
+      "sink": "MEM_readLE@lib/common/mem.h:150",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "compressed_data@lib/zstd.h:173",
+      "path": [
+        "ZSTD_decompress@lib/zstd.h:173",
+        "ZSTD_decompressDCtx@lib/decompress/zstd_decompress.c:200",
+        "ZSTD_decompressFrame@lib/decompress/zstd_decompress.c:1800",
+        "ZSTD_decompressBlock@lib/decompress/zstd_decompress_block.c:100",
+        "ZSTD_decompressSequences@lib/decompress/zstd_decompress_block.c:500"
+      ],
+      "sink": "ZSTD_execSequence@lib/decompress/zstd_decompress_block.c:600",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "legacy_data@lib/legacy/zstd_legacy.h:56",
+      "path": [
+        "ZSTD_isLegacy@lib/legacy/zstd_legacy.h:56",
+        "ZSTDv01_decompress@lib/legacy/zstd_v01.c:800",
+        "ZSTDv01_decodeFrame@lib/legacy/zstd_v01.c:900"
+      ],
+      "sink": "ZSTD_memcpy@lib/common/zstd_deps.h:50",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "gz_file@zlibWrapper/gzread.c:50",
+      "path": [
+        "gzread@zlibWrapper/gzread.c:50",
+        "gz_decomp@zlibWrapper/gzread.c:100",
+        "ZSTD_decompress@lib/zstd.h:173"
+      ],
+      "sink": "ZSTD_memcpy@lib/common/zstd_deps.h:50",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "dictionary_file@programs/fileio.c:1500",
+      "path": [
+        "FIO_decompressFilename@programs/fileio.c:1500",
+        "ZSTD_createDDict@lib/decompress/zstd_ddict.c:50",
+        "ZSTD_loadEntropy@lib/decompress/zstd_ddict.c:100"
+      ],
+      "sink": "ZSTD_memcpy@lib/common/zstd_deps.h:50",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "sample_buffer@lib/dictBuilder/zdict.c:100",
+      "path": [
+        "ZDICT_trainFromBuffer@lib/dictBuilder/zdict.c:100",
+        "COVER_trainFromBuffer@lib/dictBuilder/cover.c:200",
+        "COVER_tryParameters@lib/dictBuilder/cover.c:500"
+      ],
+      "sink": "ZSTD_malloc@lib/common/allocations.h:50",
+      "sink_type": "memory_allocation"
+    },
+    {
+      "source": "seekable_index@contrib/seekable_format/zstdseek_decompress.c:200",
+      "path": [
+        "ZSTD_seekable_decompress@contrib/seekable_format/zstdseek_decompress.c:200",
+        "ZSTD_seekable_readFrame@contrib/seekable_format/zstdseek_decompress.c:300",
+        "ZSTD_decompress@lib/zstd.h:173"
+      ],
+      "sink": "ZSTD_memcpy@lib/common/zstd_deps.h:50",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "FSE_table@lib/common/fse_decompress.c:100",
+      "path": [
+        "FSE_decompress@lib/common/fse_decompress.c:100",
+        "FSE_readNCount@lib/common/entropy_common.c:50",
+        "BIT_initDStream@lib/common/bitstream.h:100"
+      ],
+      "sink": "BIT_readBits@lib/common/bitstream.h:150",
+      "sink_type": "memory_operation"
+    }
+  ]
+}

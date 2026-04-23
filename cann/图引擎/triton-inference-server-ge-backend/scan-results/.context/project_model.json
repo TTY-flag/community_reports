@@ -1,0 +1,247 @@
+{
+  "project_name": "triton-inference-server-ge-backend",
+  "scan_time": "2026-04-22T10:30:00Z",
+  "lsp_available": false,
+  "total_files": 11,
+  "total_lines": 4722,
+  "project_profile": {
+    "project_type": "library",
+    "deployment_model": "作为 Triton Inference Server 的自定义 backend 插件（libtriton_npu_ge.so）部署，被 Triton Server 在启动模型时动态加载。Triton Server 本身作为网络服务运行，监听 HTTP/GRPC 端口接收远程推理请求，然后将请求分发给 backend 处理。",
+    "trust_boundaries": [
+      {
+        "boundary": "Triton Server Interface",
+        "trusted_side": "Backend Plugin (本项目)",
+        "untrusted_side": "Triton Server Core",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Network Interface (Triton Server)",
+        "trusted_side": "Triton Server",
+        "untrusted_side": "Remote Clients (HTTP/GRPC)",
+        "risk": "Critical"
+      },
+      {
+        "boundary": "Model Repository",
+        "trusted_side": "Deployment Admin",
+        "untrusted_side": "Model Files / Config Files",
+        "risk": "Low"
+      },
+      {
+        "boundary": "NPU Device",
+        "trusted_side": "Backend Runtime",
+        "untrusted_side": "Ascend Hardware",
+        "risk": "Low"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "backend_api",
+      "path": "src",
+      "language": "c_cpp",
+      "components": ["npu_ge.cpp", "npu_ge.h"]
+    },
+    {
+      "name": "model_management",
+      "path": "src",
+      "language": "c_cpp",
+      "components": ["model_state.cpp", "model_state.h", "model_instance_state.cpp", "model_instance_state.h"]
+    },
+    {
+      "name": "inference_engine",
+      "path": "src",
+      "language": "c_cpp",
+      "components": ["inference.cpp", "inference.h"]
+    },
+    {
+      "name": "scheduler",
+      "path": "src",
+      "language": "c_cpp",
+      "components": ["scheduler.cpp", "scheduler.h"]
+    },
+    {
+      "name": "example_client",
+      "path": "example",
+      "language": "python",
+      "components": ["client.py"]
+    }
+  ],
+  "files": [
+    {
+      "path": "src/model_state.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "model_management",
+      "lines": 1424,
+      "priority": 1,
+      "reason": "包含 system() 命令执行、配置文件解析、文件系统遍历、环境变量设置等高风险操作"
+    },
+    {
+      "path": "src/model_instance_state.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "model_management",
+      "lines": 582,
+      "priority": 2,
+      "reason": "设备初始化、环境变量读取、JSON 配置解析、多线程图编译"
+    },
+    {
+      "path": "src/inference.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "inference_engine",
+      "lines": 1370,
+      "priority": 3,
+      "reason": "推理执行核心逻辑、内存分配与复制、请求输入处理"
+    },
+    {
+      "path": "src/npu_ge.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "backend_api",
+      "lines": 189,
+      "priority": 4,
+      "reason": "Triton Backend API 入口点，接收推理请求并分发"
+    },
+    {
+      "path": "src/scheduler.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "scheduler",
+      "lines": 309,
+      "priority": 5,
+      "reason": "实例调度器，涉及线程同步和状态管理"
+    },
+    {
+      "path": "include/model_state.h",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "model_management",
+      "lines": 371,
+      "priority": 6,
+      "reason": "模型状态类定义，包含配置解析接口"
+    },
+    {
+      "path": "include/inference.h",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "inference_engine",
+      "lines": 173,
+      "priority": 7,
+      "reason": "推理类定义，包含大量内存操作接口"
+    },
+    {
+      "path": "include/model_instance_state.h",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "model_management",
+      "lines": 105,
+      "priority": 8,
+      "reason": "模型实例状态类定义"
+    },
+    {
+      "path": "include/scheduler.h",
+      "language": "c_cpp",
+      "risk": "Low",
+      "module": "scheduler",
+      "lines": 141,
+      "priority": 9,
+      "reason": "调度器类定义"
+    },
+    {
+      "path": "include/utils.h",
+      "language": "c_cpp",
+      "risk": "Low",
+      "module": "backend_api",
+      "lines": 58,
+      "priority": 10,
+      "reason": "工具宏定义"
+    },
+    {
+      "path": "example/client.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "example_client",
+      "lines": 50,
+      "priority": 11,
+      "reason": "示例客户端脚本，非核心代码"
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "src/npu_ge.cpp",
+      "line": 165,
+      "function": "TRITONBACKEND_ModelInstanceExecute",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "作为 Triton Backend API 入口点，接收来自 Triton Server 的推理请求。这些请求最初来自远程客户端（HTTP/GRPC），经过 Triton Server 处理后传递给 backend。虽然 Triton Server 可能对请求进行了部分验证，但 backend 需要处理原始推理请求数据。",
+      "description": "接收推理请求并调用 ProcessRequests 处理"
+    },
+    {
+      "file": "src/model_state.cpp",
+      "line": 121,
+      "function": "ParseGeConfig",
+      "type": "env",
+      "trust_level": "trusted_admin",
+      "justification": "解析 backend 配置，这些配置来自 Triton Server 的命令行参数（--backend-config），由部署管理员控制。攻击者无法直接修改这些配置。",
+      "description": "解析 backend 命令行配置 JSON"
+    },
+    {
+      "file": "src/model_state.cpp",
+      "line": 278,
+      "function": "ParseModelConfig",
+      "type": "file",
+      "trust_level": "trusted_admin",
+      "justification": "解析模型配置文件 config.pbtxt，该文件位于模型仓库目录中，由部署管理员准备。攻击者无法直接修改模型配置文件（需要管理员权限）。",
+      "description": "解析 Triton 模型配置文件"
+    },
+    {
+      "file": "src/model_state.cpp",
+      "line": 478,
+      "function": "FindModelFile",
+      "type": "file",
+      "trust_level": "trusted_admin",
+      "justification": "查找模型文件（ONNX/TensorFlow pb），路径来自模型配置，由部署管理员控制。攻击者无法直接修改模型文件。",
+      "description": "查找并加载模型文件"
+    },
+    {
+      "file": "src/model_instance_state.cpp",
+      "line": 20,
+      "function": "GetEnvVar",
+      "type": "env",
+      "trust_level": "trusted_admin",
+      "justification": "读取环境变量 GE_NPU_CONFIG，该环境变量由 Triton Server 启动脚本设置，由部署管理员控制。",
+      "description": "读取 GE_NPU_CONFIG 环境变量"
+    },
+    {
+      "file": "src/inference.cpp",
+      "line": 275,
+      "function": "ProcessRequestInputsV2",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "处理来自 Triton Server 请求的输入数据。这些数据最初来自远程客户端推理请求，需要验证数据尺寸和类型。",
+      "description": "处理推理请求的输入张量数据"
+    },
+    {
+      "file": "src/model_state.cpp",
+      "line": 66,
+      "function": "SetDumpGraph",
+      "type": "file",
+      "trust_level": "trusted_admin",
+      "justification": "设置图 dump 路径并执行清理命令。路径来自配置参数，由部署管理员控制。代码中有基本的命令注入过滤（检查 ; & | 字符）。",
+      "description": "设置 GE 图 dump 配置并执行清理命令"
+    }
+  ],
+  "attack_surfaces": [
+    "Backend API: TRITONBACKEND_ModelInstanceExecute 接收推理请求",
+    "配置解析: ParseGeConfig 解析 backend 命令行配置",
+    "模型配置解析: ParseModelConfig 解析 config.pbtxt",
+    "模型加载: FindModelFile 查找并加载 ONNX/TensorFlow 模型",
+    "请求输入处理: ProcessRequestInputsV2 处理推理输入张量",
+    "命令执行: system() 在 SetDumpGraph 中执行路径清理命令（有基本过滤）",
+    "内存操作: aclrtMemcpy 在多处执行设备-主机内存复制",
+    "JSON 解析: json::parse 解析 GE 配置",
+    "环境变量: getenv/setenv 读取和设置环境变量",
+    "文件系统遍历: std::filesystem 递归查找模型文件"
+  ]
+}

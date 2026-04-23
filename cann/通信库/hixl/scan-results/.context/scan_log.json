@@ -1,0 +1,119 @@
+{
+  "scan_id": "961d6c22-a68a-48ee-bf31-62f2c5bec899",
+  "start_time": "2026-04-21T21:52:00+08:00",
+  "end_time": "2026-04-21T23:47:00+08:00",
+  "duration_seconds": 3660,
+  "project_name": "hixl",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/cann/2/hixl",
+  "status": "success",
+  "agents": [
+    {
+      "name": "architecture",
+      "start_time": "2026-04-21T21:52:30+08:00",
+      "end_time": "2026-04-21T22:00:10+08:00",
+      "duration_seconds": 460,
+      "status": "success",
+      "output_files": [
+        "scan-results/.context/project_model.json",
+        "scan-results/.context/call_graph.json",
+        "scan-results/threat_analysis_report.md"
+      ],
+      "summary": {
+        "files_analyzed": 288,
+        "modules_identified": 20,
+        "entry_points": 12,
+        "attack_surface_count": 5
+      }
+    },
+    {
+      "name": "dataflow-scanner",
+      "start_time": "2026-04-21T22:00:30+08:00",
+      "end_time": "2026-04-21T22:38:39+08:00",
+      "duration_seconds": 2289,
+      "status": "success",
+      "output_files": [],
+      "summary": {
+        "modules_scanned": 20,
+        "candidates_found": 50,
+        "critical_count": 6,
+        "high_count": 15,
+        "cross_module_count": 6
+      }
+    },
+    {
+      "name": "security-auditor",
+      "start_time": "2026-04-21T22:00:30+08:00",
+      "end_time": "2026-04-21T22:11:59+08:00",
+      "duration_seconds": 689,
+      "status": "success",
+      "output_files": [],
+      "summary": {
+        "modules_audited": 20,
+        "candidates_found": 14,
+        "high_count": 6,
+        "medium_count": 7
+      }
+    },
+    {
+      "name": "verification",
+      "start_time": "2026-04-21T22:39:00+08:00",
+      "end_time": "2026-04-21T22:58:43+08:00",
+      "duration_seconds": 1183,
+      "status": "success",
+      "output_files": [],
+      "summary": {
+        "total_verified": 56,
+        "confirmed_count": 4,
+        "likely_count": 17,
+        "possible_count": 11,
+        "false_positive_count": 24
+      }
+    },
+    {
+      "name": "details-analyzer",
+      "start_time": "2026-04-21T22:59:00+08:00",
+      "end_time": "2026-04-21T23:13:56+08:00",
+      "duration_seconds": 896,
+      "status": "success",
+      "output_files": [
+        "scan-results/details/VULN-ADXL-002.md",
+        "scan-results/details/VULN-SEC-012.md",
+        "scan-results/details/llm_datadist_cache_mgr-V007.md",
+        "scan-results/details/VULN-HIXL-PROXY-002.md"
+      ],
+      "summary": {
+        "confirmed_analyzed": 4,
+        "reports_generated": 4,
+        "critical_count": 2,
+        "high_count": 2
+      }
+    },
+    {
+      "name": "reporter",
+      "start_time": "2026-04-21T23:14:00+08:00",
+      "end_time": "2026-04-21T23:47:00+08:00",
+      "duration_seconds": 259,
+      "status": "success",
+      "output_files": [
+        "scan-results/report_confirmed.md",
+        "scan-results/report_unconfirmed.md"
+      ],
+      "summary": {
+        "confirmed_report_lines": 542,
+        "unconfirmed_report_lines": 767
+      }
+    }
+  ],
+  "summary": {
+    "total_candidates": 50,
+    "total_verified": 56,
+    "confirmed_count": 4,
+    "likely_count": 17,
+    "possible_count": 11,
+    "false_positive_count": 24,
+    "critical_count": 2,
+    "high_count": 2,
+    "files_scanned": 288,
+    "modules_scanned": 20
+  }
+}

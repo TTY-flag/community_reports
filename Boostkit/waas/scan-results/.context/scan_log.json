@@ -1,0 +1,127 @@
+{
+  "scan_id": "00a5485f-2840-4c7c-a9a8-5f039ba5f2f5",
+  "start_time": "2026-04-21T00:00:00Z",
+  "end_time": "2026-04-21T00:27:06Z",
+  "duration_seconds": 1626,
+  "project_name": "waas",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/kunpeng/boostkit/waas",
+  "status": "success",
+  "agents": [
+    {
+      "name": "architecture",
+      "start_time": "2026-04-21T00:05:00Z",
+      "end_time": "2026-04-21T00:12:12Z",
+      "duration_seconds": 432,
+      "status": "success",
+      "output_files": [
+        "scan-results/.context/project_model.json",
+        "scan-results/.context/call_graph.json",
+        "scan-results/threat_analysis_report.md"
+      ],
+      "summary": {
+        "files_analyzed": 10,
+        "modules_identified": 1,
+        "entry_points": 7,
+        "high_risk_files": 4
+      }
+    },
+    {
+      "name": "dataflow-scanner",
+      "start_time": "2026-04-21T00:12:15Z",
+      "end_time": "2026-04-21T00:17:08Z",
+      "duration_seconds": 293,
+      "status": "success",
+      "summary": {
+        "modules_scanned": 1,
+        "candidates_found": 6,
+        "severity_breakdown": {
+          "Critical": 1,
+          "High": 2,
+          "Medium": 3
+        }
+      }
+    },
+    {
+      "name": "security-auditor",
+      "start_time": "2026-04-21T00:12:15Z",
+      "end_time": "2026-04-21T00:13:47Z",
+      "duration_seconds": 92,
+      "status": "success",
+      "summary": {
+        "modules_scanned": 1,
+        "candidates_found": 0,
+        "focus_areas": ["subprocess execution", "permission management", "logging security"]
+      }
+    },
+    {
+      "name": "verification",
+      "start_time": "2026-04-21T00:17:10Z",
+      "end_time": "2026-04-21T00:22:09Z",
+      "duration_seconds": 299,
+      "status": "success",
+      "summary": {
+        "candidates_verified": 6,
+        "verification_result": {
+          "CONFIRMED": 0,
+          "LIKELY": 0,
+          "POSSIBLE": 4,
+          "FALSE_POSITIVE": 2
+        },
+        "severity_adjustments": {
+          "Critical_to_Medium": 1,
+          "High_to_Medium": 2,
+          "Medium_to_Low": 1
+        },
+        "key_findings": [
+          "Path traversal vulnerabilities require kernel-level manipulation to exploit",
+          "is_container_path() provides partial filtering",
+          "os.path.exists() limits attack to existing files only",
+          "No os.path.realpath() usage in codebase for path normalization"
+        ]
+      }
+    },
+    {
+      "name": "details-analyzer",
+      "start_time": null,
+      "end_time": null,
+      "duration_seconds": 0,
+      "status": "skipped",
+      "summary": {
+        "reason": "No CONFIRMED vulnerabilities found - stage 4.5 skipped per protocol"
+      }
+    },
+    {
+      "name": "reporter",
+      "start_time": "2026-04-21T00:22:15Z",
+      "end_time": "2026-04-21T00:27:12Z",
+      "duration_seconds": 297,
+      "status": "success",
+      "output_files": [
+        "scan-results/report_confirmed.md",
+        "scan-results/report_unconfirmed.md"
+      ],
+      "summary": {
+        "confirmed_report_lines": 101,
+        "unconfirmed_report_lines": 815,
+        "sections_added": [
+          "Executive Summary",
+          "Deep Analysis for Top 4 Vulnerabilities",
+          "Remediation Recommendations",
+          "Threat Modeling Analysis",
+          "False Positive Analysis"
+        ]
+      }
+    }
+  ],
+  "summary": {
+    "total_vulnerabilities": 4,
+    "confirmed": 0,
+    "possible": 4,
+    "false_positive": 2,
+    "highest_severity": "Medium",
+    "highest_confidence": 25,
+    "primary_vulnerability_type": "Path Traversal (CWE-22)",
+    "root_cause": "file_check() uses path.lstrip('/') without handling ../ sequences",
+    "exploitation_barrier": "High - requires kernel-level manipulation of /proc files"
+  }
+}

@@ -1,0 +1,460 @@
+{
+  "functions": {
+    "DeviceAdapter::Run@include/elewise/device/device_adapter.h": {
+      "defined_at": 98,
+      "calls": [
+        "ToLinearizerExpr@include/graph/expr_linearizer.h:457",
+        "PrepareParams@include/elewise/device/device_adapter.h:201",
+        "CalculateTiling@include/elewise/device/device_adapter.h:129",
+        "ConvertArgs@include/elewise/device/device_adapter.h:224",
+        "LaunchKernelWithDataTuple@include/elewise/device/device_adapter.h:60"
+      ],
+      "called_by": [
+        "示例算子入口函数@example/abs/abs.cpp",
+        "示例算子入口函数@example/rms_norm/rms_norm.cpp",
+        "示例算子入口函数@example/muls/muls.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "Device 层主入口，接收调用方传入的 arguments（张量数据和参数），执行表达式线性化、参数准备、tiling 计算、kernel 启动"
+    },
+    "ToLinearizerExpr@include/graph/expr_linearizer.h": {
+      "defined_at": 457,
+      "calls": [
+        "ExprLinearizer::optimizedList@include/graph/expr_linearizer.h:452",
+        "ToOpAndThenExpr@include/expression/expr_template.h:516"
+      ],
+      "called_by": [
+        "DeviceAdapter::Run@include/elewise/device/device_adapter.h:100"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "表达式线性化入口，将表达式树转换为执行序列，处理调用方定义的表达式模板"
+    },
+    "LaunchKernelWithDataTuple@include/elewise/device/device_adapter.h": {
+      "defined_at": 60,
+      "calls": [
+        "KernelCustom@example/elewise/device/device_adapter.h:37",
+        "TransformArgs@include/elewise/device/device_adapter.h:47"
+      ],
+      "called_by": [
+        "DeviceAdapter::Run@include/elewise/device/device_adapter.h:121"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "Kernel 启动函数，将参数转换为设备可接受的格式，启动 Ascend C kernel"
+    },
+    "KernelCustom@include/elewise/device/device_adapter.h": {
+      "defined_at": 37,
+      "calls": [
+        "KernelWrapper@include/elewise/device/device_adapter.h:30"
+      ],
+      "called_by": [
+        "LaunchKernelWithDataTuple@include/elewise/device/device_adapter.h:69"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "Ascend C kernel 入口函数，标记 __global__ __aicore__"
+    },
+    "KernelWrapper@include/elewise/device/device_adapter.h": {
+      "defined_at": 30,
+      "calls": [
+        "KernelOp::Run@example/elewise/kernel/builder.h:59"
+      ],
+      "called_by": [
+        "KernelCustom@include/elewise/device/device_adapter.h:40"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "Kernel 包装函数，调用 KernelOp::Run"
+    },
+    "KernelBuilder::Run@include/elewise/kernel/builder.h": {
+      "defined_at": 59,
+      "calls": [
+        "DefaultKernelSchedule::Run@include/elewise/kernel/schedule.h"
+      ],
+      "called_by": [
+        "KernelWrapper@include/elewise/device/device_adapter.h:33"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "Kernel 层执行函数，多核任务分解和调度"
+    },
+    "BlockBuilder::Run@include/elewise/block/builder.h": {
+      "defined_at": 53,
+      "calls": [
+        "DefaultBlockSchedule::Run@include/elewise/block/schedule.h"
+      ],
+      "called_by": [
+        "DefaultKernelSchedule::Run@include/elewise/kernel/schedule.h"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "Block 层执行函数，单核 Tile 分解和调度"
+    },
+    "TileEvaluate::Run@include/elewise/tile/tile_evaluate.h": {
+      "defined_at": 1,
+      "calls": [
+        "Evaluator::operator()@include/evaluator/eval_base.h:28",
+        "Assign@include/evaluator/eval_base.h:99",
+        "Assign@include/evaluator/eval_base.h:105"
+      ],
+      "called_by": [
+        "DefaultBlockSchedule::Run@include/elewise/block/schedule.h"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "Tile 层评估函数，执行表达式计算"
+    },
+    "Evaluator::operator()@include/evaluator/eval_base.h": {
+      "defined_at": 28,
+      "calls": [
+        "Assign@include/evaluator/eval_base.h:99",
+        "Evaluator<OpAssign>::operator()@include/evaluator/eval_base.h:78",
+        "Evaluator<OpAndThen>::operator()@include/evaluator/eval_base.h:90"
+      ],
+      "called_by": [
+        "TileEvaluate::Run@include/elewise/tile/tile_evaluate.h"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "表达式评估器，递归执行表达式树"
+    },
+    "Assign@include/evaluator/eval_base.h": {
+      "defined_at": 99,
+      "calls": [],
+      "called_by": [
+        "Evaluator::operator()@include/evaluator/eval_base.h:80",
+        "Evaluator::operator()@include/evaluator/eval_base.h:105"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "赋值函数，执行数据拷贝或函数调用"
+    },
+    "ExprLinearizer@include/graph/expr_linearizer.h": {
+      "defined_at": 446,
+      "calls": [
+        "ExtractTypeListPostOrder@include/graph/expr_linearizer.h:88",
+        "OptimizeWithLocalVars@include/graph/expr_linearizer.h:355",
+        "OptimizeBindBuffExpr@include/graph/expr_linearizer.h:443",
+        "Simplify@include/graph/expr_linearizer.h:305",
+        "RemoveRedundantCast@include/graph/expr_remove_redundant_cast.h"
+      ],
+      "called_by": [
+        "ToLinearizerExpr@include/graph/expr_linearizer.h:457"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "表达式线性化器，将表达式树转换为后序遍历列表，优化中间变量"
+    },
+    "ExtractTypeListPostOrder@include/graph/expr_linearizer.h": {
+      "defined_at": 88,
+      "calls": [],
+      "called_by": [
+        "ExprLinearizer@include/graph/expr_linearizer.h:447"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "后序遍历提取表达式列表"
+    },
+    "Simplify@include/graph/expr_linearizer.h": {
+      "defined_at": 305,
+      "calls": [
+        "SimplifyImpl@include/graph/expr_linearizer.h:200",
+        "FindVarDef@include/graph/expr_linearizer.h:145",
+        "IsLocalVarReferencedByParam@include/graph/expr_linearizer.h:164"
+      ],
+      "called_by": [
+        "ExprLinearizer@include/graph/expr_linearizer.h:452"
+      ],
+      "receives_external_input": false,
+      "risk": "Low",
+      "description": "表达式化简，移除无效 LocalVar"
+    },
+    "operator+@include/operators/math_expression.h": {
+      "defined_at": 30,
+      "calls": [
+        "Expression<OpAdd>::constructor@include/expression/expr_template.h:50"
+      ],
+      "called_by": [
+        "调用方表达式定义代码"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "加法操作符重载，构造 OpAdd 表达式"
+    },
+    "operator*@include/operators/math_expression.h": {
+      "defined_at": 82,
+      "calls": [
+        "Expression<OpMul>::constructor@include/expression/expr_template.h:50"
+      ],
+      "called_by": [
+        "调用方表达式定义代码"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "乘法操作符重载，构造 OpMul 表达式"
+    },
+    "Sqrt@include/operators/math_expression.h": {
+      "defined_at": 165,
+      "calls": [
+        "Expression<OpSqrt>::constructor@include/expression/expr_template.h:50"
+      ],
+      "called_by": [
+        "调用方表达式定义代码"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "Sqrt 函数，构造 OpSqrt 表达式"
+    },
+    "Cast@include/operators/math_expression.h": {
+      "defined_at": 189,
+      "calls": [
+        "Expression<OpCast>::constructor@include/expression/expr_template.h:50"
+      ],
+      "called_by": [
+        "调用方表达式定义代码"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "类型转换函数，构造 OpCast 表达式，涉及数据精度转换"
+    },
+    "PlaceHolder@include/expression/expr_template.h": {
+      "defined_at": 604,
+      "calls": [],
+      "called_by": [
+        "调用方表达式定义代码"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "参数占位符，定义输入输出张量位置"
+    },
+    "PyInit__C@example/python_extension/csrc/extension.cpp": {
+      "defined_at": 23,
+      "calls": [
+        "PyModule_Create@Python.h"
+      ],
+      "called_by": [
+        "Python runtime"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "Python C 扩展初始化入口，创建 Python 模块"
+    },
+    "CMakeBuildCommand::run@example/python_extension/setup.py": {
+      "defined_at": 96,
+      "calls": [
+        "os.environ.get@setup.py:113",
+        "subprocess.check_call@setup.py:124",
+        "subprocess.check_call@setup.py:125"
+      ],
+      "called_by": [
+        "setup.py bdist_wheel 命令"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "构建命令入口，读取环境变量 NPU_ARCH、TORCH_NPU_PATH，执行 cmake 命令"
+    },
+    "DeviceTensor::operator[]@include/elewise/device/device_tensor.h": {
+      "defined_at": 28,
+      "calls": [],
+      "called_by": [
+        "评估器中访问张量数据"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "设备张量下标访问，直接访问设备内存指针"
+    },
+    "DeviceTensor::Clear@include/elewise/device/device_tensor.h": {
+      "defined_at": 37,
+      "calls": [
+        "delete[] ptr_@device_tensor.h:40"
+      ],
+      "called_by": [
+        "DeviceAdapter 资源清理"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "清理设备张量内存"
+    },
+    "CHECK_ACL@include/elewise/device/device_adapter.h": {
+      "defined_at": 21,
+      "calls": [
+        "aclError 检查@device_adapter.h:24",
+        "std::cerr 输出@device_adapter.h:25"
+      ],
+      "called_by": [
+        "所有 ACL 函数调用处"
+      ],
+      "receives_external_input": false,
+      "risk": "Low",
+      "description": "ACL 错误检查宏"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "调用方 arguments (Tensor 数据)",
+      "path": [
+        "DeviceAdapter::Run@include/elewise/device/device_adapter.h:98",
+        "PrepareParams@include/elewise/device/device_adapter.h:201",
+        "ConstructParam@include/elewise/device/device_adapter.h:183",
+        "DeviceTensor constructor@include/elewise/device/device_tensor.h:23"
+      ],
+      "sink": "DeviceTensor::ptr_@include/elewise/device/device_tensor.h:52",
+      "sink_type": "memory_pointer",
+      "description": "张量数据从调用方传入，转换为设备张量指针"
+    },
+    {
+      "source": "调用方 Expression 定义",
+      "path": [
+        "DeviceAdapter::Run@include/elewise/device/device_adapter.h:100",
+        "ToLinearizerExpr@include/graph/expr_linearizer.h:457",
+        "ExprLinearizer@include/graph/expr_linearizer.h:446",
+        "ExtractTypeListPostOrder@include/graph/expr_linearizer.h:88"
+      ],
+      "sink": "Optimized expression list@include/graph/expr_linearizer.h:452",
+      "sink_type": "compile_time_type",
+      "description": "表达式模板在编译期处理，转换为线性执行序列"
+    },
+    {
+      "source": "调用方 Tensor 指针",
+      "path": [
+        "LaunchKernelWithDataTuple@include/elewise/device/device_adapter.h:60",
+        "TransformArgs@include/elewise/device/device_adapter.h:47",
+        "DeviceTensor::GetPtr@include/elewise/device/device_tensor.h:45"
+      ],
+      "sink": "KernelCustom kernel arguments@include/elewise/device/device_adapter.h:37",
+      "sink_type": "kernel_launch",
+      "description": "张量指针传递给 kernel 启动函数"
+    },
+    {
+      "source": "Kernel 参数",
+      "path": [
+        "KernelCustom@include/elewise/device/device_adapter.h:37",
+        "KernelWrapper@include/elewise/device/device_adapter.h:30",
+        "KernelBuilder::Run@include/elewise/kernel/builder.h:59",
+        "BlockBuilder::Run@include/elewise/block/builder.h:53"
+      ],
+      "sink": "TileEvaluate::Run@include/elewise/tile/tile_evaluate.h",
+      "sink_type": "compute_operation",
+      "description": "参数从 kernel 层传递到 tile 层执行计算"
+    },
+    {
+      "source": "Expression tree data",
+      "path": [
+        "TileEvaluate::Run@include/elewise/tile/tile_evaluate.h",
+        "Evaluator::operator()@include/evaluator/eval_base.h:28",
+        "Evaluator<OpAssign>::operator()@include/evaluator/eval_base.h:78",
+        "Assign@include/evaluator/eval_base.h:105"
+      ],
+      "sink": "DeviceTensor::operator[]@include/elewise/device/device_tensor.h:28",
+      "sink_type": "memory_operation",
+      "description": "表达式执行过程中访问张量数据，执行计算和赋值"
+    },
+    {
+      "source": "环境变量 NPU_ARCH",
+      "path": [
+        "CMakeBuildCommand::run@example/python_extension/setup.py:96",
+        "os.environ.get@setup.py:113",
+        "subprocess.check_call@setup.py:124 (cmake -DNPU_ARCH=)"
+      ],
+      "sink": "CMake configuration",
+      "sink_type": "build_configuration",
+      "description": "环境变量传递给 cmake 构建系统，影响编译目标架构"
+    },
+    {
+      "source": "环境变量 TORCH_NPU_PATH",
+      "path": [
+        "CMakeBuildCommand::run@example/python_extension/setup.py:96",
+        "torch_npu.__file__@setup.py:109",
+        "subprocess.check_call@setup.py:124 (cmake -DTORCH_NPU_PATH=)"
+      ],
+      "sink": "CMake configuration",
+      "sink_type": "build_configuration",
+      "description": "torch_npu 路径传递给 cmake 构建系统"
+    },
+    {
+      "source": "Python tensor data",
+      "path": [
+        "Python runtime",
+        "PyInit__C@example/python_extension/csrc/extension.cpp:23",
+        "TORCH_LIBRARY_IMPL static initializer",
+        "DeviceAdapter::Run@include/elewise/device/device_adapter.h:98"
+      ],
+      "sink": "Ascend NPU kernel execution",
+      "sink_type": "hardware_execution",
+      "description": "Python tensor 数据通过 C 扩展传递到 Ascend NPU 硬件执行"
+    }
+  ],
+  "cross_module_calls": [
+    {
+      "caller_module": "device",
+      "caller_function": "DeviceAdapter::Run",
+      "callee_module": "graph",
+      "callee_function": "ToLinearizerExpr",
+      "data_passed": "Expression template (调用方定义)"
+    },
+    {
+      "caller_module": "device",
+      "caller_function": "DeviceAdapter::Run",
+      "callee_module": "kernel",
+      "callee_function": "KernelBuilder::Run (via KernelCustom)",
+      "data_passed": "OpParam (tiling config), ArgTuple (tensor pointers)"
+    },
+    {
+      "caller_module": "kernel",
+      "caller_function": "KernelBuilder::Run",
+      "callee_module": "block",
+      "callee_function": "BlockBuilder::Run",
+      "data_passed": "BlockParam, ArgTuple"
+    },
+    {
+      "caller_module": "block",
+      "caller_function": "BlockBuilder::Run",
+      "callee_module": "tile",
+      "callee_function": "TileEvaluate::Run",
+      "data_passed": "ContextData (包含 argsTensors, tmpTensors)"
+    },
+    {
+      "caller_module": "tile",
+      "caller_function": "TileEvaluate::Run",
+      "callee_module": "evaluator",
+      "callee_function": "Evaluator::operator()",
+      "data_passed": "Expression (编译期类型)"
+    },
+    {
+      "caller_module": "graph",
+      "caller_function": "ExprLinearizer",
+      "callee_module": "expression",
+      "callee_function": "Expression template operations",
+      "data_passed": "Expression tree (编译期类型)"
+    },
+    {
+      "caller_module": "operators",
+      "caller_function": "operator+, operator*, Sqrt, Cast",
+      "callee_module": "expression",
+      "callee_function": "Expression constructor",
+      "data_passed": "Operand expressions"
+    },
+    {
+      "caller_module": "examples",
+      "caller_function": "算子入口函数",
+      "callee_module": "device",
+      "callee_function": "DeviceAdapter::Run",
+      "data_passed": "Arguments (Tensor data, attributes)"
+    },
+    {
+      "caller_module": "examples",
+      "caller_function": "PyInit__C",
+      "callee_module": "Python runtime",
+      "callee_function": "PyModule_Create",
+      "data_passed": "Module definition"
+    }
+  ],
+  "notes": {
+    "analysis_method": "基于 LSP 和静态代码分析",
+    "compile_time_operations": "表达式模板在编译期处理，大部分调用关系为类型推导而非运行时函数调用",
+    "template_metaprogramming": "ExprLinearizer、Evaluator 等主要使用模板元编程，调用链体现在类型推导而非实际函数调用",
+    "hardware_interface": "Ascend C kernel 通过 KernelCustom 函数启动，__aicore__ 标记的函数在设备端执行"
+  }
+}

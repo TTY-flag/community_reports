@@ -1,0 +1,104 @@
+{
+  "scan_id": "scan_20260422_024800",
+  "start_time": "2026-04-22T02:48:00Z",
+  "end_time": "2026-04-22T03:37:00Z",
+  "duration_seconds": 2940,
+  "status": "success",
+  "project_name": "cann/driver",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/cann/driver",
+  "mode": "autonomous_analysis",
+  "agents": [
+    {
+      "name": "architecture",
+      "start_time": "2026-04-22T02:48:00Z",
+      "end_time": "2026-04-22T02:54:00Z",
+      "duration_seconds": 320,
+      "status": "success",
+      "outputs": [
+        "project_model.json",
+        "call_graph.json",
+        "threat_analysis_report.md"
+      ],
+      "error": null,
+      "modules_found": 9,
+      "entry_points_found": 10,
+      "files_analyzed": 2782
+    },
+    {
+      "name": "dataflow-scanner",
+      "start_time": "2026-04-22T02:54:00Z",
+      "end_time": "2026-04-22T03:16:00Z",
+      "duration_seconds": 1320,
+      "status": "success",
+      "outputs": [
+        "scan.db"
+      ],
+      "error": null,
+      "modules_scanned": 9,
+      "candidates_found": 101
+    },
+    {
+      "name": "security-auditor",
+      "start_time": "2026-04-22T02:54:00Z",
+      "end_time": "2026-04-22T02:58:45Z",
+      "duration_seconds": 285,
+      "status": "success",
+      "outputs": [
+        "scan.db"
+      ],
+      "error": null,
+      "modules_scanned": 9
+    },
+    {
+      "name": "verification",
+      "start_time": "2026-04-22T03:16:00Z",
+      "end_time": "2026-04-22T03:21:25Z",
+      "duration_seconds": 325,
+      "status": "success",
+      "outputs": [
+        "scan.db"
+      ],
+      "error": null,
+      "verified_count": 13
+    },
+    {
+      "name": "details-analyzer",
+      "start_time": "2026-04-22T03:21:25Z",
+      "end_time": "2026-04-22T03:28:00Z",
+      "duration_seconds": 395,
+      "status": "partial",
+      "outputs": [
+        "details/VULN-LQDRV-001.md"
+      ],
+      "error": "Only 1 of 7 CONFIRMED vulnerabilities analyzed",
+      "confirmed_analyzed": 1
+    },
+    {
+      "name": "reporter",
+      "start_time": "2026-04-22T03:30:00Z",
+      "end_time": "2026-04-22T03:37:00Z",
+      "duration_seconds": 420,
+      "status": "success",
+      "outputs": [
+        "report_confirmed.md",
+        "report_unconfirmed.md"
+      ],
+      "error": null
+    }
+  ],
+  "summary": {
+    "project_type": "kernel_module",
+    "total_files_scanned": 2782,
+    "total_lines": 490617,
+    "candidates_found": 122,
+    "confirmed_vulnerabilities": 37,
+    "likely_vulnerabilities": 33,
+    "possible_vulnerabilities": 22,
+    "false_positives": 26,
+    "critical_count": 8,
+    "high_count": 33,
+    "medium_count": 45,
+    "low_count": 30,
+    "lsp_available": true
+  }
+}

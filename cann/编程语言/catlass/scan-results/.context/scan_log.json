@@ -1,0 +1,113 @@
+{
+  "scan_id": "catlass-scan-001",
+  "start_time": "2026-04-22T01:46:00Z",
+  "end_time": "2026-04-22T02:22:20Z",
+  "duration_seconds": 2180,
+  "project_name": "catlass",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/cann/5/catlass",
+  "status": "success",
+  "constraint_mode": false,
+  "agents": [
+    {
+      "name": "architecture",
+      "phase": "phase_2",
+      "start_time": "2026-04-22T01:46:30Z",
+      "end_time": "2026-04-22T01:56:42Z",
+      "duration_seconds": 612,
+      "status": "success",
+      "output_files": [
+        "scan-results/.context/project_model.json",
+        "scan-results/.context/call_graph.json",
+        "scan-results/threat_analysis_report.md"
+      ],
+      "summary": {
+        "modules_identified": 14,
+        "entry_points_found": 12,
+        "high_risk_files": 18
+      }
+    },
+    {
+      "name": "dataflow-scanner",
+      "phase": "phase_3",
+      "start_time": "2026-04-22T01:56:50Z",
+      "end_time": "2026-04-22T02:04:07Z",
+      "duration_seconds": 437,
+      "status": "success",
+      "summary": {
+        "modules_scanned": 7,
+        "candidates_found": 3,
+        "cross_module_issues": 1
+      }
+    },
+    {
+      "name": "security-auditor",
+      "phase": "phase_3",
+      "start_time": "2026-04-22T01:56:50Z",
+      "end_time": "2026-04-22T02:02:06Z",
+      "duration_seconds": 316,
+      "status": "success",
+      "summary": {
+        "modules_scanned": 14,
+        "candidates_found": 45
+      }
+    },
+    {
+      "name": "verification",
+      "phase": "phase_4",
+      "start_time": "2026-04-22T02:04:20Z",
+      "end_time": "2026-04-22T02:12:18Z",
+      "duration_seconds": 478,
+      "status": "success",
+      "summary": {
+        "candidates_verified": 48,
+        "confirmed": 4,
+        "likely": 11,
+        "possible": 10,
+        "false_positive": 7
+      }
+    },
+    {
+      "name": "details-analyzer",
+      "phase": "phase_4.5",
+      "start_time": "2026-04-22T02:14:20Z",
+      "end_time": "2026-04-22T02:16:15Z",
+      "duration_seconds": 115,
+      "status": "partial",
+      "note": "Deep analysis reports not generated due to worker timeout.",
+      "summary": {
+        "confirmed_vulns": 4,
+        "reports_generated": 0
+      }
+    },
+    {
+      "name": "reporter",
+      "phase": "phase_5",
+      "start_time": "2026-04-22T02:18:40Z",
+      "end_time": "2026-04-22T02:22:20Z",
+      "duration_seconds": 220,
+      "status": "success",
+      "output_files": [
+        "scan-results/report_confirmed.md",
+        "scan-results/report_unconfirmed.md"
+      ],
+      "summary": {
+        "confirmed_report_lines": 408,
+        "unconfirmed_report_lines": 699,
+        "total_vulnerabilities": 65
+      }
+    }
+  ],
+  "summary": {
+    "total_files_scanned": 438,
+    "cpp_files": 394,
+    "python_files": 44,
+    "total_candidates": 65,
+    "confirmed": 4,
+    "likely": 24,
+    "possible": 22,
+    "false_positive": 12,
+    "high_severity": 13,
+    "medium_severity": 29,
+    "low_severity": 23
+  }
+}

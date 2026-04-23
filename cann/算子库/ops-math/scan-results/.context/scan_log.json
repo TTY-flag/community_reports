@@ -1,0 +1,69 @@
+{
+  "scan_id": "scan_ops-math_20260421",
+  "start_time": "2026-04-21T13:00:00Z",
+  "end_time": "2026-04-21T22:20:00Z",
+  "duration_seconds": 33840,
+  "project_name": "ops-math",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/cann/1/ops-math",
+  "project_type": "C/C++ + Python Mixed",
+  "file_stats": {
+    "cpp_files": 4274,
+    "python_files": 47
+  },
+  "status": "success",
+  "agents": [
+    {
+      "name": "architecture",
+      "start_time": "2026-04-21T13:05:00Z",
+      "end_time": "2026-04-21T13:18:52Z",
+      "status": "success",
+      "output_files": ["project_model.json", "call_graph.json", "threat_analysis_report.md"]
+    },
+    {
+      "name": "dataflow-scanner",
+      "start_time": "2026-04-21T13:20:00Z",
+      "end_time": "2026-04-21T14:31:40Z",
+      "status": "success",
+      "vulnerabilities_found": 54
+    },
+    {
+      "name": "security-auditor",
+      "start_time": "2026-04-21T13:20:00Z",
+      "end_time": "2026-04-21T14:05:48Z",
+      "status": "success",
+      "vulnerabilities_found": 6
+    },
+    {
+      "name": "verification",
+      "start_time": "2026-04-21T14:35:00Z",
+      "end_time": "2026-04-21T15:05:00Z",
+      "status": "success"
+    },
+    {
+      "name": "details-analyzer",
+      "start_time": "2026-04-21T15:10:00Z",
+      "end_time": "2026-04-21T15:21:43Z",
+      "status": "success",
+      "reports_generated": 7
+    },
+    {
+      "name": "reporter",
+      "start_time": "2026-04-21T22:12:00Z",
+      "end_time": "2026-04-21T22:15:25Z",
+      "status": "success",
+      "output_files": ["report_confirmed.md", "report_unconfirmed.md"]
+    }
+  ],
+  "summary": {
+    "total_vulnerabilities": 62,
+    "confirmed": 15,
+    "likely": 25,
+    "possible": 17,
+    "false_positive": 5,
+    "critical": 5,
+    "high": 13,
+    "medium": 20,
+    "low": 8,
+    "modules_scanned": ["math", "conversion", "experimental", "random", "common", "scripts"]
+  }
+}

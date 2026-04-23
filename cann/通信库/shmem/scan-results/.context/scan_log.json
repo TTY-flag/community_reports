@@ -1,0 +1,88 @@
+{
+  "scan_id": "scan_shmem_20260421",
+  "start_time": "2026-04-21T21:52:00Z",
+  "end_time": "2026-04-21T22:51:00Z",
+  "duration_seconds": 3540,
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/cann/2/shmem",
+  "project_name": "shmem",
+  "status": "success",
+  "agents": [
+    {
+      "name": "architecture",
+      "start_time": "2026-04-21T21:55:00Z",
+      "end_time": "2026-04-21T22:01:46Z",
+      "duration_seconds": 406,
+      "status": "success",
+      "output_files": [
+        "project_model.json",
+        "call_graph.json",
+        "threat_analysis_report.md"
+      ],
+      "modules_count": 21,
+      "high_risk_files_count": 17,
+      "entry_points_count": 11
+    },
+    {
+      "name": "dataflow-scanner",
+      "start_time": "2026-04-21T22:03:00Z",
+      "end_time": "2026-04-21T22:11:13Z",
+      "duration_seconds": 493,
+      "status": "success",
+      "modules_scanned": 19,
+      "candidates_count": 43
+    },
+    {
+      "name": "security-auditor",
+      "start_time": "2026-04-21T22:03:00Z",
+      "end_time": "2026-04-21T22:09:36Z",
+      "duration_seconds": 396,
+      "status": "success",
+      "modules_scanned": 20,
+      "candidates_count": 39
+    },
+    {
+      "name": "verification",
+      "start_time": "2026-04-21T22:13:00Z",
+      "end_time": "2026-04-21T22:20:44Z",
+      "duration_seconds": 454,
+      "status": "success",
+      "vulnerabilities_verified": 76,
+      "confirmed_count": 0,
+      "likely_count": 7,
+      "possible_count": 69,
+      "false_positive_count": 0
+    },
+    {
+      "name": "details-analyzer",
+      "start_time": null,
+      "end_time": null,
+      "duration_seconds": 0,
+      "status": "skipped",
+      "reason": "No CONFIRMED vulnerabilities found"
+    },
+    {
+      "name": "reporter",
+      "start_time": "2026-04-21T22:45:00Z",
+      "end_time": "2026-04-21T22:51:00Z",
+      "duration_seconds": 360,
+      "status": "success",
+      "output_files": [
+        "report_confirmed.md",
+        "report_unconfirmed.md"
+      ],
+      "total_vulnerabilities": 76
+    }
+  ],
+  "summary": {
+    "total_files_scanned": 382,
+    "total_vulnerabilities": 76,
+    "confirmed": 0,
+    "likely": 7,
+    "possible": 69,
+    "false_positive": 0,
+    "high_severity": 5,
+    "medium_severity": 29,
+    "low_severity": 42,
+    "top_modules": ["python_core", "config_store", "transport_udma", "security_ssl", "python_wrapper"]
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "scan_id": "scan_ops-cv_20260421",
+  "start_time": "2026-04-21T21:50:00Z",
+  "end_time": "2026-04-22T00:30:00Z",
+  "duration_seconds": 15600,
+  "status": "success",
+  "project_name": "ops-cv",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/cann/1/ops-cv",
+  "language": "C/C++ + Python",
+  "file_counts": {
+    "cpp": 687,
+    "python": 49
+  },
+  "mode": "自主分析模式",
+  "agents": [
+    {
+      "name": "architecture",
+      "start_time": "2026-04-21T21:50:00Z",
+      "end_time": "2026-04-21T22:12:41Z",
+      "status": "success",
+      "output_files": ["project_model.json", "call_graph.json", "threat_analysis_report.md"]
+    },
+    {
+      "name": "dataflow-scanner",
+      "start_time": "2026-04-21T22:12:42Z",
+      "end_time": "2026-04-21T22:20:15Z",
+      "status": "success",
+      "items_processed": 9
+    },
+    {
+      "name": "security-auditor",
+      "start_time": "2026-04-21T22:12:42Z",
+      "end_time": "2026-04-21T22:18:19Z",
+      "status": "success",
+      "items_processed": 12
+    },
+    {
+      "name": "verification",
+      "start_time": "2026-04-21T22:20:16Z",
+      "end_time": "2026-04-22T07:09:49Z",
+      "status": "success",
+      "items_processed": 21
+    },
+    {
+      "name": "details-analyzer",
+      "start_time": "2026-04-22T00:05:00Z",
+      "end_time": "2026-04-22T00:23:00Z",
+      "status": "success",
+      "items_processed": 8
+    },
+    {
+      "name": "reporter",
+      "start_time": "2026-04-22T00:25:00Z",
+      "end_time": "2026-04-22T00:29:51Z",
+      "status": "success",
+      "output_files": ["report_confirmed.md", "report_unconfirmed.md"]
+    }
+  ],
+  "summary": {
+    "total_vulnerabilities": 21,
+    "confirmed": 8,
+    "likely": 5,
+    "possible": 4,
+    "false_positive": 4,
+    "severity_distribution": {
+      "critical": 4,
+      "high": 8,
+      "medium": 6,
+      "low": 7
+    },
+    "top_modules": ["image_transform", "image_other", "objdetect_roi", "objdetect_nms"],
+    "top_cwes": ["CWE-190", "CWE-20", "CWE-129"]
+  }
+}

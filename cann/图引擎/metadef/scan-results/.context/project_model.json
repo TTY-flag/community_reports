@@ -1,0 +1,405 @@
+{
+  "project_name": "metadef",
+  "scan_time": "2026-04-22T00:00:00Z",
+  "lsp_available": true,
+  "total_files": 49,
+  "total_lines": 7039,
+  "project_profile": {
+    "project_type": "library",
+    "deployment_model": "作为 CANN 平台的基础库，编译为动态库（libgraph_base.so 等），由上层组件（ge、ops-nn 等）动态加载使用",
+    "trust_boundaries": [
+      {
+        "boundary": "Library Interface",
+        "trusted_side": "Application logic (ge, ops repositories)",
+        "untrusted_side": "External caller (MindSpore, PyTorch, TensorFlow)",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Shared Object Loading",
+        "trusted_side": "metadef library code",
+        "untrusted_side": "Third-party operator libraries (.so files)",
+        "risk": "High"
+      },
+      {
+        "boundary": "Environment Variables",
+        "trusted_side": "metadef library code",
+        "untrusted_side": "User-controlled environment (ASCEND_OPP_PATH, ASCEND_CUSTOM_OPP_PATH)",
+        "risk": "High"
+      },
+      {
+        "boundary": "File System",
+        "trusted_side": "metadef library code",
+        "untrusted_side": "External file paths (operator packages, config files)",
+        "risk": "Medium"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "registry",
+      "path": "base/registry",
+      "language": "c_cpp",
+      "components": [
+        "op_impl_registry.cc",
+        "op_impl_registry_holder_manager.cc",
+        "op_impl_space_registry.cc",
+        "op_impl_space_registry_v2.cc",
+        "op_impl_space_registry_v2_impl.cc",
+        "opp_package_utils.cc",
+        "opp_so_manager.cc",
+        "op_impl_functions.cc",
+        "opp_so_manager.cc",
+        "op_ct_impl_registry.cc",
+        "op_impl_register_v2_impl.cc",
+        "op_bin_info.cc"
+      ]
+    },
+    {
+      "name": "opdef",
+      "path": "base/asc/opdef",
+      "language": "c_cpp",
+      "components": [
+        "op_def.cc",
+        "op_def_impl.cc",
+        "op_def_aicore.cc",
+        "op_def_aicpu.cc",
+        "op_def_hostcpu.cc",
+        "op_def_mc2.cc",
+        "op_def_factory.cc",
+        "op_def_factory_impl.cc",
+        "op_def_param.cc",
+        "op_def_attr.cc",
+        "op_config_registry.cc",
+        "op_config_registry_impl.cc"
+      ]
+    },
+    {
+      "name": "plugin",
+      "path": "base/common/plugin",
+      "language": "c_cpp",
+      "components": [
+        "plugin_manager.cc"
+      ]
+    },
+    {
+      "name": "context_builder",
+      "path": "base/context_builder",
+      "language": "c_cpp",
+      "components": [
+        "op_context_builder_impl.cc",
+        "op_context_builder_base.cc",
+        "context_holder.cc",
+        "op_kernel_run_context_builder.cc",
+        "op_tiling_context_builder.cc",
+        "op_infer_datatype_context_builder.cc",
+        "op_infer_shape_context_builder.cc",
+        "op_infer_shape_range_context_builder.cc",
+        "op_tiling_parse_context_builder.cc"
+      ]
+    },
+    {
+      "name": "runtime",
+      "path": "base/runtime",
+      "language": "c_cpp",
+      "components": [
+        "op_execute_context.cc",
+        "compute_node_info.cc",
+        "tiling_data.cc",
+        "runtime_attrs.cc"
+      ]
+    },
+    {
+      "name": "utils",
+      "path": "base/utils",
+      "language": "c_cpp",
+      "components": [
+        "file_utils.cc",
+        "type_utils_impl.cc",
+        "aligned_ptr.cc"
+      ]
+    },
+    {
+      "name": "type",
+      "path": "base/type",
+      "language": "c_cpp",
+      "components": [
+        "types_impl.cc",
+        "ascend_string_impl.cc"
+      ]
+    },
+    {
+      "name": "device_registry",
+      "path": "base/device_registry",
+      "language": "c_cpp",
+      "components": [
+        "device_op_impl_registry.cpp",
+        "tiling_device_kernel.cpp"
+      ]
+    },
+    {
+      "name": "error_manager",
+      "path": "error_manager",
+      "language": "c_cpp",
+      "components": [
+        "error_manager.cc"
+      ]
+    },
+    {
+      "name": "opcheck",
+      "path": "base/asc/opcheck",
+      "language": "c_cpp",
+      "components": [
+        "op_check.cc",
+        "op_check_register_impl.cc"
+      ]
+    },
+    {
+      "name": "tilingdata",
+      "path": "base/asc",
+      "language": "c_cpp",
+      "components": [
+        "tilingdata_base_impl.cc"
+      ]
+    }
+  ],
+  "files": [
+    {
+      "path": "base/common/plugin/plugin_manager.cc",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "plugin",
+      "lines": 1231,
+      "priority": 1
+    },
+    {
+      "path": "base/registry/opp_so_manager.cc",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "registry",
+      "lines": 288,
+      "priority": 2
+    },
+    {
+      "path": "error_manager/error_manager.cc",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "error_manager",
+      "lines": 1126,
+      "priority": 3
+    },
+    {
+      "path": "base/utils/file_utils.cc",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "utils",
+      "lines": 362,
+      "priority": 4
+    },
+    {
+      "path": "base/registry/op_impl_registry.cc",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "registry",
+      "lines": 482,
+      "priority": 5
+    },
+    {
+      "path": "base/asc/opdef/op_def_impl.cc",
+      "language": "c_cpp",
+      "risk": "Low",
+      "module": "opdef",
+      "lines": 1273,
+      "priority": 6
+    },
+    {
+      "path": "base/runtime/tiling_data.cc",
+      "language": "c_cpp",
+      "risk": "Low",
+      "module": "runtime",
+      "lines": 607,
+      "priority": 7
+    },
+    {
+      "path": "base/registry/op_impl_registry_holder_manager.cc",
+      "language": "c_cpp",
+      "risk": "Low",
+      "module": "registry",
+      "lines": 333,
+      "priority": 8
+    },
+    {
+      "path": "base/utils/type_utils_impl.cc",
+      "language": "c_cpp",
+      "risk": "Low",
+      "module": "utils",
+      "lines": 410,
+      "priority": 9
+    },
+    {
+      "path": "base/registry/op_impl_space_registry_v2_impl.cc",
+      "language": "c_cpp",
+      "risk": "Low",
+      "module": "registry",
+      "lines": 283,
+      "priority": 10
+    },
+    {
+      "path": "base/context_builder/op_context_builder_impl.cc",
+      "language": "c_cpp",
+      "risk": "Low",
+      "module": "context_builder",
+      "lines": 145,
+      "priority": 11
+    },
+    {
+      "path": "base/type/ascend_string_impl.cc",
+      "language": "c_cpp",
+      "risk": "Low",
+      "module": "type",
+      "lines": 218,
+      "priority": 12
+    },
+    {
+      "path": "base/type/types_impl.cc",
+      "language": "c_cpp",
+      "risk": "Low",
+      "module": "type",
+      "lines": 198,
+      "priority": 13
+    },
+    {
+      "path": "base/asc/opdef/op_def.cc",
+      "language": "c_cpp",
+      "risk": "Low",
+      "module": "opdef",
+      "lines": 259,
+      "priority": 14
+    },
+    {
+      "path": "base/runtime/compute_node_info.cc",
+      "language": "c_cpp",
+      "risk": "Low",
+      "module": "runtime",
+      "lines": 67,
+      "priority": 15
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "base/common/plugin/plugin_manager.cc",
+      "line": 674,
+      "function": "LoadSo",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "通过环境变量 ASCEND_OPP_PATH、ASCEND_CUSTOM_OPP_PATH 等指定的路径加载第三方算子动态库（.so 文件），路径可能被用户控制",
+      "description": "加载指定路径的共享库（.so 文件）"
+    },
+    {
+      "file": "base/common/plugin/plugin_manager.cc",
+      "line": 804,
+      "function": "Load",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "扫描目录并加载所有 .so 文件，目录路径可能来自环境变量",
+      "description": "扫描目录并加载所有 .so 文件"
+    },
+    {
+      "file": "base/common/plugin/plugin_manager.cc",
+      "line": 156,
+      "function": "GetOppPath",
+      "type": "env",
+      "trust_level": "untrusted_local",
+      "justification": "读取环境变量 MM_ENV_ASCEND_OPP_PATH 确定算子包路径",
+      "description": "获取算子包路径（从环境变量或默认路径）"
+    },
+    {
+      "file": "base/common/plugin/plugin_manager.cc",
+      "line": 249,
+      "function": "GetPluginPathFromCustomOppPath",
+      "type": "env",
+      "trust_level": "untrusted_local",
+      "justification": "读取环境变量 MM_ENV_ASCEND_CUSTOM_OPP_PATH 确定自定义算子路径",
+      "description": "从自定义算子路径获取插件路径"
+    },
+    {
+      "file": "base/registry/opp_so_manager.cc",
+      "line": 111,
+      "function": "LoadSoAndInitDefault",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "加载算子库并注册到默认空间，算子库路径来自环境变量或配置",
+      "description": "加载算子库并初始化默认注册空间"
+    },
+    {
+      "file": "base/registry/opp_so_manager.cc",
+      "line": 126,
+      "function": "LoadOpsProtoPackage",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "加载算子原型包，路径由环境变量控制",
+      "description": "加载算子原型包（.so 文件）"
+    },
+    {
+      "file": "error_manager/error_manager.cc",
+      "line": 656,
+      "function": "ParseJsonFile",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "解析 JSON 配置文件，文件路径来自库目录相对路径",
+      "description": "解析 JSON 配置文件（error_code.json）"
+    },
+    {
+      "file": "error_manager/error_manager.cc",
+      "line": 725,
+      "function": "ReadJsonFile",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "读取 JSON 文件并解析，文件路径参数可能来自外部",
+      "description": "读取 JSON 文件"
+    },
+    {
+      "file": "base/utils/file_utils.cc",
+      "line": 148,
+      "function": "GetBinFromFile",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "读取二进制文件内容，路径参数来自外部调用",
+      "description": "读取二进制文件"
+    },
+    {
+      "file": "base/utils/file_utils.cc",
+      "line": 224,
+      "function": "WriteBinToFile",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "写入二进制文件，路径参数来自外部调用",
+      "description": "写入二进制文件"
+    },
+    {
+      "file": "base/utils/file_utils.cc",
+      "line": 282,
+      "function": "SaveBinToFile",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "保存二进制数据到文件，路径参数来自外部调用",
+      "description": "保存二进制数据到文件"
+    },
+    {
+      "file": "base/utils/file_utils.cc",
+      "line": 315,
+      "function": "GetAscendWorkPath",
+      "type": "env",
+      "trust_level": "untrusted_local",
+      "justification": "读取环境变量 MM_ENV_ASCEND_WORK_PATH 确定工作路径",
+      "description": "获取 Ascend 工作路径"
+    }
+  ],
+  "attack_surfaces": [
+    "动态库加载: plugin_manager.cc 通过 mmDlopen 加载第三方算子库，路径由环境变量控制",
+    "环境变量处理: 多个环境变量（ASCEND_OPP_PATH、ASCEND_CUSTOM_OPP_PATH、ASCEND_WORK_PATH）控制库加载路径",
+    "文件路径处理: realpath、mmRealPath 等函数处理外部传入的文件路径",
+    "JSON 解析: error_manager.cc 使用 nlohmann::json 解析配置文件",
+    "共享库符号查找: mmDlsym 动态查找库函数符号",
+    "目录扫描: mmScandir 扫算目录查找 .so 文件"
+  ]
+}

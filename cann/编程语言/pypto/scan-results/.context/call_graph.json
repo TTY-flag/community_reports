@@ -1,0 +1,530 @@
+{
+  "generated_at": "2026-04-22T10:30:00Z",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/cann/5/pypto",
+  "lsp_available": false,
+  "analysis_method": "static_code_analysis",
+  "functions": {
+    "PYBIND11_MODULE@python/src/pybind11.cpp": {
+      "defined_at": 23,
+      "calls": [
+        "bind_enum@m",
+        "BindElement@m",
+        "BindTensor@m",
+        "BindSymbolicScalar@m",
+        "bind_controller@m",
+        "bind_operation@m",
+        "BindRuntime@m",
+        "BindCostModelRuntime@m",
+        "bind_pass@m",
+        "BindFunction@m",
+        "BindDistributed@m",
+        "BindPlatform@m",
+        "BindIR@m",
+        "BindCore@m"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "Main Python module entry point - exposes all C++ bindings to Python"
+    },
+    "BindRuntime@python/src/bindings/runtime.cpp": {
+      "defined_at": 1025,
+      "calls": [
+        "DeviceInit@runtime.cpp",
+        "DeviceFini@runtime.cpp",
+        "DeviceRunOnceDataFromHost@runtime.cpp",
+        "LaunchKernelTorch@runtime.cpp",
+        "SetVerifyData@runtime.cpp",
+        "BuildCache@runtime.cpp"
+      ],
+      "called_by": ["PYBIND11_MODULE@pybind11.cpp"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "Registers runtime functions to Python module"
+    },
+    "DeviceRunOnceDataFromHost@python/src/bindings/runtime.cpp": {
+      "defined_at": 186,
+      "calls": [
+        "ValidateFunctionAndIO@runtime.cpp",
+        "InitializeInputOutputData@runtime.cpp",
+        "RawTensorData::CreateTensor@interface/interpreter/raw_tensor_data.h",
+        "DeviceRunOnce@machine/runtime",
+        "EmulationLauncher::EmulationRunOnce@machine/runtime",
+        "StringUtils::DataCopy@utils"
+      ],
+      "called_by": ["BindRuntime@runtime.cpp"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "Executes kernel with user-provided tensor data from Python host"
+    },
+    "LaunchKernelTorch@python/src/bindings/runtime.cpp": {
+      "defined_at": 1008,
+      "calls": [
+        "ValidateInputs@bindings",
+        "TorchTensorConverter::Convert@bindings/torch_tensor_converter.h",
+        "KernelLauncher::Execute@runtime.cpp",
+        "KernelModule::Compile@runtime.cpp",
+        "DeviceLauncher::LaunchAicoreKernel@machine/runtime"
+      ],
+      "called_by": ["BindRuntime@runtime.cpp"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "Launches kernel on NPU with torch tensors - data flows Python->C++->Device"
+    },
+    "BindTensor@python/src/bindings/tensor.cpp": {
+      "defined_at": 21,
+      "calls": [
+        "Tensor::Tensor@interface/tensor",
+        "SymbolicScalar@symbolic_scalar"
+      ],
+      "called_by": ["PYBIND11_MODULE@pybind11.cpp"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "Creates Tensor objects with user-provided dtype, shape, and data pointers"
+    },
+    "DeviceTensorData@python/src/bindings/runtime.cpp": {
+      "defined_at": 1042,
+      "calls": [],
+      "called_by": ["BindRuntime@runtime.cpp"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "Python-exposed class wrapping raw device tensor with pointer address"
+    },
+    "JitCallableWrapper.__call__@python/pypto/frontend/parser/entry.py": {
+      "defined_at": 301,
+      "calls": [
+        "_parse_call_args@entry.py",
+        "_get_or_create_kmodule@entry.py",
+        "_execute_kernel@entry.py",
+        "_convert_tensors_with_metadata@entry.py",
+        "pypto_impl.LaunchKernelTorch@bindings/runtime.cpp",
+        "pypto_impl.DeviceInit@bindings/runtime.cpp",
+        "compile@entry.py"
+      ],
+      "called_by": ["jit@entry.py"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "JIT wrapper call - processes user Python tensors and compiles/executes kernels"
+    },
+    "JitCallableWrapper.compile@python/pypto/frontend/parser/entry.py": {
+      "defined_at": 444,
+      "calls": [
+        "_create_parser@entry.py",
+        "Parser.parse@parser.py",
+        "Parser.bind_dynamic_dims_to_input_tensors@parser.py",
+        "Parser.execute@parser.py",
+        "_setup_verify_data@entry.py",
+        "pypto_impl.SetVerifyData@bindings/runtime.cpp"
+      ],
+      "called_by": ["JitCallableWrapper.__call__@entry.py"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "Lazily compiles user Python function to PTO IR with dynamic shape binding"
+    },
+    "Parser.parse@python/pypto/frontend/parser/parser.py": {
+      "defined_at": 291,
+      "calls": [
+        "Source.as_ast@diagnostics",
+        "LivenessAnalyzer.analyze@liveness"
+      ],
+      "called_by": ["compile@entry.py"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "Parses user Python AST without sandboxing - potential code injection"
+    },
+    "Parser._visit_function_def@python/pypto/frontend/parser/parser.py": {
+      "defined_at": 829,
+      "calls": [
+        "get_signature@parser.py",
+        "_visit_body@parser.py",
+        "pypto.function@pypto"
+      ],
+      "called_by": ["Parser.visit@parser.py"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "Visits function definition - creates PTO Function from user code"
+    },
+    "CannHostRuntime::CannHostRuntime@framework/src/cann_host_runtime/cann_host_runtime.cpp": {
+      "defined_at": 37,
+      "calls": [
+        "RealPath@cann_host_runtime",
+        "dlopen@libc",
+        "dlsym@libc",
+        "GetSymbol@cann_host_runtime"
+      ],
+      "called_by": ["CannHostRuntime::Instance@cann_host_runtime.cpp"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "Loads libruntime.so and libprofapi.so from ASCEND_CANN_PACKAGE_PATH env"
+    },
+    "CannHostRuntime::GetSymbol@framework/src/cann_host_runtime/cann_host_runtime.cpp": {
+      "defined_at": 26,
+      "calls": ["dlsym@libc"],
+      "called_by": ["CannHostRuntime::CannHostRuntime@cann_host_runtime.cpp"],
+      "receives_external_input": false,
+      "risk": "High",
+      "description": "Resolves function pointers from loaded runtime library"
+    },
+    "PluginHandler::OpenHandler@framework/src/adapter/manager/plugin_handler.cpp": {
+      "defined_at": 28,
+      "calls": ["dlopen@libc"],
+      "called_by": ["AdapterManager@adapter/manager"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "Opens dynamic library via dlopen - no path validation"
+    },
+    "PluginHandler::GetFunction@framework/src/adapter/manager/plugin_handler.cpp": {
+      "defined_at": 46,
+      "calls": ["dlsym@libc"],
+      "called_by": ["AdapterManager@adapter/manager"],
+      "receives_external_input": false,
+      "risk": "High",
+      "description": "Gets function pointer from loaded library - potential malicious code execution"
+    },
+    "RuntimeBinaryLoadFromFile@framework/src/adapter/api/runtime_api.cpp": {
+      "defined_at": 194,
+      "calls": [
+        "AdapterManager::GetRuntimeAdapter@adapter/manager",
+        "StubBinaryLoadFromFile@stubs"
+      ],
+      "called_by": ["DeviceLauncher@machine/runtime"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "Loads kernel binary from file path - path traversal risk"
+    },
+    "RuntimeRegisterAllKernel@framework/src/adapter/api/runtime_api.cpp": {
+      "defined_at": 269,
+      "calls": [
+        "AdapterManager::GetRuntimeAdapter@adapter/manager",
+        "StubRegisterAllKernel@stubs"
+      ],
+      "called_by": ["DeviceLauncher@machine/runtime"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "Registers kernel binary on device - binary injection risk"
+    },
+    "GetCalcOps@framework/src/interface/interpreter/calc.cpp": {
+      "defined_at": 23,
+      "calls": [
+        "dlopen@libc",
+        "dlsym@libc",
+        "GetCurrentSharedLibPath@utils",
+        "FileExist@utils"
+      ],
+      "called_by": ["BuildOnlineManager@utils"],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "Loads calculator library for verification - dynamic library loading"
+    },
+    "DeviceLauncher::RegisterKernelBin@framework/src/machine/runtime": {
+      "defined_at": null,
+      "calls": ["RuntimeRegisterAllKernel@adapter/api/runtime_api.cpp"],
+      "called_by": ["KernelBinary::KernelBinary@bindings/runtime.cpp"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "Registers kernel binary on device - unvalidated binary data"
+    },
+    "RawTensorData::CreateTensor@framework/src/interface/interpreter/raw_tensor_data.h": {
+      "defined_at": null,
+      "calls": [],
+      "called_by": [
+        "DeviceRunOnceDataFromHost@bindings/runtime.cpp",
+        "InitializeInputOutputData@bindings/runtime.cpp",
+        "SetVerifyData@bindings/runtime.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "Creates RawTensorData with raw pointer from Python - memory corruption risk"
+    },
+    "TorchTensorConverter::Convert@python/src/bindings/torch_tensor_converter.h": {
+      "defined_at": null,
+      "calls": [],
+      "called_by": ["LaunchKernelTorch@bindings/runtime.cpp"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "Converts torch tensors to DeviceTensorData - type confusion risk"
+    },
+    "SetVerifyData@python/src/bindings/runtime.cpp": {
+      "defined_at": 107,
+      "calls": [
+        "RawTensorData::CreateTensor@interface/interpreter/raw_tensor_data.h",
+        "ProgramData::GetInstance@program",
+        "ProgramData::AppendInput@program",
+        "ProgramData::AppendOutput@program",
+        "ProgramData::AppendGolden@program"
+      ],
+      "called_by": [
+        "BindRuntime@bindings/runtime.cpp",
+        "_setup_verify_data@entry.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "Sets verify data with user-provided tensor pointers"
+    },
+    "KernelBinary::KernelBinary@python/src/bindings/runtime.cpp": {
+      "defined_at": 419,
+      "calls": [
+        "DeviceLauncher::RegisterKernelBin@machine/runtime",
+        "DeviceLauncher::FillDeviceKernelArgs@machine/runtime"
+      ],
+      "called_by": ["KernelModule::RegisterLastCompiledKernel@bindings/runtime.cpp"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "Registers compiled kernel binary - binary injection vector"
+    },
+    "KernelModule::Launch@python/src/bindings/runtime.cpp": {
+      "defined_at": 728,
+      "calls": [
+        "DeviceLauncher::LaunchSyncTask@machine/runtime",
+        "DeviceLauncher::LaunchAicpuKernel@machine/runtime",
+        "DeviceLauncher::LaunchAicoreKernel@machine/runtime",
+        "DeviceLauncher::SetDevPerfAddr@machine/runtime"
+      ],
+      "called_by": ["KernelLauncher::DoLaunch@bindings/runtime.cpp"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "Launches compiled kernel on device with user tensor data"
+    },
+    "_setup_verify_data@python/pypto/frontend/parser/entry.py": {
+      "defined_at": 491,
+      "calls": [
+        "BuildOnlineManager::build_and_load_calculator@utils",
+        "from_torch@converter",
+        "pypto_impl.CopyToHost@bindings/runtime.cpp",
+        "pypto_impl.SetVerifyData@bindings/runtime.cpp"
+      ],
+      "called_by": ["compile@entry.py"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "Copies user tensor data to host for verification - data exposure"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "Python User Input (torch.Tensor)",
+      "source_location": "python/pypto/frontend/parser/entry.py:301",
+      "path": [
+        "JitCallableWrapper.__call__@entry.py:301",
+        "_parse_call_args@entry.py:557",
+        "_execute_kernel@entry.py:676",
+        "pypto_impl.LaunchKernelTorch@bindings/runtime.cpp:1008",
+        "TorchTensorConverter::Convert@bindings/torch_tensor_converter.h",
+        "DeviceTensorData@bindings/runtime.cpp:1042"
+      ],
+      "sink": "DeviceLauncher::LaunchAicoreKernel@machine/runtime",
+      "sink_type": "device_execution",
+      "sink_location": "machine/runtime",
+      "risk": "Critical",
+      "description": "User tensor data flows directly to NPU execution without bounds validation"
+    },
+    {
+      "source": "Python Shape/Dtype Arguments",
+      "source_location": "python/src/bindings/tensor.cpp:26",
+      "path": [
+        "BindTensor@bindings/tensor.cpp:21",
+        "Tensor::Tensor@interface/tensor"
+      ],
+      "sink": "Tensor shape/dtype fields",
+      "sink_type": "memory_allocation",
+      "sink_location": "interface/tensor",
+      "risk": "High",
+      "description": "User-provided shape/dtype directly creates tensor - buffer overflow if shape too large"
+    },
+    {
+      "source": "Python Raw Pointer (data_ptr)",
+      "source_location": "python/src/bindings/runtime.cpp:186",
+      "path": [
+        "DeviceRunOnceDataFromHost@bindings/runtime.cpp:186",
+        "RawTensorData::CreateTensor@interface/interpreter/raw_tensor_data.h"
+      ],
+      "sink": "Device execution memory",
+      "sink_type": "memory_operation",
+      "sink_location": "interface/interpreter/raw_tensor_data.h",
+      "risk": "Critical",
+      "description": "Raw memory pointer from Python used directly - arbitrary memory access"
+    },
+    {
+      "source": "ASCEND_CANN_PACKAGE_PATH Environment Variable",
+      "source_location": "framework/src/cann_host_runtime/cann_host_runtime.cpp:40",
+      "path": [
+        "CannHostRuntime::CannHostRuntime@cann_host_runtime.cpp:37",
+        "RealPath@cann_host_runtime.cpp",
+        "dlopen@libc"
+      ],
+      "sink": "Function pointers (rtGetSocVersion, rtGetSocSpec)",
+      "sink_type": "dynamic_library",
+      "sink_location": "framework/src/cann_host_runtime/cann_host_runtime.cpp:30",
+      "risk": "High",
+      "description": "Environment-controlled library path loaded via dlopen - library injection"
+    },
+    {
+      "source": "User Python Code (AST)",
+      "source_location": "python/pypto/frontend/parser/parser.py:291",
+      "path": [
+        "Parser.parse@parser.py:291",
+        "Source.as_ast@diagnostics",
+        "Parser._visit_function_def@parser.py:829",
+        "pypto.function@pypto"
+      ],
+      "sink": "PTO Function IR",
+      "sink_type": "code_generation",
+      "sink_location": "pypto Function object",
+      "risk": "Critical",
+      "description": "User Python code parsed and compiled to IR - potential arbitrary code execution"
+    },
+    {
+      "source": "PluginHandler libName Parameter",
+      "source_location": "framework/src/adapter/manager/plugin_handler.cpp:28",
+      "path": [
+        "PluginHandler::OpenHandler@plugin_handler.cpp:28",
+        "dlopen@libc"
+      ],
+      "sink": "Loaded library handle",
+      "sink_type": "dynamic_library",
+      "sink_location": "framework/src/adapter/manager/plugin_handler.cpp:30",
+      "risk": "High",
+      "description": "Library path passed to dlopen without validation - malicious library loading"
+    },
+    {
+      "source": "RuntimeBinaryLoadFromFile binPath Parameter",
+      "source_location": "framework/src/adapter/api/runtime_api.cpp:194",
+      "path": [
+        "RuntimeBinaryLoadFromFile@runtime_api.cpp:194",
+        "AdapterManager::GetRuntimeAdapter@adapter/manager"
+      ],
+      "sink": "RtBinHandle (kernel binary)",
+      "sink_type": "binary_loading",
+      "sink_location": "framework/src/adapter/api/runtime_api.cpp:205",
+      "risk": "High",
+      "description": "Kernel binary loaded from file path - path traversal and binary injection"
+    },
+    {
+      "source": "Dynamic Dimension (SymbolicScalar)",
+      "source_location": "python/pypto/frontend/parser/parser.py:312",
+      "path": [
+        "Parser.bind_dynamic_dims_to_input_tensors@parser.py:312",
+        "_assign_dim_value@parser.py:335",
+        "_apply_bound_dim_values_to_context_frame@parser.py:673"
+      ],
+      "sink": "Tensor shape allocation",
+      "sink_type": "memory_allocation",
+      "sink_location": "interface/tensor",
+      "risk": "High",
+      "description": "User-controlled symbolic dimensions bound to tensor shapes - shape manipulation"
+    },
+    {
+      "source": "Kernel Binary Data",
+      "source_location": "python/src/bindings/runtime.cpp:423",
+      "path": [
+        "KernelBinary::KernelBinary@bindings/runtime.cpp:419",
+        "DeviceLauncher::RegisterKernelBin@machine/runtime",
+        "RuntimeRegisterAllKernel@adapter/api/runtime_api.cpp:269"
+      ],
+      "sink": "Device kernel execution",
+      "sink_type": "kernel_execution",
+      "sink_location": "device_runner",
+      "risk": "High",
+      "description": "Compiled kernel binary registered on device - binary manipulation"
+    },
+    {
+      "source": "Control Flow Cache",
+      "source_location": "python/src/bindings/runtime.cpp:454",
+      "path": [
+        "KernelBinary::BuildControlFlowCache@bindings/runtime.cpp:454",
+        "EmulationLauncher::BuildControlFlowCache@machine/runtime",
+        "DeviceLauncher::CopyControlFlowCache@machine/runtime"
+      ],
+      "sink": "Device control flow execution",
+      "sink_type": "control_flow",
+      "sink_location": "device_runner",
+      "risk": "Medium",
+      "description": "Control flow cache built and copied to device - cache manipulation"
+    }
+  ],
+  "cross_module_flows": [
+    {
+      "from_module": "pypto_api (Python)",
+      "to_module": "bindings (C++)",
+      "entry_point": "python/src/pybind11.cpp:23",
+      "data_type": "Tensor shape, dtype, raw pointer",
+      "risk": "Critical",
+      "description": "Python tensor data crosses to C++ backend without validation"
+    },
+    {
+      "from_module": "frontend_parser (Python)",
+      "to_module": "interface (C++)",
+      "entry_point": "python/pypto/frontend/parser/entry.py:444",
+      "data_type": "Python AST -> PTO Function IR",
+      "risk": "Critical",
+      "description": "User Python code compiled to C++ IR - code injection vector"
+    },
+    {
+      "from_module": "adapter (C++)",
+      "to_module": "cann_host_runtime (C++)",
+      "entry_point": "framework/src/adapter/manager/plugin_handler.cpp:28",
+      "data_type": "Library path string",
+      "risk": "High",
+      "description": "External library loading crosses adapter to runtime"
+    },
+    {
+      "from_module": "bindings (C++)",
+      "to_module": "machine (C++)",
+      "entry_point": "python/src/bindings/runtime.cpp:728",
+      "data_type": "Kernel binary and tensor data",
+      "risk": "High",
+      "description": "Compiled kernel and tensor data flows to device execution"
+    },
+    {
+      "from_module": "environment (External)",
+      "to_module": "cann_host_runtime (C++)",
+      "entry_point": "framework/src/cann_host_runtime/cann_host_runtime.cpp:40",
+      "data_type": "ASCEND_CANN_PACKAGE_PATH string",
+      "risk": "Medium",
+      "description": "Environment variable controls library loading path"
+    }
+  ],
+  "high_risk_functions": [
+    {
+      "function": "DeviceRunOnceDataFromHost@bindings/runtime.cpp",
+      "risk": "Critical",
+      "reason": "Accepts raw memory pointers from Python without validation"
+    },
+    {
+      "function": "LaunchKernelTorch@bindings/runtime.cpp",
+      "risk": "Critical",
+      "reason": "Executes user tensors on NPU without bounds checking"
+    },
+    {
+      "function": "Parser.parse@frontend/parser/parser.py",
+      "risk": "Critical",
+      "reason": "Parses user Python AST without sandboxing"
+    },
+    {
+      "function": "BindTensor@bindings/tensor.cpp",
+      "risk": "High",
+      "reason": "Creates tensors with user-controlled shape/dtype/pointer"
+    },
+    {
+      "function": "PluginHandler::OpenHandler@adapter/plugin_handler.cpp",
+      "risk": "High",
+      "reason": "dlopen with arbitrary library path"
+    },
+    {
+      "function": "CannHostRuntime::CannHostRuntime@cann_host_runtime.cpp",
+      "risk": "High",
+      "reason": "dlopen with environment-controlled library path"
+    },
+    {
+      "function": "RuntimeBinaryLoadFromFile@adapter/runtime_api.cpp",
+      "risk": "High",
+      "reason": "Loads kernel binary from user-controlled file path"
+    }
+  ],
+  "analysis_notes": [
+    "LSP not available for this project - analysis based on static code reading",
+    "Python-to-C++ boundary is the primary attack surface",
+    "Dynamic library loading functions use dlopen/dlsym without path validation",
+    "JIT compilation parses user Python code without sandboxing",
+    "Tensor data uses raw pointers from Python - memory corruption vector"
+  ]
+}

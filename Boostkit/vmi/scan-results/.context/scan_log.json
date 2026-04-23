@@ -1,0 +1,93 @@
+{
+  "scan_id": "scan-vmi-20250421-190700",
+  "start_time": "2025-04-21T19:07:00+08:00",
+  "end_time": "2025-04-21T20:47:00+08:00",
+  "duration_seconds": 4800,
+  "project_name": "kunpeng-boostkit-vmi",
+  "status": "completed",
+  "agents": [
+    {
+      "name": "architecture",
+      "start_time": "2025-04-21T19:09:00+08:00",
+      "end_time": "2025-04-21T19:18:37+08:00",
+      "duration_seconds": 577,
+      "status": "success",
+      "outputs": [
+        "project_model.json",
+        "call_graph.json",
+        "threat_analysis_report.md"
+      ],
+      "error": null
+    },
+    {
+      "name": "dataflow-scanner",
+      "start_time": "2025-04-21T19:19:00+08:00",
+      "end_time": "2025-04-21T19:29:00+08:00",
+      "duration_seconds": 600,
+      "status": "success",
+      "outputs": [
+        "scan.db"
+      ],
+      "error": null
+    },
+    {
+      "name": "security-auditor",
+      "start_time": "2025-04-21T19:19:00+08:00",
+      "end_time": "2025-04-21T19:59:00+08:00",
+      "duration_seconds": 2400,
+      "status": "success",
+      "outputs": [
+        "scan.db"
+      ],
+      "error": null
+    },
+    {
+      "name": "verification",
+      "start_time": "2025-04-21T20:00:00+08:00",
+      "end_time": "2025-04-21T20:24:00+08:00",
+      "duration_seconds": 1440,
+      "status": "success",
+      "outputs": [
+        "scan.db"
+      ],
+      "error": null
+    },
+    {
+      "name": "details-analyzer",
+      "start_time": "2025-04-21T20:26:00+08:00",
+      "end_time": "2025-04-21T20:34:00+08:00",
+      "duration_seconds": 480,
+      "status": "partial",
+      "outputs": [
+        "details/CONN-002.md",
+        "details/cross_module-001.md"
+      ],
+      "error": "深度分析后台任务仍在运行，仅完成 2/21 个报告"
+    },
+    {
+      "name": "reporter",
+      "start_time": "2025-04-21T20:35:00+08:00",
+      "end_time": "2025-04-21T20:47:00+08:00",
+      "duration_seconds": 720,
+      "status": "success",
+      "outputs": [
+        "report_confirmed.md",
+        "report_unconfirmed.md"
+      ],
+      "error": null
+    }
+  ],
+  "summary": {
+    "project_type": "network_service",
+    "total_files_scanned": 158,
+    "total_lines": 40209,
+    "candidates_found": 45,
+    "confirmed_vulnerabilities": 21,
+    "false_positives": 9,
+    "lsp_available": false,
+    "critical_vulns": 7,
+    "high_vulns": 13,
+    "medium_vulns": 11,
+    "low_vulns": 10
+  }
+}

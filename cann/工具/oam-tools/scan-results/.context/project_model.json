@@ -1,0 +1,417 @@
+{
+  "project_name": "oam-tools",
+  "scan_time": "2026-04-22T18:30:00Z",
+  "lsp_available": false,
+  "total_files": 575,
+  "total_lines": 59298,
+  "project_profile": {
+    "project_type": "cli_tool",
+    "deployment_model": "用户在 Ascend NPU 服务器上本地执行的命令行工具套件，用于性能分析、系统诊断和错误分析",
+    "trust_boundaries": [
+      {
+        "boundary": "Command Line Interface",
+        "trusted_side": "Local user with shell access",
+        "untrusted_side": "User-provided arguments and paths",
+        "risk": "High"
+      },
+      {
+        "boundary": "File System",
+        "trusted_side": "Tool internal logic",
+        "untrusted_side": "User-specified paths and files",
+        "risk": "High"
+      },
+      {
+        "boundary": "IPC/Unix Socket",
+        "trusted_side": "msprof collector process",
+        "untrusted_side": "External processes connecting to Unix socket",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Environment Variables",
+        "trusted_side": "Tool configuration",
+        "untrusted_side": "External environment variable values",
+        "risk": "Medium"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "asys",
+      "path": "src/asys",
+      "language": "python",
+      "components": [
+        "asys.py",
+        "cmdline/cmd_parser.py",
+        "cmdline/arg_checker.py",
+        "launch/asys_launch.py",
+        "collect/asys_collect.py",
+        "analyze/asys_analyze.py",
+        "common/cmd_run.py",
+        "common/file_operate.py",
+        "common/device.py"
+      ]
+    },
+    {
+      "name": "msprof",
+      "path": "src/msprof",
+      "language": "c_cpp",
+      "components": [
+        "collector/dvvp/msprofbin/src/input_parser.cpp",
+        "collector/dvvp/msprofbin/src/running_mode.cpp",
+        "collector/dvvp/common/socket/local_socket.cpp",
+        "collector/dvvp/transport/receiver.cpp",
+        "collector/dvvp/common/utils/utils.cpp",
+        "collector/dvvp/common/validation/param_validation.cpp",
+        "collector/basic/osal/osal_linux.c",
+        "collector/dvvp/app/application.cpp"
+      ]
+    },
+    {
+      "name": "msaicerr",
+      "path": "src/msaicerr",
+      "language": "python",
+      "components": [
+        "msaicerr.py",
+        "ms_interface/aicore_error_parser.py",
+        "ms_interface/utils.py",
+        "ms_interface/collection.py",
+        "ms_interface/dump_data_parser.py",
+        "ms_interface/aic_error_info.py"
+      ]
+    },
+    {
+      "name": "hccl_test",
+      "path": "src/hccl_test",
+      "language": "c_cpp",
+      "components": [
+        "common/src/hccl_test_main.cc",
+        "common/src/hccl_test_common.cc",
+        "opbase_test/hccl_allreduce_rootinfo_test.cc"
+      ]
+    },
+    {
+      "name": "operator_cmp",
+      "path": "src/operator_cmp",
+      "language": "python",
+      "components": []
+    },
+    {
+      "name": "third_party",
+      "path": "src/third_party",
+      "language": "c_cpp",
+      "components": [
+        "adcore/adcore_api.h",
+        "adcore/ide_tlv.h"
+      ]
+    }
+  ],
+  "files": [
+    {
+      "path": "src/asys/launch/asys_launch.py",
+      "language": "python",
+      "risk": "Critical",
+      "module": "asys",
+      "lines": 145,
+      "priority": 1,
+      "risk_reason": "命令执行入口，使用 subprocess.Popen 执行用户提供的命令，存在命令注入风险"
+    },
+    {
+      "path": "src/asys/common/cmd_run.py",
+      "language": "python",
+      "risk": "Critical",
+      "module": "asys",
+      "lines": 117,
+      "priority": 1,
+      "risk_reason": "命令执行封装，使用 subprocess.run 和 os.popen 执行命令，shell=True 存在注入风险"
+    },
+    {
+      "path": "src/asys/cmdline/cmd_parser.py",
+      "language": "python",
+      "risk": "High",
+      "module": "asys",
+      "lines": 419,
+      "priority": 2,
+      "risk_reason": "命令行参数解析入口，接收用户输入参数"
+    },
+    {
+      "path": "src/asys/cmdline/arg_checker.py",
+      "language": "python",
+      "risk": "High",
+      "module": "asys",
+      "lines": 242,
+      "priority": 2,
+      "risk_reason": "参数校验逻辑，处理用户提供的路径和命令参数"
+    },
+    {
+      "path": "src/asys/collect/asys_collect.py",
+      "language": "python",
+      "risk": "High",
+      "module": "asys",
+      "lines": 200,
+      "priority": 3,
+      "risk_reason": "信息收集入口，处理文件路径和执行命令"
+    },
+    {
+      "path": "src/asys/analyze/asys_analyze.py",
+      "language": "python",
+      "risk": "High",
+      "module": "asys",
+      "lines": 463,
+      "priority": 3,
+      "risk_reason": "分析入口，处理用户提供的文件路径"
+    },
+    {
+      "path": "src/msaicerr/msaicerr.py",
+      "language": "python",
+      "risk": "High",
+      "module": "msaicerr",
+      "lines": 258,
+      "priority": 2,
+      "risk_reason": "AI Core 错误分析工具入口，处理命令行参数和文件路径"
+    },
+    {
+      "path": "src/msaicerr/ms_interface/utils.py",
+      "language": "python",
+      "risk": "High",
+      "module": "msaicerr",
+      "lines": 432,
+      "priority": 3,
+      "risk_reason": "工具函数库，包含命令执行和文件操作功能"
+    },
+    {
+      "path": "src/msaicerr/ms_interface/collection.py",
+      "language": "python",
+      "risk": "High",
+      "module": "msaicerr",
+      "lines": 342,
+      "priority": 3,
+      "risk_reason": "文件收集功能，处理用户提供的路径"
+    },
+    {
+      "path": "src/msprof/collector/dvvp/msprofbin/src/input_parser.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "msprof",
+      "lines": 1605,
+      "priority": 2,
+      "risk_reason": "命令行参数解析入口，处理 argc/argv"
+    },
+    {
+      "path": "src/msprof/collector/dvvp/common/socket/local_socket.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "msprof",
+      "lines": 194,
+      "priority": 3,
+      "risk_reason": "Unix Socket 通信，接收外部进程连接和数据"
+    },
+    {
+      "path": "src/msprof/collector/dvvp/transport/receiver.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "msprof",
+      "lines": 142,
+      "priority": 3,
+      "risk_reason": "数据接收器，接收来自外部进程的数据包"
+    },
+    {
+      "path": "src/msprof/collector/dvvp/common/utils/utils.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "msprof",
+      "lines": 1665,
+      "priority": 4,
+      "risk_reason": "工具函数库，包含路径处理和字符串操作"
+    },
+    {
+      "path": "src/msprof/collector/dvvp/common/validation/param_validation.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "msprof",
+      "lines": 1163,
+      "priority": 4,
+      "risk_reason": "参数校验逻辑"
+    },
+    {
+      "path": "src/msprof/collector/basic/osal/osal_linux.c",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "msprof",
+      "lines": 1392,
+      "priority": 4,
+      "risk_reason": "OS 抽象层，包含文件操作和内存操作"
+    },
+    {
+      "path": "src/msprof/collector/dvvp/profhal/adx/wrapper/hdc_api.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "msprof",
+      "lines": 763,
+      "priority": 4,
+      "risk_reason": "HDC API 封装，处理设备通信"
+    },
+    {
+      "path": "src/hccl_test/common/src/hccl_test_main.cc",
+      "language": "c_cpp",
+      "risk": "Low",
+      "module": "hccl_test",
+      "lines": 100,
+      "priority": 5,
+      "risk_reason": "HCCL 测试工具入口"
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "src/asys/asys.py",
+      "line": 73,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "用户通过命令行执行 asys 工具，参数来自 sys.argv",
+      "description": "asys CLI 主入口，解析命令行参数并执行相应命令"
+    },
+    {
+      "file": "src/asys/launch/asys_launch.py",
+      "line": 80,
+      "function": "execute_task",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "接收用户命令参数并使用 subprocess.Popen 执行",
+      "description": "执行用户指定的任务命令"
+    },
+    {
+      "file": "src/asys/cmdline/cmd_parser.py",
+      "line": 413,
+      "function": "parse",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "使用 argparse 解析 sys.argv 参数",
+      "description": "命令行参数解析器"
+    },
+    {
+      "file": "src/msaicerr/msaicerr.py",
+      "line": 199,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "用户通过命令行执行 msaicerr 工具，参数来自 sys.argv",
+      "description": "msaicerr CLI 主入口"
+    },
+    {
+      "file": "src/msprof/collector/dvvp/msprofbin/src/input_parser.cpp",
+      "line": 99,
+      "function": "MsprofGetOpts",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "接收 argc/argv 参数解析 msprof 命令行",
+      "description": "msprof 命令行参数解析入口"
+    },
+    {
+      "file": "src/msprof/collector/dvvp/msprofbin/src/msprof_bin.cpp",
+      "line": 50,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "msprof 二进制工具的 main 函数入口",
+      "description": "msprof CLI 主入口"
+    },
+    {
+      "file": "src/msprof/collector/dvvp/common/socket/local_socket.cpp",
+      "line": 40,
+      "function": "Create",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "创建 Unix Domain Socket 监听外部进程连接",
+      "description": "Unix Socket 服务端创建，接收外部进程连接请求"
+    },
+    {
+      "file": "src/msprof/collector/dvvp/common/socket/local_socket.cpp",
+      "line": 96,
+      "function": "Accept",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "接受 Unix Socket 连接",
+      "description": "Unix Socket accept 函数"
+    },
+    {
+      "file": "src/msprof/collector/dvvp/common/socket/local_socket.cpp",
+      "line": 149,
+      "function": "Recv",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "从 Unix Socket 接收数据",
+      "description": "Unix Socket 数据接收"
+    },
+    {
+      "file": "src/msprof/collector/dvvp/transport/receiver.cpp",
+      "line": 110,
+      "function": "Run",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "接收并处理来自设备端的数据包",
+      "description": "设备数据接收循环"
+    },
+    {
+      "file": "src/asys/common/cmd_run.py",
+      "line": 57,
+      "function": "run_command",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "执行外部命令，命令参数可能来自用户输入",
+      "description": "命令执行封装函数"
+    },
+    {
+      "file": "src/msaicerr/ms_interface/utils.py",
+      "line": 218,
+      "function": "execute_command",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "执行外部命令，命令参数可能来自用户输入",
+      "description": "命令执行封装函数"
+    },
+    {
+      "file": "src/asys/analyze/coredump_analyze.py",
+      "line": 30,
+      "function": "analyze_coredump",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "分析用户指定的 coredump 文件路径",
+      "description": "coredump 文件分析入口"
+    },
+    {
+      "file": "src/asys/analyze/asys_analyze.py",
+      "line": 50,
+      "function": "run",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "分析用户指定的文件路径",
+      "description": "分析入口函数"
+    },
+    {
+      "file": "src/msaicerr/msaicerr.py",
+      "line": 53,
+      "function": "extract_tar",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "解压用户指定的 tar 文件到指定路径",
+      "description": "tar 文件解压功能"
+    },
+    {
+      "file": "src/asys/diagnose/asys_diagnose.py",
+      "line": 50,
+      "function": "run",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "执行硬件诊断命令",
+      "description": "诊断入口函数"
+    }
+  ],
+  "attack_surfaces": [
+    "命令行参数 (sys.argv): asys, msaicerr, msprof CLI 工具",
+    "用户命令执行 (subprocess.Popen/shell=True): asys launch 命令",
+    "文件路径输入 (--output, --file, --path): 所有工具的文件操作",
+    "环境变量 (ASCEND_OPP_PATH, HOME): 配置和路径依赖",
+    "Unix Domain Socket: msprof 进程间通信",
+    "Tar 文件解压: msaicerr 的 tar 文件处理"
+  ]
+}

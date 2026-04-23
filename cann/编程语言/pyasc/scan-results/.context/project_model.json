@@ -1,0 +1,361 @@
+{
+  "project_name": "pyasc",
+  "scan_time": "2026-04-22T10:30:00Z",
+  "lsp_available": true,
+  "total_files": 315,
+  "total_lines": 56063,
+  "project_profile": {
+    "project_type": "library",
+    "deployment_model": "Python 编译器框架，作为 pip 包安装。开发者使用 @asc.jit 装饰器编写自定义算子，框架通过 JIT 编译将其转换为 Ascend C 代码并在 NPU 上执行。CLI 工具 (ascir-opt, ascir-translate) 用于处理 MLIR 文件。",
+    "trust_boundaries": [
+      {
+        "boundary": "Python DSL Input",
+        "trusted_side": "Framework Internal (编译器和运行时)",
+        "untrusted_side": "User-written Python DSL code",
+        "risk": "High"
+      },
+      {
+        "boundary": "Environment Variables",
+        "trusted_side": "Framework Internal",
+        "untrusted_side": "Local user environment (PYASC_COMPILER, PYASC_LINKER, PYASC_HOME, PYASC_CACHE_DIR, PYASC_DUMP_PATH)",
+        "risk": "High"
+      },
+      {
+        "boundary": "MLIR File Input",
+        "trusted_side": "CLI Tools Internal",
+        "untrusted_side": "User-provided MLIR files (for ascir-opt, ascir-translate)",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Cache Storage",
+        "trusted_side": "Framework Internal",
+        "untrusted_side": "File cache directory (pickle serialized kernels)",
+        "risk": "High"
+      },
+      {
+        "boundary": "External Compiler",
+        "trusted_side": "Framework Internal (subprocess)",
+        "untrusted_side": "External bisheng compiler and ld.lld linker",
+        "risk": "Critical"
+      },
+      {
+        "boundary": "NPU Runtime",
+        "trusted_side": "Framework Internal",
+        "untrusted_side": "Ascend NPU hardware and CANN runtime libraries",
+        "risk": "Medium"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "runtime",
+      "path": "python/asc/runtime",
+      "language": "python",
+      "components": ["jit.py", "compiler.py", "launcher.py", "cache.py", "config.py", "memory_handle.py", "utils.py"]
+    },
+    {
+      "name": "codegen",
+      "path": "python/asc/codegen",
+      "language": "python",
+      "components": ["function_visitor.py", "function.py", "specialization.py", "name_scope.py", "dependencies_finder.py", "errors.py"]
+    },
+    {
+      "name": "language",
+      "path": "python/asc/language",
+      "language": "python",
+      "components": ["core/", "basic/", "adv/", "fwk/"]
+    },
+    {
+      "name": "lib_runtime",
+      "path": "python/asc/lib/runtime",
+      "language": "python",
+      "components": ["interface.py", "state.py", "support.py", "build_utils.py"]
+    },
+    {
+      "name": "lib_host",
+      "path": "python/asc/lib/host",
+      "language": "python",
+      "components": ["wrappers.py", "loader.py"]
+    },
+    {
+      "name": "pybind_bindings",
+      "path": "python/src",
+      "language": "c_cpp",
+      "components": ["Module.cpp", "IR.cpp", "OpBuilder.cpp", "Passes.cpp", "Translation.cpp"]
+    },
+    {
+      "name": "asc_dialect",
+      "path": "lib/Dialect/Asc",
+      "language": "c_cpp",
+      "components": ["IR/", "Transforms/", "Utils/"]
+    },
+    {
+      "name": "emitasc_dialect",
+      "path": "lib/Dialect/EmitAsc",
+      "language": "c_cpp",
+      "components": ["IR/"]
+    },
+    {
+      "name": "ascendc_target",
+      "path": "lib/Target/AscendC",
+      "language": "c_cpp",
+      "components": ["Translation.cpp", "CodeEmitter.cpp", "Core/", "Basic/", "Adv/", "Fwk/", "External/"]
+    },
+    {
+      "name": "tablegen",
+      "path": "lib/TableGen",
+      "language": "c_cpp",
+      "components": ["main.cpp", "GenPybindDefs.cpp", "GenOpEmitDefs.cpp", "GenAPITypes.cpp", "Utils.cpp"]
+    },
+    {
+      "name": "cli_tools",
+      "path": "bin",
+      "language": "c_cpp",
+      "components": ["ascir-opt.cpp", "ascir-translate.cpp", "ascir-lsp.cpp"]
+    },
+    {
+      "name": "include_headers",
+      "path": "include/ascir",
+      "language": "c_cpp",
+      "components": ["Dialect/", "Target/", "API/"]
+    }
+  ],
+  "files": [
+    {
+      "path": "python/asc/runtime/compiler.py",
+      "language": "python",
+      "risk": "Critical",
+      "module": "runtime",
+      "lines": 351,
+      "priority": 1,
+      "risk_reason": "subprocess 调用外部编译器 (bisheng)，使用环境变量控制编译器路径，命令注入风险"
+    },
+    {
+      "path": "python/asc/runtime/jit.py",
+      "language": "python",
+      "risk": "Critical",
+      "module": "runtime",
+      "lines": 247,
+      "priority": 2,
+      "risk_reason": "pickle 反序列化缓存的 kernel 二进制，潜在的恶意代码执行"
+    },
+    {
+      "path": "python/asc/lib/runtime/state.py",
+      "language": "python",
+      "risk": "High",
+      "module": "lib_runtime",
+      "lines": 144,
+      "priority": 3,
+      "risk_reason": "动态加载编译生成的共享库，缓存机制涉及文件写入和加载"
+    },
+    {
+      "path": "python/asc/codegen/function_visitor.py",
+      "language": "python",
+      "risk": "High",
+      "module": "codegen",
+      "lines": 710,
+      "priority": 4,
+      "risk_reason": "AST 解析用户代码，处理用户输入的 Python DSL 代码"
+    },
+    {
+      "path": "python/asc/runtime/cache.py",
+      "language": "python",
+      "risk": "High",
+      "module": "runtime",
+      "lines": 150,
+      "priority": 5,
+      "risk_reason": "文件缓存管理，写入和读取缓存文件，路径来自环境变量"
+    },
+    {
+      "path": "python/asc/runtime/launcher.py",
+      "language": "python",
+      "risk": "High",
+      "module": "runtime",
+      "lines": 151,
+      "priority": 6,
+      "risk_reason": "加载 kernel 二进制到 NPU，处理用户数据和设备内存"
+    },
+    {
+      "path": "python/asc/lib/runtime/interface.py",
+      "language": "python",
+      "risk": "High",
+      "module": "lib_runtime",
+      "lines": 416,
+      "priority": 7,
+      "risk_reason": "ctypes 调用底层 NPU runtime 库，直接内存操作"
+    },
+    {
+      "path": "python/src/IR.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "pybind_bindings",
+      "lines": 666,
+      "priority": 8,
+      "risk_reason": "pybind11 绑定，创建 IR 对象，处理 Python 和 C++ 之间的数据传递"
+    },
+    {
+      "path": "python/src/OpBuilder.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "pybind_bindings",
+      "lines": 0,
+      "priority": 9,
+      "risk_reason": "pybind11 绑定，创建 MLIR 操作"
+    },
+    {
+      "path": "lib/Target/AscendC/Translation.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "ascendc_target",
+      "lines": 303,
+      "priority": 10,
+      "risk_reason": "MLIR 到 Ascend C 代码翻译，生成目标代码"
+    },
+    {
+      "path": "lib/Target/AscendC/CodeEmitter.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "ascendc_target",
+      "lines": 974,
+      "priority": 11,
+      "risk_reason": "代码发射器，生成 C++ 代码字符串"
+    },
+    {
+      "path": "bin/ascir-opt.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "cli_tools",
+      "lines": 26,
+      "priority": 12,
+      "risk_reason": "CLI 工具，处理 MLIR 文件输入"
+    },
+    {
+      "path": "bin/ascir-translate.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "cli_tools",
+      "lines": 51,
+      "priority": 13,
+      "risk_reason": "CLI 工具，处理 MLIR 文件输入并转换为 Ascend C"
+    },
+    {
+      "path": "lib/Dialect/Asc/IR/Ops.cpp",
+      "language": "c_cpp",
+      "risk": "Low",
+      "module": "asc_dialect",
+      "lines": 103,
+      "priority": 14,
+      "risk_reason": "ASC Dialect 操作定义，标准 MLIR 操作"
+    },
+    {
+      "path": "lib/Dialect/Asc/Transforms/InsertSync.cpp",
+      "language": "c_cpp",
+      "risk": "Low",
+      "module": "asc_dialect",
+      "lines": 0,
+      "priority": 15,
+      "risk_reason": "MLIR Pass，处理 IR 变换"
+    },
+    {
+      "path": "python/asc/language/core/tensor.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "language",
+      "lines": 0,
+      "priority": 16,
+      "risk_reason": "用户 API，提供 DSL 接口"
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "python/asc/__init__.py",
+      "line": 11,
+      "function": "jit",
+      "type": "decorator",
+      "trust_level": "untrusted_local",
+      "justification": "用户通过 @asc.jit 装饰器传入 Python 函数，该函数作为 DSL 代码被编译器处理。攻击者如果能控制用户脚本内容，可影响编译流程。",
+      "description": "JIT 编译装饰器入口，用户 Python DSL 代码从此进入编译流程"
+    },
+    {
+      "file": "python/asc/runtime/compiler.py",
+      "line": 106,
+      "function": "Compiler.__init__",
+      "type": "env",
+      "trust_level": "untrusted_local",
+      "justification": "环境变量 PYASC_COMPILER 和 PYASC_LINKER 控制外部编译器路径。本地攻击者可设置这些变量指向恶意程序。",
+      "description": "从环境变量读取编译器和链接器路径"
+    },
+    {
+      "file": "python/asc/runtime/compiler.py",
+      "line": 98,
+      "function": "Compiler.__init__",
+      "type": "env",
+      "trust_level": "untrusted_local",
+      "justification": "环境变量 PYASC_DUMP_PATH 控制中间文件输出路径。本地攻击者可设置任意路径。",
+      "description": "从环境变量读取 dump 输出路径"
+    },
+    {
+      "file": "python/asc/runtime/cache.py",
+      "line": 22,
+      "function": "CacheOptions",
+      "type": "env",
+      "trust_level": "untrusted_local",
+      "justification": "环境变量 PYASC_HOME 和 PYASC_CACHE_DIR 控制缓存目录位置。本地攻击者可指向恶意缓存文件。",
+      "description": "从环境变量读取缓存目录配置"
+    },
+    {
+      "file": "python/asc/runtime/jit.py",
+      "line": 171,
+      "function": "_cache_kernel",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "从缓存文件加载 pickle 序列化的 CompiledKernel。缓存目录由环境变量控制，可能被本地攻击者篡改。",
+      "description": "pickle 反序列化缓存的 kernel 二进制"
+    },
+    {
+      "file": "python/asc/runtime/compiler.py",
+      "line": 146,
+      "function": "_run_cmd",
+      "type": "rpc",
+      "trust_level": "untrusted_local",
+      "justification": "subprocess.Popen 调用外部编译器。编译器路径由环境变量控制，可能被本地攻击者设置为恶意程序。",
+      "description": "通过 subprocess 调用外部编译器"
+    },
+    {
+      "file": "bin/ascir-opt.cpp",
+      "line": 18,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "CLI 工具接受命令行参数处理 MLIR 文件。本地用户可提供恶意 MLIR 文件。",
+      "description": "ascir-opt CLI 工具入口，处理 MLIR 文件"
+    },
+    {
+      "file": "bin/ascir-translate.cpp",
+      "line": 31,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "CLI 工具接受命令行参数处理 MLIR 文件。本地用户可提供恶意 MLIR 文件。",
+      "description": "ascir-translate CLI 工具入口，处理 MLIR 文件"
+    },
+    {
+      "file": "python/asc/lib/runtime/state.py",
+      "line": 50,
+      "function": "RuntimeInterface.__init__",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "ctypes.CDLL 加载动态库，库路径来自缓存。缓存机制可能被本地攻击者利用。",
+      "description": "动态加载编译生成的运行时库"
+    }
+  ],
+  "attack_surfaces": [
+    "subprocess 编译器调用: 通过环境变量 PYASC_COMPILER/PYASC_LINKER 可控制外部程序执行",
+    "pickle 反序列化: 缓存文件使用 pickle 存储和加载 CompiledKernel",
+    "环境变量注入: 多个环境变量控制编译器路径、缓存目录、dump 路径",
+    "MLIR 文件解析: CLI 工具 (ascir-opt, ascir-translate) 处理用户提供的 MLIR 文件",
+    "Python DSL 代码: 用户编写的 @asc.jit 装饰器函数作为输入进入编译流程",
+    "动态库加载: ctypes.CDLL 加载编译生成的 .so 文件",
+    "临时文件操作: 编译过程创建临时目录和文件"
+  ]
+}

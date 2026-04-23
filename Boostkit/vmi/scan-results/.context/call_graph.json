@@ -1,0 +1,649 @@
+{
+  "functions": {
+    "VmiListen@Common/Connection/Connection.cpp:67": {
+      "defined_at": 67,
+      "calls": [
+        "socket@Connection.cpp:53",
+        "setsockopt@Connection.cpp:70",
+        "bind@Connection.cpp:86",
+        "listen@Connection.cpp:92"
+      ],
+      "called_by": [
+        "ServerConnection::Start@ServerConnection.cpp:35"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "VmiAccept@Common/Connection/Connection.cpp:105": {
+      "defined_at": 105,
+      "calls": [
+        "accept@Connection.cpp:110",
+        "inet_ntop@Connection.cpp:117",
+        "setsockopt@Connection.cpp:124"
+      ],
+      "called_by": [
+        "ServerConnection::Run@ServerConnection.cpp:64"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "VmiRecv@Common/Connection/Connection.cpp:292": {
+      "defined_at": 292,
+      "calls": [
+        "recv@Connection.cpp:299",
+        "setsockopt@Connection.cpp:303"
+      ],
+      "called_by": [
+        "ConnectionSocket::Recv@ConnectionSocket.cpp:56",
+        "RecvOnceData@VersionCheck.cpp:248",
+        "RecvFixedSizeData@StreamParser.cpp:246"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "VmiSend@Common/Connection/Connection.cpp:235": {
+      "defined_at": 235,
+      "calls": [
+        "send@Connection.cpp:248"
+      ],
+      "called_by": [
+        "ConnectionSocket::Send@ConnectionSocket.cpp:21",
+        "SendPayloadData@VersionCheck.cpp:195"
+      ],
+      "receives_external_input": false,
+      "risk": "High"
+    },
+    "ServerConnection::Start@Common/Communication/Connection/ServerConnection.cpp:23": {
+      "defined_at": 23,
+      "calls": [
+        "VmiCreateConnection@Connection.cpp:43",
+        "VmiListen@Connection.cpp:67"
+      ],
+      "called_by": [
+        "NetworkCommManager::Initialize@NetworkCommManager.cpp:47"
+      ],
+      "receives_external_input": false,
+      "risk": "Critical"
+    },
+    "ServerConnection::Run@Common/Communication/Connection/ServerConnection.cpp:64": {
+      "defined_at": 64,
+      "calls": [
+        "VmiAccept@Connection.cpp:105",
+        "AcceptNewClient@ServerConnection.cpp:76"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "ServerConnection::AcceptNewClient@Common/Communication/Connection/ServerConnection.cpp:76": {
+      "defined_at": 76,
+      "calls": [
+        "VersionCheck::CheckVersionServer@VersionCheck.cpp:54",
+        "VmiCloseConnection@Connection.cpp:322",
+        "NetComm::SetSocket@NetComm.cpp:38"
+      ],
+      "called_by": [
+        "ServerConnection::Run@ServerConnection.cpp:64"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "ConnectionSocket::Recv@Common/Communication/Connection/ConnectionSocket.cpp:56": {
+      "defined_at": 56,
+      "calls": [
+        "VmiRecv@Connection.cpp:292",
+        "VmiSocket::SetStatus@VmiSocket.cpp:79",
+        "VmiSocket::EventNotice@VmiSocket.cpp:38"
+      ],
+      "called_by": [
+        "StreamParseThread::RecvFixedSizeData@StreamParser.cpp:246"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "ConnectionSocket::Send@Common/Communication/Connection/ConnectionSocket.cpp:21": {
+      "defined_at": 21,
+      "calls": [
+        "StreamMsgHead::SetMsgSeq@VmiMsgHead.h:74",
+        "StreamMsgHead::SetMurmurHash@VmiMsgHead.h:79",
+        "VmiSend@Connection.cpp:235"
+      ],
+      "called_by": [
+        "MsgFragment::FragmentSend@MsgFragment.cpp",
+        "Heartbeat::SendHeartbeatRequest@Heartbeat.cpp:67"
+      ],
+      "receives_external_input": false,
+      "risk": "High"
+    },
+    "StreamParse::ParseStream@Common/Communication/StreamParse/StreamParser.cpp:188": {
+      "defined_at": 188,
+      "calls": [
+        "PacketDelimiter@StreamParser.cpp:79",
+        "ProcessMsg@StreamParser.cpp:148"
+      ],
+      "called_by": [
+        "StreamParseThread::RecvCloudPhoneData@StreamParser.cpp:279"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "StreamParse::ProcessMsg@Common/Communication/StreamParse/StreamParser.cpp:148": {
+      "defined_at": 148,
+      "calls": [
+        "StreamMsgHead::VerifyMurmurHash@VmiMsgHead.h:87",
+        "ServiceHandle::Handle@PacketHandle.cpp:28"
+      ],
+      "called_by": [
+        "ParseStream@StreamParser.cpp:188"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "StreamParse::PacketDelimiter@Common/Communication/StreamParse/StreamParser.cpp:79": {
+      "defined_at": 79,
+      "calls": [
+        "StreamMsgHead::GetType@VmiMsgHead.h:49",
+        "StreamMsgHead::VerifyMsgHead@VmiMsgHead.h:29",
+        "StreamMsgHead::GetPayloadSize@VmiMsgHead.h:39"
+      ],
+      "called_by": [
+        "ParseStream@StreamParser.cpp:188",
+        "RecvCloudPhoneData@StreamParser.cpp:279"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "StreamParseThread::RecvCloudPhoneData@Common/Communication/StreamParse/StreamParser.cpp:279": {
+      "defined_at": 279,
+      "calls": [
+        "malloc@StreamParser.cpp:282",
+        "RecvFixedSizeData@StreamParser.cpp:246",
+        "PacketDelimiter@StreamParser.cpp:79",
+        "ParseStream@StreamParser.cpp:188",
+        "EngineEventHandler::CreateEvent@EngineEventHandler.cpp"
+      ],
+      "called_by": [
+        "ProcessRecvMsg@StreamParser.cpp:334"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "PacketHandle::Handle@Common/Communication/PacketHandle/PacketHandle.cpp:28": {
+      "defined_at": 28,
+      "calls": [
+        "MsgReassemble::Reassemble@MsgReassemble.cpp:226",
+        "RenderServerHandleFuncHook@CommonDefine.h:19"
+      ],
+      "called_by": [
+        "ServiceHandle::Handle@PacketHandle.h"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "MsgReassemble::Reassemble@Common/Communication/MsgFragment/MsgReassemble.cpp:226": {
+      "defined_at": 226,
+      "calls": [
+        "CheckPacket@MsgReassemble.cpp:60",
+        "ProcessSingleFragment@MsgReassemble.cpp:82",
+        "ProcessFirstFragment@MsgReassemble.cpp:117",
+        "ProcessMiddleFragment@MsgReassemble.cpp:134",
+        "ProcessEndFragment@MsgReassemble.cpp:162"
+      ],
+      "called_by": [
+        "PacketHandle::Handle@PacketHandle.cpp:28",
+        "Heartbeat::RecvHeartbeatResponse@Heartbeat.cpp:131"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "MsgReassemble::ProcessSingleFragment@Common/Communication/MsgFragment/MsgReassemble.cpp:82": {
+      "defined_at": 82,
+      "calls": [
+        "malloc@MsgReassemble.cpp:98",
+        "memcpy@MsgReassemble.cpp:106",
+        "free@MsgReassemble.cpp:94"
+      ],
+      "called_by": [
+        "Reassemble@MsgReassemble.cpp:226"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "MsgReassemble::ProcessEndFragment@Common/Communication/MsgFragment/MsgReassemble.cpp:162": {
+      "defined_at": 162,
+      "calls": [
+        "malloc@MsgReassemble.cpp:190",
+        "memcpy@MsgReassemble.cpp:210",
+        "free@MsgReassemble.cpp:214"
+      ],
+      "called_by": [
+        "Reassemble@MsgReassemble.cpp:226"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "Heartbeat::SendHeartbeatRequest@Common/Communication/Heartbeat/Heartbeat.cpp:67": {
+      "defined_at": 67,
+      "calls": [
+        "clock_gettime@Heartbeat.cpp:69",
+        "MsgFragment::FragmentSend@MsgFragment.cpp"
+      ],
+      "called_by": [
+        "TaskentryHeartbeat@Heartbeat.cpp:47"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "Heartbeat::HandleRecvMsg@Common/Communication/Heartbeat/Heartbeat.cpp:98": {
+      "defined_at": 98,
+      "calls": [
+        "memcpy@Heartbeat.cpp:112",
+        "MsgFragment::FragmentSend@MsgFragment.cpp",
+        "CalcLatency@Heartbeat.cpp:184"
+      ],
+      "called_by": [
+        "RecvHeartbeatResponse@Heartbeat.cpp:131"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "Heartbeat::RecvHeartbeatResponse@Common/Communication/Heartbeat/Heartbeat.cpp:131": {
+      "defined_at": 131,
+      "calls": [
+        "clock_gettime@Heartbeat.cpp:139",
+        "PacketQueue::GetNextPktWait@PacketQueue.cpp",
+        "MsgReassemble::Reassemble@MsgReassemble.cpp:226",
+        "HandleRecvMsg@Heartbeat.cpp:98"
+      ],
+      "called_by": [
+        "TaskentryHeartbeat@Heartbeat.cpp:47"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "VersionCheck::RecvPayloadData@Common/Utils/VersionCheck.cpp:216": {
+      "defined_at": 216,
+      "calls": [
+        "RecvOnceData@VersionCheck.cpp:248",
+        "malloc@VersionCheck.cpp:234"
+      ],
+      "called_by": [
+        "CheckVersionServer@VersionCheck.cpp:54",
+        "RecvAndMatchVersion@VersionCheck.cpp:125"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "VersionCheck::RecvOnceData@Common/Utils/VersionCheck.cpp:248": {
+      "defined_at": 248,
+      "calls": [
+        "VmiRecv@Connection.cpp:292",
+        "usleep@VersionCheck.cpp:260"
+      ],
+      "called_by": [
+        "RecvPayloadData@VersionCheck.cpp:216"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "VmiAgent::Initialize@CloudPhoneService/VmiAgent/VmiAgent.cpp:763": {
+      "defined_at": 763,
+      "calls": [
+        "InitVmiEngine@VmiApi.cpp:8",
+        "RegisterNetworkChangeStatusCallback@NetworkExport.cpp",
+        "NetworkInitialize@NetworkCommManager.cpp:47"
+      ],
+      "called_by": [
+        "main@main.cpp:16"
+      ],
+      "receives_external_input": false,
+      "risk": "High"
+    },
+    "CallbackForRecv@CloudPhoneService/VmiAgent/VmiAgent.cpp:200": {
+      "defined_at": 200,
+      "calls": [
+        "RecvDataRunnable::Run@VmiAgent.cpp:110",
+        "MainLooper::SendMsg@MainLooper.cpp"
+      ],
+      "called_by": [
+        "DealNetworkOnline@VmiAgent.cpp:514"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "RecvDataRunnable::Run@CloudPhoneService/VmiAgent/VmiAgent.cpp:110": {
+      "defined_at": 110,
+      "calls": [
+        "InjectData@VmiApi.cpp:33",
+        "SetParam@VmiApi.cpp:38",
+        "GetParam@VmiApi.cpp:43",
+        "free@VmiAgent.cpp:119"
+      ],
+      "called_by": [
+        "CallbackForRecv@VmiAgent.cpp:200"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "CallbackForRecvStart@CloudPhoneService/VmiAgent/VmiAgent.cpp:475": {
+      "defined_at": 475,
+      "calls": [
+        "StartVideoModule@VmiAgent.cpp:317",
+        "StartAudioModule@VmiAgent.cpp:372",
+        "StartTouchModule@VmiAgent.cpp:410",
+        "StartMicModule@VmiAgent.cpp:391",
+        "StartSensorModule@VmiAgent.cpp:429",
+        "StartGpsModule@VmiAgent.cpp:448"
+      ],
+      "called_by": [
+        "DealNetworkOnline@VmiAgent.cpp:514"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "StartVideoModule@CloudPhoneService/VmiAgent/VmiAgent.cpp:317": {
+      "defined_at": 317,
+      "calls": [
+        "GetStatus@VmiApi.cpp:18",
+        "StopModule@VmiApi.cpp:28",
+        "AmendFrameSize@VmiAgent.cpp:295",
+        "GetPropertyWithDefault@SystemProperty.cpp",
+        "StartModule@VmiApi.cpp:23"
+      ],
+      "called_by": [
+        "CallbackForRecvStart@VmiAgent.cpp:475",
+        "StartModules@VmiAgent.cpp:672"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "NetworkCommManager::Initialize@CloudPhoneService/VmiAgent/NetworkComm/NetworkCommManager.cpp:47": {
+      "defined_at": 47,
+      "calls": [
+        "ServerConnection::Start@ServerConnection.cpp:23",
+        "ServerConnection::RegisterNewClientCallback@ServerConnection.cpp:58",
+        "PostConnectRenderServerRunnable@NetworkCommManager.cpp:239"
+      ],
+      "called_by": [
+        "VmiAgent::Initialize@VmiAgent.cpp:763"
+      ],
+      "receives_external_input": false,
+      "risk": "High"
+    },
+    "NetworkCommManager::AcceptNewNetComm@CloudPhoneService/VmiAgent/NetworkComm/NetworkCommManager.cpp:263": {
+      "defined_at": 263,
+      "calls": [
+        "NetComm::SetBreakCallback@NetComm.cpp:377",
+        "NetworkComm::Start@NetworkComm.cpp",
+        "m_callback@NetworkCommManager.cpp:306"
+      ],
+      "called_by": [
+        "ServerConnection::AcceptNewClient@ServerConnection.cpp:76"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "Parser::ExtractSPS@CloudPhoneClient/VideoDecoder/Control/Parser.cpp:164": {
+      "defined_at": 164,
+      "calls": [
+        "FindSps@Parser.cpp:99",
+        "InitSps@Parser.cpp:120",
+        "SetProfile@Parser.cpp:138",
+        "ReadExponentialGolombCode@Parser.cpp:56",
+        "ReadBit@Parser.cpp:33",
+        "ReadSignedExponentialGolombCode@Parser.cpp:67"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "Parser::ReadExponentialGolombCode@CloudPhoneClient/VideoDecoder/Control/Parser.cpp:56": {
+      "defined_at": 56,
+      "calls": [
+        "ReadBit@Parser.cpp:33",
+        "ReadBits@Parser.cpp:47"
+      ],
+      "called_by": [
+        "ExtractSPS@Parser.cpp:164",
+        "InitSps@Parser.cpp:120",
+        "SetProfile@Parser.cpp:138"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "Parser::GetH264Width@CloudPhoneClient/VideoDecoder/Control/Parser.cpp:276": {
+      "defined_at": 276,
+      "calls": [],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "Parser::GetH264Height@CloudPhoneClient/VideoDecoder/Control/Parser.cpp:284": {
+      "defined_at": 284,
+      "calls": [],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "VideoEngineClient::RecvData@CloudPhoneClient/VideoDecoder/Control/VideoEngineClient.cpp:313": {
+      "defined_at": 313,
+      "calls": [
+        "PacketManager::GetNextPkt@PacketManager.cpp",
+        "memcpy@VideoEngineClient.cpp:343",
+        "free@VideoEngineClient.cpp:339"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "VideoEngineClient::SendData@CloudPhoneClient/VideoDecoder/Control/VideoEngineClient.cpp:350": {
+      "defined_at": 350,
+      "calls": [
+        "NetController::NetCommSend@NetController.cpp"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "ClientVideoHandleHook@CloudPhoneClient/VideoDecoder/Control/VideoEngineClient.cpp:41": {
+      "defined_at": 41,
+      "calls": [
+        "PacketManager::PutPkt@PacketManager.cpp"
+      ],
+      "called_by": [
+        "RegisterVideoHandleHooks@VideoEngineClient.cpp:95"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "NetComm::Send@Common/Communication/NetComm/NetComm.cpp:251": {
+      "defined_at": 251,
+      "calls": [
+        "malloc@NetComm.cpp:273",
+        "memcpy@NetComm.cpp:280",
+        "MsgFragment::FragmentSend@MsgFragment.cpp"
+      ],
+      "called_by": [
+        "NetController::NetCommSend@NetController.cpp",
+        "CallbackForSend@VmiAgent.cpp:161"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "NetComm::HandleSocketBreak@Common/Communication/NetComm/NetComm.cpp:356": {
+      "defined_at": 356,
+      "calls": [
+        "m_callback@NetComm.cpp:369",
+        "EngineEventHandler::CreateEvent@EngineEventHandler.cpp"
+      ],
+      "called_by": [
+        "Heartbeat::CheckNetStatus@Heartbeat.cpp:240",
+        "ConnectionSocket::Recv@ConnectionSocket.cpp:56"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "StreamMsgHead::VerifyMurmurHash@Common/Include/VmiMsgHead.h:87": {
+      "defined_at": 87,
+      "calls": [
+        "MurmurHash2@MurmurHash.cpp"
+      ],
+      "called_by": [
+        "ProcessMsg@StreamParser.cpp:148"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "StreamMsgHead::SetMurmurHash@Common/Include/VmiMsgHead.h:79": {
+      "defined_at": 79,
+      "calls": [
+        "MurmurHash2@MurmurHash.cpp"
+      ],
+      "called_by": [
+        "ConnectionSocket::Send@ConnectionSocket.cpp:21"
+      ],
+      "receives_external_input": false,
+      "risk": "Low"
+    },
+    "VideoEncoderCommon::GeneralConfig@CloudPhoneService/VideoEngine/Media/video_codec/VideoEncoderCommon.cpp:49": {
+      "defined_at": 49,
+      "calls": [],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "VideoEncoderCommon::SetEncodeParams@CloudPhoneService/VideoEngine/Media/video_codec/VideoEncoderCommon.cpp:14": {
+      "defined_at": 14,
+      "calls": [
+        "EncodeParamsChangeNoReset@VideoEncoderCommon.cpp:27"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "VmiAccept@Common/Connection/Connection.cpp:105",
+      "path": [
+        "ServerConnection::AcceptNewClient@ServerConnection.cpp:76",
+        "VersionCheck::CheckVersionServer@VersionCheck.cpp:54",
+        "NetComm::Start@NetComm.cpp:182"
+      ],
+      "sink": "VmiRecv@Common/Connection/Connection.cpp:292",
+      "sink_type": "network_input"
+    },
+    {
+      "source": "VmiRecv@Common/Connection/Connection.cpp:292",
+      "path": [
+        "ConnectionSocket::Recv@ConnectionSocket.cpp:56",
+        "StreamParseThread::RecvFixedSizeData@StreamParser.cpp:246",
+        "StreamParseThread::RecvCloudPhoneData@StreamParser.cpp:279",
+        "StreamParse::ParseStream@StreamParser.cpp:188",
+        "StreamParse::ProcessMsg@StreamParser.cpp:148",
+        "PacketHandle::Handle@PacketHandle.cpp:28",
+        "MsgReassemble::Reassemble@MsgReassemble.cpp:226"
+      ],
+      "sink": "malloc@MsgReassemble.cpp:190",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "VmiRecv@Common/Connection/Connection.cpp:292",
+      "path": [
+        "StreamParse::PacketDelimiter@StreamParser.cpp:79",
+        "StreamMsgHead::GetPayloadSize@VmiMsgHead.h:39"
+      ],
+      "sink": "malloc@StreamParser.cpp:282",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "MsgReassemble::Reassemble@MsgReassemble.cpp:226",
+      "path": [
+        "MsgReassemble::ProcessEndFragment@MsgReassemble.cpp:162",
+        "memcpy@MsgReassemble.cpp:210"
+      ],
+      "sink": "memcpy@MsgReassemble.cpp:210",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "PacketHandle::Handle@PacketHandle.cpp:28",
+      "path": [
+        "RenderServerHandleFuncHook@CommonDefine.h:19",
+        "CallbackForRecv@VmiAgent.cpp:200",
+        "RecvDataRunnable::Run@VmiAgent.cpp:110",
+        "InjectData@VmiApi.cpp:33"
+      ],
+      "sink": "InjectData@VmiApi.cpp:33",
+      "sink_type": "data_injection"
+    },
+    {
+      "source": "PacketHandle::Handle@PacketHandle.cpp:28",
+      "path": [
+        "CallbackForRecvStart@VmiAgent.cpp:475",
+        "StartVideoModule@VmiAgent.cpp:317",
+        "AmendFrameSize@VmiAgent.cpp:295"
+      ],
+      "sink": "StartModule@VmiApi.cpp:23",
+      "sink_type": "module_control"
+    },
+    {
+      "source": "ConnectionSocket::Recv@ConnectionSocket.cpp:56",
+      "path": [
+        "Heartbeat::RecvHeartbeatResponse@Heartbeat.cpp:131",
+        "MsgReassemble::Reassemble@MsgReassemble.cpp:226",
+        "Heartbeat::HandleRecvMsg@Heartbeat.cpp:98",
+        "memcpy@Heartbeat.cpp:112"
+      ],
+      "sink": "memcpy@Heartbeat.cpp:112",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "VmiRecv@Common/Connection/Connection.cpp:292",
+      "path": [
+        "VersionCheck::RecvOnceData@VersionCheck.cpp:248",
+        "VersionCheck::RecvPayloadData@VersionCheck.cpp:216",
+        "malloc@VersionCheck.cpp:234"
+      ],
+      "sink": "malloc@VersionCheck.cpp:234",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "ClientVideoHandleHook@VideoEngineClient.cpp:41",
+      "path": [
+        "PacketManager::PutPkt@PacketManager.cpp",
+        "VideoEngineClient::RecvData@VideoEngineClient.cpp:313",
+        "memcpy@VideoEngineClient.cpp:343"
+      ],
+      "sink": "memcpy@VideoEngineClient.cpp:343",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "Parser::ExtractSPS@Parser.cpp:164",
+      "path": [
+        "Parser::ReadExponentialGolombCode@Parser.cpp:56",
+        "Parser::ReadBit@Parser.cpp:33"
+      ],
+      "sink": "picWidthInMbsMinus1@Parser.cpp:189",
+      "sink_type": "integer_calculation"
+    },
+    {
+      "source": "Parser::ExtractSPS@Parser.cpp:164",
+      "path": [
+        "Parser::GetH264Width@Parser.cpp:276",
+        "Parser::GetH264Height@Parser.cpp:284"
+      ],
+      "sink": "return@Parser.cpp:281",
+      "sink_type": "integer_calculation"
+    },
+    {
+      "source": "ConnectionSocket::Recv@ConnectionSocket.cpp:56",
+      "path": [
+        "StreamParseThread::RecvFixedSizeData@StreamParser.cpp:246",
+        "StreamParse::PacketDelimiter@StreamParser.cpp:79",
+        "StreamMsgHead::GetPayloadSize@VmiMsgHead.h:39"
+      ],
+      "sink": "malloc@StreamParser.cpp:282",
+      "sink_type": "memory_operation"
+    }
+  ]
+}

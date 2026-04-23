@@ -1,0 +1,97 @@
+{
+  "scan_id": "scan_kae_20250421",
+  "start_time": "2025-04-21T18:54:00Z",
+  "end_time": "2025-04-21T20:31:00Z",
+  "duration_seconds": 5620,
+  "project_name": "kae",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/kunpeng/boostkit/kae",
+  "status": "success",
+  "mode": "autonomous",
+  "agents": [
+    {
+      "name": "architecture",
+      "start_time": "2025-04-21T18:54:30Z",
+      "end_time": "2025-04-21T19:01:37Z",
+      "duration_seconds": 427,
+      "status": "success",
+      "output_files": [
+        "project_model.json",
+        "call_graph.json",
+        "threat_analysis_report.md"
+      ]
+    },
+    {
+      "name": "dataflow-scanner",
+      "start_time": "2025-04-21T19:02:00Z",
+      "end_time": "2025-04-21T19:08:37Z",
+      "duration_seconds": 397,
+      "status": "success",
+      "item_count": 13
+    },
+    {
+      "name": "security-auditor",
+      "start_time": "2025-04-21T19:02:00Z",
+      "end_time": "2025-04-21T19:27:12Z",
+      "duration_seconds": 1512,
+      "status": "success",
+      "item_count": 96
+    },
+    {
+      "name": "verification",
+      "start_time": "2025-04-21T19:27:30Z",
+      "end_time": "2025-04-21T19:36:23Z",
+      "duration_seconds": 533,
+      "status": "success",
+      "item_count": 95,
+      "summary": {
+        "confirmed": 26,
+        "likely": 26,
+        "possible": 44,
+        "critical": 2
+      }
+    },
+    {
+      "name": "details-analyzer",
+      "start_time": "2025-04-21T19:40:00Z",
+      "end_time": "2025-04-21T20:11:00Z",
+      "duration_seconds": 1860,
+      "status": "partial_success",
+      "item_count": 10,
+      "output_files": [
+        "details/VULN-SEC-KERNEL-003.md",
+        "details/VULN-SEC-KERNEL419-001.md",
+        "details/VULN-SEC-UADK-004.md",
+        "details/VULN-SEC-ZLIB-001.md",
+        "details/VULN-SEC-ZSTD-001.md",
+        "details/VULN-SEC-ZSTD-002.md",
+        "details/VULN-SEC-LZ4-001.md",
+        "details/VULN-SEC-KERNEL510-001.md",
+        "details/VULN-SEC-KERNEL54-001.md",
+        "details/VULN-CROSS-001.md"
+      ]
+    },
+    {
+      "name": "reporter",
+      "start_time": "2025-04-21T20:13:00Z",
+      "end_time": "2025-04-21T20:22:12Z",
+      "duration_seconds": 552,
+      "status": "success",
+      "output_files": [
+        "report_confirmed.md",
+        "report_unconfirmed.md"
+      ]
+    }
+  ],
+  "summary": {
+    "total_vulnerabilities": 96,
+    "confirmed": 26,
+    "likely": 26,
+    "possible": 44,
+    "critical": 2,
+    "high": 27,
+    "medium": 46,
+    "low": 21,
+    "modules_scanned": 11,
+    "details_reports": 10
+  }
+}

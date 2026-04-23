@@ -1,0 +1,448 @@
+{
+  "functions": {
+    "quantize@amct_pytorch/quantize.py:30": {
+      "defined_at": 30,
+      "calls": [
+        "set_default_config@amct_pytorch/config/parser.py:26",
+        "parse_config@amct_pytorch/config/parser.py:259",
+        "ModelOptimizer.__init__@amct_pytorch/optimizer/model_optimizer.py:26",
+        "ModelOptimizer.add_pass@amct_pytorch/optimizer/model_optimizer.py:34",
+        "ModelOptimizer.do_optimizer@amct_pytorch/optimizer/model_optimizer.py:50",
+        "InsertQuantizeModulePass.__init__@amct_pytorch/optimizer/insert_quantize_op_pass.py:31"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "Main API entry point - takes user model and config dict"
+    },
+    "convert@amct_pytorch/quantize.py:48": {
+      "defined_at": 48,
+      "calls": [
+        "ModelOptimizer.__init__@amct_pytorch/optimizer/model_optimizer.py:26",
+        "ModelOptimizer.add_pass@amct_pytorch/optimizer/model_optimizer.py:34",
+        "ModelOptimizer.do_optimizer@amct_pytorch/optimizer/model_optimizer.py:50",
+        "ReplaceNpuQuantModulePass@amct_pytorch/optimizer/replace_npu_quant_pass.py"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "Converts calibration model to deployment model"
+    },
+    "algorithm_register@amct_pytorch/quantize.py:64": {
+      "defined_at": 64,
+      "calls": [
+        "Algorithm.register@amct_pytorch/algorithm/register_algo.py"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "Registers custom quantization algorithm"
+    },
+    "parse_config@amct_pytorch/config/parser.py:259": {
+      "defined_at": 259,
+      "calls": [
+        "QuantConfig.__init__@amct_pytorch/config/fields.py:388",
+        "get_supported_layers@amct_pytorch/config/parser.py:231"
+      ],
+      "called_by": [
+        "quantize@amct_pytorch/quantize.py:30"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "Parse user config dict into layer-specific configs"
+    },
+    "QuantConfig.__init__@amct_pytorch/config/fields.py:388": {
+      "defined_at": 388,
+      "calls": [
+        "BatchNumField.__init__@amct_pytorch/config/fields.py:27",
+        "QuantCfgField.__init__@amct_pytorch/config/fields.py:147",
+        "AlgorithmField.__init__@amct_pytorch/config/fields.py:315",
+        "SkipLayersField.__init__@amct_pytorch/config/fields.py:369"
+      ],
+      "called_by": [
+        "parse_config@amct_pytorch/config/parser.py:259"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "Initialize QuantConfig from user dict - processes batch_num, quant_cfg, algorithm"
+    },
+    "QuantCfgField.__init__@amct_pytorch/config/fields.py:147": {
+      "defined_at": 147,
+      "calls": [
+        "WeightsCfgField.__init__@amct_pytorch/config/fields.py:44",
+        "InputsCfgField.__init__@amct_pytorch/config/fields.py:106",
+        "QuantCfgField.extract_fuzzy_configs@amct_pytorch/config/fields.py:157"
+      ],
+      "called_by": [
+        "QuantConfig.__init__@amct_pytorch/config/fields.py:388"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "Process weights and inputs config with fuzzy pattern extraction"
+    },
+    "WeightsCfgField.check@amct_pytorch/config/fields.py:74": {
+      "defined_at": 74,
+      "calls": [
+        "WeightsCfgField.check_group_size@amct_pytorch/config/fields.py:92"
+      ],
+      "called_by": [
+        "WeightsCfgField.__init__@amct_pytorch/config/fields.py:44"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "Validate weights config fields (quant_type, symmetric, strategy, group_size)"
+    },
+    "match_fuzzy_pattern@amct_pytorch/config/utils.py:32": {
+      "defined_at": 32,
+      "calls": [
+        "fnmatch.fnmatch@stdlib"
+      ],
+      "called_by": [
+        "QuantCfgField.get_fuzzy_config@amct_pytorch/config/fields.py:187",
+        "_check_fuzzy_config_warnings@amct_pytorch/config/parser.py:87"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "Match layer names with wildcard patterns - uses fnmatch"
+    },
+    "get_supported_layers@amct_pytorch/config/parser.py:231": {
+      "defined_at": 231,
+      "calls": [
+        "_build_layer_types_and_quant_type@amct_pytorch/config/parser.py:179",
+        "_check_fuzzy_config_warnings@amct_pytorch/config/parser.py:87",
+        "_is_layer_supported@amct_pytorch/config/parser.py:202",
+        "_check_layer_constraints@amct_pytorch/config/parser.py:216",
+        "QuantConfig.get_layer_config@amct_pytorch/config/fields.py:396"
+      ],
+      "called_by": [
+        "parse_config@amct_pytorch/config/parser.py:259"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "Iterate through model modules to find supported layers for quantization"
+    },
+    "check_skip_layer@amct_pytorch/config/parser.py:32": {
+      "defined_at": 32,
+      "calls": [],
+      "called_by": [
+        "_is_layer_supported@amct_pytorch/config/parser.py:202"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "Check if layer name matches skip patterns"
+    },
+    "search_scale@amct_pytorch/algorithm/awq.py:49": {
+      "defined_at": 49,
+      "calls": [
+        "torch.isfinite@torch",
+        "process_weights_for_layers@amct_pytorch/algorithm/awq.py:28",
+        "calculate_scale_offset_by_granularity@amct_pytorch/algorithm/awq.py:118"
+      ],
+      "called_by": [
+        "LinearAWQuant.forward@amct_pytorch/quantize_op/linear_awq_module.py:63"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "AWQ scale search algorithm - processes tensor data"
+    },
+    "LinearAWQuant.forward@amct_pytorch/quantize_op/linear_awq_module.py:63": {
+      "defined_at": 63,
+      "calls": [
+        "check_linear_input_dim@amct_pytorch/utils/data_utils.py:21",
+        "search_scale@amct_pytorch/algorithm/awq.py:49",
+        "apply_scale@amct_pytorch/algorithm/awq.py:105",
+        "calculate_scale_offset_by_granularity@amct_pytorch/algorithm/awq.py:118"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "AWQ quantization forward pass - processes input tensor"
+    },
+    "quant_tensor@amct_pytorch/utils/quant_util.py:222": {
+      "defined_at": 222,
+      "calls": [
+        "torch_npu.npu_quantize@torch_npu",
+        "torch_npu.npu_dynamic_mx_quant@torch_npu",
+        "cal_shared_exponent@amct_pytorch/utils/quant_util.py:60",
+        "scale_input_by_shared_exponents@amct_pytorch/utils/quant_util.py:94",
+        "float_to_fp4e2m1@amct_pytorch/utils/data_utils.py:32",
+        "convert_to_per_group_shape@amct_pytorch/utils/quant_util.py:43"
+      ],
+      "called_by": [
+        "quant_weight@amct_pytorch/utils/quant_util.py:133",
+        "quant_dequant_tensor@amct_pytorch/utils/quant_util.py:266"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "Quantize tensor to specified dtype using NPU ops"
+    },
+    "NpuQuantizationLinear.forward@amct_pytorch/deploy_op/npu_quantization_linear.py:56": {
+      "defined_at": 56,
+      "calls": [
+        "torch_npu.npu_dynamic_quant@torch_npu",
+        "torch_npu.npu_quantize@torch_npu",
+        "torch_npu.npu_quant_matmul@torch_npu"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "NPU quantized linear forward pass"
+    },
+    "create_quant_config@amct_pytorch/graph_based_compression/amct_pytorch/quantize_tool.py:51": {
+      "defined_at": 51,
+      "calls": [
+        "os.path.realpath@stdlib",
+        "ModuleHelper.deep_copy@amct_pytorch/graph_based_compression/amct_pytorch/utils/model_util.py",
+        "ModuleHelper.check_amct_op@amct_pytorch/graph_based_compression/amct_pytorch/utils/model_util.py",
+        "Parser.export_onnx@amct_pytorch/graph_based_compression/amct_pytorch/parser/parser.py",
+        "Parser.parse_net_to_graph@amct_pytorch/graph_based_compression/amct_pytorch/parser/parser.py",
+        "Configuration.create_quant_config@amct_pytorch/graph_based_compression/amct_pytorch/configuration/configuration.py"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "Create quant config file from user-specified file path"
+    },
+    "quantize_model@amct_pytorch/graph_based_compression/amct_pytorch/quantize_tool.py:155": {
+      "defined_at": 155,
+      "calls": [
+        "inner_quantize_model@amct_pytorch/graph_based_compression/amct_pytorch/quantize_tool.py:193",
+        "os.path.realpath@stdlib"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "Quantize model with user-specified file paths"
+    },
+    "inner_quantize_model@amct_pytorch/graph_based_compression/amct_pytorch/quantize_tool.py:193": {
+      "defined_at": 193,
+      "calls": [
+        "os.path.realpath@stdlib",
+        "SingletonScaleOffsetRecord.reset_singleton@amct_pytorch/graph_based_compression/amct_pytorch/utils/singleton_record.py",
+        "ModuleHelper.deep_copy@amct_pytorch/graph_based_compression/amct_pytorch/utils/model_util.py",
+        "Parser.export_onnx@amct_pytorch/graph_based_compression/amct_pytorch/parser/parser.py",
+        "Parser.parse_net_to_graph@amct_pytorch/graph_based_compression/amct_pytorch/parser/parser.py",
+        "Configuration.init@amct_pytorch/graph_based_compression/amct_pytorch/configuration/configuration.py",
+        "RecordFileParser.parse@amct_pytorch/graph_based_compression/amct_pytorch/parser/parse_record_file.py",
+        "_inner_quantize_weight@amct_pytorch/graph_based_compression/amct_pytorch/quantize_tool.py:268",
+        "_inner_quantize_data@amct_pytorch/graph_based_compression/amct_pytorch/quantize_tool.py:291",
+        "save_onnx_model@amct_pytorch/graph_based_compression/amct_pytorch/utils/save.py"
+      ],
+      "called_by": [
+        "quantize_model@amct_pytorch/graph_based_compression/amct_pytorch/quantize_tool.py:155"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "Internal model quantization with file operations"
+    },
+    "save_model@amct_pytorch/graph_based_compression/amct_pytorch/quantize_tool.py:309": {
+      "defined_at": 309,
+      "calls": [
+        "files_util.is_valid_name@amct_pytorch/graph_based_compression/amct_pytorch/common/utils/files.py",
+        "os.path.realpath@stdlib",
+        "SingletonScaleOffsetRecord.reset_singleton@amct_pytorch/graph_based_compression/amct_pytorch/utils/singleton_record.py",
+        "Parser.parse_net_to_graph@amct_pytorch/graph_based_compression/amct_pytorch/parser/parser.py",
+        "RecordFileParser.parse@amct_pytorch/graph_based_compression/amct_pytorch/parser/parse_record_file.py",
+        "_generate_model@amct_pytorch/graph_based_compression/amct_pytorch/quantize_tool.py:693"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "Save model with user-specified file paths"
+    },
+    "FloatToHifloat8@amct_pytorch/experimental/hifloat8/hifloat8_cast.cpp:285": {
+      "defined_at": 285,
+      "calls": [
+        "torch::Tensor.contiguous@torch",
+        "torch::zeros_like@torch",
+        "DataCastToHiF8Functor<uint32_t>::operator()@amct_pytorch/experimental/hifloat8/hifloat8_cast.cpp:257",
+        "DataCastToHiF8Functor<uint16_t>::operator()@amct_pytorch/experimental/hifloat8/hifloat8_cast.cpp:268"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "Pybind11 exported C++ function - cast float to hifloat8"
+    },
+    "Hifloat8ToFloat32@amct_pytorch/experimental/hifloat8/hifloat8_cast.cpp:301": {
+      "defined_at": 301,
+      "calls": [
+        "torch::Tensor.contiguous@torch",
+        "HiF8CastToFpNFunctor<uint32_t>::operator()@amct_pytorch/experimental/hifloat8/hifloat8_cast.cpp:257"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "Pybind11 exported C++ function - convert hifloat8 to float32"
+    },
+    "HiF8CastByDot@amct_pytorch/experimental/hifloat8/hifloat8_cast.cpp:125": {
+      "defined_at": 125,
+      "calls": [
+        "HIF8_DOT_MAP.at@amct_pytorch/experimental/hifloat8/hifloat8_cast.cpp:45"
+      ],
+      "called_by": [
+        "HiF8ToFpN@amct_pytorch/experimental/hifloat8/hifloat8_cast.cpp:159"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "Template function for hif8 casting by dot value"
+    },
+    "GetRank@amct_pytorch/graph_based_compression/amct_tensor_decompose/src/tensor_decomposition_api.cpp:31": {
+      "defined_at": 31,
+      "calls": [
+        "Vector.Create@amct_pytorch/graph_based_compression/amct_tensor_decompose/src/vector.cpp",
+        "TensorDecomposition::Estimation@amct_pytorch/graph_based_compression/amct_tensor_decompose/src/tensor_decomposition.cpp"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "extern C function - estimate rank for tensor decomposition"
+    },
+    "FastFilterConv@amct_pytorch/graph_based_compression/amct_tensor_decompose/src/tensor_decomposition_api.cpp:47": {
+      "defined_at": 47,
+      "calls": [],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Low",
+      "description": "Determine decompose mode for conv layer"
+    },
+    "check_params@amct_pytorch/utils/check_params.py:24": {
+      "defined_at": 24,
+      "calls": [
+        "signature.bind@inspect",
+        "check_param_types@amct_pytorch/utils/check_params.py:46"
+      ],
+      "called_by": [
+        "quantize@amct_pytorch/quantize.py:28",
+        "convert@amct_pytorch/quantize.py:47",
+        "algorithm_register@amct_pytorch/quantize.py:60",
+        "create_quant_config@amct_pytorch/graph_based_compression/amct_pytorch/quantize_tool.py:45",
+        "quantize_model@amct_pytorch/graph_based_compression/amct_pytorch/quantize_tool.py:148",
+        "save_model@amct_pytorch/graph_based_compression/amct_pytorch/quantize_tool.py:308"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "Decorator for checking function parameter types"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "user_config_dict",
+      "path": [
+        "quantize@amct_pytorch/quantize.py:30",
+        "parse_config@amct_pytorch/config/parser.py:259",
+        "QuantConfig.__init__@amct_pytorch/config/fields.py:388",
+        "QuantCfgField.__init__@amct_pytorch/config/fields.py:147",
+        "WeightsCfgField.__init__@amct_pytorch/config/fields.py:44",
+        "WeightsCfgField.check@amct_pytorch/config/fields.py:74"
+      ],
+      "sink": "WeightsCfgField.check@amct_pytorch/config/fields.py:74",
+      "sink_type": "validation",
+      "description": "User config dict flows to weights field validation"
+    },
+    {
+      "source": "user_config_dict",
+      "path": [
+        "quantize@amct_pytorch/quantize.py:30",
+        "parse_config@amct_pytorch/config/parser.py:259",
+        "get_supported_layers@amct_pytorch/config/parser.py:231",
+        "QuantConfig.get_layer_config@amct_pytorch/config/fields.py:396",
+        "match_fuzzy_pattern@amct_pytorch/config/utils.py:32",
+        "fnmatch.fnmatch@stdlib"
+      ],
+      "sink": "fnmatch.fnmatch@stdlib",
+      "sink_type": "string_operation",
+      "description": "User config patterns flow to fnmatch wildcard matching"
+    },
+    {
+      "source": "user_file_path",
+      "path": [
+        "create_quant_config@amct_pytorch/graph_based_compression/amct_pytorch/quantize_tool.py:51",
+        "os.path.realpath@stdlib"
+      ],
+      "sink": "os.path.realpath@stdlib",
+      "sink_type": "file_operation",
+      "description": "User file path flows to realpath resolution"
+    },
+    {
+      "source": "user_file_path",
+      "path": [
+        "quantize_model@amct_pytorch/graph_based_compression/amct_pytorch/quantize_tool.py:155",
+        "inner_quantize_model@amct_pytorch/graph_based_compression/amct_pytorch/quantize_tool.py:193",
+        "Configuration.init@amct_pytorch/graph_based_compression/amct_pytorch/configuration/configuration.py",
+        "JSON.parse@stdlib"
+      ],
+      "sink": "Configuration.init",
+      "sink_type": "file_parsing",
+      "description": "User config file path flows to configuration parsing"
+    },
+    {
+      "source": "user_tensor",
+      "path": [
+        "quantize@amct_pytorch/quantize.py:30",
+        "InsertQuantizeModulePass.__init__@amct_pytorch/optimizer/insert_quantize_op_pass.py:31",
+        "LinearAWQuant.forward@amct_pytorch/quantize_op/linear_awq_module.py:63",
+        "search_scale@amct_pytorch/algorithm/awq.py:49",
+        "process_weights_for_layers@amct_pytorch/algorithm/awq.py:28"
+      ],
+      "sink": "process_weights_for_layers@amct_pytorch/algorithm/awq.py:28",
+      "sink_type": "tensor_operation",
+      "description": "User model tensor data flows to weight processing"
+    },
+    {
+      "source": "user_tensor",
+      "path": [
+        "FloatToHifloat8@amct_pytorch/experimental/hifloat8/hifloat8_cast.cpp:285",
+        "input.contiguous@torch",
+        "DataCastToHiF8Functor<uint32_t>::operator()@amct_pytorch/experimental/hifloat8/hifloat8_cast.cpp:268",
+        "FpNToHiF8<uint32_t>@amct_pytorch/experimental/hifloat8/hifloat8_cast.cpp:193"
+      ],
+      "sink": "FpNToHiF8@amct_pytorch/experimental/hifloat8/hifloat8_cast.cpp:193",
+      "sink_type": "memory_operation",
+      "description": "User tensor data flows to C++ casting function"
+    },
+    {
+      "source": "user_array",
+      "path": [
+        "GetRank@amct_pytorch/graph_based_compression/amct_tensor_decompose/src/tensor_decomposition_api.cpp:31",
+        "Vector.Create@amct_pytorch/graph_based_compression/amct_tensor_decompose/src/vector.cpp",
+        "memcpy@stdlib"
+      ],
+      "sink": "Vector.Create",
+      "sink_type": "memory_operation",
+      "description": "User array data flows to Vector creation in C++"
+    },
+    {
+      "source": "user_model",
+      "path": [
+        "quantize@amct_pytorch/quantize.py:30",
+        "ModelOptimizer.do_optimizer@amct_pytorch/optimizer/model_optimizer.py:50",
+        "InsertQuantizeModulePass.run@amct_pytorch/optimizer/insert_quantize_op_pass.py",
+        "ModuleHelper.replace_module_by_name@amct_pytorch/utils/model_util.py"
+      ],
+      "sink": "ModuleHelper.replace_module_by_name",
+      "sink_type": "model_operation",
+      "description": "User model flows to module replacement"
+    },
+    {
+      "source": "user_record_file",
+      "path": [
+        "save_model@amct_pytorch/graph_based_compression/amct_pytorch/quantize_tool.py:309",
+        "RecordFileParser.parse@amct_pytorch/graph_based_compression/amct_pytorch/parser/parse_record_file.py",
+        "open@stdlib"
+      ],
+      "sink": "RecordFileParser.parse",
+      "sink_type": "file_operation",
+      "description": "User record file path flows to file parsing"
+    },
+    {
+      "source": "user_layer_name",
+      "path": [
+        "match_fuzzy_pattern@amct_pytorch/config/utils.py:32",
+        "fnmatch.fnmatch@stdlib"
+      ],
+      "sink": "fnmatch.fnmatch",
+      "sink_type": "string_operation",
+      "description": "User layer name flows to pattern matching"
+    }
+  ]
+}

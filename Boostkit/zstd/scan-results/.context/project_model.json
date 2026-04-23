@@ -1,0 +1,527 @@
+{
+  "project_name": "zstd",
+  "scan_time": "2026-04-21T10:00:00Z",
+  "lsp_available": true,
+  "total_files": 142,
+  "total_lines": 102906,
+  "project_profile": {
+    "project_type": "library",
+    "deployment_model": "作为 C 库嵌入应用程序，或作为 CLI 工具在用户本地执行。库被广泛用于压缩/解压缩数据流、文件、网络传输等场景。",
+    "trust_boundaries": [
+      {
+        "boundary": "External Data Input",
+        "trusted_side": "Application logic (compression)",
+        "untrusted_side": "Compressed data from files/network (decompression)",
+        "risk": "Critical"
+      },
+      {
+        "boundary": "File System Interface",
+        "trusted_side": "Application-controlled file paths",
+        "untrusted_side": "User-provided file paths (CLI mode)",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Dictionary Loading",
+        "trusted_side": "Application-provided dictionary",
+        "untrusted_side": "External dictionary files",
+        "risk": "High"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "lib_common",
+      "path": "lib/common",
+      "language": "c_cpp",
+      "components": [
+        "entropy_common.c",
+        "error_private.c",
+        "fse_decompress.c",
+        "mem.h",
+        "pool.c",
+        "threading.c",
+        "xxhash.c",
+        "zstd_common.c",
+        "zstd_internal.h",
+        "debug.c",
+        "bitstream.h",
+        "compiler.h",
+        "cpu.h",
+        "fse.h",
+        "huf.h",
+        "allocations.h",
+        "bits.h",
+        "portability_macros.h",
+        "zstd_deps.h",
+        "zstd_trace.h"
+      ]
+    },
+    {
+      "name": "lib_compress",
+      "path": "lib/compress",
+      "language": "c_cpp",
+      "components": [
+        "fse_compress.c",
+        "hist.c",
+        "huf_compress.c",
+        "zstd_compress.c",
+        "zstd_compress_literals.c",
+        "zstd_compress_sequences.c",
+        "zstd_compress_superblock.c",
+        "zstd_double_fast.c",
+        "zstd_fast.c",
+        "zstd_lazy.c",
+        "zstd_ldm.c",
+        "zstdmt_compress.c",
+        "zstd_opt.c",
+        "zstd_preSplit.c",
+        "clevels.h",
+        "hist.h",
+        "zstd_compress_internal.h",
+        "zstd_compress_literals.h",
+        "zstd_compress_sequences.h",
+        "zstd_compress_superblock.h",
+        "zstd_cwksp.h",
+        "zstd_double_fast.h",
+        "zstd_fast.h",
+        "zstd_lazy.h",
+        "zstd_ldm.h",
+        "zstdmt_compress.h",
+        "zstd_opt.h",
+        "zstd_preSplit.h"
+      ]
+    },
+    {
+      "name": "lib_decompress",
+      "path": "lib/decompress",
+      "language": "c_cpp",
+      "components": [
+        "huf_decompress.c",
+        "zstd_ddict.c",
+        "zstd_decompress.c",
+        "zstd_decompress_block.c",
+        "huf_decompress_amd64.S",
+        "zstd_decompress_internal.h",
+        "zstd_ddict.h",
+        "zstd_decompress_block.h"
+      ]
+    },
+    {
+      "name": "lib_dictbuilder",
+      "path": "lib/dictBuilder",
+      "language": "c_cpp",
+      "components": [
+        "cover.c",
+        "divsufsort.c",
+        "fastcover.c",
+        "zdict.c",
+        "cover.h",
+        "divsufsort.h"
+      ]
+    },
+    {
+      "name": "lib_legacy",
+      "path": "lib/legacy",
+      "language": "c_cpp",
+      "components": [
+        "zstd_v01.c",
+        "zstd_v02.c",
+        "zstd_v03.c",
+        "zstd_v04.c",
+        "zstd_v05.c",
+        "zstd_v06.c",
+        "zstd_v07.c",
+        "zstd_legacy.h",
+        "zstd_v01.h",
+        "zstd_v02.h",
+        "zstd_v03.h",
+        "zstd_v04.h",
+        "zstd_v05.h",
+        "zstd_v06.h",
+        "zstd_v07.h"
+      ]
+    },
+    {
+      "name": "lib_deprecated",
+      "path": "lib/deprecated",
+      "language": "c_cpp",
+      "components": [
+        "zbuff.h"
+      ]
+    },
+    {
+      "name": "programs_cli",
+      "path": "programs",
+      "language": "c_cpp",
+      "components": [
+        "benchfn.c",
+        "benchzstd.c",
+        "datagen.c",
+        "dibio.c",
+        "fileio.c",
+        "fileio_asyncio.c",
+        "lorem.c",
+        "timefn.c",
+        "util.c",
+        "zstdcli.c",
+        "zstdcli_trace.c",
+        "benchfn.h",
+        "benchzstd.h",
+        "datagen.h",
+        "dibio.h",
+        "fileio.h",
+        "fileio_asyncio.h",
+        "fileio_common.h",
+        "fileio_types.h",
+        "lorem.h",
+        "platform.h",
+        "timefn.h",
+        "util.h",
+        "zstdcli_trace.h"
+      ]
+    },
+    {
+      "name": "zlib_wrapper",
+      "path": "zlibWrapper",
+      "language": "c_cpp",
+      "components": [
+        "gzclose.c",
+        "gzlib.c",
+        "gzread.c",
+        "gzwrite.c",
+        "zstd_zlibwrapper.c",
+        "gzcompatibility.h",
+        "gzguts.h",
+        "zstd_zlibwrapper.h"
+      ]
+    },
+    {
+      "name": "contrib_linux_kernel",
+      "path": "contrib/linux-kernel",
+      "language": "c_cpp",
+      "components": [
+        "zstd_compress_module.c",
+        "zstd_decompress_module.c",
+        "zstd_common_module.c",
+        "decompress_sources.h",
+        "linux_zstd.h",
+        "mem.h",
+        "zstd_deps.h"
+      ]
+    },
+    {
+      "name": "contrib_seekable_format",
+      "path": "contrib/seekable_format",
+      "language": "c_cpp",
+      "components": [
+        "zstdseek_compress.c",
+        "zstdseek_decompress.c",
+        "zstd_seekable.h"
+      ]
+    },
+    {
+      "name": "examples",
+      "path": "examples",
+      "language": "c_cpp",
+      "components": [
+        "simple_compression.c",
+        "simple_decompression.c",
+        "streaming_compression.c",
+        "streaming_decompression.c",
+        "dictionary_compression.c",
+        "dictionary_decompression.c",
+        "multiple_simple_compression.c",
+        "multiple_streaming_compression.c",
+        "streaming_memory_usage.c",
+        "streaming_compression_thread_pool.c",
+        "common.h"
+      ]
+    },
+    {
+      "name": "tests",
+      "path": "tests",
+      "language": "mixed",
+      "components": [
+        "fuzzer.c",
+        "fullbench.c",
+        "fuzz.py",
+        "test-zstd-versions.py",
+        "zstreamtest.c",
+        "decodecorpus.c",
+        "datagencli.c",
+        "roundTripCrash.c",
+        "longmatch.c",
+        "largeDictionary.c",
+        "invalidDictionaries.c",
+        "legacy.c",
+        "poolTests.c",
+        "paramgrill.c",
+        "checkTag.c"
+      ]
+    }
+  ],
+  "files": [
+    {
+      "path": "lib/decompress/zstd_decompress.c",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "lib_decompress",
+      "lines": 2410,
+      "priority": 1
+    },
+    {
+      "path": "lib/decompress/zstd_decompress_block.c",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "lib_decompress",
+      "lines": 2311,
+      "priority": 2
+    },
+    {
+      "path": "lib/decompress/huf_decompress.c",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "lib_decompress",
+      "lines": 1953,
+      "priority": 3
+    },
+    {
+      "path": "lib/legacy/zstd_v01.c",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "lib_legacy",
+      "lines": 2400,
+      "priority": 4
+    },
+    {
+      "path": "lib/legacy/zstd_v02.c",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "lib_legacy",
+      "lines": 2100,
+      "priority": 5
+    },
+    {
+      "path": "lib/legacy/zstd_v03.c",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "lib_legacy",
+      "lines": 2200,
+      "priority": 6
+    },
+    {
+      "path": "lib/legacy/zstd_v04.c",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "lib_legacy",
+      "lines": 2300,
+      "priority": 7
+    },
+    {
+      "path": "lib/legacy/zstd_v05.c",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "lib_legacy",
+      "lines": 2500,
+      "priority": 8
+    },
+    {
+      "path": "lib/legacy/zstd_v06.c",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "lib_legacy",
+      "lines": 2600,
+      "priority": 9
+    },
+    {
+      "path": "lib/legacy/zstd_v07.c",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "lib_legacy",
+      "lines": 2700,
+      "priority": 10
+    },
+    {
+      "path": "lib/common/fse_decompress.c",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "lib_common",
+      "lines": 500,
+      "priority": 11
+    },
+    {
+      "path": "programs/zstdcli.c",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "programs_cli",
+      "lines": 1675,
+      "priority": 12
+    },
+    {
+      "path": "programs/fileio.c",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "programs_cli",
+      "lines": 3717,
+      "priority": 13
+    },
+    {
+      "path": "programs/util.c",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "programs_cli",
+      "lines": 1200,
+      "priority": 14
+    },
+    {
+      "path": "zlibWrapper/gzread.c",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "zlib_wrapper",
+      "lines": 600,
+      "priority": 15
+    },
+    {
+      "path": "zlibWrapper/zstd_zlibwrapper.c",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "zlib_wrapper",
+      "lines": 1000,
+      "priority": 16
+    },
+    {
+      "path": "contrib/seekable_format/zstdseek_decompress.c",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "contrib_seekable_format",
+      "lines": 800,
+      "priority": 17
+    },
+    {
+      "path": "contrib/linux-kernel/zstd_decompress_module.c",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "contrib_linux_kernel",
+      "lines": 400,
+      "priority": 18
+    },
+    {
+      "path": "lib/dictBuilder/zdict.c",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "lib_dictbuilder",
+      "lines": 1100,
+      "priority": 19
+    },
+    {
+      "path": "lib/zstd.h",
+      "language": "c_cpp",
+      "risk": "Low",
+      "module": "lib_common",
+      "lines": 3209,
+      "priority": 20
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "programs/zstdcli.c",
+      "line": 859,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "CLI 工具入口，用户可通过命令行参数指定文件路径，本地用户可控制输入文件内容和路径",
+      "description": "处理命令行参数，读取用户指定的文件进行压缩/解压缩"
+    },
+    {
+      "file": "lib/zstd.h",
+      "line": 173,
+      "function": "ZSTD_decompress",
+      "type": "file",
+      "trust_level": "untrusted_network",
+      "justification": "核心库 API，接收压缩数据缓冲区。应用场景包括解压缩网络传输数据、文件数据等不可信来源",
+      "description": "解压缩单个压缩帧，处理用户提供的数据"
+    },
+    {
+      "file": "lib/decompress/zstd_decompress.c",
+      "line": 100,
+      "function": "ZSTD_decompressStream",
+      "type": "file",
+      "trust_level": "untrusted_network",
+      "justification": "流式解压缩 API，持续接收输入数据。典型场景：网络数据流解压缩、管道输入处理",
+      "description": "流式解压缩，处理连续输入数据"
+    },
+    {
+      "file": "lib/legacy/zstd_legacy.h",
+      "line": 56,
+      "function": "ZSTD_isLegacy",
+      "type": "file",
+      "trust_level": "untrusted_network",
+      "justification": "检测并处理旧版本格式的压缩数据。旧格式可能存在未修复的安全问题",
+      "description": "识别并路由到 legacy 解压缩器"
+    },
+    {
+      "file": "lib/legacy/zstd_v01.c",
+      "line": 1,
+      "function": "ZSTDv01_decompress",
+      "type": "file",
+      "trust_level": "untrusted_network",
+      "justification": "v0.1 版本格式解压缩，处理早期格式数据。旧格式代码可能缺乏现代安全检查",
+      "description": "解压缩 v0.1 版本格式的数据"
+    },
+    {
+      "file": "zlibWrapper/gzread.c",
+      "line": 1,
+      "function": "gzread",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "zlib 兼容层 API，处理 gzip 格式文件。应用可能使用此接口处理用户提供的外部文件",
+      "description": "读取 gzip 格式文件"
+    },
+    {
+      "file": "contrib/seekable_format/zstdseek_decompress.c",
+      "line": 1,
+      "function": "ZSTD_seekable_decompress",
+      "type": "file",
+      "trust_level": "untrusted_network",
+      "justification": "可寻址格式解压缩，处理索引帧数据。索引数据可能被恶意构造",
+      "description": "解压缩可寻址格式的数据帧"
+    },
+    {
+      "file": "contrib/linux-kernel/zstd_decompress_module.c",
+      "line": 1,
+      "function": "zstd_decompress_module_init",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "内核模块入口，通过系统调用接口接收数据。需要内核权限触发，但数据来源可能来自用户空间",
+      "description": "Linux 内核模块解压缩接口"
+    },
+    {
+      "file": "programs/fileio.c",
+      "line": 100,
+      "function": "FIO_decompressFilename",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "CLI 文件解压缩入口，处理用户指定的文件路径和文件内容",
+      "description": "解压缩指定文件名"
+    },
+    {
+      "file": "lib/dictBuilder/zdict.c",
+      "line": 1,
+      "function": "ZDICT_trainFromBuffer",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "字典训练 API，从样本数据构建压缩字典。恶意样本可能触发缓冲区问题",
+      "description": "从缓冲区训练压缩字典"
+    }
+  ],
+  "attack_surfaces": [
+    "压缩数据解析：解压缩模块处理用户/网络提供的压缩数据，可能触发缓冲区溢出、整数溢出、内存破坏",
+    "Legacy 格式支持：旧版本格式（v0.1-v0.7）解压缩可能缺乏现代安全检查",
+    "Huffman/FSE 熵解码：熵解码表可能被恶意构造触发越界访问",
+    "字典加载：外部字典文件可能被恶意构造",
+    "文件路径处理：CLI 模式下用户可指定任意文件路径",
+    "流式解压缩：长时间运行的解压缩流可能触发资源耗尽",
+    "内核模块接口：Linux 内核模块接收用户空间数据的解压缩请求",
+    "zlib 兼容层：gzread/gzwrite 处理外部文件数据"
+  ]
+}

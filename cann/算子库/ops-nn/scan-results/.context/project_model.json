@@ -1,0 +1,678 @@
+{
+  "project_name": "ops-nn",
+  "project_type": "C/C++ + Python Mixed",
+  "description": "Huawei CANN Neural Network Operator Library",
+  "language_composition": {
+    "cpp": 6795,
+    "python": 60
+  },
+  "file_statistics": {
+    "activation": 856,
+    "conv": 414,
+    "control": 24,
+    "foreach": 363,
+    "hash": 38,
+    "index": 1008,
+    "loss": 367,
+    "matmul": 852,
+    "norm": 962,
+    "optim": 150,
+    "pooling": 564,
+    "quant": 392,
+    "rnn": 68,
+    "common": 181
+  },
+  "modules": [
+    {
+      "name": "hash",
+      "path": "hash",
+      "language": "cpp",
+      "priority": 1,
+      "file_count": 38,
+      "submodules": [
+        "init_embedding_hash_table",
+        "embedding_hash_table_lookup_or_insert",
+        "embedding_hash_table_import",
+        "embedding_hash_table_export",
+        "embedding_hash_table_apply_adam_w"
+      ],
+      "entry_points": [
+        "op_kernel/init_embedding_hash_table_apt.cpp",
+        "op_kernel/embedding_hash_table_lookup_or_insert.cpp",
+        "op_kernel/embedding_hash_table_import.cpp"
+      ],
+      "risk_level": "critical",
+      "risk_reason": "Hash table operations with direct memory access, atomic operations, potential integer overflow in table size calculation, buffer overflow in bucket operations",
+      "high_risk_files": [
+        {
+          "path": "hash/embedding_hash_table_lookup_or_insert/op_kernel/arch35/kernel_lookup_or_insert_general.h",
+          "lines": 169,
+          "risk": "Atomic CAS operations, direct memory pointer manipulation, hash collision handling"
+        },
+        {
+          "path": "hash/embedding_hash_table_lookup_or_insert/op_kernel/embedding_hash_table_lookup_or_insert.cpp",
+          "lines": 48,
+          "risk": "Kernel entry point with GM_ADDR memory parameters"
+        },
+        {
+          "path": "hash/init_embedding_hash_table/op_kernel/init_embedding_hash_table_apt.cpp",
+          "lines": 28,
+          "risk": "Hash table initialization with bucketSize/embeddingDim parameters"
+        }
+      ]
+    },
+    {
+      "name": "common",
+      "path": "common",
+      "language": "cpp",
+      "priority": 2,
+      "file_count": 181,
+      "submodules": [
+        "inc/op_kernel",
+        "inc/op_host",
+        "inc/op_api",
+        "src/framework (ONNX plugins)",
+        "src/op_host (tiling API)",
+        "graph_fusion"
+      ],
+      "entry_points": [
+        "src/framework/*_onnx_plugin.cpp (ONNX model parsing)",
+        "src/op_host/tbe_tiling_api.cpp (tiling API)",
+        "src/op_host/hash.cpp (hash utility)",
+        "src/op_host/runtime_kb_api.cpp (runtime API)"
+      ],
+      "risk_level": "high",
+      "risk_reason": "ONNX plugins parse external model data (ParseParams functions), dynamic symbol loading via LegacyCommonManager, tiling API receives runtime parameters",
+      "high_risk_files": [
+        {
+          "path": "common/src/framework/resize_onnx_plugin.cpp",
+          "lines": 390,
+          "risk": "ONNX model parsing, attribute extraction from external model"
+        },
+        {
+          "path": "common/src/op_host/tbe_tiling_api.cpp",
+          "lines": 37,
+          "risk": "Dynamic function loading via symbol lookup"
+        },
+        {
+          "path": "common/src/legacy_common_manager.cpp",
+          "lines": 150,
+          "risk": "Dynamic symbol loading, GetFunc pointer retrieval"
+        },
+        {
+          "path": "common/src/op_host/hash.cpp",
+          "lines": 72,
+          "risk": "MurmurHash implementation, void pointer casting"
+        }
+      ],
+      "onnx_plugins": [
+        "resize_onnx_plugin.cpp",
+        "constantofshape_onnx_plugin.cpp",
+        "topk_onnx_plugin.cpp",
+        "lstm_onnx_plugin.cpp",
+        "gru_onnx_plugin.cpp",
+        "matmul_onnx_plugin.cpp",
+        "ascend_quant_onnx_plugin.cpp",
+        "ascend_dequant_onnx_plugin.cpp",
+        "batch_matmul_onnx_plugin.cpp",
+        "instancenormalization_onnx_plugin.cpp"
+      ]
+    },
+    {
+      "name": "conv",
+      "path": "conv",
+      "language": "cpp",
+      "priority": 2,
+      "file_count": 414,
+      "submodules": [
+        "convolution_forward",
+        "convolution_backward",
+        "conv2d_v2",
+        "conv3d_v2",
+        "conv3d_transpose_v2",
+        "deformable_conv2d",
+        "depthwise_conv2d",
+        "quant_conv3d"
+      ],
+      "entry_points": [
+        "op_api/aclnn_convolution.cpp",
+        "op_api/aclnn_convolution_backward.cpp"
+      ],
+      "risk_level": "high",
+      "risk_reason": "Complex tensor shape validation, large tiling calculation files, integer overflow in block size calculation",
+      "high_risk_files": [
+        {
+          "path": "conv/convolution_forward/op_host/op_api/aclnn_convolution.cpp",
+          "lines": 5462,
+          "risk": "Large file with complex shape validation and parameter handling"
+        },
+        {
+          "path": "conv/convolution_backward/op_api/aclnn_convolution_backward.cpp",
+          "lines": 3205,
+          "risk": "Backward pass with gradient tensor handling"
+        }
+      ]
+    },
+    {
+      "name": "matmul",
+      "path": "matmul",
+      "language": "cpp",
+      "priority": 2,
+      "file_count": 852,
+      "submodules": [
+        "mat_mul_v3",
+        "batch_mat_mul_v3",
+        "gemm",
+        "gemm_v2",
+        "gemm_v3",
+        "quant_matmul",
+        "quant_batch_matmul_v3",
+        "quant_batch_matmul_v4",
+        "weight_quant_batch_matmul_v2",
+        "fused_mat_mul",
+        "sparse_tensor_dense_mat_mul",
+        "sparse4to2quant_matmul"
+      ],
+      "entry_points": [
+        "op_api/aclnn_matmul.cpp",
+        "op_api/aclnn_batch_matmul.cpp"
+      ],
+      "risk_level": "high",
+      "risk_reason": "Integer overflow in tiling block calculations, quantization parameters handling",
+      "high_risk_files": [
+        {
+          "path": "matmul/mat_mul_v3/op_host/op_tiling/matmul_v3_base_tiling.cpp",
+          "lines": 2839,
+          "risk": "Tiling calculation with block size arithmetic"
+        },
+        {
+          "path": "matmul/quant_batch_matmul_v3/op_api/aclnn_quant_matmul_v4.cpp",
+          "lines": 2124,
+          "risk": "Quantization parameters validation and processing"
+        },
+        {
+          "path": "matmul/sparse4to2quant_matmul/op_host/op_tiling/sparse4to2quant_matmul_tiling.cpp",
+          "lines": 1500,
+          "risk": "Sparse matrix handling with index calculations"
+        }
+      ]
+    },
+    {
+      "name": "rnn",
+      "path": "rnn",
+      "language": "cpp",
+      "priority": 3,
+      "file_count": 68,
+      "submodules": [
+        "dynamic_rnn",
+        "dynamic_rnnv2",
+        "bidirection_lstm",
+        "bidirection_lstmv2",
+        "single_layer_lstm_grad",
+        "thnn_fused_lstm_cell_grad"
+      ],
+      "entry_points": [
+        "op_api/aclnn_lstm.cpp",
+        "op_api/aclnn_bidirection_lstmv2.cpp"
+      ],
+      "risk_level": "high",
+      "risk_reason": "Complex state management, memory operations for LSTM hidden states",
+      "high_risk_files": [
+        {
+          "path": "rnn/bidirection_lstm/op_kernel/lstm_bidir_fp16.cpp",
+          "lines": 1579,
+          "risk": "Bidirectional LSTM with complex state handling"
+        },
+        {
+          "path": "rnn/single_layer_lstm_grad/op_host/op_api/aclnn_lstm_backward.cpp",
+          "lines": 1837,
+          "risk": "Gradient computation with backward pass state"
+        }
+      ]
+    },
+    {
+      "name": "index",
+      "path": "index",
+      "language": "cpp",
+      "priority": 4,
+      "file_count": 1008,
+      "submodules": [
+        "gather_v2",
+        "gather_v3",
+        "gather_elements",
+        "gather_nd",
+        "index_put",
+        "index_put_v2",
+        "scatter",
+        "scatter_add",
+        "scatter_nd",
+        "scatter_elements",
+        "embedding",
+        "embedding_bag",
+        "unique_consecutive",
+        "top_k_top_p_sample"
+      ],
+      "entry_points": [
+        "op_api/aclnn_gather_v2.cpp",
+        "op_api/aclnn_index_put_v2.cpp",
+        "op_api/aclnn_scatter.cpp"
+      ],
+      "risk_level": "medium",
+      "risk_reason": "Array index operations, potential out-of-bounds access if index validation fails",
+      "high_risk_files": [
+        {
+          "path": "index/unsorted_segment_sum/op_host/arch35/unsorted_segment_sum_tiling_arch35.cpp",
+          "lines": 2369,
+          "risk": "Segment index handling with tiling"
+        },
+        {
+          "path": "index/index_put_v2/op_api/aclnn_index_put_impl.cpp",
+          "lines": 1406,
+          "risk": "Index put with value placement validation"
+        }
+      ]
+    },
+    {
+      "name": "quant",
+      "path": "quant",
+      "language": "cpp",
+      "priority": 4,
+      "file_count": 392,
+      "submodules": [
+        "ascend_quant",
+        "ascend_quant_v2",
+        "ascend_dequant",
+        "ascend_anti_quant_v2",
+        "dynamic_quant",
+        "dynamic_quant_v2",
+        "dynamic_block_quant",
+        "dynamic_mx_quant",
+        "dynamic_block_mx_quant",
+        "flat_quant",
+        "trans_quant_param",
+        "trans_quant_param_v2",
+        "ifmr",
+        "dequant_bias",
+        "swi_glu_quant"
+      ],
+      "entry_points": [
+        "op_kernel/dequant_swiglu_quant_apt.cpp",
+        "op_api/aclnn_quantize.cpp"
+      ],
+      "risk_level": "medium",
+      "risk_reason": "Type conversion and precision handling, quantization scale/offset calculations",
+      "high_risk_files": [
+        {
+          "path": "quant/dequant_swiglu_quant/op_kernel/dequant_swiglu_quant_apt.cpp",
+          "lines": 1411,
+          "risk": "Combined dequantize + swiglu + quantize operations"
+        },
+        {
+          "path": "quant/dynamic_mx_quant/op_host/arch35/dynamic_mx_quant_tiling_arch35.cpp",
+          "lines": 800,
+          "risk": "Dynamic quantization with MX format"
+        }
+      ]
+    },
+    {
+      "name": "activation",
+      "path": "activation",
+      "language": "cpp",
+      "priority": 3,
+      "file_count": 856,
+      "submodules": [
+        "softmax",
+        "softmax_v2",
+        "softmax_grad",
+        "gelu",
+        "gelu_v2",
+        "gelu_grad",
+        "relu",
+        "relu_v2",
+        "relu_grad",
+        "sigmoid",
+        "sigmoid_grad",
+        "swish",
+        "swish_grad",
+        "silu",
+        "silu_grad",
+        "glu",
+        "swi_glu",
+        "mish",
+        "hard_swish",
+        "hard_sigmoid"
+      ],
+      "entry_points": [
+        "op_api/aclnn_softmax.cpp",
+        "op_api/aclnn_gelu.cpp",
+        "op_api/aclnn_relu.cpp"
+      ],
+      "risk_level": "medium",
+      "risk_reason": "Tensor data transformation operations"
+    },
+    {
+      "name": "norm",
+      "path": "norm",
+      "language": "cpp",
+      "priority": 5,
+      "file_count": 962,
+      "submodules": [
+        "layer_norm",
+        "layer_norm_v3",
+        "layer_norm_v4",
+        "layer_norm_grad",
+        "batch_norm",
+        "batch_norm_v3",
+        "batch_norm_grad",
+        "group_norm",
+        "group_norm_v2",
+        "rms_norm",
+        "rms_norm_grad",
+        "add_layer_norm",
+        "add_rms_norm",
+        "deep_norm",
+        "instance_norm",
+        "sync_batch_norm"
+      ],
+      "entry_points": [
+        "op_kernel/deep_norm.cpp",
+        "op_api/aclnn_layer_norm.cpp"
+      ],
+      "risk_level": "medium",
+      "risk_reason": "Normalization statistics calculation, shape handling for multi-axis",
+      "high_risk_files": [
+        {
+          "path": "norm/deep_norm/op_kernel/deep_norm.cpp",
+          "lines": 1799,
+          "risk": "Deep normalization with multiple tensor operations"
+        }
+      ]
+    },
+    {
+      "name": "optim",
+      "path": "optim",
+      "language": "cpp",
+      "priority": 4,
+      "file_count": 150,
+      "submodules": [
+        "apply_adam",
+        "apply_adam_w",
+        "apply_adam_w_v2",
+        "apply_adam_w_quant",
+        "apply_ftrl",
+        "apply_momentum",
+        "apply_gradient_descent",
+        "apply_fused_ema_adam",
+        "advance_step"
+      ],
+      "entry_points": [
+        "op_api/aclnn_apply_adam.cpp",
+        "op_api/aclnn_apply_adam_w.cpp"
+      ],
+      "risk_level": "medium",
+      "risk_reason": "Optimizer state variable updates, gradient accumulation"
+    },
+    {
+      "name": "pooling",
+      "path": "pooling",
+      "language": "cpp",
+      "priority": 5,
+      "file_count": 564,
+      "submodules": [
+        "max_pool_with_argmax",
+        "max_pool_v2",
+        "avg_pool_v2",
+        "avg_pool3_d",
+        "avg_pool3_d_grad",
+        "max_pool3d_with_argmax_v2",
+        "adaptive_average_pool2d"
+      ],
+      "risk_level": "low",
+      "risk_reason": "Pooling window operations with fixed patterns"
+    },
+    {
+      "name": "loss",
+      "path": "loss",
+      "language": "cpp",
+      "priority": 5,
+      "file_count": 367,
+      "submodules": [
+        "mse_loss",
+        "mse_loss_grad",
+        "smooth_l1_loss",
+        "smooth_l1_loss_grad_v2",
+        "binary_cross_entropy",
+        "binary_cross_entropy_grad",
+        "softmax_cross_entropy_with_logits"
+      ],
+      "risk_level": "low",
+      "risk_reason": "Loss computation operations"
+    },
+    {
+      "name": "foreach",
+      "path": "foreach",
+      "language": "cpp",
+      "priority": 6,
+      "file_count": 363,
+      "submodules": [
+        "foreach_add",
+        "foreach_mul",
+        "foreach_sub",
+        "foreach_div",
+        "foreach_min",
+        "foreach_max"
+      ],
+      "risk_level": "low",
+      "risk_reason": "Batch tensor operations"
+    },
+    {
+      "name": "control",
+      "path": "control",
+      "language": "cpp",
+      "priority": 6,
+      "file_count": 24,
+      "submodules": [
+        "copy",
+        "fill"
+      ],
+      "risk_level": "low"
+    }
+  ],
+  "python_scripts": {
+    "total_count": 60,
+    "risk_level": "medium",
+    "high_risk_files": [
+      {
+        "path": "scripts/package/package.py",
+        "lines": 813,
+        "risk": "subprocess.run for chmod/rm/symlink commands, file operations"
+      },
+      {
+        "path": "scripts/tools/third_lib_download.py",
+        "lines": 50,
+        "risk": "subprocess.run for git clone/fetch/reset commands"
+      },
+      {
+        "path": "scripts/torch_extension/setup.py",
+        "lines": 150,
+        "risk": "subprocess.check_call for cmake commands"
+      },
+      {
+        "path": "scripts/util/dependency_parser.py",
+        "lines": 200,
+        "risk": "subprocess.run for cmake dependency parsing"
+      },
+      {
+        "path": "scripts/util/parse_ini_to_json.py",
+        "lines": 344,
+        "risk": "INI file parsing, JSON serialization, file size validation"
+      }
+    ],
+    "dangerous_patterns_found": [
+      "subprocess.run()",
+      "subprocess.check_call()",
+      "os.system() pattern in shell scripts",
+      "os.chdir()",
+      "os.symlink()",
+      "os.chmod()"
+    ]
+  },
+  "entry_points": [
+    {
+      "type": "api_function",
+      "pattern": "aclnn*_GetWorkspaceSize",
+      "description": "ACL NN API workspace size calculation - user input validation",
+      "risk": "Input validation, tensor shape checking, potential buffer overflow from malformed shapes"
+    },
+    {
+      "type": "api_function",
+      "pattern": "aclnn*()",
+      "description": "ACL NN API execution function - kernel dispatch",
+      "risk": "Memory operations, tensor data handling, workspace allocation"
+    },
+    {
+      "type": "kernel_function",
+      "pattern": "*_apt.cpp",
+      "description": "APT kernel implementation - device-side execution",
+      "risk": "Direct memory access (GM_ADDR), vector operations, atomic operations"
+    },
+    {
+      "type": "tiling_function",
+      "pattern": "*_tiling.cpp",
+      "description": "Tiling strategy calculation - memory block planning",
+      "risk": "Integer overflow in block size calculations, shape arithmetic"
+    },
+    {
+      "type": "onnx_plugin",
+      "pattern": "*_onnx_plugin.cpp",
+      "description": "ONNX model parsing plugin - external model data",
+      "risk": "ParseParams functions parse attributes from external ONNX models, potential malformed model handling"
+    },
+    {
+      "type": "infershape_function",
+      "pattern": "*_infershape.cpp",
+      "description": "Shape inference function - tensor dimension calculation",
+      "risk": "Shape validation, dimension overflow checks"
+    }
+  ],
+  "high_risk_patterns": [
+    {
+      "pattern": "memcpy/memset",
+      "description": "Direct memory operations",
+      "cwe": "CWE-119",
+      "count_estimate": "500+"
+    },
+    {
+      "pattern": "malloc/free",
+      "description": "Dynamic memory allocation",
+      "cwe": "CWE-787",
+      "count_estimate": "100+"
+    },
+    {
+      "pattern": "AtomicCas/AtomicAdd",
+      "description": "Atomic operations in hash module",
+      "cwe": "CWE-362",
+      "locations": ["hash/embedding_hash_table_lookup_or_insert"]
+    },
+    {
+      "pattern": "integer arithmetic in tiling",
+      "description": "Integer overflow in block size calculations",
+      "cwe": "CWE-190",
+      "locations": ["matmul_tiling", "conv_tiling", "pooling_tiling"]
+    },
+    {
+      "pattern": "tensor shape operations",
+      "description": "Shape validation and transformation",
+      "cwe": "CWE-129",
+      "locations": ["gather", "scatter", "index_put"]
+    },
+    {
+      "pattern": "void pointer casting",
+      "description": "Type-unsafe pointer operations",
+      "cwe": "CWE-587",
+      "locations": ["common/src/op_host/hash.cpp"]
+    },
+    {
+      "pattern": "subprocess.run/check_call",
+      "description": "Python command execution",
+      "cwe": "CWE-78",
+      "locations": ["scripts/package/package.py", "scripts/tools/third_lib_download.py"]
+    }
+  ],
+  "attack_surface": {
+    "external_inputs": [
+      "Tensor shape and dimension parameters (from user API)",
+      "Tensor data pointers (from user application)",
+      "Workspace size parameters (calculated from shapes)",
+      "Tiling configuration parameters (derived from tensor shapes)",
+      "ONNX model attributes (from external model files)",
+      "INI configuration files (parse_ini_to_json.py)",
+      "Package configuration XML (package.py)"
+    ],
+    "internal_dataflows": [
+      "op_api -> op_host (tiling/infershape) -> op_kernel (execution)",
+      "User tensor -> ACL NN API -> Tiling calculation -> Kernel execution",
+      "ONNX model -> ParseParams -> Operator attributes -> Graph construction"
+    ],
+    "trust_boundaries": [
+      {
+        "boundary": "User API call -> Internal processing",
+        "description": "User-provided tensors and parameters enter internal processing pipeline"
+      },
+      {
+        "boundary": "Host CPU -> Device NPU",
+        "description": "Tiling parameters and kernel data transferred from host to device"
+      },
+      {
+        "boundary": "External ONNX model -> Internal operator",
+        "description": "ONNX plugin parses attributes from external model files"
+      },
+      {
+        "boundary": "Shared memory pool -> Tensor data",
+        "description": "Tensor data stored in shared workspace memory"
+      }
+    ]
+  },
+  "scan_priority_order": [
+    {
+      "priority": 1,
+      "module": "hash",
+      "reason": "Critical - Direct memory operations, atomic operations, hash table handling"
+    },
+    {
+      "priority": 2,
+      "module": "common",
+      "reason": "High - ONNX plugins parse external model data, dynamic symbol loading"
+    },
+    {
+      "priority": 2,
+      "module": "conv",
+      "reason": "High - Complex shape validation, large tiling files"
+    },
+    {
+      "priority": 2,
+      "module": "matmul",
+      "reason": "High - Integer overflow in tiling, quantization handling"
+    },
+    {
+      "priority": 3,
+      "module": "rnn",
+      "reason": "High - Complex state management, memory operations"
+    },
+    {
+      "priority": 3,
+      "module": "index",
+      "reason": "Medium - Array indexing, potential out-of-bounds"
+    },
+    {
+      "priority": 4,
+      "module": "quant",
+      "reason": "Medium - Type conversion, precision handling"
+    },
+    {
+      "priority": 4,
+      "module": "scripts (Python)",
+      "reason": "Medium - Command execution in build scripts"
+    }
+  ]
+}

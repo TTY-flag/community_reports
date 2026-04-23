@@ -1,0 +1,168 @@
+{
+  "functions": {
+    "jit@python/asc/runtime/jit.py": {
+      "defined_at": 228,
+      "calls": ["JITFunction.__init__@python/asc/runtime/jit.py:35", "_cache_kernel@python/asc/runtime/jit.py:156"],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "JIT 装饰器入口，接收用户 Python 函数"
+    },
+    "JITFunction._run@python/asc/runtime/jit.py": {
+      "defined_at": 204,
+      "calls": ["_cache_kernel@python/asc/runtime/jit.py:156", "_run_launcher@python/asc/runtime/jit.py:200"],
+      "called_by": ["JITFunction.__getitem__@python/asc/runtime/jit.py:48"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "执行 JIT 函数，触发编译和运行流程"
+    },
+    "_cache_kernel@python/asc/runtime/jit.py": {
+      "defined_at": 156,
+      "calls": ["pickle.load@python/asc/runtime/jit.py:172", "_run_codegen@python/asc/runtime/jit.py:184", "_run_compiler@python/asc/runtime/jit.py:196"],
+      "called_by": ["_run@python/asc/runtime/jit.py:211"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "加载或编译 kernel 缓存，pickle 反序列化"
+    },
+    "Compiler.run@python/asc/runtime/compiler.py": {
+      "defined_at": 163,
+      "calls": ["run_passes@python/asc/runtime/compiler.py:175", "run_translation@python/asc/runtime/compiler.py:116", "run_compilation@python/asc/runtime/compiler.py:193"],
+      "called_by": ["_run_compiler@python/asc/runtime/jit.py:196"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "编译流程主入口，调用外部编译器"
+    },
+    "_run_cmd@python/asc/runtime/compiler.py": {
+      "defined_at": 145,
+      "calls": ["subprocess.Popen@python/asc/runtime/compiler.py:146"],
+      "called_by": ["_gen_dst_kernel@python/asc/runtime/compiler.py:274"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "subprocess 执行外部编译器命令"
+    },
+    "_gen_dst_kernel@python/asc/runtime/compiler.py": {
+      "defined_at": 274,
+      "calls": ["_run_cmd@python/asc/runtime/compiler.py:145", "_get_compiler_cmd@python/asc/runtime/compiler.py:330"],
+      "called_by": ["run_compilation@python/asc/runtime/compiler.py:193"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "生成 kernel 二进制，调用编译器和链接器"
+    },
+    "FunctionVisitor.visit@python/asc/codegen/function_visitor.py": {
+      "defined_at": 293,
+      "calls": ["visit_FunctionDef@python/asc/codegen/function_visitor.py:529", "visit_For@python/asc/codegen/function_visitor.py:479", "visit_If@python/asc/codegen/function_visitor.py:554"],
+      "called_by": ["_run_codegen@python/asc/runtime/jit.py:190"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "AST 遍历入口，处理用户 Python DSL 代码"
+    },
+    "Launcher.run@python/asc/runtime/launcher.py": {
+      "defined_at": 127,
+      "calls": ["expand_kernel_args@python/asc/runtime/launcher.py:66", "launch_kernel@python/asc/runtime/launcher.py:83"],
+      "called_by": ["_run_launcher@python/asc/runtime/jit.py:200"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "运行 kernel，加载二进制到 NPU"
+    },
+    "launch_kernel@python/asc/runtime/launcher.py": {
+      "defined_at": 83,
+      "calls": ["rt.register_device_binary_kernel@python/asc/runtime/launcher.py:146", "rt.launch_kernel@python/asc/runtime/launcher.py:114"],
+      "called_by": ["Launcher.run@python/asc/runtime/launcher.py:150"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "启动 kernel 在 NPU 上执行"
+    },
+    "RuntimeInterface.__init__@python/asc/lib/runtime/state.py": {
+      "defined_at": 27,
+      "calls": ["ctypes.CDLL@python/asc/lib/runtime/state.py:50", "cache_manager.get_file@python/asc/lib/runtime/state.py:39"],
+      "called_by": ["load_lib@python/asc/lib/runtime/state.py:140"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "加载运行时库，ctypes 动态加载"
+    },
+    "translateToAscendC@lib/Target/AscendC/Translation.cpp": {
+      "defined_at": 299,
+      "calls": ["emitOperation@lib/Target/AscendC/Translation.cpp:275", "CodeEmitter@lib/Target/AscendC/Translation.cpp:301"],
+      "called_by": ["run_translation@python/asc/runtime/compiler.py:116"],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "MLIR 到 Ascend C 翻译入口"
+    },
+    "main@bin/ascir-opt.cpp": {
+      "defined_at": 18,
+      "calls": ["MlirOptMain@bin/ascir-opt.cpp:25"],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "CLI 工具入口，处理 MLIR 文件"
+    },
+    "main@bin/ascir-translate.cpp": {
+      "defined_at": 31,
+      "calls": ["mlirTranslateMain@bin/ascir-translate.cpp:50", "translateToAscendC@lib/Target/AscendC/Translation.cpp:299"],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "CLI 工具入口，处理 MLIR 文件"
+    },
+    "FileCacheManager.get_file@python/asc/runtime/cache.py": {
+      "defined_at": 60,
+      "calls": ["os.path.exists@python/asc/runtime/cache.py:58"],
+      "called_by": ["_cache_kernel@python/asc/runtime/jit.py:167", "RuntimeInterface.__init__@python/asc/lib/runtime/state.py:39"],
+      "receives_external_input": false,
+      "risk": "High",
+      "description": "读取缓存文件，路径由环境变量控制"
+    },
+    "FileCacheManager.put@python/asc/runtime/cache.py": {
+      "defined_at": 66,
+      "calls": ["os.makedirs@python/asc/runtime/cache.py:82", "open@python/asc/runtime/cache.py:86", "os.replace@python/asc/runtime/cache.py:90"],
+      "called_by": ["_cache_kernel@python/asc/runtime/jit.py:179"],
+      "receives_external_input": false,
+      "risk": "High",
+      "description": "写入缓存文件，pickle 序列化数据"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "user_python_function@python/asc/__init__.py:11",
+      "path": ["jit@python/asc/runtime/jit.py:228", "JITFunction.__init__@python/asc/runtime/jit.py:35", "FunctionVisitor.visit@python/asc/codegen/function_visitor.py:293"],
+      "sink": "MLIR IR generation@python/asc/codegen/function_visitor.py:534",
+      "sink_type": "code_generation"
+    },
+    {
+      "source": "PYASC_COMPILER/PYASC_LINKER env var@python/asc/runtime/compiler.py:106",
+      "path": ["Compiler.__init__@python/asc/runtime/compiler.py:88", "_gen_dst_kernel@python/asc/runtime/compiler.py:274", "_run_cmd@python/asc/runtime/compiler.py:145"],
+      "sink": "subprocess.Popen@python/asc/runtime/compiler.py:146",
+      "sink_type": "command_execution"
+    },
+    {
+      "source": "PYASC_CACHE_DIR env var@python/asc/runtime/cache.py:22",
+      "path": ["CacheOptions@python/asc/runtime/cache.py:21", "FileCacheManager.__init__@python/asc/runtime/cache.py:42", "FileCacheManager.get_file@python/asc/runtime/cache.py:60"],
+      "sink": "pickle.load@python/asc/runtime/jit.py:172",
+      "sink_type": "deserialization"
+    },
+    {
+      "source": "cached_kernel_file@python/asc/runtime/cache.py:60",
+      "path": ["FileCacheManager.get_file@python/asc/runtime/cache.py:60", "_cache_kernel@python/asc/runtime/jit.py:167", "pickle.load@python/asc/runtime/jit.py:172"],
+      "sink": "CompiledKernel@python/asc/runtime/compiler.py:79",
+      "sink_type": "deserialization"
+    },
+    {
+      "source": "MLIR file input@bin/ascir-opt.cpp:18",
+      "path": ["main@bin/ascir-opt.cpp:18", "MlirOptMain@bin/ascir-opt.cpp:25"],
+      "sink": "MLIR parsing@mlir-opt",
+      "sink_type": "file_parsing"
+    },
+    {
+      "source": "MLIR file input@bin/ascir-translate.cpp:31",
+      "path": ["main@bin/ascir-translate.cpp:31", "translateToAscendC@lib/Target/AscendC/Translation.cpp:299", "emitOperation@lib/Target/AscendC/Translation.cpp:275"],
+      "sink": "AscendC code generation@lib/Target/AscendC/Translation.cpp:302",
+      "sink_type": "code_generation"
+    },
+    {
+      "source": "kernel_binary@python/asc/runtime/compiler.py:209",
+      "path": ["CompiledKernel@python/asc/runtime/compiler.py:79", "Launcher.run@python/asc/runtime/launcher.py:127", "register_device_binary_kernel@python/asc/lib/runtime/interface.py:224"],
+      "sink": "NPU execution@python/asc/lib/runtime/interface.py:318",
+      "sink_type": "npu_execution"
+    }
+  ]
+}

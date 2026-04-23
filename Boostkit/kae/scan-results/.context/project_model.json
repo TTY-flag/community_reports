@@ -1,0 +1,346 @@
+{
+  "project_name": "KAE Kunpeng Accelerator Engine",
+  "scan_time": "2026-04-21T18:00:00Z",
+  "lsp_available": false,
+  "total_files": 561,
+  "total_lines": 299181,
+  "project_profile": {
+    "project_type": "kernel_module",
+    "deployment_model": "Linux内核模块+用户态库。内核驱动通过ioctl和mmap接口向用户态暴露硬件加速器功能，用户态库（OpenSSL Engine、压缩库）通过UADK框架访问硬件加速器。典型部署在鲲鹏服务器上，支持多个内核版本（OLK 4.19/5.4/5.10/6.6）。",
+    "trust_boundaries": [
+      {
+        "boundary": "User-Kernel Interface",
+        "trusted_side": "Kernel driver (uacce, qm, sec, hpre, zip)",
+        "untrusted_side": "User-space applications (OpenSSL, compression libraries)",
+        "risk": "Critical"
+      },
+      {
+        "boundary": "Hardware-Software Interface",
+        "trusted_side": "Hardware accelerators (kSEC, kHPRE, kZIP)",
+        "untrusted_side": "Kernel driver",
+        "risk": "High"
+      },
+      {
+        "boundary": "Library-Application Interface",
+        "trusted_side": "OpenSSL Engine, compression libraries",
+        "untrusted_side": "End-user applications (TLS servers, storage systems)",
+        "risk": "High"
+      },
+      {
+        "boundary": "VF-PF Interface",
+        "trusted_side": "PF (Physical Function) driver",
+        "untrusted_side": "VF (Virtual Function) for VM pass-through",
+        "risk": "High"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "KAEKernelDriver-OLK-6.6",
+      "path": "KAEKernelDriver/KAEKernelDriver-OLK-6.6",
+      "language": "c_cpp",
+      "components": ["uacce/uacce.c", "hisilicon/qm.c", "hisilicon/sec2/sec_crypto.c", "hisilicon/hpre/hpre_crypto.c", "hisilicon/zip/zip_crypto.c", "hisilicon/vfio/hisi_acc_vfio_pci.c"]
+    },
+    {
+      "name": "KAEKernelDriver-OLK-5.4",
+      "path": "KAEKernelDriver/KAEKernelDriver-OLK-5.4",
+      "language": "c_cpp",
+      "components": ["uacce/uacce.c", "hisilicon/qm.c", "hisilicon/sec2/sec_crypto.c", "hisilicon/hpre/hpre_crypto.c"]
+    },
+    {
+      "name": "KAEKernelDriver-OLK-5.10",
+      "path": "KAEKernelDriver/KAEKernelDriver-OLK-5.10",
+      "language": "c_cpp",
+      "components": ["uacce/uacce.c", "hisilicon/qm.c", "hisilicon/sec2/sec_crypto.c"]
+    },
+    {
+      "name": "KAEKernelDriver-OLK-4.19",
+      "path": "KAEKernelDriver/KAEKernelDriver-OLK-4.19",
+      "language": "c_cpp",
+      "components": ["uacce/uacce.c", "hisilicon/qm.c", "hisilicon/sec2/sec_crypto.c"]
+    },
+    {
+      "name": "KAEOpensslEngine",
+      "path": "KAEOpensslEngine",
+      "language": "c_cpp",
+      "components": ["src/e_uadk.c", "src/v1/alg/ciphers/sec_ciphers.c", "src/v1/alg/digests/sec_digests.c", "src/v1/alg/pkey/hpre_rsa.c", "src/v2/alg/ciphers/uadk_cipher.c", "src/v2/alg/rsa/uadk_rsa.c"]
+    },
+    {
+      "name": "uadk",
+      "path": "uadk",
+      "language": "c_cpp",
+      "components": ["wd_cipher.c", "wd_rsa.c", "wd_digest.c", "wd_comp.c", "wd_aead.c", "drv/hisi_sec.c", "drv/hisi_hpre.c"]
+    },
+    {
+      "name": "KAEZlib",
+      "path": "KAEZlib",
+      "language": "c_cpp",
+      "components": ["src/kaezip_adapter.c", "src/v1/kaezip_deflate.c", "src/v2/kaezip_comp.c"]
+    },
+    {
+      "name": "KAEZstd",
+      "path": "KAEZstd",
+      "language": "c_cpp",
+      "components": ["src/kaezstd_adapter.c", "src/v1/kaezstd_comp.c", "src/v2/kaezstd_compress.c"]
+    },
+    {
+      "name": "KAELz4",
+      "path": "KAELz4",
+      "language": "c_cpp",
+      "components": ["src/v1/kaelz4_comp.c", "src/v2/kaelz4_compress.c"]
+    },
+    {
+      "name": "KAESnappy",
+      "path": "KAESnappy",
+      "language": "c_cpp",
+      "components": ["src/v1/kaesnappy_comp.c", "src/v2/kaesnappy_compress.c"]
+    },
+    {
+      "name": "KAEGzip",
+      "path": "KAEGzip",
+      "language": "c_cpp",
+      "components": ["open_source/gzip.c"]
+    }
+  ],
+  "files": [
+    {
+      "path": "KAEKernelDriver/KAEKernelDriver-OLK-6.6/uacce/uacce.c",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "KAEKernelDriver-OLK-6.6",
+      "lines": 1073,
+      "priority": 1
+    },
+    {
+      "path": "KAEKernelDriver/KAEKernelDriver-OLK-6.6/hisilicon/qm.c",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "KAEKernelDriver-OLK-6.6",
+      "lines": 6335,
+      "priority": 2
+    },
+    {
+      "path": "KAEKernelDriver/KAEKernelDriver-OLK-6.6/hisilicon/sec2/sec_crypto.c",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "KAEKernelDriver-OLK-6.6",
+      "lines": 2500,
+      "priority": 3
+    },
+    {
+      "path": "KAEKernelDriver/KAEKernelDriver-OLK-6.6/hisilicon/hpre/hpre_crypto.c",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "KAEKernelDriver-OLK-6.6",
+      "lines": 1500,
+      "priority": 4
+    },
+    {
+      "path": "KAEKernelDriver/KAEKernelDriver-OLK-6.6/hisilicon/vfio/hisi_acc_vfio_pci.c",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "KAEKernelDriver-OLK-6.6",
+      "lines": 1633,
+      "priority": 5
+    },
+    {
+      "path": "KAEKernelDriver/KAEKernelDriver-OLK-6.6/hisilicon/migration/acc_vf_migration.c",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "KAEKernelDriver-OLK-6.6",
+      "lines": 500,
+      "priority": 6
+    },
+    {
+      "path": "KAEOpensslEngine/src/e_uadk.c",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "KAEOpensslEngine",
+      "lines": 655,
+      "priority": 7
+    },
+    {
+      "path": "KAEOpensslEngine/src/v1/alg/ciphers/sec_ciphers.c",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "KAEOpensslEngine",
+      "lines": 800,
+      "priority": 8
+    },
+    {
+      "path": "KAEOpensslEngine/src/v1/alg/pkey/hpre_rsa.c",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "KAEOpensslEngine",
+      "lines": 600,
+      "priority": 9
+    },
+    {
+      "path": "uadk/wd_cipher.c",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "uadk",
+      "lines": 953,
+      "priority": 10
+    },
+    {
+      "path": "uadk/wd_rsa.c",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "uadk",
+      "lines": 800,
+      "priority": 11
+    },
+    {
+      "path": "uadk/drv/hisi_sec.c",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "uadk",
+      "lines": 600,
+      "priority": 12
+    },
+    {
+      "path": "KAEZlib/src/kaezip_adapter.c",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "KAEZlib",
+      "lines": 269,
+      "priority": 13
+    },
+    {
+      "path": "KAEZlib/src/v1/kaezip_deflate.c",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "KAEZlib",
+      "lines": 500,
+      "priority": 14
+    },
+    {
+      "path": "uadk/wd_comp.c",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "uadk",
+      "lines": 700,
+      "priority": 15
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "KAEKernelDriver/KAEKernelDriver-OLK-6.6/uacce/uacce.c",
+      "line": 173,
+      "function": "uacce_fops_unl_ioctl",
+      "type": "ioctl",
+      "trust_level": "untrusted_local",
+      "justification": "ioctl接口允许用户态程序控制硬件加速器队列。攻击者可以通过恶意ioctl命令触发内核漏洞，包括队列管理、DMA地址获取、QP上下文设置等操作。",
+      "description": "UACCE ioctl接口：UACCE_CMD_START_Q, UACCE_CMD_PUT_Q, UACCE_CMD_GET_SS_DMA"
+    },
+    {
+      "file": "KAEKernelDriver/KAEKernelDriver-OLK-6.6/hisilicon/qm.c",
+      "line": 2704,
+      "function": "hisi_qm_uacce_ioctl",
+      "type": "ioctl",
+      "trust_level": "untrusted_local",
+      "justification": "QM ioctl接口允许用户态设置QP上下文和深度信息。攻击者可通过恶意参数触发缓冲区溢出或内存破坏。",
+      "description": "QM ioctl接口：UACCE_CMD_QM_SET_QP_CTX, UACCE_CMD_QM_SET_QP_INFO"
+    },
+    {
+      "file": "KAEKernelDriver/KAEKernelDriver-OLK-6.6/uacce/uacce.c",
+      "line": 586,
+      "function": "uacce_fops_mmap",
+      "type": "mmap",
+      "trust_level": "untrusted_local",
+      "justification": "mmap接口允许用户态程序直接映射内核DMA缓冲区和硬件MMIO空间。攻击者可能利用映射关系进行越界读写或硬件攻击。",
+      "description": "UACCE mmap接口：映射MMIO、DUS、SS内存区域"
+    },
+    {
+      "file": "KAEKernelDriver/KAEKernelDriver-OLK-6.6/uacce/uacce.c",
+      "line": 254,
+      "function": "uacce_fops_open",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "设备文件open操作允许任意用户态进程获取加速器队列。未授权进程可能耗尽队列资源或利用队列进行攻击。",
+      "description": "UACCE设备文件打开：/dev/uacce-*"
+    },
+    {
+      "file": "KAEKernelDriver/KAEKernelDriver-OLK-6.6/hisilicon/vfio/hisi_acc_vfio_pci.c",
+      "line": 1385,
+      "function": "hisi_acc_vfio_pci_ioctl",
+      "type": "ioctl",
+      "trust_level": "semi_trusted",
+      "justification": "VFIO ioctl接口用于虚拟机直通场景。虚拟机guest可能通过VFIO接口攻击宿主机内核或窃取硬件资源。",
+      "description": "VFIO ioctl接口：用于VM pass-through"
+    },
+    {
+      "file": "KAEOpensslEngine/src/e_uadk.c",
+      "line": 231,
+      "function": "uadk_engine_ctrl",
+      "type": "decorator",
+      "trust_level": "untrusted_local",
+      "justification": "OpenSSL Engine控制接口允许应用启用/禁用加密算法。恶意应用可能禁用关键安全功能或触发回退到软件实现。",
+      "description": "OpenSSL Engine控制命令：UADK_CMD_ENABLE_*"
+    },
+    {
+      "file": "KAEOpensslEngine/src/v1/alg/ciphers/sec_ciphers.c",
+      "line": 1,
+      "function": "sec_engine_ciphers",
+      "type": "decorator",
+      "trust_level": "untrusted_local",
+      "justification": "对称加密接口接收用户密钥和数据进行硬件加密。攻击者可能通过恶意密钥或数据触发硬件边界条件漏洞。",
+      "description": "对称加密接口：AES/SM4/DES加密"
+    },
+    {
+      "file": "KAEOpensslEngine/src/v1/alg/pkey/hpre_rsa.c",
+      "line": 1,
+      "function": "hpre_get_rsa_methods",
+      "type": "decorator",
+      "trust_level": "untrusted_local",
+      "justification": "RSA非对称加密接口处理用户提供的密钥和消息。攻击者可能通过特殊构造的密钥或消息触发整数溢出或硬件异常。",
+      "description": "RSA非对称加密接口：密钥生成/加密/解密/签名"
+    },
+    {
+      "file": "uadk/wd_cipher.c",
+      "line": 730,
+      "function": "wd_do_cipher_sync",
+      "type": "rpc",
+      "trust_level": "untrusted_local",
+      "justification": "UADK同步加密接口接收用户数据。用户可控的输入长度、IV、密钥可能触发内存越界或硬件异常。",
+      "description": "UADK同步加密接口：wd_do_cipher_sync"
+    },
+    {
+      "file": "uadk/wd_cipher.c",
+      "line": 765,
+      "function": "wd_do_cipher_async",
+      "type": "rpc",
+      "trust_level": "untrusted_local",
+      "justification": "UADK异步加密接口接收用户数据。异步模式下数据缓冲区管理更复杂，可能存在竞态条件或缓冲区管理漏洞。",
+      "description": "UADK异步加密接口：wd_do_cipher_async"
+    },
+    {
+      "file": "KAEZlib/src/kaezip_adapter.c",
+      "line": 87,
+      "function": "kz_deflate",
+      "type": "rpc",
+      "trust_level": "untrusted_local",
+      "justification": "压缩接口接收用户提供的数据流。用户可控的输入长度和flush参数可能触发缓冲区溢出或硬件队列耗尽。",
+      "description": "KAE压缩接口：deflate压缩"
+    },
+    {
+      "file": "KAEZlib/src/kaezip_adapter.c",
+      "line": 190,
+      "function": "kz_inflate",
+      "type": "rpc",
+      "trust_level": "untrusted_local",
+      "justification": "解压接口接收用户提供的数据流。恶意构造的压缩数据可能触发解压炸弹攻击或内存分配异常。",
+      "description": "KAE解压接口：inflate解压"
+    }
+  ],
+  "attack_surfaces": [
+    "ioctl接口：UACCE_CMD_START_Q, UACCE_CMD_PUT_Q, UACCE_CMD_GET_SS_DMA, UACCE_CMD_QM_SET_QP_CTX, UACCE_CMD_QM_SET_QP_INFO",
+    "mmap接口：用户态映射MMIO、DUS、SS内存区域",
+    "VFIO接口：虚拟机直通加速器设备",
+    "OpenSSL Engine接口：cipher/digest/rsa/dh/ecc算法",
+    "UADK框架接口：wd_do_cipher_sync/async, wd_do_digest_sync/async",
+    "压缩库接口：deflate/inflate压缩解压",
+    "设备文件：/dev/uacce-hisi_sec2, /dev/uacce-hisi_hpre, /dev/uacce-hisi_zip"
+  ]
+}

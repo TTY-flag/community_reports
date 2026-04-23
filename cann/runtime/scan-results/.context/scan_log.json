@@ -1,0 +1,88 @@
+{
+  "scan_id": "cann-runtime-20250422",
+  "start_time": "2025-04-22T18:44:00+08:00",
+  "end_time": "2025-04-22T19:27:30+08:00",
+  "duration_seconds": 2610,
+  "status": "success",
+  "project_name": "cann-runtime",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/cann/runtime",
+  "agents": [
+    {
+      "name": "architecture",
+      "phase": 2,
+      "status": "success",
+      "start_time": "2025-04-22T18:44:30+08:00",
+      "end_time": "2025-04-22T18:56:00+08:00",
+      "duration_seconds": 690,
+      "output_files": [
+        "scan-results/.context/project_model.json",
+        "scan-results/.context/call_graph.json",
+        "scan-results/threat_analysis_report.md"
+      ]
+    },
+    {
+      "name": "dataflow-scanner",
+      "phase": 3,
+      "status": "success",
+      "start_time": "2025-04-22T18:56:30+08:00",
+      "end_time": "2025-04-22T19:01:11+08:00",
+      "duration_seconds": 281,
+      "items_processed": 12,
+      "summary": "发现12个数据流漏洞：命令注入3个、库注入2个、内存问题2个、路径遍历2个"
+    },
+    {
+      "name": "security-auditor",
+      "phase": 3,
+      "status": "success",
+      "start_time": "2025-04-22T18:56:30+08:00",
+      "end_time": "2025-04-22T19:08:20+08:00",
+      "duration_seconds": 410,
+      "items_processed": 52,
+      "summary": "发现52个安全逻辑漏洞：认证授权缺失8个、命令注入12个、库注入15个"
+    },
+    {
+      "name": "verification",
+      "phase": 4,
+      "status": "success",
+      "start_time": "2025-04-22T19:08:30+08:00",
+      "end_time": "2025-04-22T19:20:16+08:00",
+      "duration_seconds": 706,
+      "items_processed": 62,
+      "summary": "验证62个候选漏洞：21个误报、30个可能、11个疑似真实"
+    },
+    {
+      "name": "reporter",
+      "phase": 5,
+      "status": "success",
+      "start_time": "2025-04-22T19:20:30+08:00",
+      "end_time": "2025-04-22T19:27:30+08:00",
+      "duration_seconds": 420,
+      "output_files": [
+        "scan-results/report_confirmed.md",
+        "scan-results/report_unconfirmed.md"
+      ],
+      "summary": "生成漏洞报告：执行摘要、Top5深度分析、修复建议"
+    }
+  ],
+  "summary": {
+    "total_vulnerabilities": 62,
+    "confirmed": 0,
+    "likely": 11,
+    "possible": 30,
+    "false_positive": 21,
+    "critical_severity": 0,
+    "high_severity": 11,
+    "medium_severity": 20,
+    "low_severity": 31,
+    "top_vulnerability_types": [
+      "CWE-427: 库劫持/不可信搜索路径 (9个)",
+      "CWE-22: 路径遍历 (2个)",
+      "CWE-78: 命令注入 (已验证为误报)"
+    ],
+    "high_risk_modules": [
+      "aicpu_sched: 11个漏洞",
+      "tsd: 10个漏洞",
+      "runtime: 9个漏洞"
+    ]
+  }
+}

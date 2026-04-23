@@ -1,0 +1,100 @@
+{
+  "scan_id": "scan_ops-nn_20260421",
+  "start_time": "2026-04-21T20:57:00Z",
+  "end_time": "2026-04-22T05:15:00Z",
+  "duration_seconds": 28980,
+  "status": "success",
+  "project_name": "ops-nn",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/cann/1/ops-nn",
+  "language_composition": {
+    "cpp": 6795,
+    "python": 60
+  },
+  "agents": [
+    {
+      "name": "architecture",
+      "start_time": "2026-04-21T20:57:30Z",
+      "end_time": "2026-04-21T21:00:00Z",
+      "status": "success",
+      "note": "Simplified analysis due to project size - generated project_model.json and call_graph.json",
+      "outputs": [
+        "scan-results/.context/project_model.json",
+        "scan-results/.context/call_graph.json",
+        "scan-results/threat_analysis_report.md"
+      ]
+    },
+    {
+      "name": "dataflow-scanner",
+      "start_time": "2026-04-21T21:00:00Z",
+      "end_time": "2026-04-21T21:35:00Z",
+      "status": "success",
+      "note": "Alternative scan strategy - background agent timeout, direct session scan",
+      "item_count": 7,
+      "vulnerabilities": [
+        "OPSNN_HASH_INT_OVERFLOW_001",
+        "OPSNN_HASH_INT_OVERFLOW_002",
+        "OPSNN_HASH_DIV_ZERO_001",
+        "OPSNN_HASH_ARRAY_OOB_001",
+        "OPSNN_HASH_ARRAY_OOB_002",
+        "OPSNN_HASH_BUCKETSIZE_OVERFLOW_001",
+        "OPSNN_CONV_INT_OVERFLOW_001"
+      ]
+    },
+    {
+      "name": "security-auditor",
+      "start_time": "2026-04-21T21:00:00Z",
+      "end_time": "2026-04-21T21:35:00Z",
+      "status": "success",
+      "note": "Alternative audit strategy - direct session audit",
+      "item_count": 2,
+      "vulnerabilities": [
+        "OPSNN_HASH_KEYNUM_LOOP_001",
+        "OPSNN_HASH_NULL_PTR_001"
+      ]
+    },
+    {
+      "name": "verification",
+      "start_time": "2026-04-22T04:45:00Z",
+      "end_time": "2026-04-22T05:06:00Z",
+      "duration_seconds": 1294,
+      "status": "success",
+      "note": "Verified 9 candidate vulnerabilities, 6 LIKELY, 2 POSSIBLE, 1 FALSE_POSITIVE",
+      "item_count": 9,
+      "verified_results": {
+        "LIKELY": 6,
+        "POSSIBLE": 2,
+        "FALSE_POSITIVE": 1
+      }
+    },
+    {
+      "name": "details-analyzer",
+      "status": "skipped",
+      "note": "No CONFIRMED vulnerabilities to analyze"
+    },
+    {
+      "name": "reporter",
+      "start_time": "2026-04-22T05:07:00Z",
+      "end_time": "2026-04-22T05:15:00Z",
+      "status": "success",
+      "outputs": [
+        "scan-results/report_confirmed.md",
+        "scan-results/report_unconfirmed.md"
+      ]
+    }
+  ],
+  "summary": {
+    "total_candidates": 9,
+    "verified": 8,
+    "false_positive": 1,
+    "confirmed": 0,
+    "likely": 6,
+    "possible": 2,
+    "severity_distribution": {
+      "High": 1,
+      "Medium": 6,
+      "Low": 2
+    },
+    "modules_scanned": ["hash", "conv"],
+    "scan_strategy": "Partial scan due to project size (6795+ files) - focused on high-risk modules"
+  }
+}

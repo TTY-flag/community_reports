@@ -1,0 +1,79 @@
+{
+  "scan_id": "scan_pyasc_20260422",
+  "start_time": "2026-04-22T02:27:00Z",
+  "end_time": "2026-04-22T03:36:00Z",
+  "duration_seconds": 4140,
+  "project_name": "pyasc",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/cann/5/pyasc",
+  "status": "success",
+  "agents": [
+    {
+      "name": "architecture",
+      "start_time": "2026-04-22T02:28:00Z",
+      "end_time": "2026-04-22T02:33:00Z",
+      "duration_seconds": 300,
+      "status": "success",
+      "output_files": ["project_model.json", "call_graph.json", "threat_analysis_report.md"]
+    },
+    {
+      "name": "dataflow-scanner",
+      "start_time": "2026-04-22T02:33:00Z",
+      "end_time": "2026-04-22T02:43:00Z",
+      "duration_seconds": 600,
+      "status": "success",
+      "item_count": 43,
+      "sub_agents": ["python-dataflow-module-scanner", "dataflow-module-scanner"]
+    },
+    {
+      "name": "security-auditor",
+      "start_time": "2026-04-22T02:33:00Z",
+      "end_time": "2026-04-22T02:52:00Z",
+      "duration_seconds": 1140,
+      "status": "success",
+      "item_count": 42,
+      "sub_agents": ["python-security-module-scanner", "security-module-scanner"]
+    },
+    {
+      "name": "verification",
+      "start_time": "2026-04-22T02:52:00Z",
+      "end_time": "2026-04-22T03:01:00Z",
+      "duration_seconds": 540,
+      "status": "success",
+      "item_count": 81,
+      "sub_agents": ["verification-worker"]
+    },
+    {
+      "name": "details-analyzer",
+      "start_time": "2026-04-22T03:01:00Z",
+      "end_time": "2026-04-22T03:07:00Z",
+      "duration_seconds": 360,
+      "status": "partial",
+      "item_count": 0,
+      "message": "Background tasks timeout, no reports generated",
+      "sub_agents": ["details-worker"]
+    },
+    {
+      "name": "reporter",
+      "start_time": "2026-04-22T03:07:00Z",
+      "end_time": "2026-04-22T03:12:00Z",
+      "duration_seconds": 300,
+      "status": "success",
+      "output_files": ["report_confirmed.md", "report_unconfirmed.md"]
+    }
+  ],
+  "summary": {
+    "total_files": 315,
+    "total_lines": 56063,
+    "languages": ["C/C++", "Python"],
+    "modules_scanned": 12,
+    "total_candidates": 85,
+    "total_verified": 81,
+    "confirmed": 19,
+    "likely": 33,
+    "possible": 29,
+    "critical": 13,
+    "high": 20,
+    "medium": 36,
+    "low": 13
+  }
+}

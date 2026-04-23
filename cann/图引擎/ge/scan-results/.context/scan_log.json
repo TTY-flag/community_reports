@@ -1,0 +1,102 @@
+{
+  "scan_id": "scan_cann_ge_20260422_005100",
+  "start_time": "2026-04-22T00:51:00Z",
+  "end_time": "2026-04-22T01:32:00Z",
+  "duration_seconds": 2460,
+  "status": "success",
+  "project_name": "cann/ge",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/cann/4/ge",
+  "agents": [
+    {
+      "name": "architecture",
+      "start_time": "2026-04-22T00:52:00Z",
+      "end_time": "2026-04-22T01:01:00Z",
+      "status": "success",
+      "output_files": [
+        "scan-results/.context/project_model.json",
+        "scan-results/.context/call_graph.json",
+        "scan-results/threat_analysis_report.md"
+      ],
+      "summary": {
+        "modules_identified": 10,
+        "high_risk_files": 25,
+        "entry_points": 24,
+        "attack_surfaces": 14,
+        "trust_boundaries": 6
+      }
+    },
+    {
+      "name": "dataflow-scanner",
+      "start_time": "2026-04-22T01:02:00Z",
+      "end_time": "2026-04-22T01:09:00Z",
+      "status": "success",
+      "modules_scanned": ["parser", "graph_metadef", "dflow", "base", "api", "runtime", "python_api"],
+      "summary": {
+        "vulnerabilities_found": 5,
+        "high_severity": 3,
+        "medium_severity": 2
+      }
+    },
+    {
+      "name": "security-auditor",
+      "start_time": "2026-04-22T01:02:00Z",
+      "end_time": "2026-04-22T01:18:00Z",
+      "status": "success",
+      "modules_scanned": ["parser", "graph_metadef", "dflow", "api", "base", "runtime", "compiler", "python_api", "pydflow"],
+      "summary": {
+        "vulnerabilities_found": 15,
+        "confirmed": 2,
+        "likely": 6,
+        "possible": 2,
+        "high_severity": 10,
+        "medium_severity": 5
+      }
+    },
+    {
+      "name": "verification",
+      "start_time": "2026-04-22T01:20:00Z",
+      "end_time": "2026-04-22T01:26:00Z",
+      "status": "success",
+      "summary": {
+        "total_candidates": 15,
+        "confirmed": 7,
+        "likely": 3,
+        "possible": 1,
+        "false_positive": 4,
+        "critical_severity": 4,
+        "high_severity": 3
+      }
+    },
+    {
+      "name": "details-analyzer",
+      "start_time": "2026-04-22T01:28:00Z",
+      "end_time": "2026-04-22T01:31:00Z",
+      "status": "partial",
+      "note": "Background workers launched but reports not completed"
+    },
+    {
+      "name": "reporter",
+      "start_time": "2026-04-22T01:31:00Z",
+      "end_time": "2026-04-22T01:32:00Z",
+      "status": "success",
+      "output_files": [
+        "scan-results/report_confirmed.md",
+        "scan-results/report_unconfirmed.md"
+      ]
+    }
+  ],
+  "summary": {
+    "total_vulnerabilities": 15,
+    "confirmed": 7,
+    "likely": 3,
+    "possible": 1,
+    "false_positive": 4,
+    "critical": 4,
+    "high": 5,
+    "medium": 2,
+    "low": 4,
+    "modules_scanned": 10,
+    "files_analyzed": 5279,
+    "scan_mode": "autonomous"
+  }
+}

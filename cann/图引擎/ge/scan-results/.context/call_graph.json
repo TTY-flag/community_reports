@@ -1,0 +1,421 @@
+{
+  "functions": {
+    "aclgrphParseONNX@parser/parser/onnx/onnx_parser.cc": {
+      "defined_at": 111,
+      "calls": [
+        "PrepareBeforeParse@parser/parser/onnx/onnx_parser.cc",
+        "AclParserInitialize@parser/parser/common/acl_graph_parser_util.cc",
+        "ParseParamsBeforeGraph@parser/parser/common/acl_graph_parser_util.cc",
+        "Parse@parser/parser/onnx/onnx_parser.cc",
+        "HandleAfterParse@parser/parser/onnx/onnx_parser.cc"
+      ],
+      "called_by": [
+        "main@api/atc/main.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "ONNX模型文件解析入口，接收外部模型文件路径"
+    },
+    "Parse@parser/parser/onnx/onnx_parser.cc": {
+      "defined_at": 1134,
+      "calls": [
+        "GetModelFromFile@parser/parser/onnx/onnx_parser.cc",
+        "ModelParseToGraph@parser/parser/onnx/onnx_parser.cc"
+      ],
+      "called_by": [
+        "aclgrphParseONNX@parser/parser/onnx/onnx_parser.cc",
+        "aclgrphParseONNXFromMem@parser/parser/onnx/onnx_parser.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "GetModelFromFile@parser/parser/onnx/onnx_parser.cc": {
+      "defined_at": 765,
+      "calls": [
+        "ReadProtoFromBinaryFile@parser/parser/common/util.h",
+        "SetExternalPath@parser/parser/onnx/onnx_parser.cc"
+      ],
+      "called_by": [
+        "Parse@parser/parser/onnx/onnx_parser.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "从文件读取ONNX protobuf数据"
+    },
+    "ReadProtoFromBinaryFile@parser/parser/common": {
+      "defined_at": 0,
+      "calls": [],
+      "called_by": [
+        "GetModelFromFile@parser/parser/onnx/onnx_parser.cc",
+        "aclgrphParseTensorFlow@parser/parser/tensorflow/tensorflow_parser.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "读取二进制protobuf文件（危险sink）"
+    },
+    "aclgrphParseTensorFlow@parser/parser/tensorflow/tensorflow_parser.cc": {
+      "defined_at": 100,
+      "calls": [
+        "AclParserInitialize@parser/parser/common/acl_graph_parser_util.cc",
+        "Parse@parser/parser/tensorflow/tensorflow_parser.cc",
+        "SetOutputNodeInfo@parser/parser/common/acl_graph_parser_util.cc"
+      ],
+      "called_by": [
+        "main@api/atc/main.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "ParseFromMemory@parser/parser/onnx/onnx_parser.cc": {
+      "defined_at": 1149,
+      "calls": [
+        "GetModelFromMemory@parser/parser/onnx/onnx_parser.cc",
+        "ModelParseToGraph@parser/parser/onnx/onnx_parser.cc"
+      ],
+      "called_by": [
+        "aclgrphParseONNXFromMem@parser/parser/onnx/onnx_parser.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "从内存缓冲区解析ONNX模型"
+    },
+    "GetModelFromMemory@parser/parser/onnx/onnx_parser.cc": {
+      "defined_at": 851,
+      "calls": [
+        "ReadProtoFromArray@parser/parser/common"
+      ],
+      "called_by": [
+        "ParseFromMemory@parser/parser/onnx/onnx_parser.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "从内存读取protobuf数据"
+    },
+    "aclmdlLoadFromFile@api/acl/acl_model/model/acl_model.cpp": {
+      "defined_at": 109,
+      "calls": [
+        "aclmdlLoadFromFileImpl@api/acl/acl_model/model"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "ACL API模型文件加载入口"
+    },
+    "aclmdlLoadFromMem@api/acl/acl_model/model/acl_model.cpp": {
+      "defined_at": 150,
+      "calls": [
+        "aclmdlLoadFromMemImpl@api/acl/acl_model/model"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "ACL API内存模型加载入口"
+    },
+    "Process@dflow/deployer/daemon/daemon_service.cc": {
+      "defined_at": 31,
+      "calls": [
+        "ProcessInitRequest@dflow/deployer/daemon/daemon_service.cc",
+        "ProcessDisconnectRequest@dflow/deployer/daemon/daemon_service.cc",
+        "ProcessHeartbeatRequest@dflow/deployer/daemon/daemon_service.cc",
+        "ProcessDeployRequest@dflow/deployer/daemon/daemon_service.cc"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "分布式守护进程网络请求处理入口"
+    },
+    "ProcessInitRequest@dflow/deployer/daemon/daemon_service.cc": {
+      "defined_at": 111,
+      "calls": [
+        "VerifyInitRequest@dflow/deployer/daemon/daemon_service.cc",
+        "VerifyIpaddr@dflow/deployer/daemon/daemon_service.cc",
+        "VerifySignData@dflow/deployer/daemon/daemon_service.cc",
+        "CreateAndInitClient@dflow/deployer/daemon/daemon_client_manager.cc"
+      ],
+      "called_by": [
+        "Process@dflow/deployer/daemon/daemon_service.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "LoadSo@base/common/helper/custom_op_so_loader.cc": {
+      "defined_at": 30,
+      "calls": [
+        "dlopen@system"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "动态加载自定义算子SO文件"
+    },
+    "LoadSo@parser/parser/common/tbe_plugin_loader.cc": {
+      "defined_at": 50,
+      "calls": [
+        "dlopen@system"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "动态加载TBE插件SO文件"
+    },
+    "AddGraph@api/session/session/session.cc": {
+      "defined_at": 50,
+      "calls": [
+        "AddGraphImpl@api/session/session"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "RunGraph@api/session/session/session.cc": {
+      "defined_at": 100,
+      "calls": [
+        "RunGraphImpl@api/session/session"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "UnserializeModel@graph_metadef/graph/serialization/model_serialize.cc": {
+      "defined_at": 200,
+      "calls": [
+        "ParseFromArray@protobuf",
+        "ParseFromMemory@protobuf"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "模型反序列化，从protobuf数据恢复模型"
+    },
+    "pygraph_create@api/python/ge/ge/_capi/pygraph_wrapper.py": {
+      "defined_at": 20,
+      "calls": [
+        "_capi.graph_create@C wrapper"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "Python Graph创建入口"
+    },
+    "pysession_create@api/python/ge/ge/_capi/pysession_wrapper.py": {
+      "defined_at": 15,
+      "calls": [
+        "_capi.session_create@C wrapper"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "Initialize@dflow/llm_datadist/v1/common/llm_flow_service.cc": {
+      "defined_at": 99,
+      "calls": [
+        "NewSession@dflow/llm_datadist/v1/common"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "LoadFlowFuncs@dflow/llm_datadist/v1/common/llm_flow_service.cc": {
+      "defined_at": 109,
+      "calls": [
+        "ConstructFlowGraph@dflow/llm_datadist/v1/common/flow_graph_manager.cc",
+        "BuildFlowGraph@dflow/llm_datadist/v1/common/flow_graph_manager.cc"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Medium"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "aclgrphParseONNX@parser/parser/onnx/onnx_parser.cc:111",
+      "path": [
+        "PrepareBeforeParse@parser/parser/onnx/onnx_parser.cc:58",
+        "Parse@parser/parser/onnx/onnx_parser.cc:1134",
+        "GetModelFromFile@parser/parser/onnx/onnx_parser.cc:765",
+        "ReadProtoFromBinaryFile@parser/parser/common:0"
+      ],
+      "sink": "ReadProtoFromBinaryFile@parser/parser/common",
+      "sink_type": "file_operation",
+      "description": "ONNX模型文件解析路径：用户提供的文件路径 -> protobuf读取"
+    },
+    {
+      "source": "aclgrphParseONNXFromMem@parser/parser/onnx/onnx_parser.cc:144",
+      "path": [
+        "PrepareBeforeParse@parser/parser/onnx/onnx_parser.cc:58",
+        "ParseFromMemory@parser/parser/onnx/onnx_parser.cc:1149",
+        "GetModelFromMemory@parser/parser/onnx/onnx_parser.cc:851",
+        "ReadProtoFromArray@parser/parser/common:0"
+      ],
+      "sink": "ReadProtoFromArray@parser/parser/common",
+      "sink_type": "memory_operation",
+      "description": "ONNX内存缓冲区解析路径：用户提供的缓冲区 -> protobuf内存解析"
+    },
+    {
+      "source": "aclgrphParseTensorFlow@parser/parser/tensorflow/tensorflow_parser.cc:100",
+      "path": [
+        "Parse@parser/parser/tensorflow/tensorflow_parser.cc",
+        "ReadProtoFromBinaryFile@parser/parser/common"
+      ],
+      "sink": "ReadProtoFromBinaryFile@parser/parser/common",
+      "sink_type": "file_operation",
+      "description": "TensorFlow PB模型文件解析路径"
+    },
+    {
+      "source": "aclmdlLoadFromFile@api/acl/acl_model/model/acl_model.cpp:109",
+      "path": [
+        "aclmdlLoadFromFileImpl@api/acl/acl_model/model",
+        "LoadModel@runtime/v1/graph/load"
+      ],
+      "sink": "LoadModel@runtime",
+      "sink_type": "file_operation",
+      "description": "ACL模型文件加载路径"
+    },
+    {
+      "source": "aclmdlLoadFromMem@api/acl/acl_model/model/acl_model.cpp:150",
+      "path": [
+        "aclmdlLoadFromMemImpl@api/acl/acl_model/model",
+        "LoadModelFromMem@runtime"
+      ],
+      "sink": "LoadModelFromMem@runtime",
+      "sink_type": "memory_operation",
+      "description": "ACL内存模型加载路径"
+    },
+    {
+      "source": "Process@dflow/deployer/daemon/daemon_service.cc:31",
+      "path": [
+        "ProcessInitRequest@dflow/deployer/daemon/daemon_service.cc:111",
+        "VerifyInitRequest@dflow/deployer/daemon/daemon_service.cc:74",
+        "VerifySignData@dflow/deployer/daemon/daemon_service.cc:63",
+        "AuthVerify@dflow/deployer/deployer/deployer_authentication.cc"
+      ],
+      "sink": "AuthVerify@dflow/deployer",
+      "sink_type": "network_operation",
+      "description": "分布式守护进程请求处理路径：网络请求 -> 认证验证"
+    },
+    {
+      "source": "LoadSo@base/common/helper/custom_op_so_loader.cc:30",
+      "path": [
+        "mmDlopen@base/common",
+        "dlopen@system"
+      ],
+      "sink": "dlopen@system",
+      "sink_type": "dynamic_load",
+      "description": "自定义算子SO加载路径：SO文件路径 -> dlopen"
+    },
+    {
+      "source": "LoadSo@parser/parser/common/tbe_plugin_loader.cc:50",
+      "path": [
+        "mmDlopen@base/common",
+        "dlopen@system"
+      ],
+      "sink": "dlopen@system",
+      "sink_type": "dynamic_load",
+      "description": "TBE插件SO加载路径"
+    },
+    {
+      "source": "AddGraph@api/session/session/session.cc:50",
+      "path": [
+        "AddGraphImpl@api/session/session",
+        "CompileGraph@compiler/graphcompiler"
+      ],
+      "sink": "CompileGraph@compiler",
+      "sink_type": "graph_operation",
+      "description": "Session图添加路径：用户构建的Graph -> 编译"
+    },
+    {
+      "source": "RunGraph@api/session/session/session.cc:100",
+      "path": [
+        "RunGraphImpl@api/session/session",
+        "ExecuteGraph@runtime"
+      ],
+      "sink": "ExecuteGraph@runtime",
+      "sink_type": "graph_operation",
+      "description": "Session图执行路径：用户输入数据 -> 图执行"
+    },
+    {
+      "source": "UnserializeModel@graph_metadef/graph/serialization/model_serialize.cc:200",
+      "path": [
+        "ParseFromArray@protobuf",
+        "ParseFromMemory@protobuf"
+      ],
+      "sink": "ParseFromArray@protobuf",
+      "sink_type": "serialization",
+      "description": "模型反序列化路径：protobuf数据 -> 模型恢复"
+    },
+    {
+      "source": "pygraph_create@api/python/ge/ge/_capi/pygraph_wrapper.py:20",
+      "path": [
+        "_capi.graph_create@C wrapper",
+        "Graph::Graph@base/graph"
+      ],
+      "sink": "Graph::Graph@base/graph",
+      "sink_type": "cross_language",
+      "description": "Python Graph创建路径：Python调用 -> C++实现"
+    },
+    {
+      "source": "pysession_create@api/python/ge/ge/_capi/pysession_wrapper.py:15",
+      "path": [
+        "_capi.session_create@C wrapper",
+        "Session::Session@api/session"
+      ],
+      "sink": "Session::Session@api/session",
+      "sink_type": "cross_language",
+      "description": "Python Session创建路径"
+    },
+    {
+      "source": "LoadFlowFuncs@dflow/llm_datadist/v1/common/llm_flow_service.cc:109",
+      "path": [
+        "ConstructFlowGraph@dflow/llm_datadist/v1/common/flow_graph_manager.cc",
+        "BuildFlowGraph@dflow/llm_datadist/v1/common/flow_graph_manager.cc"
+      ],
+      "sink": "BuildFlowGraph@dflow",
+      "sink_type": "distributed_operation",
+      "description": "LLM分布式流函数加载路径"
+    }
+  ],
+  "cross_module_data_flows": [
+    {
+      "source_module": "parser",
+      "sink_module": "base",
+      "description": "Parser模块解析模型后传递给Base模块的图结构",
+      "entry": "aclgrphParseONNX@parser",
+      "exit": "ComputeGraph@base/graph"
+    },
+    {
+      "source_module": "api",
+      "sink_module": "runtime",
+      "description": "API层的Session调用Runtime执行器",
+      "entry": "Session::RunGraph@api/session",
+      "exit": "ExecuteGraph@runtime"
+    },
+    {
+      "source_module": "api",
+      "sink_module": "compiler",
+      "description": "API层调用Compiler编译图",
+      "entry": "Session::AddGraph@api/session",
+      "exit": "CompileGraph@compiler"
+    },
+    {
+      "source_module": "dflow",
+      "sink_module": "runtime",
+      "description": "分布式流调用Runtime执行",
+      "entry": "LlmWorker::RunFlowFunc@dflow",
+      "exit": "ExecuteGraph@runtime"
+    },
+    {
+      "source_module": "python_api",
+      "sink_module": "api",
+      "description": "Python绑定调用C++ API",
+      "entry": "pygraph_create@python_api",
+      "exit": "Graph@api"
+    },
+    {
+      "source_module": "parser",
+      "sink_module": "graph_metadef",
+      "description": "Parser解析结果传递给图元数据定义",
+      "entry": "Parse@parser",
+      "exit": "OpDef@graph_metadef"
+    }
+  ]
+}

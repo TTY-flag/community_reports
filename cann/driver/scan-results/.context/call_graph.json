@@ -1,0 +1,302 @@
+{
+  "functions": {
+    "devdrv_manager_ioctl@src/sdk_driver/dms/devmng/drv_devmng/drv_devmng_host/ascend910/devdrv_manager_ioctl.c": {
+      "defined_at": 1094,
+      "calls": [
+        "devdrv_manager_ioctl_get_plat_info@src/sdk_driver/dms/devmng/drv_devmng/drv_devmng_host/ascend910/devdrv_manager_ioctl.c",
+        "devdrv_manager_get_container_devids@src/sdk_driver/dms/devmng/drv_devmng/drv_devmng_host/ascend910/devdrv_manager_ioctl.c",
+        "devdrv_manager_get_devinfo@src/sdk_driver/dms/devmng/drv_devmng/drv_devmng_host/ascend910/devdrv_manager_ioctl.c",
+        "devdrv_fop_bind_host_pid@src/sdk_driver/dms/devmng/drv_devmng/drv_devmng_host/ascend910/devdrv_manager_ioctl.c",
+        "copy_to_user_safe",
+        "copy_from_user_safe"
+      ],
+      "called_by": [
+        "file_operations.unlocked_ioctl"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "pcidev_ioctl@src/custom/lqdrv/kernel/ioctl_comm.c": {
+      "defined_at": 131,
+      "calls": [
+        "ka_base_copy_from_user",
+        "get_all_fault_by_pci@src/custom/lqdrv/kernel/ioctl_comm.c",
+        "lq_get_fault_event_head_info@src/custom/lqdrv/kernel/ioctl_comm.c",
+        "copy_to_user"
+      ],
+      "called_by": [
+        "file_operations.unlocked_ioctl"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "queue_drv_open@src/sdk_driver/queue/host/queue_fops.c": {
+      "defined_at": 62,
+      "calls": [
+        "queue_context_init",
+        "queue_proc_fs_add_process"
+      ],
+      "called_by": [
+        "file_operations.open"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "queue_drv_host_init@src/sdk_driver/queue/host/queue_fops.c": {
+      "defined_at": 97,
+      "calls": [
+        "queue_ioctl_host_init_op",
+        "copy_from_user_safe",
+        "copy_to_user_safe"
+      ],
+      "called_by": [
+        "queue_drv_ioctl"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "shared_memory_mmap@src/custom/lqdrv/kernel/pci-dev.c": {
+      "defined_at": 210,
+      "calls": [
+        "ka_mm_ioremap",
+        "memset_s",
+        "remap_pfn_range"
+      ],
+      "called_by": [
+        "file_operations.mmap"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "copy_from_user_safe@kernel_adapt": {
+      "defined_at": 0,
+      "calls": [],
+      "called_by": [
+        "devdrv_manager_ioctl",
+        "devdrv_manager_get_devinfo",
+        "devdrv_fop_bind_host_pid",
+        "queue_drv_host_init"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "内核安全函数，从用户空间复制数据"
+    },
+    "copy_to_user_safe@kernel_adapt": {
+      "defined_at": 0,
+      "calls": [],
+      "called_by": [
+        "devdrv_manager_ioctl",
+        "devdrv_manager_get_devinfo",
+        "queue_drv_host_init"
+      ],
+      "receives_external_input": false,
+      "risk": "High",
+      "description": "内核安全函数，向用户空间复制数据"
+    },
+    "devdrv_manager_get_devinfo@src/sdk_driver/dms/devmng/drv_devmng/drv_devmng_host/ascend910/devdrv_manager_ioctl.c": {
+      "defined_at": 152,
+      "calls": [
+        "copy_from_user_safe",
+        "devdrv_manager_trans_and_check_id",
+        "devdrv_manager_get_devdrv_info",
+        "dms_hotreset_task_cnt_increase",
+        "strncpy_s",
+        "copy_to_user_safe"
+      ],
+      "called_by": [
+        "devdrv_manager_ioctl"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "devdrv_fop_bind_host_pid@src/sdk_driver/dms/devmng/drv_devmng/drv_devmng_host/ascend910/devdrv_manager_ioctl.c": {
+      "defined_at": 373,
+      "calls": [
+        "copy_from_user_safe",
+        "devdrv_bind_master_para_check",
+        "devdrv_manager_container_logical_id_to_physical_id",
+        "devdrv_bind_hostpid"
+      ],
+      "called_by": [
+        "devdrv_manager_ioctl"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "ka_mm_ioremap@kernel_adapt": {
+      "defined_at": 0,
+      "calls": [],
+      "called_by": [
+        "shared_memory_mmap",
+        "pci_dev_init"
+      ],
+      "receives_external_input": false,
+      "risk": "High",
+      "description": "内核ioremap函数，映射物理内存"
+    },
+    "get_all_fault_by_pci@src/custom/lqdrv/kernel/ioctl_comm.c": {
+      "defined_at": 86,
+      "calls": [
+        "kzalloc",
+        "memcpy_s",
+        "ka_task_mutex_lock",
+        "copy_to_user",
+        "ka_mm_kfree"
+      ],
+      "called_by": [
+        "pcidev_ioctl"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "hns_roce_lite_init@src/ascend_hal/roce/host_lite/hns_roce_lite.c": {
+      "defined_at": 1,
+      "calls": [
+        "ibv_get_device_list",
+        "ibv_open_device",
+        "ibv_query_port",
+        "ibv_create_cq",
+        "ibv_create_qp"
+      ],
+      "called_by": [
+        "module_init"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "RoCE初始化，接收网络数据"
+    },
+    "hdc_server_init@src/ascend_hal/hdc/common/hdc_server.c": {
+      "defined_at": 1,
+      "calls": [
+        "socket",
+        "bind",
+        "listen",
+        "accept",
+        "recv",
+        "send"
+      ],
+      "called_by": [
+        "module_init"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "HDC服务器初始化"
+    },
+    "svm_init@src/sdk_driver/svm/v2/common/svm_module_ops.c": {
+      "defined_at": 1,
+      "calls": [
+        "svm_master_mem_map",
+        "svm_master_mem_create",
+        "svm_master_mem_share"
+      ],
+      "called_by": [
+        "module_init"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "memcpy_s@seclib": {
+      "defined_at": 0,
+      "calls": [],
+      "called_by": [
+        "get_all_fault_by_pci",
+        "devdrv_manager_get_devinfo"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "安全memcpy函数"
+    },
+    "strncpy_s@seclib": {
+      "defined_at": 0,
+      "calls": [],
+      "called_by": [
+        "devdrv_manager_get_devinfo"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "安全strncpy函数"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "copy_from_user_safe@devdrv_manager_ioctl.c:384",
+      "path": [
+        "devdrv_manager_ioctl@devdrv_manager_ioctl.c:1094",
+        "devdrv_fop_bind_host_pid@devdrv_manager_ioctl.c:373",
+        "devdrv_bind_hostpid@devdrv_manager.c"
+      ],
+      "sink": "devdrv_bind_hostpid",
+      "sink_type": "process_bind"
+    },
+    {
+      "source": "copy_from_user_safe@devdrv_manager_ioctl.c:172",
+      "path": [
+        "devdrv_manager_ioctl@devdrv_manager_ioctl.c:1094",
+        "devdrv_manager_get_devinfo@devdrv_manager_ioctl.c:152",
+        "strncpy_s@devdrv_manager_ioctl.c:268"
+      ],
+      "sink": "strncpy_s@devdrv_manager_ioctl.c:268",
+      "sink_type": "string_operation"
+    },
+    {
+      "source": "ka_base_copy_from_user@ioctl_comm.c:142",
+      "path": [
+        "pcidev_ioctl@ioctl_comm.c:131",
+        "get_all_fault_by_pci@ioctl_comm.c:86",
+        "memcpy_s@ioctl_comm.c:103"
+      ],
+      "sink": "memcpy_s@ioctl_comm.c:103",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "copy_from_user_safe@queue_fops.c",
+      "path": [
+        "queue_drv_ioctl@queue_fops.c",
+        "queue_drv_host_init@queue_fops.c:97",
+        "queue_ioctl_host_init_op"
+      ],
+      "sink": "queue_ioctl_host_init_op",
+      "sink_type": "queue_init"
+    },
+    {
+      "source": "mmap_user_request@pci-dev.c",
+      "path": [
+        "shared_memory_mmap@pci-dev.c:210",
+        "ka_mm_ioremap@pci-dev.c:376",
+        "remap_pfn_range"
+      ],
+      "sink": "remap_pfn_range@pci-dev.c",
+      "sink_type": "memory_mapping"
+    },
+    {
+      "source": "recv@hdc_server.c",
+      "path": [
+        "hdc_server_recv@hdc_server.c",
+        "hdc_process_message@hdc_core.c",
+        "handle_request"
+      ],
+      "sink": "handle_request@hdc_core.c",
+      "sink_type": "network_handler"
+    },
+    {
+      "source": "ibv_recv_wc@hns_roce_lite.c",
+      "path": [
+        "hns_roce_lite_poll_cq",
+        "process_rdma_packet",
+        "parse_message"
+      ],
+      "sink": "parse_message@hns_roce_lite.c",
+      "sink_type": "network_handler"
+    },
+    {
+      "source": "copy_from_user_safe@devdrv_manager_ioctl.c:431",
+      "path": [
+        "devdrv_get_error_code@devdrv_manager_ioctl.c:424",
+        "devdrv_manager_get_devdrv_info",
+        "copy_to_user_safe@devdrv_manager_ioctl.c:461"
+      ],
+      "sink": "copy_to_user_safe@devdrv_manager_ioctl.c:461",
+      "sink_type": "data_export"
+    }
+  ]
+}

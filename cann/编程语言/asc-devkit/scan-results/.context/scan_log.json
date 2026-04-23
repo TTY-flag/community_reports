@@ -1,0 +1,109 @@
+{
+  "scan_id": "scan_asc-devkit_20260422",
+  "start_time": "2026-04-22T00:00:00Z",
+  "end_time": "2026-04-22T00:35:00Z",
+  "duration_seconds": 2100,
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/cann/5/asc-devkit",
+  "project_name": "asc-devkit",
+  "status": "success",
+  "agents": [
+    {
+      "name": "architecture",
+      "phase": 2,
+      "start_time": "2026-04-22T00:00:00Z",
+      "end_time": "2026-04-22T00:05:00Z",
+      "duration_seconds": 300,
+      "status": "success",
+      "output_files": [
+        "scan-results/.context/project_model.json",
+        "scan-results/.context/call_graph.json",
+        "scan-results/threat_analysis_report.md"
+      ]
+    },
+    {
+      "name": "dataflow-scanner",
+      "phase": 3,
+      "start_time": "2026-04-22T00:05:00Z",
+      "end_time": "2026-04-22T00:10:32Z",
+      "duration_seconds": 332,
+      "status": "success",
+      "item_count": 7,
+      "modules_scanned": [
+        "tools/build/elf_tool",
+        "tools/build/asc_pack_kernel",
+        "tools/build/asc_op_compile_base"
+      ]
+    },
+    {
+      "name": "security-auditor",
+      "phase": 3,
+      "start_time": "2026-04-22T00:05:00Z",
+      "end_time": "2026-04-22T00:09:59Z",
+      "duration_seconds": 299,
+      "status": "success",
+      "item_count": 3,
+      "modules_scanned": [
+        "scripts/package",
+        "cmake/asc/fwk_modules"
+      ]
+    },
+    {
+      "name": "verification",
+      "phase": 4,
+      "start_time": "2026-04-22T00:15:00Z",
+      "end_time": "2026-04-22T00:20:45Z",
+      "duration_seconds": 345,
+      "status": "success",
+      "item_count": 10,
+      "result_summary": {
+        "CONFIRMED": 3,
+        "LIKELY": 4,
+        "POSSIBLE": 3
+      }
+    },
+    {
+      "name": "details-analyzer",
+      "phase": 4.5,
+      "start_time": "2026-04-22T00:25:00Z",
+      "end_time": "2026-04-22T00:32:23Z",
+      "duration_seconds": 443,
+      "status": "success",
+      "item_count": 3,
+      "output_files": [
+        "scan-results/details/VULN-SEC-001.md",
+        "scan-results/details/VULN-SEC-003.md",
+        "scan-results/details/VULN-DF-001.md"
+      ]
+    },
+    {
+      "name": "reporter",
+      "phase": 5,
+      "start_time": "2026-04-22T00:35:00Z",
+      "end_time": "2026-04-22T00:35:00Z",
+      "duration_seconds": 0,
+      "status": "success",
+      "output_files": [
+        "scan-results/report_confirmed.md",
+        "scan-results/report_unconfirmed.md"
+      ]
+    }
+  ],
+  "summary": {
+    "total_vulnerabilities": 10,
+    "confirmed": 3,
+    "likely": 4,
+    "possible": 3,
+    "high_risk": 6,
+    "medium_risk": 2,
+    "low_risk": 2,
+    "modules_scanned": [
+      "tools/build",
+      "scripts/package",
+      "cmake/asc/fwk_modules"
+    ],
+    "vulnerability_types": {
+      "command_injection": 4,
+      "path_traversal": 6
+    }
+  }
+}

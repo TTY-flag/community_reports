@@ -1,0 +1,86 @@
+{
+  "scan_id": "scan_hccl_20260421",
+  "start_time": "2026-04-21T21:52:00Z",
+  "end_time": "2026-04-21T22:40:00Z",
+  "duration_seconds": 2880,
+  "project_name": "hccl",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/cann/2/hccl",
+  "status": "success",
+  "agents": [
+    {
+      "name": "architecture",
+      "start_time": "2026-04-21T21:53:00Z",
+      "end_time": "2026-04-21T22:08:00Z",
+      "duration_seconds": 900,
+      "status": "success",
+      "output_files": [
+        "scan-results/.context/project_model.json",
+        "scan-results/.context/call_graph.json",
+        "scan-results/threat_analysis_report.md"
+      ]
+    },
+    {
+      "name": "dataflow-scanner",
+      "start_time": "2026-04-21T22:09:00Z",
+      "end_time": "2026-04-21T22:15:00Z",
+      "duration_seconds": 360,
+      "status": "success",
+      "item_count": 19
+    },
+    {
+      "name": "security-auditor",
+      "start_time": "2026-04-21T22:09:00Z",
+      "end_time": "2026-04-21T22:12:00Z",
+      "duration_seconds": 180,
+      "status": "success",
+      "item_count": 6
+    },
+    {
+      "name": "verification",
+      "start_time": "2026-04-21T22:16:00Z",
+      "end_time": "2026-04-21T22:20:00Z",
+      "duration_seconds": 240,
+      "status": "success",
+      "item_count": 24
+    },
+    {
+      "name": "details-analyzer",
+      "start_time": "2026-04-21T22:24:00Z",
+      "end_time": "2026-04-21T22:30:00Z",
+      "duration_seconds": 360,
+      "status": "success",
+      "item_count": 5,
+      "output_files": [
+        "scan-results/details/VULN-SEC-DL-002.md",
+        "scan-results/details/VULN-SEC-BIN-001.md",
+        "scan-results/details/VULN-SEC-BIN-002.md",
+        "scan-results/details/VULN-DF-007.md",
+        "scan-results/details/VULN-DF-008.md"
+      ]
+    },
+    {
+      "name": "reporter",
+      "start_time": "2026-04-21T22:31:00Z",
+      "end_time": "2026-04-21T22:39:00Z",
+      "duration_seconds": 480,
+      "status": "success",
+      "output_files": [
+        "scan-results/report_confirmed.md",
+        "scan-results/report_unconfirmed.md"
+      ]
+    }
+  ],
+  "summary": {
+    "total_candidates": 25,
+    "after_dedup": 24,
+    "confirmed": 5,
+    "likely": 1,
+    "possible": 11,
+    "false_positive": 7,
+    "high_severity": 5,
+    "medium_severity": 9,
+    "low_severity": 10,
+    "main_vulnerability_type": "CWE-426: Untrusted Search Path",
+    "risk_level": "HIGH"
+  }
+}

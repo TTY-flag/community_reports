@@ -1,0 +1,132 @@
+{
+  "project_name": "asc-devkit",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/cann/5/asc-devkit",
+  "language": "mixed",
+  "description": "华为 Ascend NPU 开发工具包，用于开发 AI 算子",
+  "entry_points": [
+    {
+      "type": "command_line",
+      "location": "tools/build/asc_pack_kernel/ascendc_pack_kernel.c",
+      "function": "main",
+      "description": "内核打包工具命令行入口"
+    },
+    {
+      "type": "file_io",
+      "location": "tools/build/asc_pack_kernel/ascendc_pack_kernel.c",
+      "function": "ReadFile/WriteFile/GetFileSize",
+      "description": "文件读写操作"
+    },
+    {
+      "type": "file_io",
+      "location": "tools/build/elf_tool/ascendc_elf_tool.c",
+      "function": "ElfAddSection/ElfGetSymbolOffset",
+      "description": "ELF 文件处理"
+    },
+    {
+      "type": "subprocess",
+      "location": "tools/build/asc_op_compile_base",
+      "description": "Python 编译脚本调用外部编译器"
+    }
+  ],
+  "modules": [
+    {
+      "name": "tools/build/elf_tool",
+      "path": "tools/build/elf_tool",
+      "language": "c",
+      "risk_level": "high",
+      "file_count": 2,
+      "description": "ELF 文件处理工具",
+      "functions": ["ElfHeaderCheck", "ElfAddSection", "ElfGetSymbolOffset"],
+      "potential_vulnerabilities": ["buffer_overflow", "integer_overflow"]
+    },
+    {
+      "name": "tools/build/asc_pack_kernel",
+      "path": "tools/build/asc_pack_kernel",
+      "language": "c",
+      "risk_level": "high",
+      "file_count": 2,
+      "description": "内核打包工具",
+      "functions": ["main", "GetFileSize", "ReadFile", "WriteFile"],
+      "potential_vulnerabilities": ["memory_leak", "buffer_overflow", "path_traversal"]
+    },
+    {
+      "name": "tools/build/asc_op_compile_base",
+      "path": "tools/build/asc_op_compile_base",
+      "language": "python",
+      "risk_level": "high",
+      "file_count": 20,
+      "description": "算子编译框架",
+      "functions": ["compile_op", "ascendc_compile_base"],
+      "potential_vulnerabilities": ["command_injection", "subprocess_call"]
+    },
+    {
+      "name": "impl/c_api/instr_impl",
+      "path": "impl/c_api/instr_impl",
+      "language": "c",
+      "risk_level": "medium",
+      "file_count": 200,
+      "description": "NPU 指令实现"
+    },
+    {
+      "name": "impl/adv_api/tiling",
+      "path": "impl/adv_api/tiling",
+      "language": "cpp",
+      "risk_level": "medium",
+      "file_count": 100,
+      "description": "算子 tiling 实现"
+    },
+    {
+      "name": "impl/basic_api",
+      "path": "impl/basic_api",
+      "language": "cpp",
+      "risk_level": "medium",
+      "file_count": 150,
+      "description": "基础 API 实现"
+    },
+    {
+      "name": "impl/utils",
+      "path": "impl/utils",
+      "language": "cpp",
+      "risk_level": "low",
+      "file_count": 50,
+      "description": "工具函数"
+    },
+    {
+      "name": "cmake/asc",
+      "path": "cmake/asc",
+      "language": "python",
+      "risk_level": "medium",
+      "file_count": 30,
+      "description": "构建脚本"
+    },
+    {
+      "name": "examples",
+      "path": "examples",
+      "language": "mixed",
+      "risk_level": "low",
+      "file_count": 300,
+      "description": "示例代码（不作为主要扫描目标）"
+    }
+  ],
+  "high_risk_files": [
+    "tools/build/elf_tool/ascendc_elf_tool.c",
+    "tools/build/asc_pack_kernel/ascendc_pack_kernel.c",
+    "tools/build/asc_op_compile_base/adapter/compile_op.py",
+    "tools/build/asc_op_compile_base/asc_op_compiler/compile_op.py"
+  ],
+  "scan_priority": [
+    "tools/build/elf_tool",
+    "tools/build/asc_pack_kernel",
+    "tools/build/asc_op_compile_base",
+    "impl/c_api/instr_impl",
+    "impl/adv_api/tiling",
+    "impl/basic_api"
+  ],
+  "statistics": {
+    "total_files": 3622,
+    "c_files": 2,
+    "cpp_files": 3156,
+    "python_files": 464,
+    "header_files": 1000
+  }
+}

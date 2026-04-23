@@ -1,0 +1,314 @@
+{
+  "project_name": "CANN/pypto",
+  "project_type": "AI Operator Compiler Framework",
+  "description": "Huawei NPU operator compilation and optimization framework",
+  "languages": {
+    "cpp": {
+      "files": 1456,
+      "lines": 88573
+    },
+    "python": {
+      "files": 523,
+      "lines": 149869
+    }
+  },
+  "modules": [
+    {
+      "name": "adapter",
+      "path": "framework/src/adapter",
+      "description": "Hardware adaptation layer - runtime API, HAL, ACL integration",
+      "risk_level": "high",
+      "languages": ["cpp"],
+      "entry_points": [
+        "framework/src/adapter/api/runtime_api.cpp",
+        "framework/src/adapter/api/acl_api.cpp",
+        "framework/src/adapter/api/hal_api.cpp",
+        "framework/src/adapter/manager/plugin_handler.cpp"
+      ],
+      "trust_boundary": "external",
+      "security_concerns": [
+        "Dynamic library loading via dlopen",
+        "Runtime function pointer resolution via dlsym",
+        "External library path handling (libruntime.so, libprofapi.so)"
+      ]
+    },
+    {
+      "name": "codegen",
+      "path": "framework/src/codegen",
+      "description": "CCE code generation for NPU kernels",
+      "risk_level": "medium",
+      "languages": ["cpp"],
+      "entry_points": [
+        "framework/src/codegen/codegen_cce.cpp",
+        "framework/src/codegen/codegen_op.cpp"
+      ],
+      "trust_boundary": "internal",
+      "security_concerns": [
+        "Kernel binary generation",
+        "RegisterKernelBin function"
+      ]
+    },
+    {
+      "name": "interface",
+      "path": "framework/src/interface",
+      "description": "Core IR/Tensor/TileOp interface definitions",
+      "risk_level": "high",
+      "languages": ["cpp"],
+      "entry_points": [
+        "framework/src/interface/interpreter/calc.cpp",
+        "framework/src/interface/interpreter/raw_tensor_data.h",
+        "framework/src/interface/registry/op_registry.cpp",
+        "framework/src/interface/machine/host/host_machine.cpp"
+      ],
+      "trust_boundary": "mixed",
+      "security_concerns": [
+        "Dynamic library loading for calculator",
+        "Operator registration mechanism",
+        "Tensor data handling with raw pointers"
+      ]
+    },
+    {
+      "name": "machine",
+      "path": "framework/src/machine",
+      "description": "Runtime execution and device management",
+      "risk_level": "high",
+      "languages": ["cpp"],
+      "entry_points": [
+        "framework/src/machine/runtime/device_launcher.cpp",
+        "framework/src/machine/runtime/device_runner.cpp"
+      ],
+      "trust_boundary": "mixed",
+      "security_concerns": [
+        "Kernel binary registration",
+        "Device memory management",
+        "Control flow cache handling"
+      ]
+    },
+    {
+      "name": "bindings",
+      "path": "python/src/bindings",
+      "description": "pybind11 Python bindings to C++ backend",
+      "risk_level": "critical",
+      "languages": ["cpp"],
+      "entry_points": [
+        "python/src/bindings/runtime.cpp",
+        "python/src/bindings/tensor.cpp",
+        "python/src/bindings/operation.cpp",
+        "python/src/bindings/controller.cpp"
+      ],
+      "trust_boundary": "external",
+      "security_concerns": [
+        "Python-to-C++ data conversion without validation",
+        "Tensor shape/dtype injection from Python",
+        "Function pointer handling from Python",
+        "DeviceTensorData with raw memory pointers"
+      ]
+    },
+    {
+      "name": "pypto_api",
+      "path": "python/pypto",
+      "description": "Python API layer for user interaction",
+      "risk_level": "critical",
+      "languages": ["python"],
+      "entry_points": [
+        "python/pypto/tensor.py",
+        "python/pypto/operation.py",
+        "python/pypto/config.py",
+        "python/pypto/runtime.py",
+        "python/pypto/frontend/__init__.py"
+      ],
+      "trust_boundary": "external",
+      "security_concerns": [
+        "User-provided tensor shapes and data",
+        "Python JIT compilation (frontend.parser)",
+        "Configuration injection",
+        "Dynamic dimension handling"
+      ]
+    },
+    {
+      "name": "frontend_parser",
+      "path": "python/pypto/frontend/parser",
+      "description": "Python AST parser and JIT compilation",
+      "risk_level": "critical",
+      "languages": ["python"],
+      "entry_points": [
+        "python/pypto/frontend/parser/entry.py",
+        "python/pypto/frontend/parser/parser.py"
+      ],
+      "trust_boundary": "external",
+      "security_concerns": [
+        "Python AST parsing of user code",
+        "Dynamic shape binding from user input",
+        "Symbolic scalar evaluation",
+        "Torch tensor conversion"
+      ]
+    },
+    {
+      "name": "cann_host_runtime",
+      "path": "framework/src/cann_host_runtime",
+      "description": "CANN host runtime integration",
+      "risk_level": "high",
+      "languages": ["cpp"],
+      "entry_points": [
+        "framework/src/cann_host_runtime/cann_host_runtime.cpp"
+      ],
+      "trust_boundary": "external",
+      "security_concerns": [
+        "dlopen of libruntime.so and libprofapi.so",
+        "External library path from ASCEND_CANN_PACKAGE_PATH",
+        "Function pointer resolution"
+      ]
+    },
+    {
+      "name": "tools",
+      "path": "tools",
+      "description": "Debug and verification tools",
+      "risk_level": "medium",
+      "languages": ["python"],
+      "entry_points": [
+        "tools/verifier/parse_dump_tensors.py",
+        "tools/dump_tensor/process_dump_tensor.py"
+      ],
+      "trust_boundary": "mixed",
+      "security_concerns": [
+        "JSON/YAML file parsing",
+        "Tensor dump file processing",
+        "Command line argument handling"
+      ]
+    },
+    {
+      "name": "models",
+      "path": "models",
+      "description": "Model operator implementations (deepseek, qwen, glm)",
+      "risk_level": "low",
+      "languages": ["python"],
+      "entry_points": [],
+      "trust_boundary": "internal",
+      "security_concerns": []
+    }
+  ],
+  "entry_points": [
+    {
+      "type": "python_api",
+      "location": "python/src/pybind11.cpp",
+      "function": "PYBIND11_MODULE(pypto_impl, m)",
+      "description": "Main Python module entry point via pybind11",
+      "risk_level": "critical",
+      "data_flow": "Python -> C++ bindings -> Framework modules"
+    },
+    {
+      "type": "python_api",
+      "location": "python/pypto/frontend/parser/entry.py",
+      "function": "JitCallableWrapper.__call__",
+      "description": "JIT compilation entry point for user Python functions",
+      "risk_level": "critical",
+      "data_flow": "User Python code -> AST parsing -> IR generation -> Compilation"
+    },
+    {
+      "type": "dynamic_library",
+      "location": "framework/src/adapter/manager/plugin_handler.cpp",
+      "function": "PluginHandler::OpenHandler",
+      "description": "Dynamic library loading via dlopen",
+      "risk_level": "high",
+      "data_flow": "Library path string -> dlopen -> Function resolution"
+    },
+    {
+      "type": "dynamic_library",
+      "location": "framework/src/cann_host_runtime/cann_host_runtime.cpp",
+      "function": "CannHostRuntime::CannHostRuntime",
+      "description": "CANN runtime library loading",
+      "risk_level": "high",
+      "data_flow": "ASCEND_CANN_PACKAGE_PATH env -> libruntime.so -> dlopen"
+    },
+    {
+      "type": "dynamic_library",
+      "location": "framework/src/interface/interpreter/calc.cpp",
+      "function": "GetCalcOps",
+      "description": "Calculator library loading for verification",
+      "risk_level": "medium",
+      "data_flow": "Process handle -> dlopen -> GetCalcOps function"
+    },
+    {
+      "type": "file_io",
+      "location": "framework/src/adapter/api/runtime_api.cpp",
+      "function": "RuntimeBinaryLoadFromFile",
+      "description": "Load kernel binary from file",
+      "risk_level": "high",
+      "data_flow": "File path -> Binary loading -> Kernel registration"
+    },
+    {
+      "type": "file_io",
+      "location": "tools/verifier/parse_dump_tensors.py",
+      "function": "CompactDumpTensorInfoParser",
+      "description": "Parse tensor dump files",
+      "risk_level": "medium",
+      "data_flow": "Dump tensor path -> JSON parsing -> Data extraction"
+    },
+    {
+      "type": "python_api",
+      "location": "python/src/bindings/runtime.cpp",
+      "function": "DeviceRunOnceDataFromHost",
+      "description": "Execute kernel with user-provided tensor data",
+      "risk_level": "critical",
+      "data_flow": "Python tensors -> DeviceTensorData -> Device execution"
+    },
+    {
+      "type": "python_api",
+      "location": "python/src/bindings/tensor.cpp",
+      "function": "BindTensor",
+      "description": "Tensor creation with user-provided shape and dtype",
+      "risk_level": "high",
+      "data_flow": "Python shape/dtype -> Tensor object"
+    },
+    {
+      "type": "environment",
+      "location": "framework/src/cann_host_runtime/cann_host_runtime.cpp",
+      "function": "CannHostRuntime::CannHostRuntime",
+      "description": "Environment variable ASCEND_CANN_PACKAGE_PATH",
+      "risk_level": "medium",
+      "data_flow": "Environment -> Library path resolution"
+    }
+  ],
+  "trust_boundaries": [
+    {
+      "name": "python_to_cpp",
+      "description": "Python user input to C++ backend",
+      "crosses": ["bindings", "pypto_api", "frontend_parser"],
+      "risk": "Data injection, type confusion, memory corruption"
+    },
+    {
+      "name": "external_library",
+      "description": "External shared library loading",
+      "crosses": ["adapter", "cann_host_runtime", "interface/interpreter"],
+      "risk": "Library path injection, malicious library loading"
+    },
+    {
+      "name": "file_system",
+      "description": "File input/output operations",
+      "crosses": ["adapter/api", "tools"],
+      "risk": "Path traversal, malicious binary injection"
+    },
+    {
+      "name": "user_code",
+      "description": "User-provided Python code for JIT compilation",
+      "crosses": ["frontend_parser"],
+      "risk": "Code injection, arbitrary code execution"
+    }
+  ],
+  "attack_surface": {
+    "summary": "The CANN/pypto framework has multiple high-risk attack surfaces primarily through Python bindings and dynamic library loading mechanisms.",
+    "critical_areas": [
+      "Python bindings (pybind11) expose C++ functionality without adequate input validation",
+      "JIT compilation allows user-provided Python code to be parsed and compiled",
+      "Dynamic library loading via dlopen uses externally-controlled paths",
+      "Tensor data handling uses raw memory pointers from Python",
+      "File operations load kernel binaries and tensor dumps from user-controlled paths"
+    ],
+    "recommended_focus": [
+      "Input validation in Python bindings",
+      "Path sanitization for dlopen operations",
+      "Bounds checking for tensor shape and memory operations",
+      "AST sanitization in frontend parser"
+    ]
+  }
+}

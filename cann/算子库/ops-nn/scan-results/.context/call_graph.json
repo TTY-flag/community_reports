@@ -1,0 +1,507 @@
+{
+  "project_name": "ops-nn",
+  "call_graph_type": "simplified",
+  "note": "Large project (6795+ files), simplified call graph focusing on high-risk entry points and data flows",
+  "generated_time": "2026-04-21",
+  "api_entry_points": [
+    {
+      "name": "aclnnConvolutionGetWorkspaceSize",
+      "file": "conv/convolution_forward/op_host/op_api/aclnn_convolution.cpp",
+      "type": "api_entry",
+      "risk_level": "high",
+      "data_flow": "User tensor shapes -> Workspace calculation -> Kernel dispatch",
+      "calls": [
+        "ConvolutionShapeValidate",
+        "ConvolutionCheckParams",
+        "GetWorkspaceSize",
+        "SetTilingData"
+      ],
+      "called_by": ["User application"],
+      "security_notes": "Validates tensor dimensions and calculates workspace size - integer overflow risk in size multiplication"
+    },
+    {
+      "name": "aclnnConvolution",
+      "file": "conv/convolution_forward/op_host/op_api/aclnn_convolution.cpp",
+      "type": "api_entry",
+      "risk_level": "high",
+      "data_flow": "Workspace -> Tiling -> Kernel launch",
+      "calls": [
+        "ConvolutionTilingExecute",
+        "ConvolutionKernelLaunch",
+        "SetKernelArgs"
+      ],
+      "called_by": ["User application"],
+      "security_notes": "Launches kernel with tiling data - direct memory access in kernel"
+    },
+    {
+      "name": "aclnnMatmulGetWorkspaceSize",
+      "file": "matmul/mat_mul_v3/op_host/op_api/aclnn_matmul_v3.cpp",
+      "type": "api_entry",
+      "risk_level": "high",
+      "data_flow": "Matrix dimensions -> Workspace -> Tiling params",
+      "calls": [
+        "MatmulShapeValidate",
+        "MatmulGetWorkspaceSizeImpl",
+        "CalculateBlockSize"
+      ],
+      "called_by": ["User application"],
+      "security_notes": "Block size calculation - potential integer overflow in M*N*K multiplication"
+    },
+    {
+      "name": "aclnnMatmul",
+      "file": "matmul/mat_mul_v3/op_host/op_api/aclnn_matmul_v3.cpp",
+      "type": "api_entry",
+      "risk_level": "high",
+      "calls": [
+        "MatmulTilingExecute",
+        "MatmulKernelLaunch"
+      ],
+      "called_by": ["User application"]
+    },
+    {
+      "name": "aclnnInitEmbeddingHashTable",
+      "file": "hash/init_embedding_hash_table/op_api/aclnn_init_embedding_hash_table.cpp",
+      "type": "api_entry",
+      "risk_level": "critical",
+      "data_flow": "Table config -> Bucket allocation -> Memory setup",
+      "calls": [
+        "HashTableInit",
+        "BucketAllocation",
+        "MemorySetup"
+      ],
+      "called_by": ["User application"],
+      "security_notes": "Hash table initialization with bucketSize/embeddingDim - memory allocation size calculation"
+    },
+    {
+      "name": "aclnnEmbeddingHashTableLookupOrInsert",
+      "file": "hash/embedding_hash_table_lookup_or_insert/op_api/aclnn_embedding_hash_table_lookup_or_insert.cpp",
+      "type": "api_entry",
+      "risk_level": "critical",
+      "data_flow": "Keys -> Hash lookup -> Value insertion -> Memory write",
+      "calls": [
+        "HashTableLookup",
+        "HashTableInsert",
+        "AtomicCas",
+        "MemoryReadWrite"
+      ],
+      "called_by": ["User application"],
+      "security_notes": "Direct memory access with atomic operations - hash collision handling, bucket overflow"
+    },
+    {
+      "name": "aclnnLSTMGetWorkspaceSize",
+      "file": "rnn/dynamic_rnn/op_host/op_api/aclnn_lstm.cpp",
+      "type": "api_entry",
+      "risk_level": "high",
+      "calls": [
+        "LSTMShapeValidate",
+        "CalculateLSTMWorkspace",
+        "GetHiddenStateSize"
+      ],
+      "called_by": ["User application"],
+      "security_notes": "LSTM state dimension calculation - complex workspace allocation"
+    },
+    {
+      "name": "aclnnLSTM",
+      "file": "rnn/dynamic_rnn/op_host/op_api/aclnn_lstm.cpp",
+      "type": "api_entry",
+      "risk_level": "high",
+      "calls": [
+        "LSTMKernelLaunch",
+        "LSTMForwardExecute",
+        "HiddenStateUpdate"
+      ],
+      "called_by": ["User application"]
+    },
+    {
+      "name": "aclnnGatherV2",
+      "file": "index/gather_v2/op_api/aclnn_gather_v2.cpp",
+      "type": "api_entry",
+      "risk_level": "medium",
+      "calls": [
+        "GatherIndexValidate",
+        "TensorGather",
+        "IndexCalculate"
+      ],
+      "called_by": ["User application"],
+      "security_notes": "Index range validation required - potential out-of-bounds read"
+    },
+    {
+      "name": "aclnnIndexPutV2",
+      "file": "index/index_put_v2/op_api/aclnn_index_put_v2.cpp",
+      "type": "api_entry",
+      "risk_level": "medium",
+      "calls": [
+        "IndexPutImpl",
+        "IndexValidation",
+        "TensorPut"
+      ],
+      "called_by": ["User application"],
+      "security_notes": "Index placement validation - potential out-of-bounds write"
+    },
+    {
+      "name": "aclnnQuantize",
+      "file": "quant/ascend_quant/op_api/aclnn_quantize.cpp",
+      "type": "api_entry",
+      "risk_level": "medium",
+      "calls": [
+        "QuantizeParamsValidate",
+        "QuantizeScaleCalculate",
+        "QuantizeExecute"
+      ],
+      "called_by": ["User application"],
+      "security_notes": "Quantization scale/offset parameters - precision handling"
+    }
+  ],
+  "kernel_functions": [
+    {
+      "name": "init_embedding_hash_table",
+      "file": "hash/init_embedding_hash_table/op_kernel/init_embedding_hash_table_apt.cpp",
+      "type": "kernel",
+      "risk_level": "critical",
+      "memory_operations": ["GM_ADDR tableHandle", "GM_ADDR sampledValues", "GM_ADDR workspace"],
+      "calls": [
+        "KernelInitEmbeddingHashTable::Init",
+        "KernelInitEmbeddingHashTable::Process"
+      ],
+      "called_by": ["aclnnInitEmbeddingHashTable"],
+      "security_notes": "Direct GM_ADDR memory access, bucketSize/embeddingDim from tiling data"
+    },
+    {
+      "name": "embedding_hash_table_lookup_or_insert",
+      "file": "hash/embedding_hash_table_lookup_or_insert/op_kernel/embedding_hash_table_lookup_or_insert.cpp",
+      "type": "kernel",
+      "risk_level": "critical",
+      "memory_operations": ["GM_ADDR tableHandle", "GM_ADDR keys", "GM_ADDR values", "GM_ADDR workspace"],
+      "calls": [
+        "KernelLookupOrInsertGeneral::Init",
+        "KernelLookupOrInsertGeneral::Process",
+        "ComputeLookupOrInsert",
+        "MurmurHash3"
+      ],
+      "called_by": ["aclnnEmbeddingHashTableLookupOrInsert"],
+      "security_notes": "Atomic CAS operations (AscendC::Simt::AtomicCas), hash collision loop, direct memory pointer manipulation"
+    },
+    {
+      "name": "ComputeLookupOrInsert",
+      "file": "hash/embedding_hash_table_lookup_or_insert/op_kernel/arch35/kernel_lookup_or_insert_general.h",
+      "type": "kernel_internal",
+      "risk_level": "critical",
+      "atomic_operations": ["AtomicCas", "AtomicAdd"],
+      "memory_operations": ["pTable", "pKeys", "pValues", "pCurrBucket"],
+      "security_notes": "Atomic CAS for bucket locking, hash collision detection loop, pointer arithmetic pCurrBucket = pTable + currIdx * bucketSize"
+    },
+    {
+      "name": "convolution_forward_kernel",
+      "file": "conv/convolution_forward/op_kernel/convolution_forward_apt.cpp",
+      "type": "kernel",
+      "risk_level": "high",
+      "calls": [
+        "ConvolutionCompute",
+        "TensorLoad",
+        "TensorStore"
+      ],
+      "called_by": ["aclnnConvolution"]
+    },
+    {
+      "name": "matmul_kernel",
+      "file": "matmul/mat_mul_v3/op_kernel/matmul_v3_apt.cpp",
+      "type": "kernel",
+      "risk_level": "high",
+      "calls": [
+        "MatmulCompute",
+        "BlockLoad",
+        "BlockStore"
+      ],
+      "called_by": ["aclnnMatmul"]
+    },
+    {
+      "name": "lstm_kernel",
+      "file": "rnn/dynamic_rnn/op_kernel/lstm_apt.cpp",
+      "type": "kernel",
+      "risk_level": "high",
+      "calls": [
+        "LSTMCellCompute",
+        "HiddenStateRead",
+        "HiddenStateWrite"
+      ],
+      "called_by": ["aclnnLSTM"]
+    }
+  ],
+  "tiling_functions": [
+    {
+      "name": "MatmulV3BaseTiling",
+      "file": "matmul/mat_mul_v3/op_host/op_tiling/matmul_v3_base_tiling.cpp",
+      "type": "tiling",
+      "risk_level": "high",
+      "integer_operations": ["blockM = CeilDiv(M, factor)", "blockN = CeilDiv(N, factor)", "blockK = CeilDiv(K, factor)"],
+      "calls": [
+        "GetMatmulTiling",
+        "CalculateBlockSize",
+        "SetTilingData"
+      ],
+      "called_by": ["aclnnMatmul"],
+      "security_notes": "Integer division and ceiling - potential overflow for large M,N,K values"
+    },
+    {
+      "name": "ConvolutionTiling",
+      "file": "conv/common/op_host/op_tiling/convolution_tiling.cpp",
+      "type": "tiling",
+      "risk_level": "high",
+      "calls": [
+        "GetConvTiling",
+        "CalculateBlockDims",
+        "SetTilingKey"
+      ],
+      "called_by": ["aclnnConvolution"],
+      "security_notes": "Block dimension calculation for convolution shapes"
+    },
+    {
+      "name": "EmbeddingHashTableTiling",
+      "file": "hash/init_embedding_hash_table/op_host/arch35/init_embedding_hash_table_tiling_arch35.cpp",
+      "type": "tiling",
+      "risk_level": "critical",
+      "integer_operations": ["bucketSize = embeddingDim * sizeof(float) + overhead", "tableSize = numBuckets"],
+      "calls": [
+        "CalculateBucketSize",
+        "CalculateTableSize",
+        "SetTilingParams"
+      ],
+      "called_by": ["aclnnInitEmbeddingHashTable"],
+      "security_notes": "Bucket size calculation - memory allocation size derivation"
+    },
+    {
+      "name": "LSTMTiling",
+      "file": "rnn/dynamic_rnn/op_host/arch35/dynamic_rnn_tiling_arch35.cpp",
+      "type": "tiling",
+      "risk_level": "high",
+      "calls": [
+        "GetLSTMTiling",
+        "CalculateHiddenStateSize",
+        "SetTilingData"
+      ],
+      "called_by": ["aclnnLSTM"]
+    }
+  ],
+  "onnx_plugin_functions": [
+    {
+      "name": "ParseParamsMatMul",
+      "file": "common/src/framework/matmul_onnx_plugin.cpp",
+      "type": "onnx_plugin",
+      "risk_level": "medium",
+      "data_source": "External ONNX model file",
+      "calls": [
+        "dynamic_cast<NodeProto>",
+        "node->attribute() parsing",
+        "op_dest.SetAttr"
+      ],
+      "called_by": ["ONNX parser framework"],
+      "security_notes": "Parses transA/transB attributes from ONNX model - external model data handling"
+    },
+    {
+      "name": "ParseParamsResize",
+      "file": "common/src/framework/resize_onnx_plugin.cpp",
+      "type": "onnx_plugin",
+      "risk_level": "medium",
+      "data_source": "External ONNX model file",
+      "security_notes": "Parse resize parameters from ONNX - model attribute validation"
+    },
+    {
+      "name": "ParseParamsLSTM",
+      "file": "common/src/framework/lstm_onnx_plugin.cpp",
+      "type": "onnx_plugin",
+      "risk_level": "medium",
+      "data_source": "External ONNX model file",
+      "security_notes": "Parse LSTM configuration from ONNX model"
+    },
+    {
+      "name": "ParseParamsConv",
+      "file": "common/src/framework/batch_matmul_onnx_plugin.cpp",
+      "type": "onnx_plugin",
+      "risk_level": "medium",
+      "data_source": "External ONNX model file",
+      "security_notes": "Parse convolution parameters from ONNX model"
+    }
+  ],
+  "common_utility_functions": [
+    {
+      "name": "MurmurHash",
+      "file": "common/src/op_host/hash.cpp",
+      "type": "utility",
+      "risk_level": "medium",
+      "signature": "uint32_t MurmurHash(const void* src, uint32_t len, uint32_t seed)",
+      "security_notes": "void pointer casting, memory read operations for hash computation"
+    },
+    {
+      "name": "GetTbeTiling",
+      "file": "common/src/op_host/tbe_tiling_api.cpp",
+      "type": "utility",
+      "risk_level": "medium",
+      "calls": [
+        "LegacyCommonMgr::GetInstance().GetFunc",
+        "LegacyGenTbeConvBackwardTiling"
+      ],
+      "called_by": ["Convolution backward operators"],
+      "security_notes": "Dynamic symbol loading via GetFunc pointer retrieval"
+    },
+    {
+      "name": "LegacyCommonMgr::GetFunc",
+      "file": "common/src/legacy_common_manager.cpp",
+      "type": "utility",
+      "risk_level": "medium",
+      "security_notes": "Dynamic function pointer loading via symbol name"
+    }
+  ],
+  "cross_module_calls": [
+    {
+      "caller_module": "conv",
+      "caller_function": "aclnnConvolution",
+      "callee_module": "common",
+      "callee_function": "ConvForwardInfershape",
+      "risk": "Shape validation - potential dimension overflow"
+    },
+    {
+      "caller_module": "conv",
+      "caller_function": "ConvolutionTilingExecute",
+      "callee_module": "common",
+      "callee_function": "GetTbeTiling",
+      "risk": "Dynamic symbol loading"
+    },
+    {
+      "caller_module": "matmul",
+      "caller_function": "MatmulTilingExecute",
+      "callee_module": "common",
+      "callee_function": "MatmulUtil",
+      "risk": "Memory block calculation - integer overflow"
+    },
+    {
+      "caller_module": "hash",
+      "caller_function": "embedding_hash_table_lookup_or_insert",
+      "callee_module": "common",
+      "callee_function": "MurmurHash",
+      "risk": "Hash computation - void pointer casting"
+    },
+    {
+      "caller_module": "hash",
+      "caller_function": "InitEmbeddingHashTableAPT",
+      "callee_module": "common",
+      "callee_function": "MemoryAlloc",
+      "risk": "Direct memory allocation"
+    },
+    {
+      "caller_module": "rnn",
+      "caller_function": "LSTMKernel",
+      "callee_module": "activation",
+      "callee_function": "Sigmoid/Tanh",
+      "risk": "Activation function compute"
+    }
+  ],
+  "high_risk_call_chains": [
+    {
+      "chain_id": 1,
+      "chain": [
+        "aclnnInitEmbeddingHashTable",
+        "HashTableInit",
+        "BucketAllocation",
+        "MemoryAlloc"
+      ],
+      "risk": "Critical - Hash table memory allocation, bucketSize * tableSize calculation",
+      "cwe": ["CWE-787", "CWE-190"],
+      "module": "hash"
+    },
+    {
+      "chain_id": 2,
+      "chain": [
+        "aclnnEmbeddingHashTableLookupOrInsert",
+        "embedding_hash_table_lookup_or_insert",
+        "ComputeLookupOrInsert",
+        "AtomicCas",
+        "pCurrBucket = pTable + currIdx * bucketSize"
+      ],
+      "risk": "Critical - Direct memory pointer arithmetic, atomic operations, hash collision handling",
+      "cwe": ["CWE-119", "CWE-362", "CWE-125"],
+      "module": "hash"
+    },
+    {
+      "chain_id": 3,
+      "chain": [
+        "aclnnConvolutionGetWorkspaceSize",
+        "ConvolutionShapeValidate",
+        "GetWorkspaceSize"
+      ],
+      "risk": "High - Workspace size calculation from tensor dimensions, potential integer overflow",
+      "cwe": ["CWE-190"],
+      "module": "conv"
+    },
+    {
+      "chain_id": 4,
+      "chain": [
+        "aclnnMatmul",
+        "MatmulTilingExecute",
+        "MatmulV3BaseTiling",
+        "CalculateBlockSize",
+        "blockM = CeilDiv(M, factor)"
+      ],
+      "risk": "High - Integer overflow in block size calculation for large matrices",
+      "cwe": ["CWE-190"],
+      "module": "matmul"
+    },
+    {
+      "chain_id": 5,
+      "chain": [
+        "aclnnGatherV2",
+        "GatherIndexValidate",
+        "IndexCalculate",
+        "pValues[i * embeddingDim + j]"
+      ],
+      "risk": "Medium - Index calculation for gather, potential out-of-bounds if validation fails",
+      "cwe": ["CWE-129", "CWE-125"],
+      "module": "index"
+    },
+    {
+      "chain_id": 6,
+      "chain": [
+        "ONNX Model File",
+        "ParseParamsMatMul",
+        "node->attribute()",
+        "op_dest.SetAttr"
+      ],
+      "risk": "Medium - External ONNX model parsing, attribute extraction",
+      "cwe": ["CWE-20"],
+      "module": "common"
+    }
+  ],
+  "python_script_call_chains": [
+    {
+      "chain_id": "py_1",
+      "script": "scripts/package/package.py",
+      "functions": [
+        "main() -> args_parse() -> parse_xml_config() -> subprocess.run(['chmod', ...])",
+        "create_softlink() -> subprocess.run(['rm', '-f', ...]) -> os.symlink()",
+        "do_chmod() -> subprocess.run(['chmod', '-R', ...])"
+      ],
+      "risk": "Medium - Command execution via subprocess, file operations",
+      "cwe": ["CWE-78"]
+    },
+    {
+      "chain_id": "py_2",
+      "script": "scripts/tools/third_lib_download.py",
+      "functions": [
+        "execute_process(['git', 'clone', url, file_path])",
+        "execute_process(['git', 'fetch', 'origin'])",
+        "execute_process(['git', 'reset', '--hard', 'origin/HEAD'])"
+      ],
+      "risk": "Medium - Git command execution, external URL handling",
+      "cwe": ["CWE-78"]
+    },
+    {
+      "chain_id": "py_3",
+      "script": "scripts/util/parse_ini_to_json.py",
+      "functions": [
+        "parse_ini_to_obj() -> open(ini_file) -> lines = ini_file.readlines()",
+        "write_json_file() -> os.open(json_file_real_path, wr_flag, wr_mode) -> json.dump()"
+      ],
+      "risk": "Low - INI file parsing, JSON serialization with safe file operations",
+      "cwe": ["CWE-73"]
+    }
+  ]
+}

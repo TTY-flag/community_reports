@@ -1,0 +1,543 @@
+{
+  "project_name": "HCCL",
+  "project_description": "Huawei Collective Communication Library - 高性能集合通信库，为昇腾AI处理器集群提供集合通信和点对点通信能力",
+  "language": {
+    "primary": "C++",
+    "secondary": ["C", "Python"],
+    "file_counts": {
+      "cpp": 689,
+      "python": 27
+    }
+  },
+  "architecture": {
+    "type": "library",
+    "components": [
+      {
+        "name": "HCCL集合通信库",
+        "description": "内置和扩展通信算子，提供对外通信算子接口",
+        "path": "src/ops/",
+        "entry_points": [
+          "HcclAllReduce",
+          "HcclBroadcast",
+          "HcclReduceScatter",
+          "HcclReduceScatterV",
+          "HcclScatter",
+          "HcclAllGather",
+          "HcclAllGatherV",
+          "HcclSend",
+          "HcclRecv",
+          "HcclAlltoAll",
+          "HcclAlltoAllV",
+          "HcclAlltoAllVC",
+          "HcclReduce",
+          "HcclBatchSendRecv"
+        ]
+      },
+      {
+        "name": "HCOMM通信基础库接口",
+        "description": "分层解耦设计，控制面和数据面分离",
+        "path": "src/common/hcomm_dlsym/"
+      },
+      {
+        "name": "公共模块",
+        "description": "类型定义、日志、参数校验、环境配置等通用逻辑",
+        "path": "src/common/"
+      },
+      {
+        "name": "算子公共组件",
+        "description": "执行器、选择器、模板、拓扑信息处理",
+        "path": "src/ops/op_common/"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "all_reduce",
+      "path": "src/ops/all_reduce/",
+      "description": "AllReduce集合通信算子实现",
+      "risk_level": "high",
+      "file_count": 33,
+      "entry_point": "HcclAllReduce"
+    },
+    {
+      "name": "all_gather",
+      "path": "src/ops/all_gather/",
+      "description": "AllGather集合通信算子实现",
+      "risk_level": "high",
+      "entry_point": "HcclAllGather"
+    },
+    {
+      "name": "all_gather_v",
+      "path": "src/ops/all_gather_v/",
+      "description": "AllGatherV变长集合通信算子实现",
+      "risk_level": "high",
+      "entry_point": "HcclAllGatherV",
+      "special_note": "处理变长数组参数recvCounts/recvDispls"
+    },
+    {
+      "name": "all_to_all_v",
+      "path": "src/ops/all_to_all_v/",
+      "description": "AlltoAllV/AlltoAllVC集合通信算子实现",
+      "risk_level": "high",
+      "entry_points": ["HcclAlltoAll", "HcclAlltoAllV", "HcclAlltoAllVC"],
+      "special_note": "处理复杂变长数组参数sendCounts/recvCounts/sdispls/rdispls"
+    },
+    {
+      "name": "reduce_scatter",
+      "path": "src/ops/reduce_scatter/",
+      "description": "ReduceScatter集合通信算子实现",
+      "risk_level": "high",
+      "entry_point": "HcclReduceScatter"
+    },
+    {
+      "name": "reduce_scatter_v",
+      "path": "src/ops/reduce_scatter_v/",
+      "description": "ReduceScatterV变长集合通信算子实现",
+      "risk_level": "high",
+      "entry_point": "HcclReduceScatterV",
+      "special_note": "处理变长数组参数sendCounts/sendDispls"
+    },
+    {
+      "name": "broadcast",
+      "path": "src/ops/broadcast/",
+      "description": "Broadcast集合通信算子实现",
+      "risk_level": "medium",
+      "entry_point": "HcclBroadcast"
+    },
+    {
+      "name": "scatter",
+      "path": "src/ops/scatter/",
+      "description": "Scatter集合通信算子实现",
+      "risk_level": "medium",
+      "entry_point": "HcclScatter"
+    },
+    {
+      "name": "reduce",
+      "path": "src/ops/reduce/",
+      "description": "Reduce集合通信算子实现",
+      "risk_level": "medium",
+      "entry_point": "HcclReduce"
+    },
+    {
+      "name": "send",
+      "path": "src/ops/send/",
+      "description": "点对点Send通信算子实现",
+      "risk_level": "high",
+      "entry_point": "HcclSend",
+      "special_note": "涉及跨Rank数据传输"
+    },
+    {
+      "name": "recv",
+      "path": "src/ops/recv/",
+      "description": "点对点Recv通信算子实现",
+      "risk_level": "high",
+      "entry_point": "HcclRecv",
+      "special_note": "涉及跨Rank数据接收"
+    },
+    {
+      "name": "batch_send_recv",
+      "path": "src/ops/batch_send_recv/",
+      "description": "批量Send/Recv通信算子实现",
+      "risk_level": "high",
+      "entry_point": "HcclBatchSendRecv",
+      "special_note": "处理数组形式的sendRecvInfo"
+    },
+    {
+      "name": "op_common_executor",
+      "path": "src/ops/op_common/executor/",
+      "description": "算子执行器框架",
+      "risk_level": "medium"
+    },
+    {
+      "name": "op_common_selector",
+      "path": "src/ops/op_common/selector/",
+      "description": "算法选择器",
+      "risk_level": "medium"
+    },
+    {
+      "name": "op_common_template",
+      "path": "src/ops/op_common/template/",
+      "description": "算法模板（AICPU/AIV/CCU/DPU）",
+      "risk_level": "high",
+      "special_note": "包含kernel launch和binary加载逻辑"
+    },
+    {
+      "name": "op_common_topo",
+      "path": "src/ops/op_common/topo/",
+      "description": "拓扑信息处理",
+      "risk_level": "medium"
+    },
+    {
+      "name": "common",
+      "path": "src/common/",
+      "description": "公共模块（参数校验、环境配置、日志等）",
+      "risk_level": "medium"
+    },
+    {
+      "name": "hcomm_dlsym",
+      "path": "src/common/hcomm_dlsym/",
+      "description": "动态符号加载，HCOMM库接口封装",
+      "risk_level": "high",
+      "special_note": "使用dlopen/dlsym动态加载库"
+    },
+    {
+      "name": "interface_graph_mode",
+      "path": "src/ops/interface_graph_mode/",
+      "description": "图模式接口实现",
+      "risk_level": "medium"
+    }
+  ],
+  "entry_points": [
+    {
+      "name": "HcclAllReduce",
+      "file": "include/hccl.h",
+      "line": 35,
+      "signature": "HcclResult HcclAllReduce(void *sendBuf, void *recvBuf, uint64_t count, HcclDataType dataType, HcclReduceOp op, HcclComm comm, aclrtStream stream)",
+      "category": "public_api",
+      "risk_level": "high",
+      "data_flow": "external_input -> sendBuf/recvBuf -> network_transmission"
+    },
+    {
+      "name": "HcclAllGatherV",
+      "file": "include/hccl.h",
+      "line": 134,
+      "signature": "HcclResult HcclAllGatherV(void *sendBuf, uint64_t sendCount, void *recvBuf, const void *recvCounts, const void *recvDispls, HcclDataType dataType, HcclComm comm, aclrtStream stream)",
+      "category": "public_api",
+      "risk_level": "high",
+      "data_flow": "external_input -> sendBuf/recvBuf/recvCounts/recvDispls -> buffer_calculation -> network_transmission",
+      "special_note": "recvCounts和recvDispls是外部传入的数组，用于计算缓冲区偏移"
+    },
+    {
+      "name": "HcclAlltoAllV",
+      "file": "include/hccl.h",
+      "line": 202,
+      "signature": "HcclResult HcclAlltoAllV(const void *sendBuf, const void *sendCounts, const void *sdispls, HcclDataType sendType, const void *recvBuf, const void *recvCounts, const void *rdispls, HcclDataType recvType, HcclComm comm, aclrtStream stream)",
+      "category": "public_api",
+      "risk_level": "high",
+      "data_flow": "external_input -> sendBuf/recvBuf/sendCounts/recvCounts/sdispls/rdispls -> buffer_calculation -> network_transmission",
+      "special_note": "多个变长数组参数，复杂的缓冲区计算逻辑"
+    },
+    {
+      "name": "HcclSend",
+      "file": "include/hccl.h",
+      "line": 149,
+      "signature": "HcclResult HcclSend(void* sendBuf, uint64_t count, HcclDataType dataType, uint32_t destRank, HcclComm comm, aclrtStream stream)",
+      "category": "public_api",
+      "risk_level": "high",
+      "data_flow": "external_input -> sendBuf -> network_transmission -> destRank"
+    },
+    {
+      "name": "HcclRecv",
+      "file": "include/hccl.h",
+      "line": 163,
+      "signature": "HcclResult HcclRecv(void* recvBuf, uint64_t count, HcclDataType dataType, uint32_t srcRank, HcclComm comm, aclrtStream stream)",
+      "category": "public_api",
+      "risk_level": "high",
+      "data_flow": "network_receive -> recvBuf"
+    },
+    {
+      "name": "HcclBatchSendRecv",
+      "file": "include/hccl.h",
+      "line": 249,
+      "signature": "HcclResult HcclBatchSendRecv(HcclSendRecvItem* sendRecvInfo, uint32_t itemNum, HcclComm comm, aclrtStream stream)",
+      "category": "public_api",
+      "risk_level": "high",
+      "data_flow": "external_input -> sendRecvInfo array -> network_transmission",
+      "special_note": "sendRecvInfo是外部传入的数组结构"
+    },
+    {
+      "name": "HcclReduceScatterV",
+      "file": "include/hccl.h",
+      "line": 85,
+      "signature": "HcclResult HcclReduceScatterV(void *sendBuf, const void *sendCounts, const void *sendDispls, void *recvBuf, uint64_t recvCount, HcclDataType dataType, HcclReduceOp op, HcclComm comm, aclrtStream stream)",
+      "category": "public_api",
+      "risk_level": "high",
+      "data_flow": "external_input -> sendBuf/sendCounts/sendDispls -> buffer_calculation -> network_transmission"
+    },
+    {
+      "name": "HcclLaunchAicpuKernel",
+      "file": "src/ops/op_common/template/aicpu/kernel_launch.cc",
+      "line": 218,
+      "signature": "unsigned int HcclLaunchAicpuKernel(OpParam *param)",
+      "category": "internal_api",
+      "risk_level": "high",
+      "data_flow": "OpParam serialization -> device kernel execution"
+    },
+    {
+      "name": "InitEnvConfig",
+      "file": "src/common/alg_env_config.cc",
+      "line": 111,
+      "signature": "HcclResult InitEnvConfig()",
+      "category": "internal_api",
+      "risk_level": "medium",
+      "data_flow": "environment_variables -> configuration parsing"
+    },
+    {
+      "name": "HcommDlInit",
+      "file": "src/common/hcomm_dlsym/hcomm_dlsym.cc",
+      "line": 57,
+      "signature": "void HcommDlInit(void)",
+      "category": "internal_api",
+      "risk_level": "high",
+      "special_note": "使用dlopen加载libhcomm.so"
+    }
+  ],
+  "communication_protocols": [
+    {
+      "name": "HCCS",
+      "description": "Huawei Cluster Communication System - 服务器内高速通信链路",
+      "usage": "Level0/Level1 intra-server communication"
+    },
+    {
+      "name": "RoCE",
+      "description": "RDMA over Converged Ethernet - 服务器间RDMA通信",
+      "usage": "Level1/Level2 inter-server communication"
+    },
+    {
+      "name": "PCIe",
+      "description": "PCI Express - 服务器内通信备用链路",
+      "usage": "Intra-server communication fallback"
+    },
+    {
+      "name": "UBC_CTP",
+      "description": "Unified Buffer Control - Control Transport Protocol",
+      "usage": "AICPU/CCU engine communication"
+    },
+    {
+      "name": "UBC_TP",
+      "description": "Unified Buffer Control - Transport Protocol",
+      "usage": "AICPU/CCU engine communication"
+    },
+    {
+      "name": "UB_MEM",
+      "description": "Unified Buffer Memory Protocol",
+      "usage": "AIV engine communication"
+    }
+  ],
+  "execution_modes": [
+    {
+      "name": "AICPU",
+      "description": "AI CPU展开模式",
+      "config_env": "HCCL_OP_EXPANSION_MODE=AI_CPU"
+    },
+    {
+      "name": "AIV",
+      "description": "AI Vector展开模式",
+      "config_env": "HCCL_OP_EXPANSION_MODE=AIV"
+    },
+    {
+      "name": "CCU_MS",
+      "description": "CCU Multi-Stream模式",
+      "config_env": "HCCL_OP_EXPANSION_MODE=CCU_MS"
+    },
+    {
+      "name": "CCU_SCHED",
+      "description": "CCU Scheduler模式",
+      "config_env": "HCCL_OP_EXPANSION_MODE=CCU_SCHED"
+    },
+    {
+      "name": "HOST",
+      "description": "Host CPU展开模式",
+      "config_env": "HCCL_OP_EXPANSION_MODE=HOST"
+    }
+  ],
+  "environment_variables": [
+    {
+      "name": "HCCL_OP_EXPANSION_MODE",
+      "description": "算子展开模式配置",
+      "risk_level": "medium",
+      "validation": "enum[AI_CPU,AIV,AIV_ONLY,HOST,HOST_TS,CCU_MS,CCU_SCHED]"
+    },
+    {
+      "name": "HCCL_DETERMINISTIC",
+      "description": "确定性计算开关",
+      "risk_level": "low",
+      "validation": "enum[true,false,strict]"
+    },
+    {
+      "name": "HCCL_INTRA_PCIE_ENABLE",
+      "description": "服务器内PCIe通信开关",
+      "risk_level": "medium",
+      "validation": "digit[0,1]"
+    },
+    {
+      "name": "HCCL_INTRA_ROCE_ENABLE",
+      "description": "服务器内RoCE通信开关",
+      "risk_level": "medium",
+      "validation": "digit[0,1]"
+    },
+    {
+      "name": "HCCL_INTER_HCCS_DISABLE",
+      "description": "服务器间HCCS禁用开关",
+      "risk_level": "medium",
+      "validation": "enum[true,false]"
+    },
+    {
+      "name": "HCCL_ALGO",
+      "description": "算法配置",
+      "risk_level": "medium",
+      "validation": "complex_string_format"
+    },
+    {
+      "name": "HCCL_EXEC_TIMEOUT",
+      "description": "执行超时时间",
+      "risk_level": "low",
+      "validation": "float_with_2_decimals"
+    },
+    {
+      "name": "HCCL_ENTRY_LOG_ENABLE",
+      "description": "入口日志开关",
+      "risk_level": "low",
+      "validation": "digit[0,1]"
+    },
+    {
+      "name": "HCCL_OP_RETRY_ENABLE",
+      "description": "重试开关",
+      "risk_level": "low",
+      "validation": "format[L0:0,L1:0,L2:0]"
+    },
+    {
+      "name": "HCCL_DEBUG_CONFIG",
+      "description": "调试配置",
+      "risk_level": "low",
+      "validation": "enum_list[ALG,TASK,RESOURCE,AIV_OPS_EXC]"
+    },
+    {
+      "name": "ASCEND_HOME_PATH",
+      "description": "CANN安装路径",
+      "risk_level": "medium",
+      "validation": "path_string",
+      "usage": "AIV binary loading"
+    }
+  ],
+  "high_risk_areas": [
+    {
+      "area": "变长参数处理",
+      "description": "AllGatherV/AlltoAllV/ReduceScatterV等算子接收外部传入的数组参数",
+      "risk_factors": [
+        "recvCounts/recvDispls/sendCounts/sendDispls等数组由外部传入",
+        "数组内容直接影响缓冲区偏移计算",
+        "可能导致缓冲区越界或整数溢出"
+      ],
+      "affected_modules": ["all_gather_v", "all_to_all_v", "reduce_scatter_v"]
+    },
+    {
+      "area": "跨Rank数据传输",
+      "description": "Send/Recv/BatchSendRecv涉及跨进程/跨服务器的数据传输",
+      "risk_factors": [
+        "数据通过网络传输，可能被篡改",
+        "destRank/srcRank参数控制目标节点",
+        "缓冲区大小和数据量需要严格匹配"
+      ],
+      "affected_modules": ["send", "recv", "batch_send_recv"]
+    },
+    {
+      "area": "动态库加载",
+      "description": "使用dlopen/dlsym动态加载libhcomm.so",
+      "risk_factors": [
+        "库路径可能被篡改",
+        "符号查找失败可能导致运行时错误"
+      ],
+      "affected_modules": ["hcomm_dlsym"]
+    },
+    {
+      "area": "Binary文件加载",
+      "description": "AIV模式需要加载kernel binary文件",
+      "risk_factors": [
+        "binary路径由ASCEND_HOME_PATH环境变量决定",
+        "文件可能被替换或篡改"
+      ],
+      "affected_modules": ["op_common_template_aiv"]
+    },
+    {
+      "area": "序列化/反序列化",
+      "description": "OpParam和拓扑信息的序列化传输",
+      "risk_factors": [
+        "序列化数据在Host和Device之间传递",
+        "反序列化过程可能存在缓冲区处理问题"
+      ],
+      "affected_modules": ["op_common_template", "common"]
+    },
+    {
+      "area": "环境变量解析",
+      "description": "多个环境变量控制通信行为",
+      "risk_factors": [
+        "环境变量可被外部设置",
+        "错误的配置可能导致通信失败或安全问题"
+      ],
+      "affected_modules": ["common"]
+    }
+  ],
+  "data_types": [
+    "HCCL_DATA_TYPE_INT8",
+    "HCCL_DATA_TYPE_INT16",
+    "HCCL_DATA_TYPE_INT32",
+    "HCCL_DATA_TYPE_INT64",
+    "HCCL_DATA_TYPE_FP16",
+    "HCCL_DATA_TYPE_FP32",
+    "HCCL_DATA_TYPE_FP64",
+    "HCCL_DATA_TYPE_BFP16",
+    "HCCL_DATA_TYPE_UINT8",
+    "HCCL_DATA_TYPE_UINT16",
+    "HCCL_DATA_TYPE_UINT32",
+    "HCCL_DATA_TYPE_UINT64"
+  ],
+  "reduce_operations": [
+    "HCCL_REDUCE_SUM",
+    "HCCL_REDUCE_MIN",
+    "HCCL_REDUCE_MAX",
+    "HCCL_REDUCE_PROD"
+  ],
+  "communication_algorithms": [
+    {
+      "level": "level0",
+      "algorithms": ["NA", "RING", "FULLMESH", "NHR", "NB"]
+    },
+    {
+      "level": "level1",
+      "algorithms": ["NA", "RING", "NHR", "NHR_V1", "NB"]
+    },
+    {
+      "level": "level2",
+      "algorithms": ["NA", "RING", "NHR", "NB"]
+    }
+  ],
+  "topology_types": [
+    "TOPO_TYPE_COMMON",
+    "TOPO_TYPE_8P_RING",
+    "TOPO_TYPE_4P_MESH",
+    "TOPO_TYPE_2P_MESH",
+    "TOPO_TYPE_1P_MESH",
+    "TOPO_TYPE_4P_RING",
+    "TOPO_TYPE_NP_SINGLE_RING",
+    "TOPO_TYPE_8P_MESH",
+    "TOPO_TYPE_NP_MESH",
+    "TOPO_TYPE_NP_DOUBLE_RING",
+    "TOPO_TYPE_HETEROG",
+    "TOPO_TYPE_ES_MESH"
+  ],
+  "build_system": {
+    "type": "CMake",
+    "main_file": "CMakeLists.txt",
+    "build_script": "build.sh"
+  },
+  "test_coverage": {
+    "unit_tests": "test/ut/",
+    "system_tests": "test/st/",
+    "examples": "examples/"
+  },
+  "dependencies": {
+    "external": [
+      "acl (Ascend Computing Library)",
+      "hcomm (Huawei Communication Library)",
+      "CANN SDK"
+    ],
+    "internal": []
+  },
+  "security_notes": {
+    "input_validation": "参数校验函数位于src/common/param_check.cc",
+    "error_handling": "使用CHK_RET/CHK_PTR_NULL宏进行错误处理",
+    "logging": "HCCL_INFO/HCCL_ERROR/HCCL_WARNING用于日志记录",
+    "memory_management": "使用malloc/free和RAII管理内存"
+  }
+}

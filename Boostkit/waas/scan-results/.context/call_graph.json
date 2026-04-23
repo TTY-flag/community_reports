@@ -1,0 +1,579 @@
+{
+  "functions": {
+    "cpu_booster_main@src/waasbooster/waas_booster.py": {
+      "defined_at": 516,
+      "calls": [
+        "booster_param_parser@src/waasbooster/waas_booster.py",
+        "set_log_instance@src/waasbooster/boost_log.py",
+        "QuotaBooster.__init__@src/waasbooster/waas_booster.py",
+        "QuotaBooster.init_service@src/waasbooster/waas_booster.py",
+        "QuotaBooster.run@src/waasbooster/waas_booster.py"
+      ],
+      "called_by": [],
+      "receives_external_input": false,
+      "risk": "High"
+    },
+    "booster_param_parser@src/waasbooster/waas_booster.py": {
+      "defined_at": 507,
+      "calls": [],
+      "called_by": [
+        "cpu_booster_main@src/waasbooster/waas_booster.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "external_input_source": "命令行参数 argparse"
+    },
+    "QuotaBooster.__init__@src/waasbooster/waas_booster.py": {
+      "defined_at": 40,
+      "calls": [
+        "get_all_pod@src/waasbooster/waas_booster.py",
+        "get_pod_og_quota@src/waasbooster/waas_booster.py",
+        "NUMAMonitor.__init__@src/waasbooster/numa_cpu_monitor.py",
+        "check_init_param@src/waasbooster/waas_booster.py"
+      ],
+      "called_by": [
+        "cpu_booster_main@src/waasbooster/waas_booster.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "QuotaBooster.run@src/waasbooster/waas_booster.py": {
+      "defined_at": 161,
+      "calls": [
+        "QuotaManager.__init__@src/waasbooster/quota_manager.py",
+        "monitor_container@src/waasbooster/waas_booster.py",
+        "restore_init_quota@src/waasbooster/waas_booster.py",
+        "cleanup@src/waasbooster/waas_booster.py"
+      ],
+      "called_by": [
+        "cpu_booster_main@src/waasbooster/waas_booster.py"
+      ],
+      "receives_external_input": false,
+      "risk": "High"
+    },
+    "monitor_container@src/waasbooster/waas_booster.py": {
+      "defined_at": 217,
+      "calls": [
+        "cpu_util_queue_start@src/waasbooster/waas_booster.py",
+        "DataCollector.__init__@src/waasbooster/data_collector.py",
+        "refresh_pod_path@src/waasbooster/waas_booster.py",
+        "numa_balance@src/waasbooster/waas_booster.py",
+        "get_cpu_util_queue@src/waasbooster/waas_booster.py",
+        "load_forecast@src/waasbooster/waas_booster.py",
+        "check_pod_status@src/waasbooster/waas_booster.py",
+        "QuotaManager.quota_approval@src/waasbooster/quota_manager.py",
+        "quota_set@src/waasbooster/waas_booster.py"
+      ],
+      "called_by": [
+        "QuotaBooster.run@src/waasbooster/waas_booster.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "external_input_source": "cgroup 文件系统数据"
+    },
+    "check_pod_status@src/waasbooster/waas_booster.py": {
+      "defined_at": 259,
+      "calls": [
+        "calculate_container_quota@src/waasbooster/waas_booster.py"
+      ],
+      "called_by": [
+        "monitor_container@src/waasbooster/waas_booster.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "external_input_source": "cpu_queue_dict (来自 cgroup)"
+    },
+    "calculate_container_quota@src/waasbooster/waas_booster.py": {
+      "defined_at": 338,
+      "calls": [
+        "update_container_queue_time@src/waasbooster/waas_booster.py",
+        "quota_calculate@src/waasbooster/waas_booster.py"
+      ],
+      "called_by": [
+        "check_pod_status@src/waasbooster/waas_booster.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "quota_calculate@src/waasbooster/waas_booster.py": {
+      "defined_at": 354,
+      "calls": [
+        "init_pid@src/waasbooster/waas_booster.py",
+        "PIDController.update@src/waasbooster/quota_calculator.py"
+      ],
+      "called_by": [
+        "calculate_container_quota@src/waasbooster/waas_booster.py"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "quota_set@src/waasbooster/waas_booster.py": {
+      "defined_at": 104,
+      "calls": [
+        "quota_updater@src/waasbooster/quota_updater.py"
+      ],
+      "called_by": [
+        "monitor_container@src/waasbooster/waas_booster.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "external_input_source": "pod_update_quota_dict"
+    },
+    "get_all_pod@src/waasbooster/waas_booster.py": {
+      "defined_at": 98,
+      "calls": [
+        "get_boosted_container_cgroups@src/waasbooster/util.py"
+      ],
+      "called_by": [
+        "QuotaBooster.__init__@src/waasbooster/waas_booster.py",
+        "refresh_pod_path@src/waasbooster/waas_booster.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "external_input_source": "cgroup 文件系统"
+    },
+    "refresh_pod_path@src/waasbooster/waas_booster.py": {
+      "defined_at": 271,
+      "calls": [
+        "get_all_pod@src/waasbooster/waas_booster.py",
+        "get_container_info@src/waasbooster/util.py",
+        "cpu_util_queue_start@src/waasbooster/waas_booster.py",
+        "init_quota_record@src/waasbooster/waas_booster.py"
+      ],
+      "called_by": [
+        "monitor_container@src/waasbooster/waas_booster.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "restore_init_quota@src/waasbooster/waas_booster.py": {
+      "defined_at": 390,
+      "calls": [
+        "quota_updater@src/waasbooster/quota_updater.py"
+      ],
+      "called_by": [
+        "QuotaBooster.run@src/waasbooster/waas_booster.py"
+      ],
+      "receives_external_input": false,
+      "risk": "High"
+    },
+    "load_forecast@src/waasbooster/waas_booster.py": {
+      "defined_at": 423,
+      "calls": [
+        "get_forecast_load@src/waasbooster/load_predictor.py"
+      ],
+      "called_by": [
+        "monitor_container@src/waasbooster/waas_booster.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Low",
+      "external_input_source": "pod_data (内部收集)"
+    },
+    "get_boosted_container_cgroups@src/waasbooster/util.py": {
+      "defined_at": 192,
+      "calls": [
+        "get_container_cgroups@src/waasbooster/util.py"
+      ],
+      "called_by": [
+        "get_all_pod@src/waasbooster/waas_booster.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "external_input_source": "/proc 和 cgroup 文件系统"
+    },
+    "get_container_cgroups@src/waasbooster/util.py": {
+      "defined_at": 160,
+      "calls": [
+        "get_cpu_cgroup_mount_point@src/waasbooster/util.py",
+        "get_all_pids@src/waasbooster/util.py",
+        "get_cgroup_path_for_pid@src/waasbooster/util.py",
+        "legal_cgroup_path@src/waasbooster/util.py",
+        "check_container_cpuset_cpus@src/waasbooster/util.py",
+        "is_container_path@src/waasbooster/util.py"
+      ],
+      "called_by": [
+        "get_boosted_container_cgroups@src/waasbooster/util.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "external_input_source": "/proc 目录遍历"
+    },
+    "get_all_pids@src/waasbooster/util.py": {
+      "defined_at": 98,
+      "calls": [],
+      "called_by": [
+        "get_container_cgroups@src/waasbooster/util.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "external_input_source": "/proc 目录"
+    },
+    "get_cgroup_path_for_pid@src/waasbooster/util.py": {
+      "defined_at": 103,
+      "calls": [
+        "file_check@src/waasbooster/util.py"
+      ],
+      "called_by": [
+        "get_container_cgroups@src/waasbooster/util.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "file_check@src/waasbooster/util.py": {
+      "defined_at": 114,
+      "calls": [],
+      "called_by": [
+        "get_cgroup_path_for_pid@src/waasbooster/util.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "external_input_source": "/proc/{pid}/cgroup 文件"
+    },
+    "get_container_info@src/waasbooster/util.py": {
+      "defined_at": 209,
+      "calls": [],
+      "called_by": [
+        "refresh_pod_path@src/waasbooster/waas_booster.py",
+        "_balance_pods@src/waasbooster/quota_manager.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "external_input_source": "cgroup 文件"
+    },
+    "QuotaManager.__init__@src/waasbooster/quota_manager.py": {
+      "defined_at": 81,
+      "calls": [
+        "_get_cgroup_version@src/waasbooster/quota_manager.py"
+      ],
+      "called_by": [
+        "QuotaBooster.run@src/waasbooster/waas_booster.py"
+      ],
+      "receives_external_input": false,
+      "risk": "High"
+    },
+    "_get_cgroup_version@src/waasbooster/quota_manager.py": {
+      "defined_at": 18,
+      "calls": [],
+      "called_by": [
+        "QuotaManager.__init__@src/waasbooster/quota_manager.py"
+      ],
+      "receives_external_input": false,
+      "risk": "High",
+      "external_input_source": "subprocess 执行外部命令"
+    },
+    "QuotaManager.quota_approval@src/waasbooster/quota_manager.py": {
+      "defined_at": 98,
+      "calls": [
+        "_check_numa_util@src/waasbooster/quota_manager.py",
+        "_get_pods_to_limit@src/waasbooster/quota_manager.py",
+        "_balance_pods@src/waasbooster/quota_manager.py",
+        "_get_pods_to_scale@src/waasbooster/quota_manager.py",
+        "_get_pods_to_balance@src/waasbooster/quota_manager.py"
+      ],
+      "called_by": [
+        "monitor_container@src/waasbooster/waas_booster.py",
+        "numa_balance@src/waasbooster/waas_booster.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "external_input_source": "numa_cpu_util_dict, pod_quotas"
+    },
+    "_balance_pods@src/waasbooster/quota_manager.py": {
+      "defined_at": 184,
+      "calls": [
+        "get_container_info@src/waasbooster/util.py",
+        "_get_overload_pods@src/waasbooster/quota_manager.py",
+        "_balance_pods_by_share@src/waasbooster/quota_manager.py"
+      ],
+      "called_by": [
+        "QuotaManager.quota_approval@src/waasbooster/quota_manager.py"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "quota_updater@src/waasbooster/quota_updater.py": {
+      "defined_at": 30,
+      "calls": [
+        "_update_parent_quota@src/waasbooster/quota_updater.py"
+      ],
+      "called_by": [
+        "quota_set@src/waasbooster/waas_booster.py",
+        "restore_init_quota@src/waasbooster/waas_booster.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "external_input_source": "cgroup_path, quota 参数"
+    },
+    "_update_parent_quota@src/waasbooster/quota_updater.py": {
+      "defined_at": 17,
+      "calls": [],
+      "called_by": [
+        "quota_updater@src/waasbooster/quota_updater.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "external_input_source": "parent_cgroup_path, quota_value"
+    },
+    "CpuMonitor.run@src/waasbooster/cpu_monitor.py": {
+      "defined_at": 65,
+      "calls": [
+        "get_cpu_usage@src/waasbooster/cpu_monitor.py",
+        "cpu_util_cal@src/waasbooster/cpu_monitor.py"
+      ],
+      "called_by": [
+        "cpu_util_queue_start@src/waasbooster/waas_booster.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "external_input_source": "cgroup 文件系统"
+    },
+    "get_cpu_usage@src/waasbooster/cpu_monitor.py": {
+      "defined_at": 37,
+      "calls": [],
+      "called_by": [
+        "CpuMonitor.run@src/waasbooster/cpu_monitor.py",
+        "cpu_util_cal@src/waasbooster/cpu_monitor.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "external_input_source": "cgroup cpuacct.usage 文件"
+    },
+    "cpu_util_cal@src/waasbooster/cpu_monitor.py": {
+      "defined_at": 89,
+      "calls": [
+        "get_cpu_usage@src/waasbooster/cpu_monitor.py",
+        "get_cpu_limits@src/waasbooster/cpu_monitor.py",
+        "weighted_queue_sum@src/waasbooster/util.py"
+      ],
+      "called_by": [
+        "CpuMonitor.run@src/waasbooster/cpu_monitor.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "NUMAMonitor.run@src/waasbooster/numa_cpu_monitor.py": {
+      "defined_at": 98,
+      "calls": [
+        "get_numa_cpu_mapping@src/waasbooster/numa_cpu_monitor.py",
+        "update_numa_util_dict@src/waasbooster/numa_cpu_monitor.py"
+      ],
+      "called_by": [
+        "QuotaBooster.__init__@src/waasbooster/waas_booster.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "external_input_source": "/sys/devices/system/node, /proc/stat"
+    },
+    "get_cpu_utilization@src/waasbooster/numa_cpu_monitor.py": {
+      "defined_at": 62,
+      "calls": [],
+      "called_by": [
+        "update_numa_util_dict@src/waasbooster/numa_cpu_monitor.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "external_input_source": "/proc/stat 文件"
+    },
+    "get_forecast_load@src/waasbooster/load_predictor.py": {
+      "defined_at": 88,
+      "calls": [
+        "data_pre@src/waasbooster/load_predictor.py",
+        "train_until_converged@src/waasbooster/load_predictor.py"
+      ],
+      "called_by": [
+        "load_forecast@src/waasbooster/waas_booster.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Low",
+      "external_input_source": "load_data (内部数据)"
+    },
+    "DataCollector.collect_data@src/waasbooster/data_collector.py": {
+      "defined_at": 46,
+      "calls": [
+        "get_cpu_util_queue@src/waasbooster/waas_booster.py",
+        "update_data_buffer@src/waasbooster/data_collector.py",
+        "write_to_csv@src/waasbooster/data_collector.py"
+      ],
+      "called_by": [
+        "monitor_container@src/waasbooster/waas_booster.py"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "external_input_source": "cpu_queue_dict"
+    },
+    "write_to_csv@src/waasbooster/data_collector.py": {
+      "defined_at": 83,
+      "calls": [
+        "compress_csv_files@src/waasbooster/data_collector.py"
+      ],
+      "called_by": [
+        "DataCollector.collect_data@src/waasbooster/data_collector.py"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "compress_csv_files@src/waasbooster/data_collector.py": {
+      "defined_at": 125,
+      "calls": [
+        "clean_old_zip_files@src/waasbooster/data_collector.py"
+      ],
+      "called_by": [
+        "write_to_csv@src/waasbooster/data_collector.py",
+        "DataCollector.stop@src/waasbooster/data_collector.py"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "set_log_instance@src/waasbooster/boost_log.py": {
+      "defined_at": 152,
+      "calls": [
+        "CustomRotatingFileHandler.__init__@src/waasbooster/boost_log.py"
+      ],
+      "called_by": [
+        "cpu_booster_main@src/waasbooster/waas_booster.py",
+        "debug@src/waasbooster/boost_log.py",
+        "info@src/waasbooster/boost_log.py",
+        "warning@src/waasbooster/boost_log.py",
+        "error@src/waasbooster/boost_log.py",
+        "critical@src/waasbooster/boost_log.py"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "CustomRotatingFileHandler.doRollover@src/waasbooster/boost_log.py": {
+      "defined_at": 42,
+      "calls": [
+        "archive_backups@src/waasbooster/boost_log.py"
+      ],
+      "called_by": [],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "archive_backups@src/waasbooster/boost_log.py": {
+      "defined_at": 66,
+      "calls": [],
+      "called_by": [
+        "CustomRotatingFileHandler.doRollover@src/waasbooster/boost_log.py"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "argparse.ArgumentParser.parse_args@src/waasbooster/waas_booster.py:511",
+      "path": [
+        "booster_param_parser@src/waasbooster/waas_booster.py:507",
+        "cpu_booster_main@src/waasbooster/waas_booster.py:516",
+        "QuotaBooster.__init__@src/waasbooster/waas_booster.py:40"
+      ],
+      "sink": "QuotaBooster.forecast 属性",
+      "sink_type": "attribute_assignment",
+      "description": "命令行参数 --forecast 传递到 QuotaBooster 实例"
+    },
+    {
+      "source": "subprocess.run(['/usr/bin/stat'])@src/waasbooster/quota_manager.py:20",
+      "path": [
+        "_get_cgroup_version@src/waasbooster/quota_manager.py:18",
+        "QuotaManager.__init__@src/waasbooster/quota_manager.py:81"
+      ],
+      "sink": "QuotaManager.cgroup_version",
+      "sink_type": "attribute_assignment",
+      "description": "外部命令执行结果传递到 cgroup_version 属性"
+    },
+    {
+      "source": "open('/proc/{pid}/cgroup')@src/waasbooster/util.py:116",
+      "path": [
+        "file_check@src/waasbooster/util.py:114",
+        "get_cgroup_path_for_pid@src/waasbooster/util.py:103",
+        "get_container_cgroups@src/waasbooster/util.py:160",
+        "get_boosted_container_cgroups@src/waasbooster/util.py:192",
+        "get_all_pod@src/waasbooster/waas_booster.py:98",
+        "QuotaBooster.__init__@src/waasbooster/waas_booster.py:40"
+      ],
+      "sink": "QuotaBooster.pod_path",
+      "sink_type": "attribute_assignment",
+      "description": "进程 cgroup 信息传递到容器路径列表"
+    },
+    {
+      "source": "open('cpuacct.usage')@src/waasbooster/cpu_monitor.py:40",
+      "path": [
+        "get_cpu_usage@src/waasbooster/cpu_monitor.py:37",
+        "CpuMonitor.run@src/waasbooster/cpu_monitor.py:65",
+        "cpu_util_cal@src/waasbooster/cpu_monitor.py:89",
+        "CpuMonitor.container_info_queue_dict@src/waasbooster/cpu_monitor.py:57"
+      ],
+      "sink": "QuotaBooster.cpu_queue_dict@src/waasbooster/waas_booster.py:232",
+      "sink_type": "attribute_access",
+      "description": "容器 CPU 使用数据流到 cpu_queue_dict"
+    },
+    {
+      "source": "cpu_queue_dict@src/waasbooster/waas_booster.py:232",
+      "path": [
+        "monitor_container@src/waasbooster/waas_booster.py:217",
+        "check_pod_status@src/waasbooster/waas_booster.py:259",
+        "calculate_container_quota@src/waasbooster/waas_booster.py:338",
+        "quota_calculate@src/waasbooster/waas_booster.py:354"
+      ],
+      "sink": "pod_update_quota_dict@src/waasbooster/waas_booster.py:230",
+      "sink_type": "variable_assignment",
+      "description": "CPU 使用数据经过计算转换为配额调整字典"
+    },
+    {
+      "source": "pod_update_quota_dict@src/waasbooster/waas_booster.py:230",
+      "path": [
+        "monitor_container@src/waasbooster/waas_booster.py:217",
+        "QuotaManager.quota_approval@src/waasbooster/quota_manager.py:98",
+        "_balance_pods@src/waasbooster/quota_manager.py:184",
+        "get_container_info@src/waasbooster/util.py:209"
+      ],
+      "sink": "open('cpu.shares')@src/waasbooster/util.py:212",
+      "sink_type": "file_read",
+      "description": "配额审批过程中读取容器 shares 信息"
+    },
+    {
+      "source": "pod_update_quota_dict@src/waasbooster/waas_booster.py:245",
+      "path": [
+        "monitor_container@src/waasbooster/waas_booster.py:217",
+        "quota_set@src/waasbooster/waas_booster.py:104",
+        "quota_updater@src/waasbooster/quota_updater.py:30"
+      ],
+      "sink": "open(quota_path, 'w')@src/waasbooster/quota_updater.py:41",
+      "sink_type": "file_write",
+      "description": "配额调整字典写入 cgroup quota 文件（关键数据流）"
+    },
+    {
+      "source": "open('/proc/stat')@src/waasbooster/numa_cpu_monitor.py:63",
+      "path": [
+        "get_cpu_utilization@src/waasbooster/numa_cpu_monitor.py:62",
+        "update_numa_util_dict@src/waasbooster/numa_cpu_monitor.py:120",
+        "NUMAMonitor.run@src/waasbooster/numa_cpu_monitor.py:98"
+      ],
+      "sink": "QuotaBooster.numa_balance()@src/waasbooster/waas_booster.py:409",
+      "sink_type": "method_call",
+      "description": "/proc/stat 数据流到 NUMA 平衡逻辑"
+    },
+    {
+      "source": "numa_cpu_util_dict@src/waasbooster/waas_booster.py:238",
+      "path": [
+        "monitor_container@src/waasbooster/waas_booster.py:217",
+        "QuotaManager.quota_approval@src/waasbooster/quota_manager.py:98",
+        "_check_numa_util@src/waasbooster/quota_manager.py:129"
+      ],
+      "sink": "throttle_nodes 判断逻辑",
+      "sink_type": "control_flow",
+      "description": "NUMA CPU 利用率数据影响配额审批决策"
+    },
+    {
+      "source": "cpu_queue_dict@src/waasbooster/waas_booster.py:452",
+      "path": [
+        "load_collect@src/waasbooster/waas_booster.py:448",
+        "update_pod_data@src/waasbooster/waas_booster.py:461",
+        "QuotaBooster.pod_data@src/waasbooster/waas_booster.py:81"
+      ],
+      "sink": "get_forecast_load@src/waasbooster/load_predictor.py:88",
+      "sink_type": "function_call",
+      "description": "CPU 使用数据收集用于负载预测"
+    }
+  ]
+}

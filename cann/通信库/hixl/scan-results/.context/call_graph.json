@@ -1,0 +1,323 @@
+{
+  "functions": {
+    "Hixl::Initialize@src/hixl/engine/hixl_impl.cc:190": {
+      "defined_at": 190,
+      "calls": ["HixlImpl::Initialize@src/hixl/engine/hixl_impl.cc:75"],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "Hixl 初始化入口，接收 IP:port 参数"
+    },
+    "HixlImpl::Initialize@src/hixl/engine/hixl_impl.cc:75": {
+      "defined_at": 75,
+      "calls": ["EngineFactory::CreateEngine", "Engine::Initialize"],
+      "called_by": ["Hixl::Initialize@src/hixl/engine/hixl_impl.cc:190"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "Hixl::RegisterMem@src/hixl/engine/hixl_impl.cc:209": {
+      "defined_at": 209,
+      "calls": ["HixlImpl::RegisterMem@src/hixl/engine/hixl_impl.cc:96"],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "内存注册 API，接收用户提供地址"
+    },
+    "HixlImpl::RegisterMem@src/hixl/engine/hixl_impl.cc:96": {
+      "defined_at": 96,
+      "calls": ["Engine::RegisterMem"],
+      "called_by": ["Hixl::RegisterMem@src/hixl/engine/hixl_impl.cc:209"],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "Hixl::TransferSync@src/hixl/engine/hixl_impl.cc:256": {
+      "defined_at": 256,
+      "calls": ["CheckTransferOpDescs@src/hixl/engine/hixl_impl.cc:22", "HixlImpl::TransferSync@src/hixl/engine/hixl_impl.cc:128"],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "同步传输 API，接收 TransferOpDesc 数组"
+    },
+    "CheckTransferOpDescs@src/hixl/engine/hixl_impl.cc:22": {
+      "defined_at": 22,
+      "calls": [],
+      "called_by": ["Hixl::TransferSync@src/hixl/engine/hixl_impl.cc:256", "Hixl::TransferAsync@src/hixl/engine/hixl_impl.cc:274"],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "验证 TransferOpDesc 参数（地址非空检查）"
+    },
+    "HixlImpl::TransferSync@src/hixl/engine/hixl_impl.cc:128": {
+      "defined_at": 128,
+      "calls": ["Engine::TransferSync"],
+      "called_by": ["Hixl::TransferSync@src/hixl/engine/hixl_impl.cc:256"],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "HixlServer::Initialize@src/hixl/engine/hixl_server.cc:23": {
+      "defined_at": 23,
+      "calls": ["HixlCSServerCreate@src/hixl/cs/hixl_cs_server.cc", "HixlCSServerRegProc@src/hixl/cs/hixl_cs_server.cc:405", "HixlCSServerListen@src/hixl/cs/hixl_cs_server.cc:391"],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "服务器初始化，监听 TCP 端口"
+    },
+    "HixlCSServer::Listen@src/hixl/cs/hixl_cs_server.cc:391": {
+      "defined_at": 391,
+      "calls": ["CtrlMsgPlugin::Listen", "CtrlMsgPlugin::AddFdToEpoll", "DoWait@src/hixl/cs/hixl_cs_server.cc:443"],
+      "called_by": ["HixlServer::Initialize@src/hixl/engine/hixl_server.cc:23"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "启动 TCP 监听线程"
+    },
+    "HixlCSServer::DoWait@src/hixl/cs/hixl_cs_server.cc:443": {
+      "defined_at": 443,
+      "calls": ["epoll_wait", "CtrlMsgPlugin::Accept", "ProClientMsg@src/hixl/cs/hixl_cs_server.cc:411", "CleanupClient@src/hixl/cs/hixl_cs_server.cc:419"],
+      "called_by": ["HixlCSServer::Listen@src/hixl/cs/hixl_cs_server.cc:391"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "epoll 事件循环，接收新连接和消息"
+    },
+    "HixlCSServer::ProClientMsg@src/hixl/cs/hixl_cs_server.cc:411": {
+      "defined_at": 411,
+      "calls": ["MsgReceiver::IRecv", "MsgHandler::SubmitMsg@src/hixl/cs/msg_handler.cc:16"],
+      "called_by": ["HixlCSServer::DoWait@src/hixl/cs/hixl_cs_server.cc:443"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "接收客户端消息并提交处理"
+    },
+    "MsgHandler::SubmitMsg@src/hixl/cs/msg_handler.cc:16": {
+      "defined_at": 16,
+      "calls": [],
+      "called_by": ["HixlCSServer::ProClientMsg@src/hixl/cs/hixl_cs_server.cc:411"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "将消息加入队列"
+    },
+    "MsgHandler::HandleMsg@src/hixl/cs/msg_handler.cc:47": {
+      "defined_at": 47,
+      "calls": ["MsgProcessor (callback)"],
+      "called_by": ["MsgHandler::HandleMsg@src/hixl/cs/msg_handler.cc:64"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "处理单个消息"
+    },
+    "HixlCSServer::MatchEndpointMsg@src/hixl/cs/hixl_cs_server.cc:257": {
+      "defined_at": 257,
+      "calls": ["EndpointStore::MatchEndpoint", "SendMatchEndpointResp@src/hixl/cs/hixl_cs_server.cc:246"],
+      "called_by": ["MsgHandler::HandleMsg@src/hixl/cs/msg_handler.cc:47"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "处理 MatchEndpointReq 消息"
+    },
+    "HixlCSServer::CreateChannel@src/hixl/cs/hixl_cs_server.cc:284": {
+      "defined_at": 284,
+      "calls": ["Endpoint::CreateChannel", "SendCreateChannelResp@src/hixl/cs/hixl_cs_server.cc:233"],
+      "called_by": ["MsgHandler::HandleMsg@src/hixl/cs/msg_handler.cc:47"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "处理 CreateChannelReq 消息"
+    },
+    "HixlCSServer::ExportMem@src/hixl/cs/hixl_cs_server.cc:369": {
+      "defined_at": 369,
+      "calls": ["Endpoint::ExportMem", "Serialize@src/hixl/cs/hixl_cs_server.cc:342", "SendRemoteMemResp@src/hixl/cs/hixl_cs_server.cc:353"],
+      "called_by": ["MsgHandler::HandleMsg@src/hixl/cs/msg_handler.cc:47"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "处理 GetRemoteMemReq，导出内存描述"
+    },
+    "HixlCSClient::BatchTransfer@src/hixl/cs/hixl_cs_client.cc:958": {
+      "defined_at": 958,
+      "calls": ["ValidateAddress@src/hixl/cs/hixl_cs_client.cc:463", "BatchTransferHost@src/hixl/cs/hixl_cs_client.cc:547", "BatchTransferDevice@src/hixl/cs/hixl_cs_client.cc:780"],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "批量传输入口"
+    },
+    "HixlCSClient::ValidateAddress@src/hixl/cs/hixl_cs_client.cc:463": {
+      "defined_at": 463,
+      "calls": ["HixlMemStore::ValidateMemoryAccess"],
+      "called_by": ["HixlCSClient::BatchTransfer@src/hixl/cs/hixl_cs_client.cc:958"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "验证用户提供的内存地址"
+    },
+    "HixlCSClient::BatchTransferHost@src/hixl/cs/hixl_cs_client.cc:547": {
+      "defined_at": 547,
+      "calls": ["BatchTransferTask@src/hixl/cs/hixl_cs_client.cc:529", "HcommProxy::ReadNbiOnThread"],
+      "called_by": ["HixlCSClient::BatchTransfer@src/hixl/cs/hixl_cs_client.cc:958"],
+      "receives_external_input": false,
+      "risk": "High",
+      "description": "Host 内存批量传输"
+    },
+    "HixlCSClient::BatchTransferTask@src/hixl/cs/hixl_cs_client.cc:529": {
+      "defined_at": 529,
+      "calls": ["TransferWithRetry@src/hixl/cs/hixl_cs_client.cc:480", "HcommProxy::ChannelFenceOnThread"],
+      "called_by": ["HixlCSClient::BatchTransferHost@src/hixl/cs/hixl_cs_client.cc:547"],
+      "receives_external_input": false,
+      "risk": "High",
+      "description": "执行批量传输任务"
+    },
+    "HixlCSClient::TransferWithRetry@src/hixl/cs/hixl_cs_client.cc:480": {
+      "defined_at": 480,
+      "calls": ["HcommProxy::ReadNbiOnThread", "HcommProxy::WriteNbiOnThread", "HcommProxy::ChannelFenceOnThread"],
+      "called_by": ["HixlCSClient::BatchTransferTask@src/hixl/cs/hixl_cs_client.cc:529"],
+      "receives_external_input": false,
+      "risk": "High",
+      "description": "带重试的单次传输"
+    },
+    "ChannelManager::HandleChannelEvent@src/llm_datadist/adxl/channel_manager.cc": {
+      "defined_at": 120,
+      "calls": ["recv@src/llm_datadist/adxl/channel_manager.cc:123"],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "接收通道网络数据"
+    },
+    "ChannelMsgHandler::RecvMsg@src/llm_datadist/adxl/channel_msg_handler.cc:518": {
+      "defined_at": 518,
+      "calls": ["MsgHandlerPlugin::RecvMsg"],
+      "called_by": ["Channel::HandleConnect"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "接收通道消息"
+    },
+    "ChannelMsgHandler::HandleConnect@src/llm_datadist/adxl/channel_msg_handler.cc:572": {
+      "defined_at": 572,
+      "calls": ["RecvMsg@src/llm_datadist/adxl/channel_msg_handler.cc:518", "strcpy_s@src/llm_datadist/adxl/channel_msg_handler.cc:398"],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "处理连接消息，包含 strcpy_s 操作"
+    },
+    "LinkMsgHandler::RecvMsg@src/llm_datadist/link_mgr/link_msg_handler.cc:250": {
+      "defined_at": 250,
+      "calls": ["MsgHandlerPlugin::RecvMsg"],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "接收链路消息"
+    },
+    "LinkMsgHandler::HandleConnect@src/llm_datadist/link_mgr/link_msg_handler.cc:401": {
+      "defined_at": 401,
+      "calls": ["RecvMsg@src/llm_datadist/link_mgr/link_msg_handler.cc:250", "strcpy_s@src/llm_datadist/link_mgr/link_msg_handler.cc:318"],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "处理链路连接消息"
+    },
+    "LlmDataDist::Initialize@src/llm_datadist/api/llm_datadist_impl.cc:182": {
+      "defined_at": 182,
+      "calls": ["LlmDataDistImpl::Initialize"],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "LLM-DataDist 初始化 API"
+    },
+    "LlmDataDist::LinkLlmClusters@src/llm_datadist/api/llm_datadist_impl.cc:203": {
+      "defined_at": 203,
+      "calls": ["LlmDataDistImpl::LinkLlmClusters"],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "建立集群连接 API"
+    },
+    "LlmDataDist::PullKvCache@src/llm_datadist/api/llm_datadist_impl.cc:244": {
+      "defined_at": 244,
+      "calls": ["LlmDataDistImpl::PullKvCache"],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "拉取 KV Cache API"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "Initialize (local_engine param)@src/hixl/engine/hixl_impl.cc:190",
+      "path": ["HixlImpl::Initialize@src/hixl/engine/hixl_impl.cc:75", "EngineFactory::CreateEngine", "HixlServer::Initialize@src/hixl/engine/hixl_server.cc:23", "HixlCSServer::Listen@src/hixl/cs/hixl_cs_server.cc:391", "CtrlMsgPlugin::Listen"],
+      "sink": "TCP Socket Listen (bind/listen)",
+      "sink_type": "network_operation",
+      "risk": "Critical",
+      "description": "用户提供的 IP:port 参数最终传递给 socket 监听"
+    },
+    {
+      "source": "RegisterMem (mem.addr/mem.len)@src/hixl/engine/hixl_impl.cc:209",
+      "path": ["HixlImpl::RegisterMem@src/hixl/engine/hixl_impl.cc:96", "Engine::RegisterMem", "HixlServer::RegisterMem@src/hixl/engine/hixl_server.cc:75", "HixlCSServer::RegMem@src/hixl/cs/hixl_cs_server.cc:193", "Endpoint::RegisterMem"],
+      "sink": "Memory Registration (HCCL/HCOMM)",
+      "sink_type": "memory_operation",
+      "risk": "High",
+      "description": "用户提供的内存地址被注册到硬件通信层"
+    },
+    {
+      "source": "TransferSync (op_descs)@src/hixl/engine/hixl_impl.cc:256",
+      "path": ["CheckTransferOpDescs@src/hixl/engine/hixl_impl.cc:22", "HixlImpl::TransferSync@src/hixl/engine/hixl_impl.cc:128", "Engine::TransferSync", "HixlCSClient::BatchTransfer@src/hixl/cs/hixl_cs_client.cc:958", "ValidateAddress@src/hixl/cs/hixl_cs_client.cc:463"],
+      "sink": "ValidateMemoryAccess (address validation)",
+      "sink_type": "memory_operation",
+      "risk": "High",
+      "description": "TransferOpDesc 中的地址经过验证后用于传输"
+    },
+    {
+      "source": "TransferSync (op_descs)@src/hixl/engine/hixl_impl.cc:256",
+      "path": ["HixlImpl::TransferSync@src/hixl/engine/hixl_impl.cc:128", "HixlCSClient::BatchTransferTask@src/hixl/cs/hixl_cs_client.cc:529", "HcommProxy::ReadNbiOnThread"],
+      "sink": "HCCL Read Operation",
+      "sink_type": "memory_operation",
+      "risk": "Critical",
+      "description": "用户地址最终传递给硬件进行 RDMA/HCCS 读取"
+    },
+    {
+      "source": "recv()@src/llm_datadist/adxl/channel_manager.cc:123",
+      "path": ["ChannelManager::HandleChannelEvent", "recv_buffer_.resize", "ProtocolHeader parsing"],
+      "sink": "recv_buffer_ (buffer resize)",
+      "sink_type": "memory_operation",
+      "risk": "High",
+      "description": "网络数据被接收并存储到 recv_buffer_，需检查缓冲区边界"
+    },
+    {
+      "source": "RecvMsg@src/llm_datadist/adxl/channel_msg_handler.cc:518",
+      "path": ["MsgHandlerPlugin::RecvMsg", "ChannelMsgHandler::HandleConnect@src/llm_datadist/adxl/channel_msg_handler.cc:572"],
+      "sink": "strcpy_s (channel_info.comm_config.hcclCommName)@src/llm_datadist/adxl/channel_msg_handler.cc:398",
+      "sink_type": "memory_operation",
+      "risk": "Medium",
+      "description": "接收的消息数据被安全复制到固定大小缓冲区"
+    },
+    {
+      "source": "RecvMsg@src/llm_datadist/link_mgr/link_msg_handler.cc:250",
+      "path": ["MsgHandlerPlugin::RecvMsg", "LinkMsgHandler::HandleConnect@src/llm_datadist/link_mgr/link_msg_handler.cc:401"],
+      "sink": "strcpy_s (comm_params.comm_config.hcclCommName)@src/llm_datadist/link_mgr/link_msg_handler.cc:318",
+      "sink_type": "memory_operation",
+      "risk": "Medium",
+      "description": "链路消息数据被安全复制"
+    },
+    {
+      "source": "Listen (TCP accept)@src/hixl/cs/hixl_cs_server.cc:391",
+      "path": ["HixlCSServer::DoWait@src/hixl/cs/hixl_cs_server.cc:443", "CtrlMsgPlugin::Accept", "ProClientMsg@src/hixl/cs/hixl_cs_server.cc:411", "MsgReceiver::IRecv", "MsgHandler::SubmitMsg@src/hixl/cs/msg_handler.cc:16"],
+      "sink": "MsgHandler::HandleMsg@src/hixl/cs/msg_handler.cc:47",
+      "sink_type": "control_flow",
+      "risk": "Critical",
+      "description": "TCP 连接接收的消息流经消息处理器"
+    },
+    {
+      "source": "MsgHandler::HandleMsg@src/hixl/cs/msg_handler.cc:47",
+      "path": ["MatchEndpointMsg@src/hixl/cs/hixl_cs_server.cc:257", "EndpointStore::MatchEndpoint"],
+      "sink": "Endpoint matching",
+      "sink_type": "control_flow",
+      "risk": "High",
+      "description": "MatchEndpointReq 消息触发端点匹配"
+    },
+    {
+      "source": "MsgHandler::HandleMsg@src/hixl/cs/msg_handler.cc:47",
+      "path": ["CreateChannel@src/hixl/cs/hixl_cs_server.cc:284", "Endpoint::CreateChannel"],
+      "sink": "Channel creation",
+      "sink_type": "control_flow",
+      "risk": "High",
+      "description": "CreateChannelReq 消息触发通道创建"
+    },
+    {
+      "source": "MsgHandler::HandleMsg@src/hixl/cs/msg_handler.cc:47",
+      "path": ["ExportMem@src/hixl/cs/hixl_cs_server.cc:369", "Endpoint::ExportMem", "Serialize@src/hixl/cs/hixl_cs_server.cc:342"],
+      "sink": "nlohmann::json dump@src/hixl/cs/hixl_cs_server.cc:345",
+      "sink_type": "serialization",
+      "risk": "Medium",
+      "description": "内存描述被序列化为 JSON 发送给远端"
+    }
+  ]
+}

@@ -1,0 +1,642 @@
+{
+  "project_name": "VMI (Video Streaming Engine for Cloud Phone)",
+  "scan_time": "2025-04-21T19:30:00Z",
+  "lsp_available": false,
+  "total_files": 158,
+  "total_lines": 40209,
+  "project_profile": {
+    "project_type": "network_service",
+    "deployment_model": "Linux服务器上的守护进程（VmiAgent），监听TCP端口8888，接受远程Android客户端（CloudPhoneClient APK）的连接，提供云手机视频流服务",
+    "trust_boundaries": [
+      {
+        "boundary": "Network Interface",
+        "trusted_side": "CloudPhoneService (VmiAgent)",
+        "untrusted_side": "Remote Android Client (CloudPhoneClient APK)",
+        "risk": "Critical"
+      },
+      {
+        "boundary": "Video Encoder",
+        "trusted_side": "Video Engine Internal Logic",
+        "untrusted_side": "Network Received Configuration Data",
+        "risk": "High"
+      },
+      {
+        "boundary": "Touch Event Handler",
+        "trusted_side": "Android System Injection",
+        "untrusted_side": "Client Touch Data",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Version Check",
+        "trusted_side": "Server Version String",
+        "untrusted_side": "Client Version String",
+        "risk": "Low"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "VmiAgent",
+      "path": "CloudPhoneService/VmiAgent",
+      "language": "c_cpp",
+      "components": [
+        "main.cpp",
+        "VmiAgent.cpp",
+        "VmiAgent.h",
+        "VmiApi.cpp",
+        "VmiApi.h",
+        "MainLooper.cpp",
+        "MainLooper.h",
+        "NetworkComm/NetworkComm.cpp",
+        "NetworkComm/NetworkComm.h",
+        "NetworkComm/NetworkCommManager.cpp",
+        "NetworkComm/NetworkCommManager.h",
+        "NetworkComm/NetworkExport.cpp",
+        "NetworkComm/NetworkExport.h",
+        "NetworkComm/INetworkComm.cpp",
+        "NetworkComm/INetworkComm.h",
+        "ApiTest/ApiTest.cpp",
+        "ApiTest/ApiTest.h",
+        "Fpsperf/Fpsperf.cpp",
+        "Fpsperf/Fpsperf.h",
+        "Fpsperf/DeviceWatcher.cpp",
+        "Fpsperf/DeviceWatcher.h",
+        "Latency/Latency.cpp",
+        "Latency/Latency.h"
+      ]
+    },
+    {
+      "name": "VideoEngine-GpuEncTurbo",
+      "path": "CloudPhoneService/VideoEngine/GpuEncTurbo",
+      "language": "c_cpp",
+      "components": [
+        "GpuEncodeFactory.cpp",
+        "GpuEncoderFactory.h",
+        "GpuEncoderBase.h",
+        "GpuEncoderParams.h",
+        "VaCommon.h",
+        "VaBitstream.cpp",
+        "VaBitstream.h",
+        "CpuEncoder/CpuEncoder.cpp",
+        "CpuEncoder/CpuEncoder.h",
+        "CpuEncoder/Rgb2Yuv/VmiRgb2Yuv.cpp",
+        "CpuEncoder/Rgb2Yuv/Rgb2Yuv.h",
+        "CpuEncoder/Rgb2Yuv/VmiRgb2Yuv.h",
+        "GpuEncoderAmd/GpuEncoderAmd.cpp",
+        "GpuEncoderAmd/GpuEncoderAmd.h",
+        "GpuEncoderAmd/VaEncoderAmd.cpp",
+        "GpuEncoderAmd/VaEncoderAmd.h",
+        "GpuEncoderAmd/VaCommonAmd.h",
+        "GpuEncoderHantro/GpuEncoderHantro.cpp",
+        "GpuEncoderHantro/GpuEncoderHantro.h",
+        "GpuEncoderHantro/HantroCaptureWrapper.cpp",
+        "GpuEncoderHantro/HantroCaptureWrapperBase.h",
+        "GpuEncoderHantro/DisplayServerMock.cpp",
+        "GpuEncoderHantro/AvcodecWrapper.h",
+        "GpuEncoderHantro/sync.c",
+        "GpuEncoderHantro/sync.h",
+        "GpuEncoderHantro/sw_sync.h",
+        "GpuEncoderInno/GpuEncoderInno.cpp",
+        "GpuEncoderInno/GpuEncoderInno.h",
+        "GpuEncoderInno/VaEncInno.cpp",
+        "GpuEncoderInno/VaEncInno.h",
+        "GpuEncoderInno/InnoFbcApi.h"
+      ]
+    },
+    {
+      "name": "VideoEngine-Media",
+      "path": "CloudPhoneService/VideoEngine/Media",
+      "language": "c_cpp",
+      "components": [
+        "video_codec/VideoCodecApi.cpp",
+        "video_codec/VideoCodecApi.h",
+        "video_codec/VideoEncoderCommon.cpp",
+        "video_codec/VideoEncoderCommon.h",
+        "video_codec/VideoEncoderNetint.cpp",
+        "video_codec/VideoEncoderNetint.h",
+        "video_codec/VideoEncoderOpenH264.cpp",
+        "video_codec/VideoEncoderOpenH264.h",
+        "video_codec/VideoEncoderQuadra.cpp",
+        "video_codec/VideoEncoderQuadra.h",
+        "video_codec/VideoEncoderVastai.cpp",
+        "video_codec/VideoEncoderVastai.h",
+        "video_decoder/VideoDecoderApi.cpp",
+        "video_decoder/VideoDecoderNetint.cpp",
+        "video_decoder/VideoDecoderNetint.h",
+        "video_decoder/VideoDecoderQuadra.cpp",
+        "video_decoder/VideoDecoderQuadra.h",
+        "video_decoder/include/VideoDecoder.h",
+        "video_decoder/prop/Property.cpp",
+        "video_decoder/prop/Property.h"
+      ]
+    },
+    {
+      "name": "VideoDecoder-Control",
+      "path": "CloudPhoneClient/VideoDecoder/Control",
+      "language": "c_cpp",
+      "components": [
+        "CloudPhoneController.cpp",
+        "CloudPhoneController.h",
+        "NetController.cpp",
+        "NetController.h",
+        "Parser.cpp",
+        "Parser.h",
+        "VideoEngineClient.cpp",
+        "VideoEngineClient.h",
+        "NativeWindowMock.cpp"
+      ]
+    },
+    {
+      "name": "VideoDecoder-Decoder",
+      "path": "CloudPhoneClient/VideoDecoder/Decoder",
+      "language": "c_cpp",
+      "components": [
+        "DecodeController.cpp",
+        "DecodeController.h",
+        "DecoderBase.h",
+        "ItemQueue.h",
+        "VideoUtil.cpp",
+        "VideoUtil.h"
+      ]
+    },
+    {
+      "name": "VideoEngine-NdkDecoder",
+      "path": "CloudPhoneClient/VideoEngine/NdkDecoder",
+      "language": "c_cpp",
+      "components": [
+        "DecoderBase.cpp",
+        "DecoderBase.h",
+        "DecoderMedia.cpp",
+        "DecoderMedia.h",
+        "ItemQueue.h"
+      ]
+    },
+    {
+      "name": "VideoEngine-CloudPhoneUI",
+      "path": "CloudPhoneClient/VideoEngine/CloudPhoneUI/app/src/main/cpp",
+      "language": "c_cpp",
+      "components": [
+        "VideoEngineJni.cpp",
+        "VideoEngineJni.h"
+      ]
+    },
+    {
+      "name": "AudioPlay",
+      "path": "CloudPhoneClient/AudioPlay/src/main/cpp",
+      "language": "c_cpp",
+      "components": [
+        "JNIOpusWrapper.cpp",
+        "JNIOpusWrapper.h"
+      ]
+    },
+    {
+      "name": "Communication-Connection",
+      "path": "Common/Communication/Connection",
+      "language": "c_cpp",
+      "components": [
+        "ClientConnection.cpp",
+        "ClientConnection.h",
+        "ServerConnection.cpp",
+        "ServerConnection.h",
+        "ConnectionSocket.cpp",
+        "ConnectionSocket.h"
+      ]
+    },
+    {
+      "name": "Communication-Socket",
+      "path": "Common/Communication/Socket",
+      "language": "c_cpp",
+      "components": [
+        "VmiSocket.cpp",
+        "VmiSocket.h"
+      ]
+    },
+    {
+      "name": "Communication-PacketHandle",
+      "path": "Common/Communication/PacketHandle",
+      "language": "c_cpp",
+      "components": [
+        "PacketHandle.cpp",
+        "PacketHandle.h"
+      ]
+    },
+    {
+      "name": "Communication-PacketManager",
+      "path": "Common/Communication/PacketManager",
+      "language": "c_cpp",
+      "components": [
+        "PacketManager.cpp",
+        "PacketManager.h"
+      ]
+    },
+    {
+      "name": "Communication-MsgFragment",
+      "path": "Common/Communication/MsgFragment",
+      "language": "c_cpp",
+      "components": [
+        "MsgFragment.cpp",
+        "MsgFragment.h",
+        "MsgReassemble.cpp",
+        "MsgReassemble.h"
+      ]
+    },
+    {
+      "name": "Communication-StreamParse",
+      "path": "Common/Communication/StreamParse",
+      "language": "c_cpp",
+      "components": [
+        "StreamParser.cpp",
+        "StreamParser.h"
+      ]
+    },
+    {
+      "name": "Communication-Heartbeat",
+      "path": "Common/Communication/Heartbeat",
+      "language": "c_cpp",
+      "components": [
+        "Heartbeat.cpp",
+        "Heartbeat.h"
+      ]
+    },
+    {
+      "name": "Communication-NetComm",
+      "path": "Common/Communication/NetComm",
+      "language": "c_cpp",
+      "components": [
+        "NetComm.cpp",
+        "NetComm.h"
+      ]
+    },
+    {
+      "name": "Connection",
+      "path": "Common/Connection",
+      "language": "c_cpp",
+      "components": [
+        "Connection.cpp",
+        "Connection.h"
+      ]
+    },
+    {
+      "name": "Include",
+      "path": "Common/Include",
+      "language": "c_cpp",
+      "components": [
+        "CommonDefine.h",
+        "Communication.h",
+        "VmiDef.h",
+        "VmiEngine.h",
+        "VmiMsgHead.h"
+      ]
+    },
+    {
+      "name": "Log",
+      "path": "Common/Log",
+      "language": "c_cpp",
+      "components": [
+        "logging.cpp",
+        "logging.h",
+        "LogInfo.cpp",
+        "LogInfo.h"
+      ]
+    },
+    {
+      "name": "Utils",
+      "path": "Common/Utils",
+      "language": "c_cpp",
+      "components": [
+        "BitmapImage.cpp",
+        "BitmapImage.h",
+        "EngineEventHandler.cpp",
+        "EngineEventHandler.h",
+        "Looper.cpp",
+        "Looper.h",
+        "MurmurHash.cpp",
+        "MurmurHash.h",
+        "PacketQueue.cpp",
+        "PacketQueue.h",
+        "SmartPtrMacro.h",
+        "SystemProperty.cpp",
+        "SystemProperty.h",
+        "VersionCheck.cpp",
+        "VersionCheck.h"
+      ]
+    },
+    {
+      "name": "VideoEngineClient-Include",
+      "path": "release/VideoEngineClient/include",
+      "language": "c_cpp",
+      "components": [
+        "VideoEngineClient.h"
+      ]
+    }
+  ],
+  "files": [
+    {
+      "path": "Common/Connection/Connection.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "Connection",
+      "lines": 337,
+      "priority": 1
+    },
+    {
+      "path": "Common/Communication/StreamParse/StreamParser.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "Communication-StreamParse",
+      "lines": 431,
+      "priority": 2
+    },
+    {
+      "path": "Common/Communication/MsgFragment/MsgReassemble.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "Communication-MsgFragment",
+      "lines": 259,
+      "priority": 3
+    },
+    {
+      "path": "Common/Communication/Connection/ServerConnection.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "Communication-Connection",
+      "lines": 119,
+      "priority": 4
+    },
+    {
+      "path": "Common/Communication/PacketHandle/PacketHandle.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "Communication-PacketHandle",
+      "lines": 73,
+      "priority": 5
+    },
+    {
+      "path": "Common/Communication/NetComm/NetComm.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "Communication-NetComm",
+      "lines": 382,
+      "priority": 6
+    },
+    {
+      "path": "CloudPhoneService/VmiAgent/VmiAgent.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "VmiAgent",
+      "lines": 795,
+      "priority": 7
+    },
+    {
+      "path": "CloudPhoneService/VmiAgent/NetworkComm/NetworkCommManager.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "VmiAgent",
+      "lines": 356,
+      "priority": 8
+    },
+    {
+      "path": "Common/Communication/Heartbeat/Heartbeat.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "Communication-Heartbeat",
+      "lines": 348,
+      "priority": 9
+    },
+    {
+      "path": "CloudPhoneClient/VideoDecoder/Control/Parser.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "VideoDecoder-Control",
+      "lines": 291,
+      "priority": 10
+    },
+    {
+      "path": "Common/Utils/VersionCheck.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "Utils",
+      "lines": 272,
+      "priority": 11
+    },
+    {
+      "path": "CloudPhoneClient/VideoDecoder/Control/VideoEngineClient.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "VideoDecoder-Control",
+      "lines": 366,
+      "priority": 12
+    },
+    {
+      "path": "CloudPhoneService/VideoEngine/Media/video_codec/VideoEncoderCommon.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "VideoEngine-Media",
+      "lines": 123,
+      "priority": 13
+    },
+    {
+      "path": "Common/Communication/Connection/ConnectionSocket.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "Communication-Connection",
+      "lines": 111,
+      "priority": 14
+    },
+    {
+      "path": "Common/Communication/Connection/ClientConnection.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "Communication-Connection",
+      "lines": 111,
+      "priority": 15
+    },
+    {
+      "path": "Common/Include/VmiMsgHead.h",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "Include",
+      "lines": 119,
+      "priority": 16
+    },
+    {
+      "path": "Common/Include/VmiDef.h",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "Include",
+      "lines": 400,
+      "priority": 17
+    },
+    {
+      "path": "CloudPhoneService/VideoEngine/GpuEncTurbo/CpuEncoder/CpuEncoder.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "VideoEngine-GpuEncTurbo",
+      "lines": 0,
+      "priority": 18
+    },
+    {
+      "path": "CloudPhoneClient/AudioPlay/src/main/cpp/JNIOpusWrapper.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "AudioPlay",
+      "lines": 0,
+      "priority": 19
+    },
+    {
+      "path": "CloudPhoneClient/VideoEngine/NdkDecoder/DecoderBase.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "VideoEngine-NdkDecoder",
+      "lines": 0,
+      "priority": 20
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "Common/Connection/Connection.cpp",
+      "line": 67,
+      "function": "VmiListen",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "TCP端口8888监听，接受来自远程Android客户端的连接请求，服务端公网可达",
+      "description": "监听TCP端口8888，等待远程客户端连接"
+    },
+    {
+      "file": "Common/Connection/Connection.cpp",
+      "line": 105,
+      "function": "VmiAccept",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "接受远程客户端TCP连接，客户端身份未认证（仅有版本校验）",
+      "description": "接受新客户端的TCP连接"
+    },
+    {
+      "file": "Common/Communication/StreamParse/StreamParser.cpp",
+      "line": 188,
+      "function": "ParseStream",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "解析从网络接收的数据流，数据来自远程客户端，内容可被恶意构造",
+      "description": "解析网络数据流，提取消息头和负载"
+    },
+    {
+      "file": "Common/Communication/StreamParse/StreamParser.cpp",
+      "line": 148,
+      "function": "ProcessMsg",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "处理网络接收的消息，消息内容和序列号来自不可信来源",
+      "description": "处理网络消息，验证序列号和哈希"
+    },
+    {
+      "file": "Common/Communication/MsgFragment/MsgReassemble.cpp",
+      "line": 226,
+      "function": "Reassemble",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "重组网络分片数据包，分片大小和内容来自远程客户端，可能触发整数溢出或内存越界",
+      "description": "重组网络消息分片"
+    },
+    {
+      "file": "Common/Communication/Connection/ServerConnection.cpp",
+      "line": 35,
+      "function": "ServerConnection::Start",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "启动TCP端口监听服务，默认端口8888，接受远程客户端连接",
+      "description": "启动服务端网络监听"
+    },
+    {
+      "file": "CloudPhoneService/VmiAgent/VmiAgent.cpp",
+      "line": 200,
+      "function": "CallbackForRecv",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "处理远程客户端发送的数据（视频/音频/触摸配置），数据内容完全可控",
+      "description": "服务端接收数据的回调处理"
+    },
+    {
+      "file": "CloudPhoneService/VmiAgent/VmiAgent.cpp",
+      "line": 110,
+      "function": "RecvDataRunnable::Run",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "处理接收到的命令和数据，执行InjectData/SetParam操作，数据来自远程客户端",
+      "description": "执行接收到的命令（数据注入或参数设置）"
+    },
+    {
+      "file": "CloudPhoneClient/VideoDecoder/Control/Parser.cpp",
+      "line": 164,
+      "function": "ExtractSPS",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "解析H264/H265视频流的SPS（Sequence Parameter Set），数据来自远程服务端，可能触发整数溢出",
+      "description": "解析H264视频流SPS参数"
+    },
+    {
+      "file": "Common/Communication/Heartbeat/Heartbeat.cpp",
+      "line": 98,
+      "function": "HandleRecvMsg",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "处理心跳消息，消息大小和内容来自网络，可能被恶意构造",
+      "description": "处理心跳请求和响应消息"
+    },
+    {
+      "file": "Common/Utils/VersionCheck.cpp",
+      "line": 216,
+      "function": "RecvPayloadData",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "接收版本校验数据，payloadSize由远程端发送，可能触发缓冲区溢出",
+      "description": "接收版本校验数据"
+    },
+    {
+      "file": "Common/Communication/Connection/ConnectionSocket.cpp",
+      "line": 56,
+      "function": "ConnectionSocket::Recv",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "TCP socket接收数据，数据来自远程端",
+      "description": "从TCP socket接收数据"
+    },
+    {
+      "file": "CloudPhoneService/VmiAgent/VmiAgent.cpp",
+      "line": 317,
+      "function": "StartVideoModule",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "根据远程客户端发送的配置启动视频模块，分辨率参数来自网络",
+      "description": "根据客户端配置启动视频模块"
+    },
+    {
+      "file": "CloudPhoneService/VmiAgent/VmiAgent.cpp",
+      "line": 475,
+      "function": "CallbackForRecvStart",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "处理远程客户端的模块启动命令，模块类型和配置来自网络",
+      "description": "处理客户端的模块启动请求"
+    },
+    {
+      "file": "CloudPhoneClient/VideoDecoder/Control/VideoEngineClient.cpp",
+      "line": 313,
+      "function": "RecvData",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "客户端从网络接收数据包（视频/音频等），数据来自服务端",
+      "description": "客户端接收网络数据"
+    }
+  ],
+  "attack_surfaces": [
+    "TCP端口8888: 服务端监听端口，接受远程客户端连接",
+    "H264/H265视频流解析: Parser.cpp解析视频流SPS参数",
+    "网络消息重组: MsgReassemble处理分片数据包",
+    "版本校验协议: VersionCheck处理连接建立时的版本数据交换",
+    "心跳消息: Heartbeat处理心跳请求/响应",
+    "触摸事件注入: 触摸数据从客户端发送到服务端Android系统",
+    "音频数据传输: OPUS/PCM音频数据在网络上传输",
+    "GPS/传感器数据: GPS location和传感器数据从客户端传输到服务端"
+  ]
+}

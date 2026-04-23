@@ -1,0 +1,409 @@
+{
+  "call_graph": {
+    "description": "函数调用关系图 - 华为CANN ops-math算子库",
+    "layers": {
+      "L2_api": {
+        "description": "用户API层 - 两段式接口入口",
+        "functions": [
+          {
+            "name": "aclnnXXXGetWorkspaceSize",
+            "pattern": "aclnn_${operator}GetWorkspaceSize",
+            "signature": "aclnnStatus (const aclTensor* input, aclTensor* out, uint64_t* workspaceSize, aclOpExecutor** executor)",
+            "calls": [
+              "CheckParams (参数验证)",
+              "CREATE_EXECUTOR (创建执行器)",
+              "l0op::Contiguous (张量连续化)",
+              "l0op::Cast (类型转换)",
+              "l0op::${Operator} (核心算子)",
+              "l0op::ViewCopy (输出拷贝)"
+            ],
+            "file_pattern": "**/op_api/aclnn_*.cpp"
+          },
+          {
+            "name": "aclnnXXX",
+            "pattern": "aclnn_${operator}",
+            "signature": "aclnnStatus (void* workspace, uint64_t workspaceSize, aclOpExecutor* executor, aclrtStream stream)",
+            "calls": [
+              "CommonOpExecutorRun (框架执行器)"
+            ],
+            "file_pattern": "**/op_api/aclnn_*.cpp"
+          }
+        ]
+      },
+      "L1_op_host": {
+        "description": "Host层 - Tiling计算和算子定义",
+        "functions": [
+          {
+            "name": "${Operator}Tiling",
+            "pattern": "${operator}_tiling.cpp",
+            "signature": "ge::graphStatus (gert::TilingContext* ctx)",
+            "calls": [
+              "GetKeyAndCounter (种子处理 - RNG)",
+              "New64 (自动种子生成 - RNG)",
+              "SetTilingData (设置分块参数)"
+            ],
+            "security_notes": "包含种子初始化，攻击面关键路径",
+            "file_pattern": "**/op_host/*_tiling.cpp"
+          },
+          {
+            "name": "${Operator}InferShape",
+            "pattern": "${operator}_infershape.cpp",
+            "signature": "ge::graphStatus (gert::InferShapeContext* ctx)",
+            "calls": [
+              "ctx->GetInputShape",
+              "ctx->SetOutputShape"
+            ],
+            "file_pattern": "**/op_host/*_infershape.cpp"
+          }
+        ]
+      },
+      "L0_op_kernel": {
+        "description": "Kernel层 - NPU设备内核执行",
+        "functions": [
+          {
+            "name": "PhiloxAlgParsInit",
+            "location": "random/random_common/op_kernel/arch35/random_kernel_base.h:377",
+            "signature": "void (uint32_t* key, uint32_t* counter, int64_t seed, int64_t offset)",
+            "calls": [],
+            "called_by": [
+              "PhiloxRandomSimt",
+              "RandomKernelBase::Init",
+              "DropOutV3Impl::Init",
+              "PhiloxBernoulliSample"
+            ],
+            "security_notes": "种子转换为Philox密钥和计数器，关键安全函数"
+          },
+          {
+            "name": "Philox4x32Round",
+            "location": "random/random_common/op_kernel/arch35/random_kernel_base.h:393",
+            "signature": "void (uint32_t* counter, const uint32_t* key)",
+            "calls": [],
+            "called_by": [
+              "PhiloxRandomSimt (10次调用)"
+            ],
+            "security_notes": "Philox加密轮函数，使用常数0x9E3779B9/0xBB67AE85"
+          },
+          {
+            "name": "PhiloxRandomSimt",
+            "location": "random/random_common/op_kernel/arch35/random_kernel_base.h:419",
+            "signature": "void (const uint32_t* key, const uint32_t* counter, uint32_t* results)",
+            "calls": [
+              "Philox4x32Round (10轮)"
+            ],
+            "called_by": [
+              "StatelessRandomUniformV2::Process",
+              "DropOutV3Impl::Process",
+              "PhiloxBernoulliSample",
+              "TruncatedNormalV2Simt"
+            ],
+            "security_notes": "SIMT级Philox RNG生成"
+          },
+          {
+            "name": "PhiloxRandom",
+            "location": "AscendC框架",
+            "signature": "template<int ROUNDS>",
+            "calls": [],
+            "called_by": [
+              "StatelessRandomUniformV2::Process",
+              "StatelessBernoulli::Process"
+            ],
+            "security_notes": "AscendC框架提供的Philox模板"
+          }
+        ]
+      },
+      "L0op_operators": {
+        "description": "L0算子调用 - op_api到op_kernel桥梁",
+        "functions": [
+          {
+            "name": "l0op::Contiguous",
+            "location": "aclnn_kernels/contiguous.h",
+            "purpose": "张量连续化预处理",
+            "called_by": "所有op_api算子"
+          },
+          {
+            "name": "l0op::Cast",
+            "location": "aclnn_kernels/cast.h",
+            "purpose": "数据类型转换",
+            "called_by": "类型不匹配算子"
+          },
+          {
+            "name": "l0op::ViewCopy",
+            "location": "aclnn_kernels/view_copy.h",
+            "purpose": "输出张量拷贝",
+            "called_by": "所有op_api算子"
+          },
+          {
+            "name": "l0op::Acos",
+            "purpose": "L0反余弦算子",
+            "called_by": ["aclnnAcosGetWorkspaceSize"]
+          },
+          {
+            "name": "l0op::DSARandomUniform",
+            "location": "random/dsa_random_uniform/op_host/op_api/dsa_random_uniform.cpp",
+            "purpose": "DSA随机均匀分布",
+            "signature": "const aclTensor* (const aclIntArray* outShape, uint64_t seed, uint64_t offset, const aclScalar* low, const aclScalar* high, aclOpExecutor* executor)",
+            "called_by": [
+              "aclnnUniformTensor",
+              "aclnnMultinomial"
+            ],
+            "security_notes": "接收seed/offset参数，攻击面入口"
+          },
+          {
+            "name": "l0op::DSARandomUniformTensor",
+            "signature": "const aclTensor* (const aclIntArray* outShape, const aclTensor* seed, const aclTensor* offset, const aclScalar* low, const aclScalar* high, aclOpExecutor* executor)",
+            "called_by": [
+              "aclnnUniformTensor"
+            ],
+            "security_notes": "种子张量版本，可处理动态种子"
+          },
+          {
+            "name": "l0op::StatelessRandomUniformV2",
+            "purpose": "无状态均匀分布",
+            "called_by": [
+              "aclnnUniform",
+              "aclnnRandom"
+            ],
+            "security_notes": "确定性RNG - 相同种子产生相同输出"
+          },
+          {
+            "name": "l0op::StatelessRandomUniformV3",
+            "purpose": "无状态均匀分布v3 - 支持范围参数",
+            "called_by": [
+              "aclnnUniform",
+              "aclnnRandom"
+            ]
+          },
+          {
+            "name": "l0op::MultinomialWithReplacement",
+            "location": "random/dsa_random_uniform/op_host/op_api/multinomial_with_replacement.cpp",
+            "purpose": "多项分布采样",
+            "signature": "const aclTensor* (const aclTensor* self, int64_t numsamples, bool replacement, int64_t seed, int64_t offset, aclOpExecutor* executor)",
+            "calls": [
+              "MultinomialWithReplacementAiCpu (AICPU任务)"
+            ],
+            "called_by": [
+              "aclnnMultinomial"
+            ],
+            "security_notes": "采样可预测性影响安全应用"
+          }
+        ]
+      },
+      "rng_functions": {
+        "description": "随机数生成核心函数",
+        "functions": [
+          {
+            "name": "New64",
+            "location": "random/random_common/op_host/arch35/random_tiling_base.h:41",
+            "signature": "uint64_t ()",
+            "calls": [
+              "GetGlobalRng()"
+            ],
+            "called_by": [
+              "GetKeyAndCounter (seed=0时)",
+              "random_uniform_int_v2_tiling",
+              "truncated_normal_v2_tiling",
+              "random_standard_normal_v2_tiling"
+            ],
+            "entropy_source": {
+              "primary": "std::chrono::high_resolution_clock::now() (纳秒时间戳)",
+              "secondary": "std::hash<std::thread::id>() (线程ID哈希)",
+              "rng": "std::mt19937_64 (Mersenne Twister)"
+            },
+            "security_notes": "时间戳熵源可预测，如果攻击者能估计时间或控制线程调度，可预测种子"
+          },
+          {
+            "name": "GetGlobalRng",
+            "location": "random/random_common/op_host/arch35/random_tiling_base.h:26",
+            "signature": "std::mt19937_64& ()",
+            "calls": [],
+            "called_by": [
+              "New64"
+            ],
+            "implementation": "static std::mt19937_64 rng初始化为时间戳+线程ID哈希",
+            "security_notes": "全局静态RNG对象，初始种子确定性"
+          },
+          {
+            "name": "GetKeyAndCounter",
+            "location": "random/random_common/op_host/arch35/random_tiling_base.h:76",
+            "signature": "ge::graphStatus (gert::TilingContext* ctx, uint32_t key[2], uint32_t counter[4])",
+            "calls": [
+              "New64 (seed=0, seed2=0时)"
+            ],
+            "called_by": [
+              "random_uniform_v2_tiling",
+              "random_standard_normal_v2_tiling"
+            ],
+            "implementation": {
+              "key[0]": "seed & 0xFFFFFFFF",
+              "key[1]": "seed >> 32",
+              "counter[0-1]": "0",
+              "counter[2]": "seed2 & 0xFFFFFFFF",
+              "counter[3]": "seed2 >> 32"
+            },
+            "security_notes": "种子转换为Philox参数，种子已知则RNG完全可预测"
+          }
+        ]
+      }
+    },
+    "security_call_chains": [
+      {
+        "chain_id": "CHAIN_001",
+        "name": "RNG自动种子攻击链",
+        "description": "当用户未提供种子时，系统自动生成可能可预测的种子",
+        "risk": "high",
+        "call_sequence": [
+          {
+            "step": 1,
+            "function": "aclnnRandomUniformGetWorkspaceSize",
+            "file": "random/random_uniform_v2/op_api/aclnn_random_uniform_v2.cpp"
+          },
+          {
+            "step": 2,
+            "function": "RandomUniformV2Tiling",
+            "file": "random/random_uniform_v2/op_host/random_uniform_v2_tiling.cpp"
+          },
+          {
+            "step": 3,
+            "function": "GetKeyAndCounter",
+            "file": "random/random_common/op_host/arch35/random_tiling_base.h:76",
+            "trigger": "seed=0, seed2=0"
+          },
+          {
+            "step": 4,
+            "function": "New64",
+            "file": "random/random_common/op_host/arch35/random_tiling_base.h:41"
+          },
+          {
+            "step": 5,
+            "function": "GetGlobalRng",
+            "file": "random/random_common/op_host/arch35/random_tiling_base.h:26",
+            "entropy": "时间戳 + 线程ID"
+          }
+        ],
+        "attack_vector": "如果攻击者能精确估计调用时间或控制线程调度，可预测自动生成的种子"
+      },
+      {
+        "chain_id": "CHAIN_002",
+        "name": "确定性RNG攻击链",
+        "description": "用户提供的种子完全决定RNG输出",
+        "risk": "medium",
+        "call_sequence": [
+          {
+            "step": 1,
+            "function": "aclnnMultinomial",
+            "file": "random/dsa_random_uniform/op_host/op_api/aclnn_multinomial.cpp",
+            "input": "seed (int64_t)"
+          },
+          {
+            "step": 2,
+            "function": "l0op::MultinomialWithReplacement",
+            "file": "random/dsa_random_uniform/op_host/op_api/multinomial_with_replacement.cpp",
+            "params": "seed, offset"
+          },
+          {
+            "step": 3,
+            "function": "MultinomialWithReplacementAiCpu",
+            "file": "AICPU任务空间"
+          }
+        ],
+        "attack_vector": "已知种子可完全预测采样结果"
+      },
+      {
+        "chain_id": "CHAIN_003",
+        "name": "Python Shell注入攻击链",
+        "description": "构建脚本中的shell命令注入",
+        "risk": "critical",
+        "call_sequence": [
+          {
+            "step": 1,
+            "function": "build_opp_kernel_static.py",
+            "line": "38, 94-107, 132-136",
+            "pattern": "subprocess.Popen(cmd, shell)"
+          },
+          {
+            "step": 2,
+            "function": "f-string interpolation",
+            "pattern": "f\"cd {dir_path} && ...\"",
+            "vulnerability": "路径中shell元字符注入"
+          }
+        ],
+        "attack_vector": "恶意路径如 '; rm -rf /' 可执行任意命令"
+      },
+      {
+        "chain_id": "CHAIN_004",
+        "name": "Python eval()代码执行攻击链",
+        "description": "测试脚本直接执行CLI参数",
+        "risk": "critical",
+        "call_sequence": [
+          {
+            "step": 1,
+            "function": "gen_data.py",
+            "file": "conversion/fill_diagonal_v2/tests/ut/op_kernel/fill_diagonal_v2_data/gen_data.py",
+            "line": 21,
+            "pattern": "shape = eval(shape)"
+          },
+          {
+            "step": 2,
+            "function": "sys.argv[1]",
+            "input": "用户CLI参数"
+          }
+        ],
+        "attack_vector": "任意Python代码执行"
+      },
+      {
+        "chain_id": "CHAIN_005",
+        "name": "Philox RNG内部攻击链",
+        "description": "Philox算法内部调用结构",
+        "risk": "informational",
+        "call_sequence": [
+          {
+            "step": 1,
+            "function": "PhiloxAlgParsInit",
+            "params": "seed -> key[2], counter[4]"
+          },
+          {
+            "step": 2,
+            "function": "PhiloxRandomSimt",
+            "params": "key, counter -> results"
+          },
+          {
+            "step": 3,
+            "function": "Philox4x32Round",
+            "iterations": "10轮",
+            "constants": ["PHILOX_M4X32_A=0xD2511F53", "PHILOX_M4X32_B=0xCD9E8D57", "PHILOX_W32_A=0x9E3779B9", "PHILOX_W32_B=0xBB67AE85"]
+          }
+        ],
+        "security_notes": "Philox是基于计数器的PRNG，使用AES风格的S-box结构，种子已知则完全确定"
+      }
+    ],
+    "cross_module_calls": {
+      "description": "跨模块关键调用",
+      "patterns": [
+        {
+          "caller_module": "op_api",
+          "callee_module": "l0op",
+          "functions": ["Contiguous", "Cast", "ViewCopy", "${Operator}"],
+          "pattern": "aclnn_*.cpp -> l0op::*"
+        },
+        {
+          "caller_module": "op_host",
+          "callee_module": "random_common",
+          "functions": ["New64", "GetKeyAndCounter"],
+          "pattern": "*_tiling.cpp -> random_tiling_base.h"
+        },
+        {
+          "caller_module": "op_kernel",
+          "callee_module": "random_common",
+          "functions": ["PhiloxAlgParsInit", "PhiloxRandomSimt", "Philox4x32Round"],
+          "pattern": "*_impl.h -> random_kernel_base.h"
+        }
+      ]
+    },
+    "statistics": {
+      "total_api_functions": 300,
+      "total_l0op_calls": 50,
+      "total_rng_functions": 6,
+      "security_chains": 5
+    }
+  }
+}

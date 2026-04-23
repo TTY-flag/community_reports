@@ -1,0 +1,105 @@
+{
+  "scan_id": "550e8400-e29b-41d4-a716-446655440000",
+  "start_time": "2026-04-22T18:30:00Z",
+  "end_time": "2026-04-22T18:55:00Z",
+  "duration_seconds": 1500,
+  "project_name": "amct",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/cann/6/amct",
+  "status": "success",
+  "language_stats": {
+    "cpp": {
+      "files": 8,
+      "lines": 1887
+    },
+    "python": {
+      "files": 524,
+      "lines": 81854
+    }
+  },
+  "agents": [
+    {
+      "name": "architecture",
+      "start_time": "2026-04-22T18:31:00Z",
+      "end_time": "2026-04-22T18:38:25Z",
+      "status": "success",
+      "output_files": [
+        "project_model.json",
+        "call_graph.json",
+        "threat_analysis_report.md"
+      ],
+      "summary": {
+        "modules": 13,
+        "priority_files": 26,
+        "entry_points": 16,
+        "high_risk_modules": 3
+      }
+    },
+    {
+      "name": "dataflow-scanner",
+      "start_time": "2026-04-22T18:40:00Z",
+      "end_time": "2026-04-22T18:44:36Z",
+      "status": "success",
+      "summary": {
+        "vulnerabilities_found": 7,
+        "types": ["path_traversal", "deserialization"]
+      }
+    },
+    {
+      "name": "security-auditor",
+      "start_time": "2026-04-22T18:40:00Z",
+      "end_time": "2026-04-22T18:44:08Z",
+      "status": "success",
+      "summary": {
+        "vulnerabilities_found": 5,
+        "types": ["unsafe_pickle_deserialization"]
+      }
+    },
+    {
+      "name": "verification",
+      "start_time": "2026-04-22T18:46:00Z",
+      "end_time": "2026-04-22T18:49:47Z",
+      "status": "success",
+      "summary": {
+        "confirmed": 3,
+        "likely": 8,
+        "false_positive": 1
+      }
+    },
+    {
+      "name": "details-analyzer",
+      "start_time": "2026-04-22T18:50:00Z",
+      "end_time": "2026-04-22T18:52:00Z",
+      "status": "success",
+      "output_files": [
+        "details/VULN-SEC-001.md",
+        "details/VULN-SEC-002.md"
+      ]
+    },
+    {
+      "name": "reporter",
+      "start_time": "2026-04-22T18:53:00Z",
+      "end_time": "2026-04-22T18:55:00Z",
+      "status": "success",
+      "output_files": [
+        "report_confirmed.md",
+        "report_unconfirmed.md"
+      ]
+    }
+  ],
+  "summary": {
+    "total_vulnerabilities": 12,
+    "confirmed": 3,
+    "likely": 8,
+    "false_positive": 1,
+    "by_severity": {
+      "critical": 3,
+      "high": 0,
+      "medium": 7,
+      "low": 2
+    },
+    "by_cwe": {
+      "CWE-502": 6,
+      "CWE-22": 6
+    }
+  }
+}

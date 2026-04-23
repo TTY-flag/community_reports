@@ -1,0 +1,263 @@
+{
+  "project_name": "WAAS Booster",
+  "scan_time": "2026-04-21T10:30:00Z",
+  "lsp_available": false,
+  "total_files": 10,
+  "total_lines": 2081,
+  "project_profile": {
+    "project_type": "cli_tool",
+    "deployment_model": "作为 systemd 服务运行在 Linux 服务器上（通常为 Kubernetes worker node），需要 root/特权权限访问 cgroup 文件系统，针对鲲鹏920处理器上的容器环境进行动态 CPU 配额调整",
+    "trust_boundaries": [
+      {
+        "boundary": "命令行接口",
+        "trusted_side": "程序内部逻辑",
+        "untrusted_side": "本地用户提供的命令行参数",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "系统文件系统",
+        "trusted_side": "程序读取的系统数据",
+        "untrusted_side": "/proc, /sys, cgroup 文件系统（可能被恶意进程或内核模块篡改）",
+        "risk": "High"
+      },
+      {
+        "boundary": "Cgroup 配额控制",
+        "trusted_side": "容器资源管理逻辑",
+        "untrusted_side": "写入 cgroup quota 文件可能影响容器资源分配",
+        "risk": "Critical"
+      },
+      {
+        "boundary": "外部命令执行",
+        "trusted_side": "程序内部调用",
+        "untrusted_side": "subprocess 执行 /usr/bin/stat（PATH 可能被劫持）",
+        "risk": "High"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "waasbooster",
+      "path": "src/waasbooster",
+      "language": "python",
+      "components": [
+        "waas_booster.py",
+        "util.py",
+        "boost_log.py",
+        "quota_manager.py",
+        "data_collector.py",
+        "load_predictor.py",
+        "cpu_monitor.py",
+        "numa_cpu_monitor.py",
+        "quota_calculator.py",
+        "quota_updater.py"
+      ]
+    }
+  ],
+  "files": [
+    {
+      "path": "src/waasbooster/quota_updater.py",
+      "language": "python",
+      "risk": "Critical",
+      "module": "waasbooster",
+      "lines": 52,
+      "priority": 1,
+      "risk_reasons": [
+        "直接写入系统 cgroup quota 文件 (cpu.cfs_quota_us)",
+        "影响容器 CPU 资源分配",
+        "路径拼接操作可能存在路径遍历风险"
+      ]
+    },
+    {
+      "path": "src/waasbooster/quota_manager.py",
+      "language": "python",
+      "risk": "High",
+      "module": "waasbooster",
+      "lines": 212,
+      "priority": 2,
+      "risk_reasons": [
+        "使用 subprocess.run 执行外部命令 (/usr/bin/stat)",
+        "管理配额审批决策逻辑",
+        "调用 quota_updater 写入 cgroup"
+      ]
+    },
+    {
+      "path": "src/waasbooster/waas_booster.py",
+      "language": "python",
+      "risk": "High",
+      "module": "waasbooster",
+      "lines": 546,
+      "priority": 3,
+      "risk_reasons": [
+        "主入口函数，处理命令行参数 (argparse)",
+        "PID 文件管理 (/var/run/waasbooster_manager/waasbooster.pid)",
+        "协调所有模块的运行",
+        "写入 init_quota.json 配额记录文件"
+      ]
+    },
+    {
+      "path": "src/waasbooster/util.py",
+      "language": "python",
+      "risk": "High",
+      "module": "waasbooster",
+      "lines": 358,
+      "priority": 4,
+      "risk_reasons": [
+        "遍历所有系统进程 (/proc 目录)",
+        "读取多个系统文件 (/proc/mounts, /proc/stat, /proc/{pid}/cgroup)",
+        "大量路径拼接操作 (os.path.join)",
+        "获取 cgroup 挂载点和容器信息"
+      ]
+    },
+    {
+      "path": "src/waasbooster/cpu_monitor.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "waasbooster",
+      "lines": 138,
+      "priority": 5,
+      "risk_reasons": [
+        "读取 cgroup 文件系统 (cpuacct.usage, cpu.cfs_quota_us, cpu.cfs_period_us)",
+        "持续监控容器 CPU 使用情况"
+      ]
+    },
+    {
+      "path": "src/waasbooster/numa_cpu_monitor.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "waasbooster",
+      "lines": 136,
+      "priority": 6,
+      "risk_reasons": [
+        "读取系统文件 (/proc/stat, /sys/devices/system/node)",
+        "NUMA CPU 监控"
+      ]
+    },
+    {
+      "path": "src/waasbooster/data_collector.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "waasbooster",
+      "lines": 174,
+      "priority": 7,
+      "risk_reasons": [
+        "文件写入操作 (CSV, ZIP)",
+        "数据持久化存储 (/var/waasbooster/)"
+      ]
+    },
+    {
+      "path": "src/waasbooster/boost_log.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "waasbooster",
+      "lines": 252,
+      "priority": 8,
+      "risk_reasons": [
+        "文件写入操作 (日志文件)",
+        "使用 tarfile 创建压缩包",
+        "文件权限设置 (os.chmod)"
+      ]
+    },
+    {
+      "path": "src/waasbooster/load_predictor.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "waasbooster",
+      "lines": 163,
+      "priority": 9,
+      "risk_reasons": [
+        "纯预测逻辑，使用 Prophet 模型",
+        "无直接外部输入处理",
+        "无文件系统操作"
+      ]
+    },
+    {
+      "path": "src/waasbooster/quota_calculator.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "waasbooster",
+      "lines": 57,
+      "priority": 10,
+      "risk_reasons": [
+        "纯计算逻辑，PID 控制器实现",
+        "无外部输入处理",
+        "无文件系统操作"
+      ]
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "src/waasbooster/waas_booster.py",
+      "line": 509,
+      "function": "booster_param_parser",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "本地用户运行程序时可通过命令行参数控制程序行为（如 --forecast 参数），攻击者可注入恶意参数值",
+      "description": "argparse 解析命令行参数 --forecast"
+    },
+    {
+      "file": "src/waasbooster/quota_manager.py",
+      "line": 20,
+      "function": "_get_cgroup_version",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "subprocess 执行外部命令 /usr/bin/stat，如果 PATH 环境变量被劫持，可能执行恶意程序；使用完整路径降低了风险，但仍存在被替换的可能",
+      "description": "执行 subprocess.run(['/usr/bin/stat', '-fc', '%T', '/sys/fs/cgroup'])"
+    },
+    {
+      "file": "src/waasbooster/util.py",
+      "line": 116,
+      "function": "file_check",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "读取 /proc/{pid}/cgroup 文件，pid 来自系统进程列表，理论上攻击者可创建恶意进程并篡改其 cgroup 文件",
+      "description": "读取进程 cgroup 信息，遍历所有 PID"
+    },
+    {
+      "file": "src/waasbooster/util.py",
+      "line": 199,
+      "function": "get_boosted_container_cgroups",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "读取容器 cgroup 文件系统中的 cpu.cfs_quota_us 文件，这些文件可能被恶意容器或进程篡改",
+      "description": "读取所有容器的 cgroup quota 配置"
+    },
+    {
+      "file": "src/waasbooster/quota_updater.py",
+      "line": 41,
+      "function": "quota_updater",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "直接写入 cgroup 文件 cpu.cfs_quota_us，影响容器 CPU 配额分配；如果路径验证不当可能导致写入错误位置",
+      "description": "写入容器 cgroup quota 文件"
+    },
+    {
+      "file": "src/waasbooster/cpu_monitor.py",
+      "line": 40,
+      "function": "get_cpu_usage",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "读取 cgroup 文件系统中的 cpuacct.usage 文件，文件路径来自容器列表，可能被篡改",
+      "description": "读取容器 CPU 使用时间"
+    },
+    {
+      "file": "src/waasbooster/numa_cpu_monitor.py",
+      "line": 63,
+      "function": "get_cpu_utilization",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "读取 /proc/stat 文件获取 CPU 统计信息，该文件可能被恶意内核模块篡改",
+      "description": "读取 /proc/stat 计算 CPU 利用率"
+    }
+  ],
+  "attack_surfaces": [
+    "命令行参数注入 (--forecast)",
+    "subprocess 命令执行 (/usr/bin/stat)",
+    "/proc 文件系统读取 (进程信息、CPU 统计)",
+    "/sys 文件系统读取 (NUMA 配置、cgroup 挂载点)",
+    "cgroup 文件系统读写 (quota 配置)",
+    "容器路径遍历 (通过 /proc/{pid}/cgroup 获取容器路径)",
+    "PID 文件写入 (/var/run/waasbooster_manager/waasbooster.pid)",
+    "数据文件写入 (/var/waasbooster/)",
+    "日志文件写入 (/var/log/waasbooster.log)"
+  ]
+}

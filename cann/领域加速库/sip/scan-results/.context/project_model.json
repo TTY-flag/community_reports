@@ -1,0 +1,359 @@
+{
+  "project_name": "SIP (Signal Processing)",
+  "scan_time": "2026-04-21T15:30:00Z",
+  "lsp_available": true,
+  "total_files": 617,
+  "total_lines": 59178,
+  "project_profile": {
+    "project_type": "library",
+    "deployment_model": "Library deployed within Huawei CANN framework on Ascend NPU servers, invoked via Ascend CL API by machine learning applications",
+    "trust_boundaries": [
+      {
+        "boundary": "API Interface",
+        "trusted_side": "SIP Library",
+        "untrusted_side": "External callers via aclTensor",
+        "risk": "High"
+      },
+      {
+        "boundary": "Device Memory",
+        "trusted_side": "SIP Kernel execution",
+        "untrusted_side": "User-provided tensor data on NPU device",
+        "risk": "High"
+      },
+      {
+        "boundary": "PyTorch Adapter",
+        "trusted_side": "sip_pta adapter layer",
+        "untrusted_side": "PyTorch tensor data from user scripts",
+        "risk": "Medium"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "ops",
+      "path": "ops",
+      "language": "c_cpp",
+      "components": ["blas", "fft", "filter", "base"]
+    },
+    {
+      "name": "core",
+      "path": "core",
+      "language": "c_cpp",
+      "components": ["blas", "fft", "filter", "interpolation", "base", "utils"]
+    },
+    {
+      "name": "include",
+      "path": "include",
+      "language": "c_cpp",
+      "components": ["blas_api.h", "fft_api.h", "filter_api.h", "interp_api.h", "base_api.h", "asdsip.h"]
+    },
+    {
+      "name": "sip_pta",
+      "path": "sip_pta",
+      "language": "mixed",
+      "components": ["csrc", "torch_sip", "test"]
+    },
+    {
+      "name": "scripts",
+      "path": "scripts",
+      "language": "python",
+      "components": ["build_util.py", "update_tbe_tactic_json.py", "compile_ascendc.py"]
+    }
+  ],
+  "files": [
+    {
+      "path": "include/blas_api.h",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "include",
+      "lines": 209,
+      "priority": 1
+    },
+    {
+      "path": "include/fft_api.h",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "include",
+      "lines": 103,
+      "priority": 1
+    },
+    {
+      "path": "include/filter_api.h",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "include",
+      "lines": 33,
+      "priority": 1
+    },
+    {
+      "path": "include/interp_api.h",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "include",
+      "lines": 24,
+      "priority": 1
+    },
+    {
+      "path": "core/blas/cgemm.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "core",
+      "lines": 85,
+      "priority": 1
+    },
+    {
+      "path": "core/blas/cgemv.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "core",
+      "lines": 50,
+      "priority": 1
+    },
+    {
+      "path": "core/blas/gemm_batched.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "core",
+      "lines": 80,
+      "priority": 1
+    },
+    {
+      "path": "core/blas/cmatinv_batched.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "core",
+      "lines": 70,
+      "priority": 1
+    },
+    {
+      "path": "core/fft/fft_api.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "core",
+      "lines": 1353,
+      "priority": 1
+    },
+    {
+      "path": "core/filter/convolve.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "core",
+      "lines": 45,
+      "priority": 2
+    },
+    {
+      "path": "core/utils/ops_base.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "core",
+      "lines": 300,
+      "priority": 1
+    },
+    {
+      "path": "core/utils/common_check.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "core",
+      "lines": 103,
+      "priority": 2
+    },
+    {
+      "path": "core/blas/blasplan/BlasCgemmPlan.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "core",
+      "lines": 161,
+      "priority": 2
+    },
+    {
+      "path": "core/blas/blasplan/BlasCgemvPlan.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "core",
+      "lines": 200,
+      "priority": 1
+    },
+    {
+      "path": "core/fft/utils/workspace.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "core",
+      "lines": 80,
+      "priority": 1
+    },
+    {
+      "path": "core/fft/fftcore/dft_core.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "core",
+      "lines": 150,
+      "priority": 2
+    },
+    {
+      "path": "core/fft/fftcore/fft_core_any.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "core",
+      "lines": 250,
+      "priority": 2
+    },
+    {
+      "path": "ops/blas/iamax/iamax/tiling/iamax_tiling.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "ops",
+      "lines": 220,
+      "priority": 1
+    },
+    {
+      "path": "ops/blas/caxpy/caxpy/tiling/caxpy_tiling.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "ops",
+      "lines": 180,
+      "priority": 2
+    },
+    {
+      "path": "sip_pta/csrc/blas/asd_blas_cgemm.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "sip_pta",
+      "lines": 60,
+      "priority": 2
+    },
+    {
+      "path": "sip_pta/csrc/filter/asd_convolve.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "sip_pta",
+      "lines": 45,
+      "priority": 2
+    },
+    {
+      "path": "scripts/build_util.py",
+      "language": "python",
+      "risk": "Low",
+      "module": "scripts",
+      "lines": 150,
+      "priority": 5
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "include/blas_api.h",
+      "line": 34,
+      "function": "asdBlasCreate",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "API entry for handle creation, called by trusted application code through Ascend CL framework",
+      "description": "Create BLAS handle for subsequent operations"
+    },
+    {
+      "file": "include/blas_api.h",
+      "line": 112,
+      "function": "asdBlasCgemm",
+      "type": "rpc",
+      "trust_level": "untrusted_local",
+      "justification": "Receives aclTensor pointers containing user-provided matrix data, tensors populated by external ML framework",
+      "description": "Complex matrix multiplication with external tensor data"
+    },
+    {
+      "file": "include/blas_api.h",
+      "line": 119,
+      "function": "asdBlasCgemv",
+      "type": "rpc",
+      "trust_level": "untrusted_local",
+      "justification": "Receives aclTensor pointers containing user-provided matrix/vector data",
+      "description": "Complex matrix-vector multiplication"
+    },
+    {
+      "file": "include/blas_api.h",
+      "line": 198,
+      "function": "asdBlasCgemmBatched",
+      "type": "rpc",
+      "trust_level": "untrusted_local",
+      "justification": "Batched operation with multiple tensors, higher risk due to dimension calculations",
+      "description": "Batched complex matrix multiplication"
+    },
+    {
+      "file": "include/blas_api.h",
+      "line": 206,
+      "function": "asdBlasCmatinvBatched",
+      "type": "rpc",
+      "trust_level": "untrusted_local",
+      "justification": "Batched matrix inversion, complex dimension validation required",
+      "description": "Batched complex matrix inversion"
+    },
+    {
+      "file": "include/fft_api.h",
+      "line": 55,
+      "function": "asdFftMakePlan1D",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "Plan creation with user-specified FFT size parameters",
+      "description": "Create 1D FFT execution plan with size parameters"
+    },
+    {
+      "file": "include/fft_api.h",
+      "line": 65,
+      "function": "asdFftExecC2C",
+      "type": "rpc",
+      "trust_level": "untrusted_local",
+      "justification": "Executes FFT transform on user-provided tensor data",
+      "description": "Execute complex-to-complex FFT transform"
+    },
+    {
+      "file": "include/fft_api.h",
+      "line": 73,
+      "function": "asdFftExecC2R",
+      "type": "rpc",
+      "trust_level": "untrusted_local",
+      "justification": "Transform with different input/output sizes, potential validation gap",
+      "description": "Execute complex-to-real FFT transform"
+    },
+    {
+      "file": "include/fft_api.h",
+      "line": 76,
+      "function": "asdFftExecR2C",
+      "type": "rpc",
+      "trust_level": "untrusted_local",
+      "justification": "Transform with different input/output sizes",
+      "description": "Execute real-to-complex FFT transform"
+    },
+    {
+      "file": "include/filter_api.h",
+      "line": 29,
+      "function": "asdConvolve",
+      "type": "rpc",
+      "trust_level": "untrusted_local",
+      "justification": "Convolution operation on user-provided signal and kernel tensors",
+      "description": "Signal convolution operation"
+    },
+    {
+      "file": "include/interp_api.h",
+      "line": 19,
+      "function": "asdInterpWithCoeff",
+      "type": "rpc",
+      "trust_level": "untrusted_local",
+      "justification": "Interpolation with coefficient tensor from user",
+      "description": "Interpolation using provided coefficients"
+    },
+    {
+      "file": "sip_pta/csrc/blas/asd_blas_cgemm.cpp",
+      "line": 25,
+      "function": "torch_sip_cgemm",
+      "type": "rpc",
+      "trust_level": "untrusted_local",
+      "justification": "PyTorch adapter converting PyTorch tensors to aclTensor without deep validation",
+      "description": "PyTorch wrapper for BLAS Cgemm operation"
+    }
+  ],
+  "attack_surfaces": [
+    "aclTensor API Interface: All BLAS/FFT/Filter operations receive external tensor data",
+    "PyTorch Adapter Layer: sip_pta converts Python tensors to Ascend format",
+    "Dimension Parameters: User-provided m, n, k, lda, ldb, ldc, fftSize, batchSize values",
+    "Workspace Memory: Internal buffer allocations based on calculated sizes",
+    "Device Memory Copy: aclrtMemcpy and MkiRtMemCopy operations on tensor data",
+    "Tiling Data: memcpy_s operations in kernel tiling without return value checks"
+  ]
+}
