@@ -1,4 +1,4 @@
-# VULN-SEC-ZLIB-001: Decompression Bomb Protection Missing in KAEZlib
+# VULN-SEC-ZLIB-001：解压炸弹保护缺失漏洞
 
 ## 1. 漏洞概述
 

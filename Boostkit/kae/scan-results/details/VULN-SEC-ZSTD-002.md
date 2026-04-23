@@ -1,4 +1,4 @@
-# VULN-SEC-ZSTD-002: Hardware Trust Buffer Overflow in KAEZstd V2
+# VULN-SEC-ZSTD-002：硬件信任缓冲区溢出漏洞
 
 ## Executive Summary
 

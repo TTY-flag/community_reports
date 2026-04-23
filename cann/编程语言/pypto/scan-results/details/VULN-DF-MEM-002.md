@@ -1,4 +1,4 @@
-# VULN-DF-MEM-002: DeviceTensorData pybind11 Arbitrary Address Entry Point
+# VULN-DF-MEM-002：pybind11入口点允许任意地址传入
 
 ## 漏洞概述
 

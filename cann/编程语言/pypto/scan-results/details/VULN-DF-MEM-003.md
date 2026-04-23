@@ -1,4 +1,4 @@
-# VULN-DF-MEM-003: Arbitrary Code Execution via ExportedOperator reinterpret_cast
+# VULN-DF-MEM-003：reinterpret_cast强制转换致任意代码执行
 
 ## 漏洞概述
 

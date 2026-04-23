@@ -1,4 +1,4 @@
-# VULN-SEC-KERNEL510-001: UACCE_CMD_SHARE_SVAS 访问控制缺失漏洞
+# VULN-SEC-KERNEL510-001：访问控制缺失漏洞
 
 ## 漏洞概述
 

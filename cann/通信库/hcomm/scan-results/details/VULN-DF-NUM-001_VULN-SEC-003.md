@@ -1,6 +1,4 @@
-# 深度利用分析报告
-
-## VULN-DF-NUM-001 & VULN-SEC-003: strtol 无错误检测漏洞
+# VULN-DF-NUM-001：strtol错误检测缺失漏洞
 
 **漏洞ID**: VULN-DF-NUM-001 (dataflow) + VULN-SEC-003 (security)  
 **CWE**: CWE-190 (Integer Overflow or Wraparound) / CWE-20 (Improper Input Validation)  

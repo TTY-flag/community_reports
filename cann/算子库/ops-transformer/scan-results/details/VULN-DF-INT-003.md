@@ -1,4 +1,4 @@
-# 漏洞深度分析报告: VULN-DF-INT-003
+# VULN-DF-INT-003：MoE分发算子整数溢出漏洞
 
 ## 基本信息
 - 漏洞ID: VULN-DF-INT-003

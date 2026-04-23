@@ -1,4 +1,4 @@
-# VULN-SEC-RUN-002: 命令注入漏洞
+# VULN-SEC-RUN-002：命令注入漏洞
 
 ## 漏洞概述
 
@@ -15,7 +15,7 @@
 
 ### 漏洞描述
 
-Environment variable-controlled compiler/linker execution paths. `PYASC_COMPILER` and `PYASC_LINKER` environment variables determine which executables are invoked via `subprocess.Popen()`. `shutil.which()` searches PATH to locate the executable. An attacker who can set these environment variables (or modify PATH) can cause execution of a malicious compiler/linker binary.
+编译器/链接器执行路径由环境变量控制。`PYASC_COMPILER` 和 `PYASC_LINKER` 环境变量决定通过 `subprocess.Popen()` 调用的可执行文件。`shutil.which()` 在 PATH 中查找可执行文件。攻击者若能设置这些环境变量（或修改 PATH），可导致执行恶意编译器/链接器二进制文件。
 
 ---
 

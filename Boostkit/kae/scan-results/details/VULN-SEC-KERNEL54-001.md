@@ -1,4 +1,4 @@
-# VULN-SEC-KERNEL54-001: UACCE_CMD_SHARE_SVAS 内存隔离缺失漏洞
+# VULN-SEC-KERNEL54-001：内存隔离缺失漏洞
 
 ## 漏洞概述
 

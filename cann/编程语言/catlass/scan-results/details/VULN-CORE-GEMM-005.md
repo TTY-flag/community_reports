@@ -1,4 +1,4 @@
-# VULN-CORE-GEMM-005 漏洞分析报告
+# VULN-CORE-GEMM-005：非对齐内存拷贝漏洞
 
 ## 漏洞基本信息
 

@@ -1,4 +1,4 @@
-# VULN-SEC-ZSTD-001: Hardware-Triggered Buffer Overflow in KAEZstd Data Parsing
+# VULN-SEC-ZSTD-001：硬件触发缓冲区溢出漏洞
 
 ## 1. 漏洞概述和严重性评估
 

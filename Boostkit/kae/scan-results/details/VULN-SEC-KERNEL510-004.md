@@ -1,4 +1,4 @@
-# VULN-SEC-KERNEL510-004 深度利用分析报告
+# VULN-SEC-KERNEL510-004：AB-BA死锁漏洞
 
 ## 漏洞概述
 

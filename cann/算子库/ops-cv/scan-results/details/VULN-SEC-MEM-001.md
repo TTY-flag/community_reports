@@ -1,4 +1,4 @@
-# VULN-SEC-MEM-001: Integer Overflow / Resource Exhaustion in NMS v3 AICPU Kernel
+# VULN-SEC-MEM-001：NMS算子整数溢出漏洞
 
 ## 漏洞摘要
 

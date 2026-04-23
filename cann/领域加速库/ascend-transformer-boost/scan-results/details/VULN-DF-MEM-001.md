@@ -1,4 +1,4 @@
-# VULN-DF-MEM-001: set_buffer_size Integer Overflow
+# VULN-DF-MEM-001：缓冲区大小设置整数溢出漏洞
 
 ## Vulnerability Overview
 

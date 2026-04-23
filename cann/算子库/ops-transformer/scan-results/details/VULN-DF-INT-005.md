@@ -1,4 +1,4 @@
-# VULN-DF-INT-005: Integer Overflow in AllGatherMatmul Shape Inference
+# VULN-DF-INT-005：AllGather算子整数溢出漏洞
 
 ## Vulnerability Metadata
 

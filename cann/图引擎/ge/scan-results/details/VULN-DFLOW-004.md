@@ -1,4 +1,4 @@
-# VULN-DFLOW-004: IDOR (Insecure Direct Object Reference) - Missing Authorization
+# VULN-DFLOW-004：IDOR缺失授权验证漏洞
 
 ## 漏洞概述
 

@@ -1,8 +1,8 @@
-# VULN-lib_runtime-001: Unsafe Dynamic Library Loading
+# VULN-lib_runtime-001：不安全动态库加载漏洞
 
 ## 漏洞概述
 
-**漏洞类型**: Unsafe Dynamic Library Loading  
+**漏洞类型**: 不安全动态库加载  
 **CWE**: CWE-427 (Use of Uncontrolled Search Path Element)  
 **严重程度**: Critical  
 **置信度**: 85%
@@ -15,7 +15,7 @@
 
 ### 漏洞描述
 
-Uncontrolled search path element leads to arbitrary code execution. The `ctypes.CDLL()` loads a shared library from a cache path that is controlled by environment variables (`PYASC_HOME`, `PYASC_CACHE_DIR`). An attacker who can set these environment variables can place a malicious library in the cache directory, which will be loaded and executed with the privileges of the Python process.
+不可控搜索路径元素导致任意代码执行。`ctypes.CDLL()` 从由环境变量（`PYASC_HOME`、`PYASC_CACHE_DIR`）控制的缓存路径加载共享库。攻击者若能设置这些环境变量，可在缓存目录中放置恶意库，该库将以 Python 进程权限加载并执行。
 
 ---
 

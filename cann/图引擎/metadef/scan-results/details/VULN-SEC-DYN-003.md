@@ -1,4 +1,4 @@
-# VULN-SEC-DYN-003: Dynamic Library Injection Vulnerability Analysis Report
+# VULN-SEC-DYN-003：动态库注入漏洞
 
 ## 漏洞概述
 

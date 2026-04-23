@@ -1,4 +1,4 @@
-# llm_datadist_cache_mgr-V007 - 参数校验缺失漏洞深度分析报告
+# llm_datadist_cache_mgr-V007：参数校验缺失漏洞
 
 ## 漏洞概要
 

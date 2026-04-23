@@ -1,4 +1,4 @@
-# VULN-SEC-MEM-006: Integer Overflow / Resource Exhaustion in Scale and Translate AICPU Kernel
+# VULN-SEC-MEM-006：缩放平移算子整数溢出漏洞
 
 ## Executive Summary
 

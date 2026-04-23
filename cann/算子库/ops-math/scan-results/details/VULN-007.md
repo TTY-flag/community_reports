@@ -1,4 +1,4 @@
-# VULN-007: Command Injection in build_opp_kernel_static.py
+# VULN-007：build脚本命令注入漏洞
 
 ## Vulnerability Summary
 

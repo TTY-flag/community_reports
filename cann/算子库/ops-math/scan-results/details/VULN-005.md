@@ -1,4 +1,4 @@
-# VULN-005: Unsafe Module Loading - Arbitrary Code Execution
+# VULN-005：不安全模块加载致任意代码执行漏洞
 
 ## 漏洞概述
 

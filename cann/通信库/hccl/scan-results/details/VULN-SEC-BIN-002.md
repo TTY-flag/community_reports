@@ -1,4 +1,4 @@
-# VULN-SEC-BIN-002: ASCEND_HOME_PATH 控制 AICPU Kernel 加载路径
+# VULN-SEC-BIN-002：ASCEND_HOME_PATH控制AICPU内核加载路径漏洞
 
 ## 漏洞概述
 

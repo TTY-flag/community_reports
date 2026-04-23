@@ -1,4 +1,4 @@
-# VULN-SEC-RT-003: importlib 模块加载漏洞
+# VULN-SEC-RT-003：importlib模块加载漏洞
 
 ## 漏洞概述
 
@@ -15,7 +15,7 @@
 
 ### 漏洞描述
 
-Unverified module loading via `importlib` from cached path. `NPUUtils` loads Python modules from cache using `importlib.util.spec_from_file_location` without any integrity verification. The loaded module executes with full Python privileges, enabling arbitrary code execution if cache is compromised.
+通过 `importlib` 从缓存路径加载模块时未验证完整性。`NPUUtils` 使用 `importlib.util.spec_from_file_location` 从缓存加载 Python 模块，没有任何完整性验证。加载的模块以完整 Python 权限执行，若缓存被篡改可实现任意代码执行。
 
 ---
 

@@ -1,4 +1,4 @@
-# VULN_QUEUE_RACE_STATIC_001: Race Condition on Static Variables
+# VULN_QUEUE_RACE_STATIC_001：静态变量竞态条件漏洞
 
 ## 漏洞摘要
 

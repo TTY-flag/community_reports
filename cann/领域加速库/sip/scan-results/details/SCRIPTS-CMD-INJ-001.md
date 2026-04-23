@@ -1,4 +1,4 @@
-# 漏洞深度利用分析报告：SCRIPTS-CMD-INJ-001
+# SCRIPTS-CMD-INJ-001：compile脚本命令注入漏洞
 
 ## 漏洞概述
 

@@ -1,4 +1,4 @@
-# VULN-DF-XMOD-002: Kafka到JSON反序列化的跨模块数据流漏洞
+# VULN-DF-XMOD-002：Kafka到JSON反序列化跨模块数据流漏洞
 
 ## 1. 漏洞概述
 

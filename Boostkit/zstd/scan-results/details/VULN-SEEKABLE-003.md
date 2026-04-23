@@ -1,4 +1,4 @@
-# VULN-SEEKABLE-003: Missing Validation Vulnerability Analysis
+# VULN-SEEKABLE-003：缺失验证漏洞分析
 
 ## Executive Summary
 

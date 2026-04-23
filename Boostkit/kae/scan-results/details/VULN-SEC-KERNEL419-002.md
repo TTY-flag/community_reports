@@ -1,4 +1,4 @@
-# VULN-SEC-KERNEL419-002: NoIOMMU Mode Default Configuration - DMA Protection Disabled
+# VULN-SEC-KERNEL419-002：NoIOMMU默认配置致DMA保护缺失漏洞
 
 ## 漏洞概述
 

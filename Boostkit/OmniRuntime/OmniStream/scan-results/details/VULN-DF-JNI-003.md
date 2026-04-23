@@ -1,4 +1,4 @@
-# 漏洞深度分析报告：JNI Channel Info JSON 解析异常安全
+# VULN-DF-JNI-003：JNI Channel Info JSON解析异常安全漏洞
 
 ## 漏洞标识
 

@@ -1,4 +1,4 @@
-# 漏洞深度分析报告 - VULN-SEC-SNAPPY-001
+# VULN-SEC-SNAPPY-001：缓冲区溢出漏洞
 
 ## 1. 漏洞确认结论
 

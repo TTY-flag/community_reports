@@ -1,4 +1,4 @@
-# VULN_QUEUE_004 - DMA地址和大小验证不足导致的越界写入漏洞
+# VULN_QUEUE_004：DMA地址验证不足致越界写入漏洞
 
 **漏洞ID**: VULN_QUEUE_004  
 **漏洞类型**: dma_validation_missing  

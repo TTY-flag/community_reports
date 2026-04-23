@@ -1,4 +1,4 @@
-# VULN-DF-COMMON-ETM-001: Entropy Table Manipulation Vulnerability Analysis
+# VULN-DF-COMMON-ETM-001：熵表操作漏洞分析
 
 ## Executive Summary
 

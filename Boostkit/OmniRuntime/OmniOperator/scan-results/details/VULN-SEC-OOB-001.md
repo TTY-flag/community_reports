@@ -1,4 +1,4 @@
-# VULN-SEC-OOB-001: UTF-8 越界读取漏洞
+# VULN-SEC-OOB-001：UTF-8越界读取漏洞
 
 ## 漏洞概述
 

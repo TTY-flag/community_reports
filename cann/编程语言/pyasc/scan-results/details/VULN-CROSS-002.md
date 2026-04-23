@@ -1,4 +1,4 @@
-# VULN-CROSS-002: VerbatimOp 跨模块代码注入链
+# VULN-CROSS-002：VerbatimOp跨模块代码注入链漏洞
 
 ## 漏洞概述
 

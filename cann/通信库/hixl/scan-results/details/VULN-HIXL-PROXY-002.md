@@ -1,4 +1,4 @@
-# VULN-HIXL-PROXY-002 - 参数验证缺失漏洞深度分析报告
+# VULN-HIXL-PROXY-002：参数验证缺失漏洞
 
 ## 漏洞概要
 

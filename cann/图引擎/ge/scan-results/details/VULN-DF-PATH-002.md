@@ -1,4 +1,4 @@
-# VULN-DF-PATH-002: Path Traversal in Model Serialization Weight Loading
+# VULN-DF-PATH-002：模型权重加载路径遍历漏洞
 
 ## 漏洞概述
 

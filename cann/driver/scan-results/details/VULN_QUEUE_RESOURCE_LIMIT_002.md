@@ -1,4 +1,4 @@
-# VULN_QUEUE_RESOURCE_LIMIT_002 - 进程级资源限制缺失
+# VULN_QUEUE_RESOURCE_LIMIT_002：进程级资源限制缺失漏洞
 
 ## 基本信息
 

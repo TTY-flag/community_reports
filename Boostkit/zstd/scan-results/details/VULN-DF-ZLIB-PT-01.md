@@ -1,4 +1,4 @@
-# VULN-DF-ZLIB-PT-01: Path Traversal Vulnerability Analysis
+# VULN-DF-ZLIB-PT-01：路径遍历漏洞分析
 
 ## Executive Summary
 

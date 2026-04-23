@@ -1,4 +1,4 @@
-# VULN-DF-KERNEL-UAF-02: Use After Free Vulnerability Analysis
+# VULN-DF-KERNEL-UAF-02：释放后使用漏洞分析
 
 ## Executive Summary
 

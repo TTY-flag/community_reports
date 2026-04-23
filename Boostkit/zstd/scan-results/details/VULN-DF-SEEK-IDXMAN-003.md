@@ -1,4 +1,4 @@
-# VULN-DF-SEEK-IDXMAN-003: Index Manipulation Vulnerability Analysis
+# VULN-DF-SEEK-IDXMAN-003：索引操作漏洞分析
 
 ## Executive Summary
 

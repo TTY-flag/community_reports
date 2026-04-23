@@ -1,4 +1,4 @@
-# VULN-RNG-002: Timestamp-Based Seed Entropy
+# VULN-RNG-002：时间戳种子熵不足漏洞
 
 ## Executive Summary
 

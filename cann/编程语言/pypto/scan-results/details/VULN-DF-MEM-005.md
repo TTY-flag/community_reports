@@ -1,4 +1,4 @@
-# VULN-DF-MEM-005: RawTensorData::CreateTensor Unvalidated Pointer Sink
+# VULN-DF-MEM-005：CreateTensor未验证指针致内存越界读取
 
 ## 漏洞概述
 

@@ -1,8 +1,8 @@
-# VULN-lib_runtime-003: PrintInterface Unsafe Loading
+# VULN-lib_runtime-003：PrintInterface不安全动态库加载漏洞
 
 ## 漏洞概述
 
-**漏洞类型**: Unsafe Dynamic Library Loading  
+**漏洞类型**: 不安全动态库加载  
 **CWE**: CWE-427 (Use of Uncontrolled Search Path Element)  
 **严重程度**: Critical  
 **置信度**: 85%
@@ -15,7 +15,7 @@
 
 ### 漏洞描述
 
-Uncontrolled search path element in `PrintInterface.__init__`. Similar to `RuntimeInterface`, this loads a shared library from an environment-controlled cache using `ctypes.cdll.LoadLibrary()`. An attacker can exploit the same cache pollution vector.
+`PrintInterface.__init__` 中存在不可控搜索路径元素漏洞。与 `RuntimeInterface` 类似，该函数使用 `ctypes.cdll.LoadLibrary()` 从环境变量控制的缓存加载共享库。攻击者可利用相同的缓存污染向量。
 
 ---
 

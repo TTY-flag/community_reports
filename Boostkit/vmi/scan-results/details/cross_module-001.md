@@ -1,4 +1,4 @@
-# Authentication Chain Break (CWE-287) - cross_module-001
+# cross_module-001：认证链断裂漏洞
 
 ## 漏洞概述
 

@@ -1,4 +1,4 @@
-# VULN-RNG-004: Auto-Seed Generation Trigger Condition - Deep Exploitation Analysis
+# VULN-RNG-004：自动种子生成条件漏洞
 
 ## Executive Summary
 

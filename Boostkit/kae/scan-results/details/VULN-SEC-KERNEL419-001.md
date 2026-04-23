@@ -1,4 +1,4 @@
-# VULN-SEC-KERNEL419-001: SVA Binding Disabled - PASID Isolation Bypass
+# VULN-SEC-KERNEL419-001：SVA绑定禁用致PASID隔离绕过漏洞
 
 ## 漏洞概述
 

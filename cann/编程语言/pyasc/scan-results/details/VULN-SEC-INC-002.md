@@ -1,4 +1,4 @@
-# VULN-SEC-INC-002: CallOpaqueOp 任意函数调用
+# VULN-SEC-INC-002：CallOpaqueOp任意函数调用漏洞
 
 ## 漏洞概述
 

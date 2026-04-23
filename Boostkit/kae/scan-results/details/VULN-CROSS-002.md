@@ -1,4 +1,4 @@
-# VULN-CROSS-002: VFIO Permission Propagation Issue
+# VULN-CROSS-002：VFIO权限传播漏洞
 
 ## 漏洞概述
 

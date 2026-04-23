@@ -1,4 +1,4 @@
-# VULN-DF-MEM-004: Tensor pybind11 Constructor Unvalidated data_ptr
+# VULN-DF-MEM-004：Tensor构造函数未验证data_ptr指针
 
 ## 漏洞概述
 

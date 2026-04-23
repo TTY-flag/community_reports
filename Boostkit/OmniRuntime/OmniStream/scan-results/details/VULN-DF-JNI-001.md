@@ -1,4 +1,4 @@
-# 漏洞深度分析报告：JNI init.cpp JSON 解析异常安全 + 内存泄漏
+# VULN-DF-JNI-001：JNI init.cpp JSON解析异常安全漏洞
 
 ## 漏洞标识
 

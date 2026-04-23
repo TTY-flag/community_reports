@@ -1,4 +1,4 @@
-# VULN-SEC-CI-002: emitasc::VerbatimOp 代码发射漏洞
+# VULN-SEC-CI-002：emitasc VerbatimOp代码发射漏洞
 
 ## 漏洞概述
 

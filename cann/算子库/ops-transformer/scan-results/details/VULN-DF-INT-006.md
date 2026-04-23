@@ -1,4 +1,4 @@
-# Vulnerability Report: VULN-DF-INT-006
+# VULN-DF-INT-006：MoE算子整数溢出漏洞
 
 ## Summary
 

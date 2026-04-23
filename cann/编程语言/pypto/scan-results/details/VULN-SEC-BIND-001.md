@@ -1,4 +1,4 @@
-# VULN-SEC-BIND-001: Unvalidated data_ptr in DeviceRunOnceDataFromHost
+# VULN-SEC-BIND-001：DeviceRunOnce函数未验证data_ptr指针
 
 ## 漏洞概述
 

@@ -1,4 +1,4 @@
-# VULN-INSTALL-003: Download of Code Without Integrity Check
+# VULN-INSTALL-003：代码下载缺乏完整性校验漏洞
 
 ## 漏洞概述
 

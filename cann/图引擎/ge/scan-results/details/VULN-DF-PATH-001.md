@@ -1,4 +1,4 @@
-# VULN-DF-PATH-001: ONNX External Data Path Traversal Vulnerability
+# VULN-DF-PATH-001：ONNX外部数据路径遍历漏洞
 
 ## 漏洞概要
 

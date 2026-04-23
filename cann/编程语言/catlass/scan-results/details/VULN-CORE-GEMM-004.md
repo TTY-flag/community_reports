@@ -1,4 +1,4 @@
-# VULN-CORE-GEMM-004: Fixed Array Overflow in Grouped Matmul Kernel
+# VULN-CORE-GEMM-004：分组矩阵乘内核固定数组溢出漏洞
 
 ## Executive Summary
 

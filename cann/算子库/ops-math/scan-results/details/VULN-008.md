@@ -1,4 +1,4 @@
-# VULN-008: Command Injection in packer.py
+# VULN-008：packer.py命令注入漏洞
 
 ## Vulnerability Summary
 

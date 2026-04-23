@@ -1,6 +1,4 @@
-# 深度利用分析报告
-
-## VULN-DF-NET-003: 网络数据接收缺少整数溢出检查
+# VULN-DF-NET-003：网络数据接收整数溢出漏洞
 
 **漏洞ID**: VULN-DF-NET-003  
 **CWE**: CWE-130 (Improper Handling of Length Parameter)  

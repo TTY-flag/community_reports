@@ -1,4 +1,4 @@
-# VULN-CORE-GEMM-002: Integer Overflow in Workspace Size Calculation
+# VULN-CORE-GEMM-002：工作空间大小计算整数溢出漏洞
 
 ## 漏洞概要
 

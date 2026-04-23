@@ -1,8 +1,8 @@
-# VULN-lib_runtime-002: Unsafe Dynamic Module Loading
+# VULN-lib_runtime-002：不安全动态模块加载漏洞
 
 ## 漏洞概述
 
-**漏洞类型**: Unsafe Dynamic Module Loading  
+**漏洞类型**: 不安全动态模块加载  
 **CWE**: CWE-427 (Use of Uncontrolled Search Path Element)  
 **严重程度**: Critical  
 **置信度**: 85%
@@ -15,7 +15,7 @@
 
 ### 漏洞描述
 
-Arbitrary code execution via `importlib.util.spec_from_file_location()`. The `utils_lib` path is retrieved from an environment-controlled cache and loaded as a Python module without integrity verification. An attacker can place a malicious .so file in the cache to achieve arbitrary code execution.
+通过 `importlib.util.spec_from_file_location()` 实现任意代码执行。`utils_lib` 路径从环境变量控制的缓存获取，作为 Python 模块加载时无完整性验证。攻击者可在缓存中放置恶意 .so 文件实现任意代码执行。
 
 ---
 

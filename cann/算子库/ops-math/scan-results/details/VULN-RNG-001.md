@@ -1,4 +1,4 @@
-# VULN-RNG-001: Predictable PRNG Seed Generation
+# VULN-RNG-001：PRNG种子生成可预测漏洞
 
 ## Executive Summary
 

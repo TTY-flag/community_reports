@@ -1,4 +1,4 @@
-# VULN-SEC-RT-001: 动态库加载漏洞
+# VULN-SEC-RT-001：动态库加载漏洞
 
 ## 漏洞概述
 
@@ -15,7 +15,7 @@
 
 ### 漏洞描述
 
-Dynamic library loading from untrusted cache path without validation. `ctypes.CDLL` loads `.so` files from a cache directory controlled by `PYASC_CACHE_DIR` environment variable. No signature verification or integrity check is performed before loading, allowing an attacker to inject malicious shared libraries if they can manipulate the cache directory.
+从不可信缓存路径加载动态库时未进行验证。`ctypes.CDLL` 从由 `PYASC_CACHE_DIR` 环境变量控制的缓存目录加载 `.so` 文件。加载前未进行签名验证或完整性检查，若攻击者能操控缓存目录，可注入恶意共享库。
 
 ---
 

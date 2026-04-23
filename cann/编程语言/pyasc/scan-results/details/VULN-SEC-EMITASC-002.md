@@ -1,4 +1,4 @@
-# VULN-SEC-EMITASC-002: EmitAsc CallOpaqueOp 定义漏洞
+# VULN-SEC-EMITASC-002：EmitAsc CallOpaqueOp定义漏洞
 
 ## 漏洞概述
 

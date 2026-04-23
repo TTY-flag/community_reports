@@ -1,4 +1,4 @@
-# VULN-INSTALL-001: Certificate Validation Bypass
+# VULN-INSTALL-001：证书验证绕过漏洞
 
 ## 漏洞概述
 

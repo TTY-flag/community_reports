@@ -1,4 +1,4 @@
-# VULN-SEC-LZ4-001: Buffer Overflow in KAELZ4 V2 Compression Data Parsing
+# VULN-SEC-LZ4-001：缓冲区溢出漏洞
 
 ## Vulnerability Classification
 | Field | Value |

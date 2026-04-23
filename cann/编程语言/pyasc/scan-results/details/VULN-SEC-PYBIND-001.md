@@ -1,4 +1,4 @@
-# VULN-SEC-PYBIND-001: VerbatimOp pybind 绑定漏洞
+# VULN-SEC-PYBIND-001：VerbatimOp pybind绑定漏洞
 
 ## 漏洞概述
 

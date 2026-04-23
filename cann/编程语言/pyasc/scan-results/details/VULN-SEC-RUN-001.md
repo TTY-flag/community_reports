@@ -1,4 +1,4 @@
-# VULN-SEC-RUN-001: Pickle 反序列化漏洞深度分析报告
+# VULN-SEC-RUN-001：Pickle反序列化漏洞
 
 ## 漏洞概述
 

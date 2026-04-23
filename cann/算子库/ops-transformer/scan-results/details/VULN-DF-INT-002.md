@@ -1,4 +1,4 @@
-# VULN-DF-INT-002: Integer Overflow in QuantAllReduce InferShape
+# VULN-DF-INT-002：量化AllReduce算子整数溢出漏洞
 
 ## Summary
 | Field | Value |

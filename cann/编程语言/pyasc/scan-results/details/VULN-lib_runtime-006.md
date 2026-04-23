@@ -1,4 +1,4 @@
-# VULN-lib_runtime-006: Cache Pollution
+# VULN-lib_runtime-006：缓存污染致任意代码执行漏洞
 
 ## 漏洞概述
 
@@ -15,7 +15,7 @@
 
 ### 漏洞描述
 
-Cache pollution leading to arbitrary code execution. The cache directory location is entirely controlled by environment variables (`PYASC_HOME`, `PYASC_CACHE_DIR`) without integrity verification. An attacker who can set these variables can pre-populate the cache with malicious shared libraries that will be loaded during runtime.
+缓存污染导致任意代码执行。缓存目录位置完全由环境变量（`PYASC_HOME`、`PYASC_CACHE_DIR`）控制，无完整性验证。攻击者若能设置这些变量，可在缓存中预置恶意共享库，运行时将被加载执行。
 
 ---
 

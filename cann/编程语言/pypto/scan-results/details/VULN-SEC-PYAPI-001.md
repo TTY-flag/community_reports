@@ -1,4 +1,4 @@
-# VULN-SEC-PYAPI-001: Python API Passes Arbitrary Pointer to C++ Backend
+# VULN-SEC-PYAPI-001：Python API传递任意指针至C++后端
 
 ## 漏洞概述
 

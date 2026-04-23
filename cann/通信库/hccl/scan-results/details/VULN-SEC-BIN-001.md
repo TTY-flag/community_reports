@@ -1,4 +1,4 @@
-# VULN-SEC-BIN-001 / VULN-DF-008: ASCEND_HOME_PATH 控制 AIV Kernel 加载路径
+# VULN-SEC-BIN-001：ASCEND_HOME_PATH控制内核加载路径漏洞
 
 ## 漏洞概述
 
