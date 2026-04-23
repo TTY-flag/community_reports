@@ -1,4 +1,4 @@
-# VUL-TOOLS-001: 路径遍历漏洞
+# VUL-TOOLS-001：KernelConfigParser.SetBinPath路径遍历致任意二进制加载
 
 ## 漏洞基本信息
 

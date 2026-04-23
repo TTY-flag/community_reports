@@ -1,4 +1,4 @@
-# VULN-SHELL-002: Arbitrary File Write via log_file Parameter
+# VULN-SHELL-002：AsyncProcess.log_file参数无路径验证致任意文件写入风险
 
 ## Executive Summary
 

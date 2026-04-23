@@ -1,4 +1,4 @@
-# checkpoint-vuln-002: Unsafe Deserialization - `load_from_hf`
+# checkpoint-vuln-002：HF模型Checkpoint加载torch.load无保护致反序列化RCE
 
 **严重性**: High | **CWE**: CWE-502 | **置信度**: 85/100
 **位置**: `checkpoint/vlm_model/hf_to_mm.py:316-317` @ `load_from_hf`

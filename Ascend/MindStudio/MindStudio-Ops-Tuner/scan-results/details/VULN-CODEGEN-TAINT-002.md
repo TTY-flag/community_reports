@@ -1,4 +1,4 @@
-# 漏洞深度利用分析报告
+# VULN-CODEGEN-TAINT-002：generate_code符号链接解析缺失致任意文件访问
 
 **漏洞ID**: VULN-CODEGEN-TAINT-002  
 **漏洞类型**: Symlink Attack (符号链接攻击)  

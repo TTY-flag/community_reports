@@ -1,24 +1,24 @@
-# Deserialization Vulnerability: Unsafe torch.load in LayerZero Checkpoint
+# layerzero-mga_checkpoint-torch_load-188：LayerZero Checkpoint加载torch.load无保护致RCE
 
-## Summary
+## 概要
 
-| Attribute | Value |
-|-----------|-------|
-| **Vulnerability ID** | layerzero-mga_checkpoint-torch_load-188 |
-| **CWE** | CWE-502 (Deserialization of Untrusted Data) |
-| **Severity** | Critical |
-| **File** | mindspeed/core/distributed/layerzero/state/mga_checkpoint.py |
-| **Line** | 188 |
-| **Function** | `load_layerzero_checkpoint` |
+| 属性 | 值 |
+|------|-----|
+| **漏洞ID** | layerzero-mga_checkpoint-torch_load-188 |
+| **CWE** | CWE-502 (不可信数据反序列化) |
+| **严重性** | Critical |
+| **文件** | mindspeed/core/distributed/layerzero/state/mga_checkpoint.py |
+| **行号** | 188 |
+| **函数** | `load_layerzero_checkpoint` |
 
-## Vulnerability Description
+## 漏洞描述
 
-The function `load_layerzero_checkpoint` uses `torch.load()` without the `weights_only=True` parameter, allowing arbitrary code execution through malicious pickle payloads embedded in checkpoint files.
+`load_layerzero_checkpoint` 函数使用 `torch.load()` 时未设置 `weights_only=True` 参数，允许通过嵌入在 checkpoint 文件中的恶意 pickle payload 执行任意代码。
 
-### Vulnerable Code
+### 漏洞代码
 
 ```python
-# Line 177-188
+# 第 177-188 行
 def load_layerzero_checkpoint(models, ckpt_dir, optimizer=None, opt_param_scheduler=None):
     if ckpt_dir is None:
         raise AssertionError(f"Got {ckpt_dir} filename")
@@ -30,68 +30,68 @@ def load_layerzero_checkpoint(models, ckpt_dir, optimizer=None, opt_param_schedu
         raise FileNotFoundError(
             f"No checkpoint found in load directory or pretrained directory: no such file {sd_file}")
     args = get_args()
-    state_dict = torch.load(sd_file)  # VULNERABLE: No weights_only=True
+    state_dict = torch.load(sd_file)  # 漏洞点：无 weights_only=True
 ```
 
-### Data Flow
+### 数据流
 
 ```
-Source: config.ckpt_load_path (YAML config file or direct parameter)
+数据源：config.ckpt_load_path (YAML 配置文件或直接参数)
    ↓
-LayerzeroConfig.ckpt_load_path (dataclass field, line 64 in config.py)
+LayerzeroConfig.ckpt_load_path (dataclass 字段，config.py 第 64 行)
    ↓
-Validation: os.path.isabs() check only (lines 267-269)
+验证：仅 os.path.isabs() 检查 (第 267-269 行)
    ↓
-load_layerzero_checkpoint(models, config.ckpt_load_path, ...) (line 271-272)
+load_layerzero_checkpoint(models, config.ckpt_load_path, ...) (第 271-272 行)
    ↓
-sd_file = os.path.join(ckpt_dir, f"model_{rank}.pt") (line 183)
+sd_file = os.path.join(ckpt_dir, f"model_{rank}.pt") (第 183 行)
    ↓
-torch.load(sd_file)  ← SINK: Arbitrary pickle deserialization
+torch.load(sd_file)  ← 危险点：任意 pickle 反序列化
 ```
 
-## Technical Details
+## 技术细节
 
-### Why `weights_only=True` Cannot Be Directly Applied
+### 为什么无法直接应用 `weights_only=True`
 
-The checkpoint state dictionary contains complex objects beyond simple tensors:
+Checkpoint state dictionary 包含复杂对象而非简单张量：
 
 ```python
-# From generate_state_dict() function (lines 112-153)
+# 来自 generate_state_dict() 函数 (第 112-153 行)
 state_dict = {}
-state_dict['args'] = args                    # Python object, not just tensors
+state_dict['args'] = args                    # Python 对象，非仅张量
 state_dict['checkpoint_version'] = 3.0
 state_dict['iteration'] = iteration
-state_dict[MODEL_KEY] = model.state_dict()  # Tensor weights
-state_dict[OPTIM_STATE_KEY] = optimizer.state_dict()  # Complex optimizer state
-state_dict[RNG_STATE_KEY] = rng_state       # Python state objects
-state_dict[PARALLE_STATE_KAY] = generate_3D_parallel_state()  # Parallel state
+state_dict[MODEL_KEY] = model.state_dict()  # 张量权重
+state_dict[OPTIM_STATE_KEY] = optimizer.state_dict()  # 复杂优化器状态
+state_dict[RNG_STATE_KEY] = rng_state       # Python 状态对象
+state_dict[PARALLE_STATE_KAY] = generate_3D_parallel_state()  # 并行状态
 ```
 
-Using `weights_only=True` would cause loading failures because:
-1. `args` is a Python argparse Namespace object
-2. Optimizer state contains complex nested objects
-3. RNG states contain Python random state objects
+使用 `weights_only=True` 将导致加载失败，因为：
+1. `args` 是 Python argparse Namespace 对象
+2. 优化器状态包含复杂嵌套对象
+3. RNG 状态包含 Python 随机状态对象
 
-### Existing Mitigations (Insufficient)
+### 现有缓解措施（不充分）
 
-1. **Absolute path validation** (config.py lines 267-269):
+1. **绝对路径验证** (config.py 第 267-269 行)：
    ```python
    if not os.path.isabs(config.ckpt_load_path):
        raise ValueError(...)
    ```
-   - Only validates path format, not file content or origin
-   - Does not prevent loading malicious files from absolute paths
+   - 仅验证路径格式，不验证文件内容或来源
+   - 不阻止从绝对路径加载恶意文件
 
-2. **File existence check** (mga_checkpoint.py line 184-186):
-   - Only checks if file exists, not its integrity or authenticity
+2. **文件存在检查** (mga_checkpoint.py 第 184-186 行)：
+   - 仅检查文件是否存在，不检查完整性或真实性
 
-## Attack Scenario
+## 攻击场景
 
-An attacker who can:
-1. Control the YAML configuration file path for `ckpt_load_path`
-2. OR inject a malicious checkpoint file into an expected directory
+可控制以下内容的攻击者：
+1. YAML 配置文件中的 `ckpt_load_path` 路径
+2. 或向预期目录注入恶意 checkpoint 文件
 
-Can achieve **arbitrary code execution** by crafting a malicious `.pt` file:
+可通过构造恶意 `.pt` 文件实现 **任意代码执行**：
 ```python
 import torch
 import os
@@ -100,19 +100,19 @@ class Malicious:
     def __reduce__(self):
         return (os.system, ('id > /tmp/pwned',))
 
-# Create malicious checkpoint
+# 创建恶意 checkpoint
 malicious_ckpt = {'model': Malicious(), 'iteration': 0}
 torch.save(malicious_ckpt, 'model_0.pt')
 ```
 
-When `torch.load('model_0.pt')` is called, the malicious code executes.
+当调用 `torch.load('model_0.pt')` 时，恶意代码被执行。
 
-## Related Vulnerable Locations
+## 相关漏洞位置
 
-Similar patterns exist elsewhere in the codebase:
+代码库中存在类似模式：
 
-| File | Line | Function |
-|------|------|----------|
+| 文件 | 行号 | 函数 |
+|------|------|------|
 | mindspeed/checkpointing.py | 277 | `load_checkpoint` |
 | mindspeed/checkpointing.py | 284 | `load_checkpoint` |
 | mindspeed/checkpointing.py | 310 | `load_checkpoint` |
@@ -120,13 +120,13 @@ Similar patterns exist elsewhere in the codebase:
 | mindspeed/core/distributed/layerzero/state/scripts/layerzero_checkpointer.py | 110 | `LayerzeroCheckpoint._build_global_state` |
 | mindspeed/core/distributed/layerzero/state/scripts/layerzero_checkpointer.py | 127, 135 | `LayerzeroCheckpoint.get_iteration`/`get_args` |
 
-## Recommendations
+## 修复建议
 
-### Short-term (Immediate)
+### 短期（立即）
 
-1. **Add security warning in documentation** about only loading checkpoints from trusted sources
+1. **在文档中添加安全警告**，说明仅从可信来源加载 checkpoint
 
-2. **Add checkpoint integrity verification** using hash checking:
+2. **添加 checkpoint 完整性验证**，使用哈希检查：
    ```python
    import hashlib
    def verify_checkpoint_hash(filepath, expected_hash):
@@ -135,55 +135,55 @@ Similar patterns exist elsewhere in the codebase:
        return file_hash == expected_hash
    ```
 
-3. **Log checkpoint loading with security warnings**:
+3. **记录 checkpoint 加载并带安全警告**：
    ```python
    import logging
-   logging.warning(f"Loading checkpoint from {sd_file}. Only load checkpoints from trusted sources.")
+   logging.warning(f"从 {sd_file} 加载 checkpoint。仅从可信来源加载 checkpoint。")
    ```
 
-### Medium-term
+### 中期
 
-1. **Separate weights from state metadata**:
-   - Store weights separately using `weights_only=True` safe format
-   - Store metadata (args, iteration, etc.) in JSON/YAML format
-   - Reconstruct state_dict after loading both parts safely
+1. **分离权重与状态元数据**：
+   - 使用 `weights_only=True` 安全格式单独存储权重
+   - 将元数据（args、iteration 等）存储在 JSON/YAML 格式
+   - 安全加载两部分后重建 state_dict
 
-2. **Implement checkpoint signing**:
-   - Sign checkpoints during save with a private key
-   - Verify signature before loading
+2. **实现 checkpoint 签名**：
+   - 使用私钥签名保存的 checkpoint
+   - 加载前验证签名
 
-### Long-term
+### 长期
 
-1. **Migrate to safer serialization formats**:
-   - Use `torch.save(..., _use_new_zipfile_serialization=True)`
-   - Consider safetensors format for model weights
-   - Store non-tensor data in JSON
+1. **迁移到更安全的序列化格式**：
+   - 使用 `torch.save(..., _use_new_zipfile_serialization=True)`
+   - 考虑 safetensors 格式存储模型权重
+   - 将非张量数据存储在 JSON
 
-2. **Add sandboxed deserialization** for untrusted checkpoints
+2. **为不可信 checkpoint 添加沙箱反序列化**
 
-## Risk Assessment
+## 风险评估
 
-| Factor | Assessment |
-|--------|------------|
-| **Likelihood** | Low-Medium (requires config/file access) |
-| **Impact** | Critical (arbitrary code execution) |
-| **Current mitigations** | Insufficient |
-| **Framework context** | Internal training framework (trusted config expected) |
+| 因素 | 评估 |
+|------|------|
+| **可能性** | Low-Medium（需配置/文件访问） |
+| **影响** | Critical（任意代码执行） |
+| **当前缓解措施** | 不充分 |
+| **框架上下文** | 内部训练框架（预期可信配置） |
 
-## References
+## 参考资料
 
-- [PyTorch Security Advisory: torch.load weights_only default change](https://github.com/pytorch/pytorch/pull/101837)
-- [CWE-502: Deserialization of Untrusted Data](https://cwe.mitre.org/data/definitions/502.html)
-- [PyTorch Safe Loading Documentation](https://pytorch.org/docs/stable/generated/torch.load.html)
+- [PyTorch 安全公告：torch.load weights_only 默认值变更](https://github.com/pytorch/pytorch/pull/101837)
+- [CWE-502：不可信数据反序列化](https://cwe.mitre.org/data/definitions/502.html)
+- [PyTorch 安全加载文档](https://pytorch.org/docs/stable/generated/torch.load.html)
 
-## Verification Steps
+## 验证步骤
 
-1. Identify all `torch.load()` calls without `weights_only=True`
-2. Trace data flow to determine if paths can be controlled externally
-3. Test with crafted malicious checkpoint file to confirm exploitability
-4. Verify any existing integrity checks or signature verification
+1. 识别所有无 `weights_only=True` 的 `torch.load()` 调用
+2. 追踪数据流确定路径是否可被外部控制
+3. 用构造的恶意 checkpoint 文件测试确认可利用性
+4. 验证是否存在完整性检查或签名验证
 
 ---
 
-*Report generated by OpenCode Vulnerability Scanner*
-*Date: 2026-04-20*
+*报告由 OpenCode 漏洞扫描器生成*
+*日期：2026-04-20*

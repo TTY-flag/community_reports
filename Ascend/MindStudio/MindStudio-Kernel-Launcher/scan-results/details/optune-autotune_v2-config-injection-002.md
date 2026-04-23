@@ -1,4 +1,4 @@
-# 漏洞合并说明
+# optune-autotune_v2-config-injection-002：configs注入（合并至cross-module）
 
 ## 合并状态
 

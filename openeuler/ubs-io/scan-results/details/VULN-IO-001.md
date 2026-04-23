@@ -1,4 +1,4 @@
-# VULN-IO-001: Path Traversal Vulnerability in CheckPath Function
+# VULN-IO-001: CheckPath函数缺少路径遍历验证致任意文件读写
 
 ## 漏洞概述
 

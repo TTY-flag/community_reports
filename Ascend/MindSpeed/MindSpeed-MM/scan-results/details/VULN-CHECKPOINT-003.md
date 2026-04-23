@@ -1,4 +1,4 @@
-# 漏洞详细分析报告：VULN-CHECKPOINT-003
+# VULN-CHECKPOINT-003：VLM模型Checkpoint转换torch.load无保护致Pickle RCE
 
 ## 漏洞基本信息
 

@@ -1,4 +1,4 @@
-# VULN-SEC-RETRIEVERS-002: LLM Prompt Injection in MultiQueryRetriever
+# VULN-SEC-RETRIEVERS-002: MultiQueryRetriever用户查询未过滤致LLM提示词注入
 
 ## 漏洞概述
 

@@ -1,4 +1,4 @@
-# VULN-SEC-XMOD-001: 权限提升视角分析
+# VULN-SEC-XMOD-001：@autotune权限继承视角致权限提升风险
 
 ## 漏洞关联声明
 

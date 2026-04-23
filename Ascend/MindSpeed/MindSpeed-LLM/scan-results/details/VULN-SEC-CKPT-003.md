@@ -1,4 +1,4 @@
-# 深度利用分析报告: VULN-SEC-CKPT-003
+# VULN-SEC-CKPT-003：Checkpoint合并函数torch.load无保护致反序列化RCE
 
 ## 漏洞基本信息
 

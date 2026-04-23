@@ -1,4 +1,4 @@
-# SEC-DLOPEN-ROOT-BYPASS-001 - dlopen Root 用户权限绕过漏洞深度分析
+# SEC-DLOPEN-ROOT-BYPASS-001：GetCurrentDeviceId dlopen环境变量控制致root权限绕过
 
 ## 漏洞基本信息
 

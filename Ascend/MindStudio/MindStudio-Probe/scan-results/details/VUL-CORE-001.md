@@ -1,4 +1,4 @@
-# VUL-CORE-001: Zip Slip Path Traversal Vulnerability
+# VUL-CORE-001：extract_zip函数Zip Slip路径遍历致任意文件写入
 
 ## 漏洞概述
 

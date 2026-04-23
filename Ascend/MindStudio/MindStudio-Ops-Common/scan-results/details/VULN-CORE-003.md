@@ -1,4 +1,4 @@
-# 漏洞报告: VULN-CORE-003 - Untrusted Function Pointer Execution
+# VULN-CORE-003：CustomDBI.Convert不可信函数指针执行致任意代码执行
 
 ## 1. 漏洞基本信息
 

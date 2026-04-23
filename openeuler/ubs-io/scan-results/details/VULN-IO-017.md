@@ -1,4 +1,4 @@
-# VULN-IO-017: Path Traversal Vulnerability in FILE* Stream Operations
+# VULN-IO-017: FILE流操作函数CheckPath路径验证缺失致任意文件访问
 
 ## 漏洞概述
 

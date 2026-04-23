@@ -1,4 +1,4 @@
-# 漏洞深度分析报告: VULN-PATH-002
+# VULN-PATH-002：get_valid_path符号链接检查缺失致任意文件访问
 
 ## 漏洞概要
 

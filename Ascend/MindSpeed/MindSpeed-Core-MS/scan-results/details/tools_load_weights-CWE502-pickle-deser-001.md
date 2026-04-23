@@ -1,4 +1,4 @@
-# 深度利用分析报告: tools_load_weights-CWE502-pickle-deser-001
+# tools_load_weights-CWE502-pickle-deser-001：MindSpore权重加载Unpickler类限制不全致RCE风险
 
 ## 漏洞基本信息
 

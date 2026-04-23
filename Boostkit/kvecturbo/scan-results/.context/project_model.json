@@ -1,0 +1,134 @@
+{
+  "project_name": "KVecTurbo",
+  "scan_time": "2026-04-22T10:30:00Z",
+  "lsp_available": true,
+  "total_files": 3,
+  "total_lines": 2055,
+  "project_profile": {
+    "project_type": "library",
+    "deployment_model": "作为动态库（.so）或静态库链接到 openGauss 向量数据库中，在鲲鹏 920 7282C 处理器上运行，使用 NEON SIMD 指令集进行向量计算加速",
+    "trust_boundaries": [
+      {
+        "boundary": "Library API Boundary",
+        "trusted_side": "KVecTurbo 内部计算逻辑",
+        "untrusted_side": "openGauss 数据库传入的用户向量数据",
+        "risk": "High"
+      },
+      {
+        "boundary": "Memory Operations",
+        "trusted_side": "库内部管理的内存",
+        "untrusted_side": "调用方提供的缓冲区和参数",
+        "risk": "High"
+      },
+      {
+        "boundary": "Parallel Computing",
+        "trusted_side": "OpenMP 并行线程",
+        "untrusted_side": "共享数据访问",
+        "risk": "Medium"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "core",
+      "path": "src",
+      "language": "c_cpp",
+      "components": ["kvecturbo.cpp"]
+    },
+    {
+      "name": "api",
+      "path": "include",
+      "language": "c_cpp",
+      "components": ["kvecturbo.h"]
+    },
+    {
+      "name": "test",
+      "path": "test/ut_test",
+      "language": "c_cpp",
+      "components": ["test.cpp"]
+    }
+  ],
+  "files": [
+    {
+      "path": "src/kvecturbo.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "core",
+      "lines": 1395,
+      "priority": 1,
+      "reasons": ["大量 memcpy_s 内存操作", "SIMD NEON 指令集", "OpenMP 并行计算", "整数运算和数组索引", "动态内存分配 malloc/calloc/free"]
+    },
+    {
+      "path": "include/kvecturbo.h",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "api",
+      "lines": 118,
+      "priority": 2,
+      "reasons": ["公共 API 定义", "外部数据入口点", "结构体定义可被调用方构造"]
+    },
+    {
+      "path": "test/ut_test/test.cpp",
+      "language": "c_cpp",
+      "risk": "Low",
+      "module": "test",
+      "lines": 542,
+      "priority": 3,
+      "reasons": ["单元测试代码", "非生产代码"]
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "include/kvecturbo.h",
+      "line": 65,
+      "function": "ComputeVectorPQCode",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "公共 API，接收调用方（openGauss）传入的向量数据和 PQ 参数。向量数据可能来自数据库用户上传，需验证数据有效性",
+      "description": "计算单个向量的 PQ 编码，接收 float* vector、PQParams* params、unsigned char* pqCode"
+    },
+    {
+      "file": "include/kvecturbo.h",
+      "line": 74,
+      "function": "ComputePQTable",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "公共 API，接收 VectorArray 样本数据和 PQ 参数。样本数据来自数据库用户上传的训练向量，可能触发大量内存操作和 K-means 计算",
+      "description": "计算 PQ 码本，接收 VectorArray samples 和 PQParams* params"
+    },
+    {
+      "file": "include/kvecturbo.h",
+      "line": 83,
+      "function": "GetPQDistanceTableSdc",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "公共 API，接收 PQParams 参数计算距离表。参数结构体可能包含无效值导致内存越界访问",
+      "description": "计算 SDC 模式距离表，接收 PQParams* params 和输出缓冲区"
+    },
+    {
+      "file": "include/kvecturbo.h",
+      "line": 92,
+      "function": "GetPQDistanceTableAdc",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "公共 API，接收用户查询向量计算 ADC 距离表。向量数据可能来自数据库用户查询请求",
+      "description": "计算 ADC 模式距离表，接收 float* vector、PQParams* params 和输出缓冲区"
+    },
+    {
+      "file": "include/kvecturbo.h",
+      "line": 108,
+      "function": "GetPQDistance",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "公共 API，接收 basecode、querycode、距离表等参数计算 PQ 距离。所有输入参数可被调用方控制，需验证数组边界",
+      "description": "计算 PQ 距离，接收 basecode、querycode、params、distanceTable 和输出指针"
+    }
+  ],
+  "attack_surfaces": [
+    "公共 API 接口: 5 个导出函数可被 openGauss 数据库调用",
+    "向量数据输入: 用户上传的向量数据通过 ComputePQTable 和 ComputeVectorPQCode 进入",
+    "参数结构体: PQParams 和 VectorArray 结构体字段可被调用方控制",
+    "缓冲区操作: 所有 API 都涉及 memcpy_s 内存拷贝操作",
+    "整数参数: dim、pqM、pqKsub 等参数可影响内存计算和数组索引"
+  ]
+}

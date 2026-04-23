@@ -1,4 +1,4 @@
-# VULN-ACLGRAPH-001 - acl_save_impl 路径遍历漏洞
+# VULN-ACLGRAPH-001：acl_save_impl函数路径遍历致任意文件写入
 
 ## 漏洞基本信息
 

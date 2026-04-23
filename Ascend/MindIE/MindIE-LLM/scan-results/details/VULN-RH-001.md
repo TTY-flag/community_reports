@@ -1,4 +1,4 @@
-# VULN-RH-001: Integer Overflow in dpInstance Calculation
+# VULN-RH-001: UpdateInferRequest dpInst计算乘法整数溢出
 
 ## 漏洞概述
 

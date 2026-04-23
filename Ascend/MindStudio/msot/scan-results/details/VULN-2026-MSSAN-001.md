@@ -1,4 +1,4 @@
-# 漏洞利用分析报告
+# VULN-2026-MSSAN-001：add_custom.cpp缓冲区溢出致程序崩溃
 
 ## 漏洞标识
 - **漏洞ID**: VULN-2026-MSSAN-001

@@ -1,4 +1,4 @@
-# SDK-IL-002: Information Leakage in AddDisk Logging
+# SDK-IL-002: AddDisk函数日志输出磁盘路径信息致敏感路径泄露
 
 ## 1. 漏洞概述
 

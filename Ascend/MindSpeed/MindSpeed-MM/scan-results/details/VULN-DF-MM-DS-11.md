@@ -1,4 +1,4 @@
-# VULN-DF-MM-DS-11: Deserialization - `load_checkpoint`
+# VULN-DF-MM-DS-11：VAE模型Checkpoint加载torch.load无保护致Pickle RCE
 
 **严重性**: High | **CWE**: CWE-502 | **置信度**: 85/100
 **位置**: `mindspeed_mm/models/ae/contextparallel_causalvae.py:521` @ `load_checkpoint`

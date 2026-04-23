@@ -1,4 +1,4 @@
-# WebSocket Proxy Input Validation Bypass - Critical Vulnerability
+# cross-module-vuln-003：WebSocket代理输入验证绕过致跨模块数据流漏洞
 
 **漏洞ID**: cross-module-vuln-003  
 **漏洞类型**: Proxy Data Flow / Input Validation Bypass (CWE-20)  

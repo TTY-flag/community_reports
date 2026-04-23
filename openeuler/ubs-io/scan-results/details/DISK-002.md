@@ -1,4 +1,4 @@
-# DISK-002: Integer Overflow in Disk Write Offset Calculation
+# DISK-002: 磁盘写入偏移计算整数溢出致错误位置写入破坏数据
 
 ## 漏洞概述
 

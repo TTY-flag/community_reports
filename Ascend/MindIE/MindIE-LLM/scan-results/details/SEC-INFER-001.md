@@ -1,4 +1,4 @@
-# 漏洞深度分析报告: SEC-INFER-001
+# SEC-INFER-001: GetTokensFromInput整数溢出致越界访问或拒绝服务
 
 ## 1. 漏洞概述
 

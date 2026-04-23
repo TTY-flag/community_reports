@@ -1,4 +1,4 @@
-# VULN-LLMMGR-005: Out-of-Bounds Shape Dimension Access
+# VULN-LLMMGR-005: GetShape直接访问第二维度缺验证致越界访问
 
 ## 漏洞概述
 

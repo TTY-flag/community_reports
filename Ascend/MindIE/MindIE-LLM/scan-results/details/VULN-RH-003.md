@@ -1,4 +1,4 @@
-# VULN-RH-003: Array Bounds Check Missing in GetPullKVFlag
+# VULN-RH-003: GetPullKVFlag响应数组边界检查缺失致异常崩溃
 
 ## 漏洞概述
 

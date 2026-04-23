@@ -1,4 +1,4 @@
-# VULN-RH-002: Array Bounds Check Missing in BuildDecodeParameters
+# VULN-RH-002: BuildDecodeParameters响应向量边界检查缺失致数组越界
 
 ## 漏洞概述
 

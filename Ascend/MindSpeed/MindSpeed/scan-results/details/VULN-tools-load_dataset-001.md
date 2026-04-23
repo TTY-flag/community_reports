@@ -1,75 +1,75 @@
-# Vulnerability Detail Report: Arbitrary Parameter Injection in load_dataset
+# VULN-tools-load_dataset-001：load_dataset函数参数注入致trust_remote_code代码执行
 
-## Summary
+## 概要
 
-| Attribute | Value |
-|-----------|-------|
-| **Vulnerability ID** | VULN-tools-load_dataset-001 |
-| **Type** | Arbitrary Parameter Injection (CWE-88) |
-| **Severity** | High |
-| **CVSS Score** | 7.8 (High) |
-| **Affected Files** | `tools/data_handler.py`, `tools/preprocess_data.py` |
-| **Affected Function** | `build_dataset()` |
-| **Lines of Code** | `tools/data_handler.py:510-513` |
+| 属性 | 值 |
+|------|-----|
+| **漏洞ID** | VULN-tools-load_dataset-001 |
+| **类型** | 参数注入 (CWE-88) |
+| **严重性** | High |
+| **CVSS评分** | 7.8 (High) |
+| **受影响文件** | `tools/data_handler.py`, `tools/preprocess_data.py` |
+| **受影响函数** | `build_dataset()` |
+| **代码行号** | `tools/data_handler.py:510-513` |
 
-## Description
+## 漏洞描述
 
-Untrusted command-line argument `--hf-datasets-params` is loaded as JSON from a user-specified file and passed directly to `load_dataset(**param_dict)` without any validation or sanitization. This allows attackers to inject arbitrary parameters including `trust_remote_code=True`, enabling potential remote code execution when loading malicious HuggingFace datasets.
+不可信的命令行参数 `--hf-datasets-params` 从用户指定文件加载为 JSON，并直接传递给 `load_dataset(**param_dict)` 而无任何验证或过滤。这允许攻击者注入任意参数，包括 `trust_remote_code=True`，在加载恶意 HuggingFace 数据集时可能导致远程代码执行。
 
-## Vulnerable Code
+## 漏洞代码
 
-### tools/data_handler.py (Lines 510-513)
+### tools/data_handler.py (第 510-513 行)
 ```python
 if args.hf_datasets_params:
     with open(args.hf_datasets_params, 'r') as fin:
         param_dict = json.load(fin)
-    return load_dataset(**param_dict)  # No validation of param_dict
+    return load_dataset(**param_dict)  # 无 param_dict 验证
 ```
 
-### tools/preprocess_data.py (Lines 93-94)
+### tools/preprocess_data.py (第 93-94 行)
 ```python
 group.add_argument('--hf-datasets-params', default=None,
                    help='huggingface load_dataset params')
 ```
 
-### tools/preprocess_data.py (Lines 172-179)
+### tools/preprocess_data.py (第 172-179 行)
 ```python
 def main():
-    args = get_args()  # Parses command line, including --hf-datasets-params
+    args = get_args()  # 解析命令行，包括 --hf-datasets-params
     # ...
-    raw_data = build_dataset(args)  # Passes untrusted args to vulnerable function
+    raw_data = build_dataset(args)  # 将不可信 args 传递给漏洞函数
 ```
 
-## Data Flow Analysis
+## 数据流分析
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│ Entry Point: tools/preprocess_data.py - main()                               │
-│ Type: cmdline (untrusted_local)                                              │
+│ 入口点：tools/preprocess_data.py - main()                                    │
+│ 类型：cmdline (untrusted_local)                                              │
 └─────────────────────────────────────────────────────────────────────────────┘
-                                    │
-                                    ▼
+                                     │
+                                     ▼
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │ argv → argparse.parse_args() → args.hf_datasets_params                      │
-│ (User-controlled file path)                                                   │
+│ (用户控制的文件路径)                                                          │
 └─────────────────────────────────────────────────────────────────────────────┘
-                                    │
-                                    ▼
+                                     │
+                                     ▼
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│ json.load(fin) → param_dict (untrusted JSON content)                         │
-│ NO VALIDATION of keys or values                                              │
+│ json.load(fin) → param_dict (不可信 JSON 内容)                               │
+│ 无键或值验证                                                                  │
 └─────────────────────────────────────────────────────────────────────────────┘
-                                    │
-                                    ▼
+                                     │
+                                     ▼
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│ Sink: load_dataset(**param_dict)                                             │
-│ Allows injection of ANY parameter including trust_remote_code=True           │
+│ 危险点：load_dataset(**param_dict)                                           │
+│ 允许注入任意参数，包括 trust_remote_code=True                                 │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
-## Proof of Concept
+## 概念验证
 
-### Step 1: Create Malicious Parameter File
+### 步骤 1：创建恶意参数文件
 ```json
 {
     "path": "malicious-user/poisoned-dataset",
@@ -78,7 +78,7 @@ def main():
 }
 ```
 
-### Step 2: Execute Attack
+### 步骤 2：执行攻击
 ```bash
 python tools/preprocess_data.py \
     --hf-datasets-params malicious_params.json \
@@ -87,59 +87,59 @@ python tools/preprocess_data.py \
     --output-prefix output
 ```
 
-### Attack Outcome
-When `trust_remote_code=True` is set, the HuggingFace `datasets` library will:
-1. Download the dataset's custom loading script from the remote repository
-2. Execute that script with full Python privileges
-3. An attacker who controls the dataset repository can execute arbitrary code
+### 攻击结果
+当设置 `trust_remote_code=True` 时，HuggingFace `datasets` 库将：
+1. 从远程仓库下载数据集的自定义加载脚本
+2. 以完整 Python 权限执行该脚本
+3. 控制数据集仓库的攻击者可执行任意代码
 
-## Impact Assessment
+## 影响评估
 
-### Confidentiality: HIGH
-- Attacker can read arbitrary files from the system
-- Can exfiltrate environment variables, secrets, and credentials
+### 机密性：HIGH
+- 攻击者可读取系统任意文件
+- 可窃取环境变量、密钥和凭证
 
-### Integrity: HIGH
-- Attacker can modify or delete any files accessible to the process
-- Can inject malicious data into the training pipeline
+### 完整性：HIGH
+- 攻击者可修改或删除进程可访问的任意文件
+- 可向训练管道注入恶意数据
 
-### Availability: HIGH
-- Attacker can crash the system or cause denial of service
-- Can corrupt datasets or training outputs
+### 可用性：HIGH
+- 攻击者可导致系统崩溃或拒绝服务
+- 可损坏数据集或训练输出
 
-### Attack Vector: LOCAL
-- Requires ability to pass command-line arguments or modify JSON file
-- Social engineering could trick users into using malicious parameter files
+### 攻击向量：LOCAL
+- 需要能传递命令行参数或修改 JSON 文件
+- 社会工程可诱骗用户使用恶意参数文件
 
-## Evidence of Known Risk Awareness
+## 已知风险意识证据
 
-The project demonstrates awareness of `trust_remote_code` risks in other code locations:
+项目在其他代码位置展现了对 `trust_remote_code` 风险的意识：
 
-### mindspeed/tokenizer/tokenizer.py (Line 75)
+### mindspeed/tokenizer/tokenizer.py (第 75 行)
 ```python
-hf_tokenizer_kwargs["trust_remote_code"] = False  # Explicitly disabled
+hf_tokenizer_kwargs["trust_remote_code"] = False  # 显式禁用
 ```
 
-### mindspeed/tokenizer/build_tokenizer/adaptor.py (Line 58)
+### mindspeed/tokenizer/build_tokenizer/adaptor.py (第 58 行)
 ```python
-hf_tokenizer_kwargs["trust_remote_code"] = False  # Explicitly disabled
+hf_tokenizer_kwargs["trust_remote_code"] = False  # 显式禁用
 ```
 
-### docs/zh/SECURITYNOTE.md (Line 121)
+### docs/zh/SECURITYNOTE.md (第 121 行)
 > 如果trust_remote_code=True，下载的代码可能包含恶意逻辑或后门，威胁系统安全。
 
-**However, the `build_dataset()` function in `tools/data_handler.py` lacks this protection.**
+**然而，`tools/data_handler.py` 中的 `build_dataset()` 函数缺少此保护。**
 
-## Root Cause Analysis
+## 根因分析
 
-1. **Missing Input Validation**: No whitelist or blacklist for allowed `load_dataset()` parameters
-2. **Indirect Injection Vector**: JSON file path parameter provides indirect injection capability
-3. **Inconsistent Security Practices**: Protection applied in tokenizer code but not in dataset loading code
-4. **Trust Boundary Violation**: User-provided parameters directly passed to sensitive API
+1. **缺少输入验证**：无 `load_dataset()` 参数的白名单或黑名单
+2. **间接注入向量**：JSON 文件路径参数提供间接注入能力
+3. **安全实践不一致**：tokenizer 代码应用了保护但数据集加载代码未应用
+4. **信任边界违规**：用户提供的参数直接传递给敏感 API
 
-## Recommended Remediation
+## 修复建议
 
-### Option 1: Parameter Whitelist (Recommended)
+### 方案 1：参数白名单（推荐）
 ```python
 ALLOWED_DATASET_PARAMS = {
     'path', 'name', 'data_dir', 'data_files', 'split',
@@ -153,72 +153,72 @@ def build_dataset(args):
         with open(args.hf_datasets_params, 'r') as fin:
             param_dict = json.load(fin)
         
-        # Security: Filter to allowed parameters only
+        # 安全：仅过滤允许的参数
         safe_params = {k: v for k, v in param_dict.items() 
                        if k in ALLOWED_DATASET_PARAMS}
         
-        # Security: Never allow trust_remote_code
+        # 安全：绝不允许 trust_remote_code
         safe_params['trust_remote_code'] = False
         
         return load_dataset(**safe_params)
-    # ... rest of function
+    # ... 函数其余部分
 ```
 
-### Option 2: Explicit Parameter Handling
+### 方案 2：显式参数处理
 ```python
 def build_dataset(args):
     if args.hf_datasets_params:
         with open(args.hf_datasets_params, 'r') as fin:
             param_dict = json.load(fin)
         
-        # Log warning for suspicious parameters
+        # 记录可疑参数警告
         dangerous_params = {'trust_remote_code', 'script_version'}
         found_dangerous = set(param_dict.keys()) & dangerous_params
         if found_dangerous:
-            logger.warning(f"Security: Rejecting dangerous parameters: {found_dangerous}")
+            logger.warning(f"安全：拒绝危险参数: {found_dangerous}")
         
-        # Explicitly set safe defaults
+        # 显式设置安全默认值
         param_dict['trust_remote_code'] = False
         
         return load_dataset(**param_dict)
-    # ... rest of function
+    # ... 函数其余部分
 ```
 
-### Option 3: Dedicated CLI Arguments (Most Secure)
-Replace `--hf-datasets-params` with explicit, individual CLI arguments:
+### 方案 3：专用 CLI 参数（最安全）
+用显式、单独的 CLI 参数替换 `--hf-datasets-params`：
 ```python
-group.add_argument('--dataset-path', type=str, help='Dataset path or name')
-group.add_argument('--dataset-name', type=str, help='Dataset configuration name')
-group.add_argument('--dataset-split', type=str, default='train', help='Dataset split')
-# ... etc
+group.add_argument('--dataset-path', type=str, help='数据集路径或名称')
+group.add_argument('--dataset-name', type=str, help='数据集配置名称')
+group.add_argument('--dataset-split', type=str, default='train', help='数据集分割')
+# ... 等
 ```
 
-## Additional Security Considerations
+## 附加安全考虑
 
-1. **Input File Validation**: Validate that `args.hf_datasets_params` points to a legitimate location
-2. **JSON Schema Validation**: Implement JSON schema validation for the parameter file
-3. **Audit Logging**: Log all dataset loading parameters for security monitoring
-4. **Documentation**: Update SECURITYNOTE.md to document this parameter injection risk
+1. **输入文件验证**：验证 `args.hf_datasets_params` 指向合法位置
+2. **JSON Schema 验证**：为参数文件实现 JSON schema 验证
+3. **审计日志**：记录所有数据集加载参数用于安全监控
+4. **文档更新**：更新 SECURITYNOTE.md 记录此参数注入风险
 
-## References
+## 参考资料
 
-- **CWE-88**: Argument Injection or Modification
-- **HuggingFace Documentation**: [Security considerations for trust_remote_code](https://huggingface.co/docs/datasets/security)
-- **Related CVE**: Similar patterns have led to CVEs in ML tooling
+- **CWE-88**：参数注入或修改
+- **HuggingFace 文档**：[trust_remote_code 安全考虑](https://huggingface.co/docs/datasets/security)
+- **相关 CVE**：类似模式在 ML 工具中已导致 CVE
 
-## Verification Status
+## 验证状态
 
-| Check | Status |
-|-------|--------|
-| Vulnerability confirmed | ✅ Yes |
-| Attack vector valid | ✅ Yes |
-| Impact realistic | ✅ Yes |
-| Remediation provided | ✅ Yes |
-| Consistent with CWE-88 | ✅ Yes |
+| 检查项 | 状态 |
+|--------|------|
+| 漏洞已确认 | ✅ 是 |
+| 攻击向量有效 | ✅ 是 |
+| 影响现实 | ✅ 是 |
+| 修复方案已提供 | ✅ 是 |
+| 与 CWE-88 一致 | ✅ 是 |
 
-## Metadata
+## 元数据
 
-- **Analyzed by**: details-worker
-- **Analysis Date**: 2026-04-20
-- **Project**: MindSpeed
-- **Repository**: /home/pwn20tty/Desktop/opencode_project/shenteng/MindSpeed/MindSpeed
+- **分析者**：details-worker
+- **分析日期**：2026-04-20
+- **项目**：MindSpeed
+- **仓库**：/home/pwn20tty/Desktop/opencode_project/shenteng/MindSpeed/MindSpeed

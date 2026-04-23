@@ -1,4 +1,4 @@
-# 深度利用分析报告: VULN-SEC-CKPT-002
+# VULN-SEC-CKPT-002：Mamba2模型HF权重转换torch.load无保护致Pickle RCE
 
 ## 漏洞基本信息
 

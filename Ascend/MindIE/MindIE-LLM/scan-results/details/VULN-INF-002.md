@@ -1,4 +1,4 @@
-# VULN-INF-002: Improper Exception Handling in InitPDNode
+# VULN-INF-002: InitPDNode中stoi转换缺异常处理致服务崩溃
 
 ## 漏洞概述
 

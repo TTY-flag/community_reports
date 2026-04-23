@@ -1,4 +1,4 @@
-# 漏洞利用分析报告
+# VULN-CALLBACK-001：msptiSubscribe回调函数指针未验证致任意代码执行风险
 
 ## 基本信息
 - **漏洞ID**: VULN-CALLBACK-001

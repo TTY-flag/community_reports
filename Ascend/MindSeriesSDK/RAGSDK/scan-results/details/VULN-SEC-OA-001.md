@@ -1,4 +1,4 @@
-# VULN-SEC-OA-001: Buffer Overflow in Tensor Dimension Conversion (CWE-787)
+# VULN-SEC-OA-001: AtTensor2Tensor张量维度转换缺边界检查致缓冲区溢出
 
 ## 漏洞概述
 

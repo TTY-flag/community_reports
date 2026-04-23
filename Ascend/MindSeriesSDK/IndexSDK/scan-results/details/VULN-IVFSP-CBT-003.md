@@ -1,4 +1,4 @@
-# VULN-IVFSP-CBT-003: Off-by-one 边界检查错误
+# VULN-IVFSP-CBT-003: PutDataInNList边界检查Off-by-one错误致数组越界
 
 ## 漏洞概述
 

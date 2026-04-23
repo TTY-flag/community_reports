@@ -1,4 +1,4 @@
-# DAEMON-002: Signal Handler Safety Issue — Deep Exploitation Analysis
+# DAEMON-002: SIGCHLD信号处理函数使用非异步安全函数致死锁内存损坏
 
 ## 漏洞概述
 

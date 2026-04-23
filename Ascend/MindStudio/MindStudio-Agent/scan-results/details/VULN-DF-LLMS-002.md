@@ -1,4 +1,4 @@
-# VULN-DF-LLMS-002 深度利用分析报告
+# VULN-DF-LLMS-002：自定义base_url无HTTPS强制校验致敏感信息明文传输
 
 ## 漏洞概述
 

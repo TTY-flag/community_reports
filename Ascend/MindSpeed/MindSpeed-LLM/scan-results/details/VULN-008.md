@@ -1,4 +1,4 @@
-# 深度利用分析报告: VULN-008
+# VULN-008：Longcat最后一层Checkpoint加载存在Pickle反序列化RCE漏洞
 
 ## 漏洞基本信息
 

@@ -1,4 +1,4 @@
-# 深度利用分析报告: VULN-SEC-HA-002
+# VULN-SEC-HA-002：高可用模块checkpoint加载函数存在Pickle反序列化RCE
 
 ## 漏洞基本信息
 

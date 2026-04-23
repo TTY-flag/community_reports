@@ -1,4 +1,4 @@
-# 深度利用分析报告: VULN-src_mindspeed_mm-pickle_deserialization-001
+# VULN-src_mindspeed_mm-pickle_deserialization-001：特征数据加载torch.load无保护致Pickle RCE
 
 ## 漏洞基本信息
 

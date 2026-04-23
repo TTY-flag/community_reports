@@ -1,4 +1,4 @@
-# SEC-INFER-002 漏洞分析报告
+# SEC-INFER-002: GetFaultRecoveryCmdType枚举类型转换缺边界验证
 
 ## 漏洞概述
 

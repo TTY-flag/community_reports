@@ -1,4 +1,4 @@
-# 深度利用分析报告: tools_load_weights-CWE502-indirect-pickle-001
+# tools_load_weights-CWE502-indirect-pickle-001：torch.load失败回退触发间接Pickle反序列化RCE
 
 ## 漏洞基本信息
 

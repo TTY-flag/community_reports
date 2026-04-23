@@ -1,4 +1,4 @@
-# DAEMON-003: Race Condition in Signal Handling
+# DAEMON-003: 多信号处理函数并发修改g_processExit致竞态条件
 
 ## 漏洞概述
 

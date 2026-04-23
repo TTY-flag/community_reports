@@ -1,4 +1,4 @@
-# VUL-TOOLS-007: 任意文件读取漏洞
+# VUL-TOOLS-007：KernelRunner.Run路径遍历致任意文件读取
 
 ## 漏洞基本信息
 

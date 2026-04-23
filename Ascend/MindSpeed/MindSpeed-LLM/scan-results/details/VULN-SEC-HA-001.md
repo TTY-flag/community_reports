@@ -1,4 +1,4 @@
-# 深度利用分析报告: VULN-SEC-HA-001
+# VULN-SEC-HA-001：高可用模块故障恢复时加载Checkpoint存在Pickle RCE风险
 
 ## 漏洞基本信息
 

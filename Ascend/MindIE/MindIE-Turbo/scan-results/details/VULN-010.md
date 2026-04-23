@@ -1,4 +1,4 @@
-# VULN-010: Missing Audit Logging - 深度利用分析报告
+# VULN-010: patcher补丁函数缺失审计日志致关键操作无可追溯性
 
 ## 漏洞概述
 

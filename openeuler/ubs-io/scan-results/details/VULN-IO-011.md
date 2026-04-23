@@ -1,4 +1,4 @@
-# VULN-IO-011: Path Traversal in File Open Hooks
+# VULN-IO-011: HookOpen等文件打开函数路径验证缺失致路径遍历攻击
 
 ## 漏洞概述
 

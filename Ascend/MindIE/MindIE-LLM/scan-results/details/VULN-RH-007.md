@@ -1,4 +1,4 @@
-# VULN-RH-007 - 整数溢出漏洞分析报告
+# VULN-RH-007: ParseTopLogProbsFromResponse乘法运算整数溢出风险
 
 ## 漏洞概述
 

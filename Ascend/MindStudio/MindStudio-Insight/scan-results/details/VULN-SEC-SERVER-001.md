@@ -1,4 +1,4 @@
-# 漏洞深度分析报告
+# VULN-SEC-SERVER-001：WsServer返回Access-Control-Allow-Origin通配符致CORS配置过宽
 
 ## VULN-SEC-SERVER-001: CORS 配置过于宽松 (CWE-942)
 

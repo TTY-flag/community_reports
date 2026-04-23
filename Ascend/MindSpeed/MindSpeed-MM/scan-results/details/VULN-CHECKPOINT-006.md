@@ -1,4 +1,4 @@
-# 漏洞详细分析报告：VULN-CHECKPOINT-006
+# VULN-CHECKPOINT-006：多模态Checkpoint加载函数torch.load无保护致RCE风险
 
 ## 漏洞基本信息
 

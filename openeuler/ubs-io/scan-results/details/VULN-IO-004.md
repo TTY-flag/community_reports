@@ -1,4 +1,4 @@
-# VULN-IO-004: Untrusted Dynamic Library Loading
+# VULN-IO-004: 代理库从不可信路径加载致动态库注入任意代码执行
 
 ## 漏洞概述
 

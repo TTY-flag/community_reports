@@ -1,4 +1,4 @@
-# CLUSTER-TRUSTBOUND-005 漏洞深度分析报告
+# CLUSTER-TRUSTBOUND-005: 信任边界违规致ZooKeeper节点信息未经验证直接使用
 
 ## 一、漏洞概述
 

@@ -1,4 +1,4 @@
-# VULN-SEC-PROX-003: 代理路径遍历漏洞详细分析报告
+# VULN-SEC-PROX-003：handle_http_request路径遍历致任意文件读取
 
 ## 漏洞概述
 

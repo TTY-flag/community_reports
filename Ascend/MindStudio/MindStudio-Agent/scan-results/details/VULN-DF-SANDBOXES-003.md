@@ -1,4 +1,4 @@
-# VULN-DF-SANDBOXES-003 深度利用分析报告
+# VULN-DF-SANDBOXES-003：sandbox_auth装饰器实现缺失致沙箱授权检查无效
 
 ## 漏洞概述
 

@@ -1,4 +1,4 @@
-# CROSS-MODULE-004: Cross-Module FAISS Deserialization Chain Analysis
+# CROSS-MODULE-004: FAISS反序列化跨模块调用链致任意代码执行
 
 ## 漏洞概要
 

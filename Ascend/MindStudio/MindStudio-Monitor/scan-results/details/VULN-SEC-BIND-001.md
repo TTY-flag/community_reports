@@ -1,4 +1,4 @@
-# 漏洞深度分析报告: VULN-SEC-BIND-001
+# VULN-SEC-BIND-001：init_dyno NPU ID输入验证缺失致IPC监控异常
 
 ## 1. 漏洞概述
 

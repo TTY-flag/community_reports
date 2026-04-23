@@ -1,4 +1,4 @@
-# 深度利用分析报告: VULN-SEC-CKPT-006
+# VULN-SEC-CKPT-006：分布式优化器加载函数torch.load无保护致RCE风险
 
 ## 漏洞基本信息
 

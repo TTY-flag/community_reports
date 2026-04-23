@@ -1,4 +1,4 @@
-# VULN-DF-LLMS-001 深度利用分析报告
+# VULN-DF-LLMS-001：LLMFactory API密钥提取后明文存储致敏感信息暴露
 
 ## 漏洞概述
 

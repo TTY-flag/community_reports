@@ -1,4 +1,4 @@
-# VULN-ASCEND-002 深度利用分析报告
+# VULN-ASCEND-002：白名单过滤不严格致路径遍历绕过安全检查
 
 ## 漏洞标识
 - **漏洞 ID**: VULN-ASCEND-002

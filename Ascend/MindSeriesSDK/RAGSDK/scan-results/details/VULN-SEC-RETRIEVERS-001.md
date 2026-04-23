@@ -1,4 +1,4 @@
-# VULN-SEC-RETRIEVERS-001: LLM Prompt Injection Vulnerability
+# VULN-SEC-RETRIEVERS-001: BMRetriever用户查询未过滤流入prompt致LLM提示词注入
 
 ## 1. 漏洞概述
 

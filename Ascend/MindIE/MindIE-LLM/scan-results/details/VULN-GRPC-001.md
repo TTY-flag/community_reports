@@ -1,4 +1,4 @@
-# VULN-GRPC-001: gRPC DecodeParameters 内存耗尽漏洞深度分析
+# VULN-GRPC-001: HandleDecodeRequest gRPC消息大小未上限验证致内存耗尽
 
 ## 漏洞概述
 

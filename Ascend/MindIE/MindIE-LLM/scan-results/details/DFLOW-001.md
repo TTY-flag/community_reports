@@ -1,4 +1,4 @@
-# DFLOW-001: gRPC 通信中 slave_ip 的输入验证不当
+# DFLOW-001: gRPC通信slave_ip未验证IP格式致拒绝服务或注入攻击
 
 ## 漏洞概述
 

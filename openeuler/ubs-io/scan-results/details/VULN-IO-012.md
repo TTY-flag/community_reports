@@ -1,4 +1,4 @@
-# VULN-IO-012: Path Traversal in File Deletion Hooks
+# VULN-IO-012: HookUnlink等文件删除函数路径验证缺失致任意文件删除
 
 ## 漏洞概述
 

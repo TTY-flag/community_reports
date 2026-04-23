@@ -1,4 +1,4 @@
-# VUL-TOOLS-005: 文件路径注入漏洞
+# VUL-TOOLS-005：SaveOutputs文件路径拼接致任意文件写入
 
 ## 漏洞基本信息
 

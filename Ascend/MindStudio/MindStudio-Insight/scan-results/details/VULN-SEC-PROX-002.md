@@ -1,4 +1,4 @@
-# 漏洞分析报告：VULN-SEC-PROX-002
+# VULN-SEC-PROX-002：代理HTTP请求头直接透传致请求头注入风险
 
 ## 漏洞概述
 

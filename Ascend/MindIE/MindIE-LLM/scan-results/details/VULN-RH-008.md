@@ -1,4 +1,4 @@
-# VULN-RH-008 - 除零漏洞详细分析报告
+# VULN-RH-008: MetricsCallback计算平均解码时间outputLen除零致崩溃
 
 ## 漏洞概述
 

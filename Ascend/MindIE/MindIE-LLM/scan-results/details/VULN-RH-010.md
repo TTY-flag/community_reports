@@ -1,4 +1,4 @@
-# VULN-RH-010 - 数组边界检查缺失漏洞详细分析报告
+# VULN-RH-010: MetricsCallback直接访问空向量at(0)致异常崩溃
 
 ## 漏洞概述
 

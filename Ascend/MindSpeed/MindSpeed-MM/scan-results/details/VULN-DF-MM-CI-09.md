@@ -1,4 +1,4 @@
-# VULN-DF-MM-CI-09: Code Injection via trust_remote_code Parameter
+# VULN-DF-MM-CI-09：ModelHub.build函数trust_remote_code参数传播致远程代码执行
 
 **漏洞ID**: VULN-DF-MM-CI-09 | **类型**: Code Injection (CWE-94) | **严重性**: Critical | **置信度**: 95/100
 **位置**: `mindspeed_mm/fsdp/models/modelhub.py:109-112` @ `build`

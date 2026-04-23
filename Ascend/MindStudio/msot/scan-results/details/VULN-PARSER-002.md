@@ -1,4 +1,4 @@
-# 漏洞深度分析报告: VULN-PARSER-002
+# VULN-PARSER-002：creat_softlink函数os.system命令注入致任意命令执行
 
 ## 漏洞概述
 

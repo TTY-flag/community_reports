@@ -1,4 +1,4 @@
-# VULN-DF-CPP-001: Path Traversal in GetDataFromBin (C++ Layer)
+# VULN-DF-CPP-001：GetDataFromBin函数路径遍历致任意文件读取
 
 ## 漏洞标识
 

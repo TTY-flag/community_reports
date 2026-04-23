@@ -1,4 +1,4 @@
-# 深度利用分析: VULN-DF-BASEUTILS-005
+# VULN-DF-BASEUTILS-005: check_path验证与使用间TOCTOU竞态致代码注入执行
 
 ## 漏洞概要
 

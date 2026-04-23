@@ -1,4 +1,4 @@
-# VULN-SEC-PROX-001: WebSocket代理消息验证缺失
+# VULN-SEC-PROX-001：WebSocket代理消息无验证直接透传致输入验证缺失
 
 ## 漏洞概述
 

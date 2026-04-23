@@ -1,0 +1,528 @@
+{
+  "project_name": "3FS (Fire-Flyer File System)",
+  "scan_time": "2026-04-22T12:00:00Z",
+  "lsp_available": false,
+  "total_files": 520,
+  "total_lines": 100000,
+  "project_profile": {
+    "project_type": "network_service",
+    "deployment_model": "分布式文件系统服务部署，运行在Linux服务器集群上。包含元数据服务(Meta)、存储服务(Storage)、管理服务(Mgmtd)、核心服务(Core)和FUSE客户端。使用RDMA网络进行高性能数据传输。",
+    "trust_boundaries": [
+      {
+        "boundary": "RDMA Network Interface",
+        "trusted_side": "Storage/Meta Services",
+        "untrusted_side": "Remote Clients",
+        "risk": "Critical"
+      },
+      {
+        "boundary": "TCP Network Interface",
+        "trusted_side": "Mgmtd Service",
+        "untrusted_side": "Remote Nodes/Clients",
+        "risk": "High"
+      },
+      {
+        "boundary": "FUSE Mount Point",
+        "trusted_side": "Local Application",
+        "untrusted_side": "Local User Processes",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "FoundationDB Storage",
+        "trusted_side": "Meta/Core Services",
+        "untrusted_side": "None (Internal)",
+        "risk": "Low"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "common/net",
+      "path": "src/common/net",
+      "language": "c_cpp",
+      "components": [
+        "ib/IBSocket.cc",
+        "ib/IBSocket.h",
+        "ib/IBConnect.cc",
+        "ib/IBConnect.h",
+        "ib/IBDevice.cc",
+        "ib/IBDevice.h",
+        "ib/RDMABuf.cc",
+        "ib/RDMABuf.h",
+        "Listener.cc",
+        "Listener.h",
+        "Server.cc",
+        "Server.h",
+        "Processor.h",
+        "Transport.cc",
+        "Transport.h",
+        "tcp/TcpSocket.cc",
+        "tcp/TcpSocket.h"
+      ]
+    },
+    {
+      "name": "common/serde",
+      "path": "src/common/serde",
+      "language": "c_cpp",
+      "components": [
+        "Serde.h",
+        "Serde.cc",
+        "CallContext.h",
+        "MessagePacket.h",
+        "ClientContext.h",
+        "Service.h"
+      ]
+    },
+    {
+      "name": "fuse",
+      "path": "src/fuse",
+      "language": "c_cpp",
+      "components": [
+        "FuseOps.cc",
+        "FuseOps.h",
+        "FuseClients.cc",
+        "FuseClients.h",
+        "FuseApplication.cc",
+        "FuseApplication.h",
+        "IoRing.cc",
+        "IoRing.h",
+        "hf3fs_fuse.cpp"
+      ]
+    },
+    {
+      "name": "storage",
+      "path": "src/storage",
+      "language": "mixed",
+      "components": [
+        "service/StorageOperator.cc",
+        "service/StorageOperator.h",
+        "service/StorageServer.cc",
+        "service/StorageService.h",
+        "store/ChunkEngine.h",
+        "store/ChunkMetaStore.cc",
+        "store/StorageTarget.cc",
+        "aio/AioReadWorker.cc",
+        "chunk_engine/src/core/engine.rs"
+      ]
+    },
+    {
+      "name": "meta",
+      "path": "src/meta",
+      "language": "c_cpp",
+      "components": [
+        "service/MetaOperator.cc",
+        "service/MetaOperator.h",
+        "service/MetaServer.cc",
+        "service/MetaServer.h",
+        "components/AclCache.h",
+        "components/SessionManager.cc",
+        "components/GcManager.cc",
+        "store/ops/BatchOperation.cc",
+        "store/ops/Rename.cc",
+        "store/ops/Remove.cc",
+        "store/ops/Open.cc"
+      ]
+    },
+    {
+      "name": "mgmtd",
+      "path": "src/mgmtd",
+      "language": "c_cpp",
+      "components": [
+        "ops/HeartbeatOperation.cc",
+        "ops/RegisterNodeOperation.cc",
+        "ops/SetConfigOperation.cc",
+        "ops/SetChainsOperation.cc",
+        "background/MgmtdLeaseExtender.cc",
+        "background/MgmtdHeartbeater.cc",
+        "service/MgmtdData.cc",
+        "store/MgmtdStore.cc"
+      ]
+    },
+    {
+      "name": "core",
+      "path": "src/core",
+      "language": "c_cpp",
+      "components": [
+        "user/UserToken.cc",
+        "user/UserToken.h",
+        "user/UserStore.cc",
+        "user/UserStore.h",
+        "user/UserCache.h",
+        "service/CoreService.cc",
+        "service/ops/HotUpdateConfigOperation.h"
+      ]
+    },
+    {
+      "name": "client",
+      "path": "src/client",
+      "language": "mixed",
+      "components": [
+        "storage/StorageClientImpl.cc",
+        "storage/StorageClient.h",
+        "meta/MetaClient.cc",
+        "meta/MetaClient.h",
+        "mgmtd/MgmtdClient.cc",
+        "mgmtd/MgmtdClient.h",
+        "cli/admin/AdminUserCtrl.cc",
+        "cli/admin/RemoteCall.cc",
+        "bin/admin_cli.cc"
+      ]
+    },
+    {
+      "name": "lib/api",
+      "path": "src/lib/api",
+      "language": "c_cpp",
+      "components": [
+        "hf3fs.h",
+        "hf3fs_expected.h",
+        "hf3fs_usrbio.h",
+        "UsrbIo.cc",
+        "fuse.h"
+      ]
+    },
+    {
+      "name": "lib/py",
+      "path": "src/lib/py",
+      "language": "c_cpp",
+      "components": [
+        "binding.cc",
+        "usrbio_binding.cc"
+      ]
+    },
+    {
+      "name": "fdb",
+      "path": "src/fdb",
+      "language": "c_cpp",
+      "components": [
+        "FDB.cc",
+        "FDB.h",
+        "FDBKVEngine.h",
+        "FDBTransaction.cc"
+      ]
+    },
+    {
+      "name": "kv",
+      "path": "src/kv",
+      "language": "c_cpp",
+      "components": [
+        "RocksDBStore.cc",
+        "LevelDBStore.cc",
+        "KVStore.h"
+      ]
+    },
+    {
+      "name": "common/kv",
+      "path": "src/common/kv",
+      "language": "c_cpp",
+      "components": [
+        "ITransaction.h",
+        "mem/MemKV.h",
+        "mem/MemTransaction.h"
+      ]
+    },
+    {
+      "name": "analytics",
+      "path": "src/analytics",
+      "language": "c_cpp",
+      "components": [
+        "StructuredTraceLog.h",
+        "SerdeObjectWriter.h",
+        "SerdeObjectReader.h"
+      ]
+    },
+    {
+      "name": "hf3fs_utils",
+      "path": "hf3fs_utils",
+      "language": "python",
+      "components": [
+        "cli.py",
+        "fs.py",
+        "trash.py"
+      ]
+    },
+    {
+      "name": "hf3fs_fuse",
+      "path": "hf3fs_fuse",
+      "language": "python",
+      "components": [
+        "fuse.py",
+        "io.py",
+        "fuse_demo.py"
+      ]
+    },
+    {
+      "name": "deploy/data_placement",
+      "path": "deploy/data_placement",
+      "language": "python",
+      "components": [
+        "src/model/data_placement.py",
+        "src/setup/gen_chain_table.py"
+      ]
+    }
+  ],
+  "files": [
+    {
+      "path": "src/common/net/ib/IBSocket.cc",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "common/net",
+      "lines": 39122,
+      "priority": 1
+    },
+    {
+      "path": "src/common/net/ib/IBConnect.cc",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "common/net",
+      "lines": 26528,
+      "priority": 1
+    },
+    {
+      "path": "src/fuse/FuseOps.cc",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "fuse",
+      "lines": 87127,
+      "priority": 1
+    },
+    {
+      "path": "src/storage/service/StorageOperator.cc",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "storage",
+      "lines": 49814,
+      "priority": 1
+    },
+    {
+      "path": "src/client/storage/StorageClientImpl.cc",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "client",
+      "lines": 116022,
+      "priority": 2
+    },
+    {
+      "path": "src/meta/service/MetaOperator.cc",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "meta",
+      "lines": 15214,
+      "priority": 2
+    },
+    {
+      "path": "src/meta/store/ops/BatchOperation.cc",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "meta",
+      "lines": 27803,
+      "priority": 2
+    },
+    {
+      "path": "src/meta/store/ops/Rename.cc",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "meta",
+      "lines": 16036,
+      "priority": 2
+    },
+    {
+      "path": "src/mgmtd/ops/HeartbeatOperation.cc",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "mgmtd",
+      "lines": 7388,
+      "priority": 2
+    },
+    {
+      "path": "src/common/serde/Serde.h",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "common/serde",
+      "lines": 35375,
+      "priority": 2
+    },
+    {
+      "path": "src/common/net/Processor.h",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "common/net",
+      "lines": 8078,
+      "priority": 2
+    },
+    {
+      "path": "src/core/user/UserToken.cc",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "core",
+      "lines": 2768,
+      "priority": 2
+    },
+    {
+      "path": "src/client/cli/admin/AdminUserCtrl.cc",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "client",
+      "lines": 16764,
+      "priority": 3
+    },
+    {
+      "path": "src/lib/py/binding.cc",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "lib/py",
+      "lines": 20167,
+      "priority": 3
+    },
+    {
+      "path": "src/fdb/FDBTransaction.cc",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "fdb",
+      "lines": 8000,
+      "priority": 4
+    },
+    {
+      "path": "src/kv/RocksDBStore.cc",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "kv",
+      "lines": 5000,
+      "priority": 4
+    },
+    {
+      "path": "src/common/utils/ConfigBase.h",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "common/utils",
+      "lines": 35646,
+      "priority": 4
+    },
+    {
+      "path": "hf3fs_utils/fs.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "hf3fs_utils",
+      "lines": 200,
+      "priority": 5
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "src/common/net/ib/IBSocket.cc",
+      "line": 155,
+      "function": "IBSocket::accept",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "RDMA连接接受入口，接收远程客户端的连接请求，可能接收恶意构造的IBConnectReq",
+      "description": "接收RDMA连接请求"
+    },
+    {
+      "file": "src/common/net/ib/IBSocket.cc",
+      "line": 127,
+      "function": "IBSocket::connect",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "RDMA连接发起，与远程服务建立连接，可能被恶意服务端攻击",
+      "description": "发起RDMA连接"
+    },
+    {
+      "file": "src/common/net/Listener.cc",
+      "line": 50,
+      "function": "Listener::listen",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "TCP/RDMA监听入口，监听指定端口等待远程连接",
+      "description": "监听网络端口"
+    },
+    {
+      "file": "src/common/net/Processor.h",
+      "line": 85,
+      "function": "Processor::unpackMsg",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "网络消息解包入口，处理来自远程的网络数据包，包含checksum校验和反序列化",
+      "description": "处理网络消息"
+    },
+    {
+      "file": "src/fuse/FuseOps.cc",
+      "line": 1,
+      "function": "fuse_operations",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "FUSE文件系统操作入口，处理本地用户进程的文件系统请求",
+      "description": "FUSE操作回调"
+    },
+    {
+      "file": "src/fuse/FuseOps.cc",
+      "line": 175,
+      "function": "real_ino",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "inode ID转换函数，处理来自FUSE的inode号",
+      "description": "inode转换"
+    },
+    {
+      "file": "src/mgmtd/ops/HeartbeatOperation.cc",
+      "line": 1,
+      "function": "HeartbeatOperation",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "心跳处理入口，接收远程节点的心跳信息",
+      "description": "节点心跳处理"
+    },
+    {
+      "file": "src/mgmtd/ops/RegisterNodeOperation.cc",
+      "line": 1,
+      "function": "RegisterNodeOperation",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "节点注册入口，接收远程节点的注册请求",
+      "description": "节点注册"
+    },
+    {
+      "file": "src/client/cli/admin/AdminUserCtrl.cc",
+      "line": 1,
+      "function": "AdminUserCtrl",
+      "type": "cmdline",
+      "trust_level": "semi_trusted",
+      "justification": "管理员CLI命令入口，处理管理员用户操作命令",
+      "description": "管理员用户控制"
+    },
+    {
+      "file": "src/lib/api/hf3fs.h",
+      "line": 1,
+      "function": "hf3fs_open",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "用户态API入口，提供文件系统操作接口",
+      "description": "用户态文件系统API"
+    },
+    {
+      "file": "src/lib/py/binding.cc",
+      "line": 1,
+      "function": "pybind11_module",
+      "type": "rpc",
+      "trust_level": "untrusted_local",
+      "justification": "Python绑定入口，暴露C++ API到Python环境",
+      "description": "Python API绑定"
+    },
+    {
+      "file": "hf3fs_utils/cli.py",
+      "line": 1,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "semi_trusted",
+      "justification": "Python CLI工具入口，处理用户命令行操作",
+      "description": "Python CLI入口"
+    }
+  ],
+  "attack_surfaces": [
+    "RDMA Network: IBSocket accept/connect - InfiniBand/RoCE连接",
+    "TCP Network: Listener listen - TCP端口监听",
+    "RPC Protocol: Processor unpackMsg - 消息解包和反序列化",
+    "FUSE Interface: FuseOps - 用户态文件系统操作",
+    "Admin CLI: admin_cli.cc - 管理员命令处理",
+    "Python Binding: binding.cc - Python模块绑定",
+    "Storage RPC: StorageOperator - 存储服务操作",
+    "Meta RPC: MetaOperator - 元数据服务操作"
+  ]
+}

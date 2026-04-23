@@ -1,4 +1,4 @@
-# VULN-CORE-001: 不安全的动态库加载漏洞
+# VULN-CORE-001：CustomDBI.SetConfig dlopen路径未验证致任意库加载
 
 ## 漏洞基本信息
 

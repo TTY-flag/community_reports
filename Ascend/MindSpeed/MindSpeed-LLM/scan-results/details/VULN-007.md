@@ -1,4 +1,4 @@
-# 深度利用分析报告: VULN-007
+# VULN-007：Longcat模型Checkpoint转换torch.load无保护致反序列化RCE
 
 ## 漏洞基本信息
 

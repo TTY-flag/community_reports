@@ -1,4 +1,4 @@
-# 深度利用分析报告: VULN-SEC-CKPT-005
+# VULN-SEC-CKPT-005：HF格式转换函数torch.load无保护致Pickle RCE风险
 
 ## 漏洞基本信息
 

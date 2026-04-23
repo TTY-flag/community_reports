@@ -1,4 +1,4 @@
-# VULN-DF-SANDBOXES-002 深度利用分析报告
+# VULN-DF-SANDBOXES-002：工具执行环境变量敏感信息写入日志文件致信息暴露
 
 ## 漏洞概述
 

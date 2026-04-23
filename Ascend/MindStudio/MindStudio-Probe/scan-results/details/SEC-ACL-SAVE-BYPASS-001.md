@@ -1,4 +1,4 @@
-# SEC-ACL-SAVE-BYPASS-001 - acl_save API 路径遍历漏洞深度分析
+# SEC-ACL-SAVE-BYPASS-001：acl_save API路径遍历致任意文件写入
 
 ## 漏洞基本信息
 

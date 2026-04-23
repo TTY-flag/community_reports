@@ -1,4 +1,4 @@
-# 漏洞深度利用分析报告
+# msopgen-keep_soc_info-tmpfile-001：临时文件固定命名致符号链接攻击风险
 
 ## 漏洞标识
 - **漏洞ID**: msopgen-keep_soc_info-tmpfile-001

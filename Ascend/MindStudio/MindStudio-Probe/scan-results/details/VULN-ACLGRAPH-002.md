@@ -1,4 +1,4 @@
-# VULN-ACLGRAPH-002 - build_final_path 缺失路径验证
+# VULN-ACLGRAPH-002：build_final_path缺失路径验证致任意文件写入
 
 ## 漏洞基本信息
 

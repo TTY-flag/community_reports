@@ -1,4 +1,4 @@
-# VUL-TOOLS-002: 路径遍历漏洞（输入路径）
+# VUL-TOOLS-002：KernelConfigParser.SetInputPath路径遍历致任意文件读取
 
 ## 漏洞基本信息
 

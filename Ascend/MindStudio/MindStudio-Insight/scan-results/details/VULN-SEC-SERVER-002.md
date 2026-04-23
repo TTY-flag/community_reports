@@ -1,4 +1,4 @@
-# 漏洞深度分析报告
+# VULN-SEC-SERVER-002：POST端点CORS通配符配置致跨域数据提交风险
 
 ## VULN-SEC-SERVER-002: CORS 配置过于宽松 - POST 端点 (CWE-942)
 

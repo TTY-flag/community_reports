@@ -1,4 +1,4 @@
-# VULN-001-SSRF: Server-Side Request Forgery (SSRF) Vulnerability
+# VULN-001-SSRF: URL验证器仅检查格式未限制目标地址致SSRF攻击
 
 ## 漏洞概述
 

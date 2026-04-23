@@ -1,4 +1,4 @@
-# VULN-DF-PY-STI-001 - Arbitrary Code Execution via Dynamic Import
+# VULN-DF-PY-STI-001：case_generator动态导入用户指定Python文件致任意代码执行
 
 ## 漏洞概述
 

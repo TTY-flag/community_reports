@@ -1,4 +1,4 @@
-# 漏洞深度分析报告
+# VULN-001-CONFIG-IMPORT：importlib动态导入配置模块致任意代码执行
 
 ## VULN-001-CONFIG-IMPORT: 配置驱动的任意代码执行 (CWE-94)
 

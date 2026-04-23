@@ -1,4 +1,4 @@
-# 漏洞合并说明
+# optune-kernel_modifier-replace_param-003：_replace_param代码注入（合并至cross-module）
 
 ## 合并状态
 

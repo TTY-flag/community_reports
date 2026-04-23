@@ -1,4 +1,4 @@
-# Cross-Module Attack Chain: Configs to Command Execution
+# cross-module-configs-to-command-exec：@autotune装饰器configs注入致跨模块命令执行
 
 ## 漏洞概述
 

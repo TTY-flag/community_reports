@@ -1,4 +1,4 @@
-# DAEMON-001: Signal Handler Safety Issue
+# DAEMON-001: SignalInterruptHandler使用非异步信号安全函数致死锁崩溃
 
 ## 漏洞概述
 

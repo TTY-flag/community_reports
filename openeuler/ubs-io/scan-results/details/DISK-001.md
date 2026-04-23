@@ -1,4 +1,4 @@
-# DISK-001: Integer Overflow in Disk Offset Calculation
+# DISK-001: 磁盘偏移计算表达式整数溢出致错误位置读写
 
 ## 漏洞基本信息
 

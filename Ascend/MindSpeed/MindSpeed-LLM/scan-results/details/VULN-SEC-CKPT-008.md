@@ -1,4 +1,4 @@
-# 深度利用分析报告: VULN-SEC-CKPT-008
+# VULN-SEC-CKPT-008：HF模型文件更新函数torch.load无保护致反序列化RCE
 
 ## 漏洞基本信息
 

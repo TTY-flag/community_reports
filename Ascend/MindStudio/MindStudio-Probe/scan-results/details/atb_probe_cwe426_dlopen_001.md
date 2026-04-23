@@ -1,4 +1,4 @@
-# atb_probe_cwe426_dlopen_001 - dlopen 不可信搜索路径漏洞
+# atb_probe_cwe426_dlopen_001：GetCurrentDeviceId dlopen不可信搜索路径致库注入
 
 ## 漏洞基本信息
 

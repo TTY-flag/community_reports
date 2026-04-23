@@ -1,4 +1,4 @@
-# VULN-RH-004: Integer Underflow in Token Offset Calculation
+# VULN-RH-004: GetContextJsonBody减法整数下溢致outputLenOffset极大值
 
 ## 漏洞概述
 

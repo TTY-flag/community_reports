@@ -1,4 +1,4 @@
-# SDK-IL-003: Information Leakage in MirrorClient::Put Alignment Failure
+# SDK-IL-003: MirrorClient::Put对齐失败日志输出Key等敏感信息泄露
 
 ## 1. 漏洞概述
 

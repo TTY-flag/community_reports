@@ -1,4 +1,4 @@
-# VULN-DF-LPE-002 漏洞详细分析报告
+# VULN-DF-LPE-002: lpe_exe_check中stat与execve间TOCTOU竞态致权限提升
 
 ## 1. 漏洞概述
 

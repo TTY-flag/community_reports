@@ -1,0 +1,98 @@
+{
+  "scan_id": "scan_3fs_20250422",
+  "start_time": "2025-04-22T19:30:00+08:00",
+  "end_time": "2025-04-22T20:10:00+08:00",
+  "duration_seconds": 2400,
+  "project_name": "3FS",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/kunpeng/boostkit/3FS",
+  "status": "success",
+  "agents": [
+    {
+      "name": "architecture",
+      "start_time": "2025-04-22T19:31:00+08:00",
+      "end_time": "2025-04-22T19:44:00+08:00",
+      "duration_seconds": 780,
+      "status": "success",
+      "output_files": [
+        "scan-results/.context/project_model.json",
+        "scan-results/.context/call_graph.json",
+        "scan-results/threat_analysis_report.md"
+      ],
+      "modules_identified": 17,
+      "high_risk_files": 18
+    },
+    {
+      "name": "dataflow-scanner",
+      "start_time": "2025-04-22T19:44:00+08:00",
+      "end_time": "2025-04-22T19:51:00+08:00",
+      "duration_seconds": 420,
+      "status": "success",
+      "vulnerabilities_found": 7,
+      "severity_distribution": {
+        "high": 3,
+        "medium": 2,
+        "low": 1
+      }
+    },
+    {
+      "name": "security-auditor",
+      "start_time": "2025-04-22T19:44:00+08:00",
+      "end_time": "2025-04-22T19:49:00+08:00",
+      "duration_seconds": 300,
+      "status": "success",
+      "vulnerabilities_found": 5,
+      "severity_distribution": {
+        "critical": 1,
+        "high": 2,
+        "medium": 2
+      }
+    },
+    {
+      "name": "verification",
+      "start_time": "2025-04-22T19:52:00+08:00",
+      "end_time": "2025-04-22T19:58:00+08:00",
+      "duration_seconds": 360,
+      "status": "success",
+      "vulnerabilities_verified": 12,
+      "confirmed_count": 2,
+      "likely_count": 1,
+      "possible_count": 7,
+      "false_positive_count": 2
+    },
+    {
+      "name": "details-analyzer",
+      "start_time": "2025-04-22T19:58:00+08:00",
+      "end_time": "2025-04-22T20:03:00+08:00",
+      "duration_seconds": 300,
+      "status": "success",
+      "vulnerabilities_analyzed": 2,
+      "output_files": [
+        "scan-results/details/VULN-003.md",
+        "scan-results/details/VULN-007.md"
+      ]
+    },
+    {
+      "name": "reporter",
+      "start_time": "2025-04-22T20:03:00+08:00",
+      "end_time": "2025-04-22T20:10:00+08:00",
+      "duration_seconds": 420,
+      "status": "success",
+      "output_files": [
+        "scan-results/report_confirmed.md",
+        "scan-results/report_unconfirmed.md"
+      ]
+    }
+  ],
+  "summary": {
+    "total_files_scanned": 520,
+    "total_vulnerabilities": 12,
+    "confirmed_vulnerabilities": 2,
+    "likely_vulnerabilities": 1,
+    "possible_vulnerabilities": 7,
+    "false_positives": 2,
+    "critical_count": 2,
+    "high_count": 1,
+    "medium_count": 4,
+    "low_count": 5
+  }
+}

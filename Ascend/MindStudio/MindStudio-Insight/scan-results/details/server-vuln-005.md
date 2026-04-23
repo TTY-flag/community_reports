@@ -1,4 +1,4 @@
-# 漏洞深度分析报告
+# server-vuln-005：CORS通配符配置（同VULN-SEC-SERVER-001重复发现）
 
 ## server-vuln-005: CORS 配置过于宽松 (重复发现)
 

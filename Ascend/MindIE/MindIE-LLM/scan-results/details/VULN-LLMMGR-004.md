@@ -1,4 +1,4 @@
-# VULN-LLMMGR-004 漏洞深度分析报告
+# VULN-LLMMGR-004: TransformRequest张量数据构造字符串缺空终止符致越界读取
 
 ## 漏洞概述
 

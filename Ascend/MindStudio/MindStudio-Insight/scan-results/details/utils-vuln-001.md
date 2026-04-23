@@ -1,4 +1,4 @@
-# 漏洞深度分析报告
+# utils-vuln-001：ValidateCommandFilePathParam缺失路径遍历检查
 
 ## utils-vuln-001: 路径遍历过滤缺失 (CWE-22)
 

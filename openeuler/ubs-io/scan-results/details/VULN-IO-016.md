@@ -1,4 +1,4 @@
-# VULN-IO-016: Path Traversal Vulnerability in HookTruncate/HookTruncate64
+# VULN-IO-016: HookTruncate文件截断函数路径验证缺失致任意文件截断破坏
 
 ## 漏洞概述
 

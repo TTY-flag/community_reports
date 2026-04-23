@@ -1,4 +1,4 @@
-# 深度利用分析报告: VULN-SEC-TRUST-001
+# VULN-SEC-TRUST-001：评估模块trust_remote_code启用致HuggingFace远程代码执行
 
 ## 漏洞基本信息
 

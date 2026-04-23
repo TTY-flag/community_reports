@@ -1,4 +1,4 @@
-# SEC-INFER-003: Integer Overflow in Output Length Calculation
+# SEC-INFER-003: GenerateInferRequest输出长度计算整数溢出风险
 
 ## 漏洞概述
 

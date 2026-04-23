@@ -1,4 +1,4 @@
-# VULN-PATH-001: Path Traversal Vulnerability in Security Module
+# VULN-PATH-001：get_valid_path函数路径遍历白名单绕过致任意文件访问
 
 ## 漏洞概述
 

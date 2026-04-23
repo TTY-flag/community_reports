@@ -1,0 +1,232 @@
+{
+  "functions": {
+    "ComputeVectorPQCode@src/kvecturbo.cpp": {
+      "defined_at": 1166,
+      "calls": ["VectorL2SquaredDistancePQ@src/kvecturbo.cpp", "MAXALIGN@src/kvecturbo.cpp", "VECTOR_SIZE@src/kvecturbo.cpp"],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "公共 API，接收外部向量数据和参数，计算 PQ 编码"
+    },
+    "ComputePQTable@src/kvecturbo.cpp": {
+      "defined_at": 938,
+      "calls": ["VectorArraySplitSingle@src/kvecturbo.cpp", "VectorArrayInit@src/kvecturbo.cpp", "NormalKmeans@src/kvecturbo.cpp", "VectorArrayGet@src/kvecturbo.cpp", "memcpy_s", "VectorArrayRelease@src/kvecturbo.cpp"],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "公共 API，接收样本数据计算 PQ 码本，触发 K-means 聚类和大量内存操作"
+    },
+    "GetPQDistanceTableSdc@src/kvecturbo.cpp": {
+      "defined_at": 1271,
+      "calls": ["ComputeOne@src/kvecturbo.cpp", "L2SquaredDistanceNeonV2@src/kvecturbo.cpp"],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "公共 API，计算 SDC 距离表，使用 SIMD 指令加速"
+    },
+    "GetPQDistanceTableAdc@src/kvecturbo.cpp": {
+      "defined_at": 1327,
+      "calls": [],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "公共 API，计算 ADC 距离表，接收查询向量"
+    },
+    "GetPQDistance@src/kvecturbo.cpp": {
+      "defined_at": 1061,
+      "calls": [],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "公共 API，计算 PQ 距离，接收 basecode、querycode、距离表"
+    },
+    "NormalKmeans@src/kvecturbo.cpp": {
+      "defined_at": 662,
+      "calls": ["VectorArrayInit@src/kvecturbo.cpp", "VectorArrayGet@src/kvecturbo.cpp", "InitCenters@src/kvecturbo.cpp", "L2Distance2Simd@src/kvecturbo.cpp", "ComputeNewCenters@src/kvecturbo.cpp", "InitVector@src/kvecturbo.cpp", "memcpy_s", "VectorArraySet@src/kvecturbo.cpp"],
+      "called_by": ["ComputePQTable@src/kvecturbo.cpp"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "K-means 聚类算法实现，处理外部传入的样本数据"
+    },
+    "VectorArraySplitSingle@src/kvecturbo.cpp": {
+      "defined_at": 269,
+      "calls": ["VectorArrayInit@src/kvecturbo.cpp", "VectorArrayGet@src/kvecturbo.cpp", "VectorArrayCopy@src/kvecturbo.cpp"],
+      "called_by": ["ComputePQTable@src/kvecturbo.cpp"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "分割向量数组到子空间，OpenMP 并行处理"
+    },
+    "VectorArrayInit@src/kvecturbo.cpp": {
+      "defined_at": 223,
+      "calls": ["malloc", "calloc", "MAXALIGN@src/kvecturbo.cpp"],
+      "called_by": ["ComputePQTable@src/kvecturbo.cpp", "NormalKmeans@src/kvecturbo.cpp", "VectorArraySplitSingle@src/kvecturbo.cpp"],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "初始化向量数组结构，动态内存分配"
+    },
+    "VectorArrayGet@src/kvecturbo.cpp": {
+      "defined_at": 90,
+      "calls": [],
+      "called_by": ["ComputePQTable@src/kvecturbo.cpp", "NormalKmeans@src/kvecturbo.cpp", "VectorArraySplitSingle@src/kvecturbo.cpp"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "获取数组元素指针，索引可能越界"
+    },
+    "VectorArrayCopy@src/kvecturbo.cpp": {
+      "defined_at": 199,
+      "calls": ["VectorArrayGet@src/kvecturbo.cpp", "memcpy_s"],
+      "called_by": ["VectorArraySplitSingle@src/kvecturbo.cpp"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "向量数组拷贝，涉及内存操作"
+    },
+    "VectorArraySet@src/kvecturbo.cpp": {
+      "defined_at": 103,
+      "calls": ["VectorArrayGet@src/kvecturbo.cpp", "memcpy_s"],
+      "called_by": ["NormalKmeans@src/kvecturbo.cpp"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "设置向量数组元素，memcpy_s 操作"
+    },
+    "VectorArrayRelease@src/kvecturbo.cpp": {
+      "defined_at": 251,
+      "calls": ["free"],
+      "called_by": ["ComputePQTable@src/kvecturbo.cpp"],
+      "receives_external_input": false,
+      "risk": "Low",
+      "description": "释放向量数组资源"
+    },
+    "InitCenters@src/kvecturbo.cpp": {
+      "defined_at": 356,
+      "calls": ["memcpy_s"],
+      "called_by": ["NormalKmeans@src/kvecturbo.cpp"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "初始化聚类中心，memcpy_s 操作"
+    },
+    "ComputeNewCenters@src/kvecturbo.cpp": {
+      "defined_at": 588,
+      "calls": ["SumCenters@src/kvecturbo.cpp", "handleClusterOrInitializeRandomly@src/kvecturbo.cpp", "memcpy_s"],
+      "called_by": ["NormalKmeans@src/kvecturbo.cpp"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "计算新聚类中心，OpenMP 并行处理"
+    },
+    "SumCenters@src/kvecturbo.cpp": {
+      "defined_at": 469,
+      "calls": ["accumulateSampleToCenter@src/kvecturbo.cpp", "mergeThreadAggregates@src/kvecturbo.cpp"],
+      "called_by": ["ComputeNewCenters@src/kvecturbo.cpp"],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "聚类聚合计算，OpenMP 并行"
+    },
+    "L2Distance2Simd@src/kvecturbo.cpp": {
+      "defined_at": 157,
+      "calls": [],
+      "called_by": ["NormalKmeans@src/kvecturbo.cpp"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "NEON SIMD L2 距离计算，处理外部向量数据"
+    },
+    "L2SquaredDistanceNeonV2@src/kvecturbo.cpp": {
+      "defined_at": 879,
+      "calls": ["L2SquaredDistanceRef@src/kvecturbo.cpp"],
+      "called_by": ["ComputeOne@src/kvecturbo.cpp"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "NEON SIMD L2 距离计算优化版本"
+    },
+    "VectorL2SquaredDistancePQ@src/kvecturbo.cpp": {
+      "defined_at": 832,
+      "calls": [],
+      "called_by": ["ComputeVectorPQCode@src/kvecturbo.cpp"],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "PQ L2 距离计算"
+    },
+    "ComputeOne@src/kvecturbo.cpp": {
+      "defined_at": 1216,
+      "calls": ["L2SquaredDistanceNeonV2@src/kvecturbo.cpp"],
+      "called_by": ["GetPQDistanceTableSdc@src/kvecturbo.cpp"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "计算单个子空间距离，OpenMP 并行调用"
+    },
+    "InitVector@src/kvecturbo.cpp": {
+      "defined_at": 324,
+      "calls": ["calloc", "VECTOR_SIZE@src/kvecturbo.cpp"],
+      "called_by": ["NormalKmeans@src/kvecturbo.cpp"],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "初始化单个向量结构，动态内存分配"
+    },
+    "handleClusterOrInitializeRandomly@src/kvecturbo.cpp": {
+      "defined_at": 512,
+      "calls": ["memcpy_s"],
+      "called_by": ["ComputeNewCenters@src/kvecturbo.cpp"],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "处理空聚类，OpenMP critical 区域内的 memcpy_s"
+    },
+    "MAXALIGN@src/kvecturbo.cpp": {
+      "defined_at": 69,
+      "calls": ["TYPEALIGN@src/kvecturbo.cpp"],
+      "called_by": ["VectorArrayInit@src/kvecturbo.cpp", "ComputePQTable@src/kvecturbo.cpp", "ComputeVectorPQCode@src/kvecturbo.cpp"],
+      "receives_external_input": false,
+      "risk": "Low",
+      "description": "内存对齐计算"
+    },
+    "VECTOR_SIZE@src/kvecturbo.cpp": {
+      "defined_at": 79,
+      "calls": [],
+      "called_by": ["VectorArrayInit@src/kvecturbo.cpp", "InitVector@src/kvecturbo.cpp", "ComputePQTable@src/kvecturbo.cpp", "ComputeVectorPQCode@src/kvecturbo.cpp"],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "计算向量大小，涉及维度参数"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "ComputePQTable.samples@src/kvecturbo.cpp:938",
+      "path": ["VectorArraySplitSingle@src/kvecturbo.cpp:269", "VectorArrayGet@src/kvecturbo.cpp:90", "VectorArrayCopy@src/kvecturbo.cpp:199", "memcpy_s@src/kvecturbo.cpp:208"],
+      "sink": "memcpy_s dest buffer",
+      "sink_type": "memory_operation",
+      "risk": "High"
+    },
+    {
+      "source": "ComputePQTable.samples@src/kvecturbo.cpp:938",
+      "path": ["NormalKmeans@src/kvecturbo.cpp:662", "VectorArrayGet@src/kvecturbo.cpp:707", "memcpy_s@src/kvecturbo.cpp:720"],
+      "sink": "memcpy_s samplesData buffer",
+      "sink_type": "memory_operation",
+      "risk": "High"
+    },
+    {
+      "source": "ComputeVectorPQCode.vector@src/kvecturbo.cpp:1166",
+      "path": ["VectorL2SquaredDistancePQ@src/kvecturbo.cpp:832", "array access@src/kvecturbo.cpp:842"],
+      "sink": "pqTable array access",
+      "sink_type": "array_index",
+      "risk": "Medium"
+    },
+    {
+      "source": "GetPQDistance.basecode@src/kvecturbo.cpp:1061",
+      "path": ["array indexing@src/kvecturbo.cpp:1095", "pqDistanceTable offset@src/kvecturbo.cpp:1108"],
+      "sink": "pqDistanceTable array access",
+      "sink_type": "array_index",
+      "risk": "High"
+    },
+    {
+      "source": "ComputePQTable.params.pqM@src/kvecturbo.cpp:938",
+      "path": ["dimension calculation@src/kvecturbo.cpp:984", "VectorArrayInit@src/kvecturbo.cpp:1001", "malloc@src/kvecturbo.cpp:225"],
+      "sink": "malloc allocation size",
+      "sink_type": "memory_allocation",
+      "risk": "High"
+    },
+    {
+      "source": "NormalKmeans.samples@src/kvecturbo.cpp:662",
+      "path": ["L2Distance2Simd@src/kvecturbo.cpp:756", "NEON vld1q_f32@src/kvecturbo.cpp:169"],
+      "sink": "SIMD memory load",
+      "sink_type": "simd_operation",
+      "risk": "High"
+    }
+  ]
+}

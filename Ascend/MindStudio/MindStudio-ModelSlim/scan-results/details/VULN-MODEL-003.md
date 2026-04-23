@@ -1,4 +1,4 @@
-# VULN-MODEL-003: Path Traversal Arbitrary File Read
+# VULN-MODEL-003：load_jsonl函数绕过安全路径验证致任意文件读取
 
 ## 漏洞概览
 

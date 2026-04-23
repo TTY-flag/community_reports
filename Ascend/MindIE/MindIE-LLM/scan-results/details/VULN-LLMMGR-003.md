@@ -1,4 +1,4 @@
-# VULN-LLMMGR-003: Out-of-Bounds Read in Stop Token IDs Processing
+# VULN-LLMMGR-003: TransformStopTokenIds基于用户可控Shape循环致越界读取
 
 ## 漏洞概述
 

@@ -1,4 +1,4 @@
-# 漏洞详细分析报告: VULN-BRIDGE-005
+# VULN-BRIDGE-005：Bridge模块AutoProcessor加载硬编码trust_remote_code致RCE
 
 ## 基本信息
 

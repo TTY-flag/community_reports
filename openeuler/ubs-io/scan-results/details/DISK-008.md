@@ -1,4 +1,4 @@
-# DISK-008: Path Traversal via BdmUpdate Block Device Check Bypass
+# DISK-008: BdmUpdate绕过块设备检查致任意文件路径可注册为磁盘
 
 ## 漏洞基本信息
 

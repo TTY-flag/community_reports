@@ -1,4 +1,4 @@
-# VULN-CROSS-002: File I/O Security Measure Asymmetry (CWE-73)
+# VULN-CROSS-002: 文件I/O安全措施不对称读操作缺验证致路径遍历风险
 
 ## 漏洞概述
 

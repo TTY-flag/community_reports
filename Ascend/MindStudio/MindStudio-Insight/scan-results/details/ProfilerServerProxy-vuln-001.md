@@ -1,4 +1,4 @@
-# 漏洞深度分析报告
+# ProfilerServerProxy-vuln-001：WebSocket代理输入验证缺失（同VULN-SEC-PROX-001）
 
 ## ProfilerServerProxy-vuln-001: WebSocket 代理输入验证缺失 (重复发现)
 

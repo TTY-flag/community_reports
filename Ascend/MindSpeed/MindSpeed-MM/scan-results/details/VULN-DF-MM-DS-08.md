@@ -1,4 +1,4 @@
-# VULN-DF-MM-DS-08: FeatureDataset 不安全反序列化漏洞 `get_data_from_feature_data`
+# VULN-DF-MM-DS-08：FeatureDataset特征数据加载torch.load无保护致Pickle RCE
 
 **严重性**: High | **CWE**: CWE-502 | **置信度**: 85/100
 **位置**: `mindspeed_mm/data/datasets/feature_dataset.py:96` @ `get_data_from_feature_data`

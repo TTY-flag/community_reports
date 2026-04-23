@@ -1,4 +1,4 @@
-# VULN-DF-LPE-003 漏洞详细分析报告
+# VULN-DF-LPE-003: chmod/chown等权限修改函数TOCTOU竞态致权限提升
 
 ## 1. 漏洞概述
 

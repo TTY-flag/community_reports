@@ -1,4 +1,4 @@
-# VULN-LLMMGR-002 深度利用分析报告
+# VULN-LLMMGR-002: TransformInputId张量Shape越界读取致内存泄露
 
 ## 1. 漏洞概述
 

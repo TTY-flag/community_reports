@@ -1,4 +1,4 @@
-# checkpoint-vuln-003: 不安全反序列化 (Unsafe Deserialization) - merge_model
+# checkpoint-vuln-003：LoRA模型合并torch.load无保护致Pickle反序列化RCE
 
 **严重性**: High | **CWE**: CWE-502 | **置信度**: 90/100
 **位置**: `checkpoint/common/merge_base_lora_weight.py:88-92` @ `merge_model`

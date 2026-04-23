@@ -1,4 +1,4 @@
-# SEC-INFER-004: Out-of-Bounds Read in BuildReComputeInput
+# SEC-INFER-004: BuildReComputeInput用户控制循环边界致越界读取
 
 ## 漏洞概述
 

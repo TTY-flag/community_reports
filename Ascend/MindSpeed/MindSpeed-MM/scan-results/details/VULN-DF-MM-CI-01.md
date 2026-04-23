@@ -1,4 +1,4 @@
-# 漏洞利用分析报告
+# VULN-DF-MM-CI-01：trust_remote_code参数传播致HuggingFace远程代码执行
 
 ## 漏洞标识
 

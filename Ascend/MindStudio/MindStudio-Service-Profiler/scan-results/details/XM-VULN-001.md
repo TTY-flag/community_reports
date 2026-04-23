@@ -1,4 +1,4 @@
-# 漏洞深度分析报告
+# XM-VULN-001：ASCEND_HOME_PATH环境变量控制ctypes.CDLL加载路径致库注入
 
 ## XM-VULN-001: 跨模块动态库路径污染 (CWE-426)
 

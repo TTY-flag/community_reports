@@ -1,4 +1,4 @@
-# 深度利用分析报告: VULN-SEC-CKPT-007
+# VULN-SEC-CKPT-007：链式优化器加载函数torch.load无保护致Pickle RCE
 
 ## 漏洞基本信息
 

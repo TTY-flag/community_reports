@@ -1,4 +1,4 @@
-# VULN-DF-SANDBOXES-001 深度利用分析报告
+# VULN-DF-SANDBOXES-001：AgentFactory删除sandbox_bindings致沙箱配置失效
 
 ## 漏洞概述
 

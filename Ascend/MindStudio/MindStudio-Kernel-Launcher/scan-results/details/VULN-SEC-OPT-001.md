@@ -1,4 +1,4 @@
-# 漏洞合并说明
+# VULN-SEC-OPT-001：_replace_param代码注入（合并至cross-module报告）
 
 ## 合并状态
 

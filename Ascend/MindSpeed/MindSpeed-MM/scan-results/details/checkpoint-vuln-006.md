@@ -1,4 +1,4 @@
-# checkpoint-vuln-006: Improper Neutralization of Directives - `merge_dcp_to_hf`
+# checkpoint-vuln-006：DCP转换硬编码trust_remote_code致HuggingFace远程代码执行
 
 **严重性**: High | **CWE**: CWE-95 | **置信度**: 85/100
 **位置**: `checkpoint/common/merge_dcp_to_hf.py:94` @ `merge_dcp_to_hf`

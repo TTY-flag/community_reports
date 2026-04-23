@@ -1,4 +1,4 @@
-# checkpoint-vuln-004: 不安全反序列化 (Unsafe Deserialization) - load_from_mm
+# checkpoint-vuln-004：Sora模型Checkpoint加载显式禁用weights_only致RCE
 
 **严重性**: High | **CWE**: CWE-502 | **置信度**: 90/100
 **位置**: `checkpoint/sora_model/convert_utils/save_load_utils.py:36` @ `load_from_mm`

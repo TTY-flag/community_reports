@@ -1,4 +1,4 @@
-# VECSTORE-502-001: FAISS Index Deserialization Vulnerability
+# VECSTORE-502-001: FAISS索引文件反序列化pickle.load致任意代码执行
 
 ## 漏洞概要
 

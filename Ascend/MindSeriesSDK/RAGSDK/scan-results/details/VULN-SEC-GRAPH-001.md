@@ -1,4 +1,4 @@
-# Vulnerability Analysis Report: VULN-SEC-GRAPH-001
+# VULN-SEC-GRAPH-001: Cypher查询字符串拼接未过滤用户输入致注入攻击
 
 ## Executive Summary
 

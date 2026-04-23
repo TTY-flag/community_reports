@@ -1,4 +1,4 @@
-# 漏洞深度利用分析报告
+# VULN-CODEGEN-TAINT-001：Manifest.generate_code路径遍历致任意目录删除风险
 
 **漏洞ID**: VULN-CODEGEN-TAINT-001  
 **漏洞类型**: Path Traversal (路径遍历)  

@@ -1,4 +1,4 @@
-# 漏洞利用分析报告
+# VULN-SEC-LIB-001：CanonicalSoPath环境变量控制dlopen致库注入
 
 ## 基本信息
 - **漏洞ID**: VULN-SEC-LIB-001

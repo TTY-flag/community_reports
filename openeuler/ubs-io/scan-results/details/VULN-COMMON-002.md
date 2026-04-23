@@ -1,4 +1,4 @@
-# VULN-COMMON-002 深度利用分析报告
+# VULN-COMMON-002: TLS库句柄指针赋值错误致静态变量Use-After-Free漏洞
 
 ## 漏洞概要
 

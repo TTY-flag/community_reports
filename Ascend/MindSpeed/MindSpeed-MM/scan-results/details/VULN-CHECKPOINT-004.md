@@ -1,4 +1,4 @@
-# VULN-CHECKPOINT-004: Unsafe Deserialization Vulnerability
+# VULN-CHECKPOINT-004：torch.load设置weights_only=False致Pickle反序列化RCE
 
 ## 漏洞概述
 

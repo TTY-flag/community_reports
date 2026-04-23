@@ -1,4 +1,4 @@
-# VULN-CROSS-002: 不安全反序列化 (Unsafe Deserialization) - main
+# VULN-CROSS-002：Checkpoint转换CLI跨模块torch.load无保护致反序列化RCE
 
 **严重性**: Critical | **CWE**: CWE-502 | **置信度**: 90/100
 **位置**: `checkpoint/convert_cli.py:13-23` @ `main`

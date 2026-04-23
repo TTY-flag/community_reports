@@ -1,0 +1,75 @@
+{
+  "scan_id": "550e8400-e29b-41d4-a716-446655440000",
+  "start_time": "2026-04-22T19:32:00Z",
+  "end_time": "2026-04-22T20:05:00Z",
+  "duration_seconds": 1980,
+  "project_name": "kvecturbo",
+  "status": "completed",
+  "agents": [
+    {
+      "name": "architecture",
+      "start_time": "2026-04-22T19:32:00Z",
+      "end_time": "2026-04-22T19:37:00Z",
+      "duration_seconds": 300,
+      "status": "success",
+      "outputs": ["project_model.json", "call_graph.json", "threat_analysis_report.md"],
+      "error": null
+    },
+    {
+      "name": "dataflow-scanner",
+      "start_time": "2026-04-22T19:37:00Z",
+      "end_time": "2026-04-22T19:38:20Z",
+      "duration_seconds": 80,
+      "status": "success",
+      "outputs": ["scan.db"],
+      "error": null
+    },
+    {
+      "name": "security-auditor",
+      "start_time": "2026-04-22T19:37:00Z",
+      "end_time": "2026-04-22T19:38:08Z",
+      "duration_seconds": 68,
+      "status": "success",
+      "outputs": ["scan.db"],
+      "error": null
+    },
+    {
+      "name": "verification",
+      "start_time": "2026-04-22T19:38:20Z",
+      "end_time": "2026-04-22T19:39:33Z",
+      "duration_seconds": 73,
+      "status": "success",
+      "outputs": ["scan.db"],
+      "error": null
+    },
+    {
+      "name": "details-analyzer",
+      "start_time": "2026-04-22T19:39:33Z",
+      "end_time": "2026-04-22T19:56:27Z",
+      "duration_seconds": 1014,
+      "status": "success",
+      "outputs": ["details/VULN-DF-CORE-002.md", "details/VULN-DF-CORE-006.md", "details/VULN-DF-CORE-020.md", "details/VULN-SEC-API-006.md"],
+      "error": null
+    },
+    {
+      "name": "reporter",
+      "start_time": "2026-04-22T19:56:27Z",
+      "end_time": "2026-04-22T19:59:11Z",
+      "duration_seconds": 164,
+      "status": "success",
+      "outputs": ["report_confirmed.md", "report_unconfirmed.md"],
+      "error": null
+    }
+  ],
+  "summary": {
+    "project_type": "library",
+    "total_files_scanned": 3,
+    "total_lines": 2055,
+    "candidates_found": 47,
+    "confirmed_vulnerabilities": 3,
+    "likely_vulnerabilities": 18,
+    "possible_vulnerabilities": 15,
+    "false_positives": 11,
+    "lsp_available": true
+  }
+}

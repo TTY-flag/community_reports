@@ -1,4 +1,4 @@
-# 深度利用分析报告: VULN-SEC-TRUST-002
+# VULN-SEC-TRUST-002：推理模块Tokenizer加载启用trust_remote_code致远程代码执行
 
 ## 漏洞基本信息
 

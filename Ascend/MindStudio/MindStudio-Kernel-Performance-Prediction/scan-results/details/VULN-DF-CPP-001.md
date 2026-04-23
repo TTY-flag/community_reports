@@ -1,4 +1,4 @@
-# VULN-DF-CPP-001: Null Pointer Dereference in MOV_DATA_REGISTER Macro
+# VULN-DF-CPP-001：MOV_DATA_REGISTER宏字符串参数空指针致程序崩溃
 
 ## 漏洞概述
 

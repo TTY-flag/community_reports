@@ -1,4 +1,4 @@
-# VULN-BUILD-008 深度利用分析报告
+# VULN-BUILD-008：proc_artifact URL下载致SSRF风险
 
 ## 漏洞概述
 

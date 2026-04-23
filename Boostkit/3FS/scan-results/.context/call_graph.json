@@ -1,0 +1,644 @@
+{
+  "functions": {
+    "IBSocket::accept@src/common/net/ib/IBSocket.cc": {
+      "defined_at": 155,
+      "calls": [
+        "qpCreate@src/common/net/ib/IBSocket.cc",
+        "qpInit@src/common/net/ib/IBSocket.cc",
+        "qpReadyToRecv@src/common/net/ib/IBSocket.cc",
+        "qpReadyToSend@src/common/net/ib/IBSocket.cc",
+        "initBufs@src/common/net/ib/IBSocket.cc"
+      ],
+      "called_by": [
+        "IBConnectService::accept@src/common/net/ib/IBConnectService.h"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "IBSocket::connect@src/common/net/ib/IBSocket.cc": {
+      "defined_at": 127,
+      "calls": [
+        "getConnectInfo@src/common/net/ib/IBSocket.cc",
+        "qpCreate@src/common/net/ib/IBSocket.cc",
+        "qpInit@src/common/net/ib/IBSocket.cc"
+      ],
+      "called_by": [
+        "ClientContext::connect@src/common/serde/ClientContext.h"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "IBSocket::rdmaRead@src/common/net/ib/IBSocket.h": {
+      "defined_at": 155,
+      "calls": [
+        "rdma@src/common/net/ib/IBSocket.cc",
+        "rdmaBatch@src/common/net/ib/IBSocket.cc",
+        "rdmaPost@src/common/net/ib/IBSocket.cc"
+      ],
+      "called_by": [
+        "CallContext::readTransmission@src/common/serde/CallContext.h",
+        "StorageOperator::readChunk@src/storage/service/StorageOperator.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "IBSocket::rdmaWrite@src/common/net/ib/IBSocket.h": {
+      "defined_at": 162,
+      "calls": [
+        "rdma@src/common/net/ib/IBSocket.cc",
+        "rdmaBatch@src/common/net/ib/IBSocket.cc",
+        "rdmaPost@src/common/net/ib/IBSocket.cc"
+      ],
+      "called_by": [
+        "CallContext::writeTransmission@src/common/serde/CallContext.h",
+        "StorageOperator::writeChunk@src/storage/service/StorageOperator.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "IBSocket::recv@src/common/net/ib/IBSocket.h": {
+      "defined_at": 141,
+      "calls": [
+        "cqPoll@src/common/net/ib/IBSocket.cc",
+        "onRecved@src/common/net/ib/IBSocket.cc"
+      ],
+      "called_by": [
+        "Transport::recv@src/common/net/Transport.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "IBSocket::send@src/common/net/ib/IBSocket.h": {
+      "defined_at": 138,
+      "calls": [
+        "postSend@src/common/net/ib/IBSocket.cc"
+      ],
+      "called_by": [
+        "Transport::send@src/common/net/Transport.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "Listener::listen@src/common/net/Listener.cc": {
+      "defined_at": 50,
+      "calls": [
+        "acceptTCP@src/common/net/Listener.cc",
+        "acceptRDMA@src/common/net/Listener.cc"
+      ],
+      "called_by": [
+        "ServiceGroup::start@src/common/net/ServiceGroup.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "Listener::acceptTCP@src/common/net/Listener.cc": {
+      "defined_at": 54,
+      "calls": [
+        "Transport::create@src/common/net/Transport.cc"
+      ],
+      "called_by": [
+        "Listener::listen@src/common/net/Listener.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "Listener::acceptRDMA@src/common/net/Listener.cc": {
+      "defined_at": 57,
+      "calls": [
+        "IBSocket::accept@src/common/net/ib/IBSocket.cc",
+        "Transport::create@src/common/net/Transport.cc"
+      ],
+      "called_by": [
+        "Listener::listen@src/common/net/Listener.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "Processor::unpackMsg@src/common/net/Processor.h": {
+      "defined_at": 85,
+      "calls": [
+        "Checksum::calcSerde@src/common/net/MessageHeader.cc",
+        "decompressSerdeMsg@src/common/net/Processor.h",
+        "serde::deserialize@src/common/serde/Serde.h",
+        "tryToProcessSerdeRequest@src/common/net/Processor.h"
+      ],
+      "called_by": [
+        "IOWorker::handleEvents@src/common/net/IOWorker.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "Processor::unpackSerdeMsg@src/common/net/Processor.h": {
+      "defined_at": 112,
+      "calls": [
+        "serde::deserialize@src/common/serde/Serde.h",
+        "tryToProcessSerdeRequest@src/common/net/Processor.h"
+      ],
+      "called_by": [
+        "Processor::unpackMsg@src/common/net/Processor.h"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "serde::deserialize@src/common/serde/Serde.h": {
+      "defined_at": 465,
+      "calls": [
+        "In::parseTable@src/common/serde/Serde.h",
+        "In::parseString@src/common/serde/Serde.h",
+        "In::parseCopyable@src/common/serde/Serde.h",
+        "memcpy@src/common/serde/Serde.h"
+      ],
+      "called_by": [
+        "Processor::unpackSerdeMsg@src/common/net/Processor.h",
+        "CallContext::call@src/common/serde/CallContext.h"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "In::parseCopyable@src/common/serde/Serde.h": {
+      "defined_at": 724,
+      "calls": [
+        "memcpy@src/common/serde/Serde.h"
+      ],
+      "called_by": [
+        "serde::deserialize@src/common/serde/Serde.h"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "CallContext::call@src/common/serde/CallContext.h": {
+      "defined_at": 47,
+      "calls": [
+        "serde::deserialize@src/common/serde/Serde.h",
+        "CallContext::makeResponse@src/common/serde/CallContext.h"
+      ],
+      "called_by": [
+        "CallContext::handle@src/common/serde/CallContext.h"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "CallContext::handle@src/common/serde/CallContext.h": {
+      "defined_at": 35,
+      "calls": [
+        "CallContext::call@src/common/serde/CallContext.h"
+      ],
+      "called_by": [
+        "Processor::processSerdeRequest@src/common/net/Processor.h"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "StorageOperator::allocateWriteChunk@src/storage/service/StorageOperator.cc": {
+      "defined_at": 100,
+      "calls": [
+        "ChunkEngine::allocate@src/storage/store/ChunkEngine.h",
+        "memcpy@src/storage/service/StorageOperator.cc"
+      ],
+      "called_by": [
+        "StorageService::writeUpdate@src/storage/service/StorageService.h"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "StorageOperator::readChunk@src/storage/service/StorageOperator.cc": {
+      "defined_at": 200,
+      "calls": [
+        "IBSocket::rdmaRead@src/common/net/ib/IBSocket.h",
+        "memcpy@src/storage/service/StorageOperator.cc"
+      ],
+      "called_by": [
+        "StorageService::readRead@src/storage/service/StorageService.h"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "StorageOperator::writeChunk@src/storage/service/StorageOperator.cc": {
+      "defined_at": 300,
+      "calls": [
+        "IBSocket::rdmaWrite@src/common/net/ib/IBSocket.h",
+        "memcpy@src/storage/service/StorageOperator.cc"
+      ],
+      "called_by": [
+        "StorageService::writeUpdate@src/storage/service/StorageService.h"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "MetaOperator::batchOp@src/meta/service/MetaOperator.cc": {
+      "defined_at": 100,
+      "calls": [
+        "BatchOperation::execute@src/meta/store/ops/BatchOperation.cc",
+        "PathResolve::resolve@src/meta/store/PathResolve.cc",
+        "AclCache::get@src/meta/components/AclCache.h"
+      ],
+      "called_by": [
+        "MetaService::batchOp@src/meta/service/MetaServer.h"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "MetaOperator::createDir@src/meta/service/MetaOperator.cc": {
+      "defined_at": 150,
+      "calls": [
+        "DirEntry::create@src/meta/store/DirEntry.cc",
+        "Inode::create@src/meta/store/Inode.cc",
+        "AclCache::get@src/meta/components/AclCache.h"
+      ],
+      "called_by": [
+        "MetaService::mkdir@src/fbs/meta/Service.h"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "MetaOperator::remove@src/meta/service/MetaOperator.cc": {
+      "defined_at": 200,
+      "calls": [
+        "Remove::execute@src/meta/store/ops/Remove.cc",
+        "PathResolve::resolve@src/meta/store/PathResolve.cc",
+        "AclCache::get@src/meta/components/AclCache.h"
+      ],
+      "called_by": [
+        "MetaService::remove@src/fbs/meta/Service.h"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "MetaOperator::rename@src/meta/service/MetaOperator.cc": {
+      "defined_at": 250,
+      "calls": [
+        "Rename::execute@src/meta/store/ops/Rename.cc",
+        "PathResolve::resolve@src/meta/store/PathResolve.cc",
+        "AclCache::get@src/meta/components/AclCache.h"
+      ],
+      "called_by": [
+        "MetaService::rename@src/fbs/meta/Service.h"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "Rename::execute@src/meta/store/ops/Rename.cc": {
+      "defined_at": 100,
+      "calls": [
+        "DirEntry::rename@src/meta/store/DirEntry.cc",
+        "Inode::update@src/meta/store/Inode.cc",
+        "kv::IReadWriteTransaction::set@src/common/kv/ITransaction.h"
+      ],
+      "called_by": [
+        "MetaOperator::rename@src/meta/service/MetaOperator.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "DirEntry::rename@src/meta/store/DirEntry.cc": {
+      "defined_at": 200,
+      "calls": [
+        "memcpy@src/meta/store/DirEntry.cc",
+        "Path::toString@src/common/utils/Path.h"
+      ],
+      "called_by": [
+        "Rename::execute@src/meta/store/ops/Rename.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "FuseClients::getattr@src/fuse/FuseClients.cc": {
+      "defined_at": 100,
+      "calls": [
+        "MetaClient::getattr@src/client/meta/MetaClient.cc",
+        "real_ino@src/fuse/FuseOps.cc"
+      ],
+      "called_by": [
+        "fuse_getattr@src/fuse/FuseOps.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "FuseClients::lookup@src/fuse/FuseClients.cc": {
+      "defined_at": 150,
+      "calls": [
+        "MetaClient::lookup@src/client/meta/MetaClient.cc",
+        "real_ino@src/fuse/FuseOps.cc"
+      ],
+      "called_by": [
+        "fuse_lookup@src/fuse/FuseOps.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "FuseClients::read@src/fuse/FuseClients.cc": {
+      "defined_at": 200,
+      "calls": [
+        "StorageClient::read@src/client/storage/StorageClient.h",
+        "IoRing::submitRead@src/fuse/IoRing.cc"
+      ],
+      "called_by": [
+        "fuse_read@src/fuse/FuseOps.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "FuseClients::write@src/fuse/FuseClients.cc": {
+      "defined_at": 250,
+      "calls": [
+        "StorageClient::write@src/client/storage/StorageClient.h",
+        "IoRing::submitWrite@src/fuse/IoRing.cc"
+      ],
+      "called_by": [
+        "fuse_write@src/fuse/FuseOps.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "MgmtdClient::heartbeat@src/client/mgmtd/MgmtdClient.cc": {
+      "defined_at": 100,
+      "calls": [
+        "serde::serialize@src/common/serde/Serde.h",
+        "serde::deserialize@src/common/serde/Serde.h",
+        "Transport::send@src/common/net/Transport.cc"
+      ],
+      "called_by": [
+        "MgmtdHeartbeater::heartbeat@src/mgmtd/background/MgmtdHeartbeater.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "MgmtdClient::registerNode@src/client/mgmtd/MgmtdClient.cc": {
+      "defined_at": 150,
+      "calls": [
+        "serde::serialize@src/common/serde/Serde.h",
+        "serde::deserialize@src/common/serde/Serde.h",
+        "Transport::send@src/common/net/Transport.cc"
+      ],
+      "called_by": [
+        "RegisterNodeOperation@src/mgmtd/ops/RegisterNodeOperation.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "HeartbeatOperation::handle@src/mgmtd/ops/HeartbeatOperation.cc": {
+      "defined_at": 50,
+      "calls": [
+        "serde::deserialize@src/common/serde/Serde.h",
+        "MgmtdStore::updateNodeInfo@src/mgmtd/store/MgmtdStore.cc"
+      ],
+      "called_by": [
+        "MgmtdService::heartbeat@src/fbs/mgmtd/MgmtdServiceDef.h"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "SetConfigOperation::handle@src/mgmtd/ops/SetConfigOperation.cc": {
+      "defined_at": 50,
+      "calls": [
+        "serde::deserialize@src/common/serde/Serde.h",
+        "ConfigManager::setConfig@src/common/app/ConfigManager.cc",
+        "MgmtdStore::setConfig@src/mgmtd/store/MgmtdStore.cc"
+      ],
+      "called_by": [
+        "MgmtdService::setConfig@src/fbs/mgmtd/MgmtdServiceDef.h"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "UserStore::addUser@src/core/user/UserStore.cc": {
+      "defined_at": 50,
+      "calls": [
+        "kv::IReadWriteTransaction::set@src/common/kv/ITransaction.h",
+        "encodeUserToken@src/core/user/UserToken.cc"
+      ],
+      "called_by": [
+        "AdminUserCtrl::addUser@src/client/cli/admin/AdminUserCtrl.cc"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "UserStore::setUserToken@src/core/user/UserStore.cc": {
+      "defined_at": 100,
+      "calls": [
+        "kv::IReadWriteTransaction::set@src/common/kv/ITransaction.h",
+        "encodeUserToken@src/core/user/UserToken.cc"
+      ],
+      "called_by": [
+        "AdminUserCtrl::setToken@src/client/cli/admin/AdminUserCtrl.cc"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "encodeUserToken@src/core/user/UserToken.cc": {
+      "defined_at": 10,
+      "calls": [
+        "serde::serialize@src/common/serde/Serde.h"
+      ],
+      "called_by": [
+        "UserStore::addUser@src/core/user/UserStore.cc",
+        "UserStore::setUserToken@src/core/user/UserStore.cc"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium"
+    },
+    "decodeUserToken@src/core/user/UserToken.cc": {
+      "defined_at": 12,
+      "calls": [
+        "serde::deserialize@src/common/serde/Serde.h"
+      ],
+      "called_by": [
+        "DecodeUserToken@src/client/cli/admin/DecodeUserToken.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium"
+    },
+    "AclCache::get@src/meta/components/AclCache.h": {
+      "defined_at": 25,
+      "calls": [],
+      "called_by": [
+        "MetaOperator::batchOp@src/meta/service/MetaOperator.cc",
+        "MetaOperator::createDir@src/meta/service/MetaOperator.cc",
+        "MetaOperator::remove@src/meta/service/MetaOperator.cc",
+        "MetaOperator::rename@src/meta/service/MetaOperator.cc"
+      ],
+      "receives_external_input": false,
+      "risk": "Low"
+    },
+    "FDBTransaction::get@src/fdb/FDBTransaction.cc": {
+      "defined_at": 50,
+      "calls": [
+        "fdb_transaction_get@src/fdb/FDB.cc"
+      ],
+      "called_by": [
+        "UserStore::getUser@src/core/user/UserStore.cc",
+        "MetaStore::get@src/meta/store/MetaStore.h"
+      ],
+      "receives_external_input": false,
+      "risk": "Low"
+    },
+    "FDBTransaction::set@src/fdb/FDBTransaction.cc": {
+      "defined_at": 100,
+      "calls": [
+        "fdb_transaction_set@src/fdb/FDB.cc"
+      ],
+      "called_by": [
+        "UserStore::addUser@src/core/user/UserStore.cc",
+        "DirEntry::create@src/meta/store/DirEntry.cc"
+      ],
+      "receives_external_input": false,
+      "risk": "Low"
+    },
+    "ChunkEngine::allocate@src/storage/chunk_engine/src/core/engine.rs": {
+      "defined_at": 100,
+      "calls": [
+        "Allocator::allocate@src/storage/chunk_engine/src/alloc/allocator.rs"
+      ],
+      "called_by": [
+        "StorageOperator::allocateWriteChunk@src/storage/service/StorageOperator.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical"
+    },
+    "py::hf3fs_open@src/lib/py/binding.cc": {
+      "defined_at": 100,
+      "calls": [
+        "hf3fs_open@src/lib/api/hf3fs.h"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High"
+    },
+    "hf3fs_open@src/lib/api/hf3fs.h": {
+      "defined_at": 50,
+      "calls": [
+        "MetaClient::open@src/client/meta/MetaClient.cc",
+        "StorageClient::create@src/client/storage/StorageClient.h"
+      ],
+      "called_by": [
+        "py::hf3fs_open@src/lib/py/binding.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "High"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "IBSocket::recv@src/common/net/ib/IBSocket.h:141",
+      "path": [
+        "Transport::recv@src/common/net/Transport.cc",
+        "Processor::unpackMsg@src/common/net/Processor.h:85",
+        "Processor::unpackSerdeMsg@src/common/net/Processor.h:112",
+        "serde::deserialize@src/common/serde/Serde.h:465",
+        "In::parseCopyable@src/common/serde/Serde.h:724"
+      ],
+      "sink": "memcpy@src/common/serde/Serde.h:729",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "IBSocket::accept@src/common/net/ib/IBSocket.cc:155",
+      "path": [
+        "IBConnectService::accept@src/common/net/ib/IBConnectService.h",
+        "Transport::create@src/common/net/Transport.cc",
+        "Processor::unpackMsg@src/common/net/Processor.h:85"
+      ],
+      "sink": "serde::deserialize@src/common/serde/Serde.h:465",
+      "sink_type": "deserialization"
+    },
+    {
+      "source": "IBSocket::rdmaRead@src/common/net/ib/IBSocket.h:155",
+      "path": [
+        "CallContext::readTransmission@src/common/serde/CallContext.h:113",
+        "StorageOperator::readChunk@src/storage/service/StorageOperator.cc:200"
+      ],
+      "sink": "memcpy@src/storage/service/StorageOperator.cc",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "IBSocket::rdmaWrite@src/common/net/ib/IBSocket.h:162",
+      "path": [
+        "CallContext::writeTransmission@src/common/serde/CallContext.h:114",
+        "StorageOperator::writeChunk@src/storage/service/StorageOperator.cc:300"
+      ],
+      "sink": "memcpy@src/storage/service/StorageOperator.cc",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "Processor::unpackMsg@src/common/net/Processor.h:85",
+      "path": [
+        "Processor::unpackSerdeMsg@src/common/net/Processor.h:112",
+        "serde::deserialize@src/common/serde/Serde.h:465",
+        "CallContext::call@src/common/serde/CallContext.h:47"
+      ],
+      "sink": "serde::deserialize@src/common/serde/Serde.h:465",
+      "sink_type": "deserialization"
+    },
+    {
+      "source": "HeartbeatOperation::handle@src/mgmtd/ops/HeartbeatOperation.cc:50",
+      "path": [
+        "serde::deserialize@src/common/serde/Serde.h:465",
+        "MgmtdStore::updateNodeInfo@src/mgmtd/store/MgmtdStore.cc"
+      ],
+      "sink": "kv::IReadWriteTransaction::set@src/common/kv/ITransaction.h",
+      "sink_type": "database_operation"
+    },
+    {
+      "source": "SetConfigOperation::handle@src/mgmtd/ops/SetConfigOperation.cc:50",
+      "path": [
+        "serde::deserialize@src/common/serde/Serde.h:465",
+        "ConfigManager::setConfig@src/common/app/ConfigManager.cc",
+        "MgmtdStore::setConfig@src/mgmtd/store/MgmtdStore.cc"
+      ],
+      "sink": "kv::IReadWriteTransaction::set@src/common/kv/ITransaction.h",
+      "sink_type": "database_operation"
+    },
+    {
+      "source": "MetaOperator::rename@src/meta/service/MetaOperator.cc:250",
+      "path": [
+        "Rename::execute@src/meta/store/ops/Rename.cc:100",
+        "DirEntry::rename@src/meta/store/DirEntry.cc:200"
+      ],
+      "sink": "memcpy@src/meta/store/DirEntry.cc",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "FuseClients::read@src/fuse/FuseClients.cc:200",
+      "path": [
+        "StorageClient::read@src/client/storage/StorageClient.h",
+        "StorageOperator::readChunk@src/storage/service/StorageOperator.cc:200"
+      ],
+      "sink": "memcpy@src/storage/service/StorageOperator.cc",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "FuseClients::write@src/fuse/FuseClients.cc:250",
+      "path": [
+        "StorageClient::write@src/client/storage/StorageClient.h",
+        "StorageOperator::writeChunk@src/storage/service/StorageOperator.cc:300"
+      ],
+      "sink": "memcpy@src/storage/service/StorageOperator.cc",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "MgmtdClient::heartbeat@src/client/mgmtd/MgmtdClient.cc:100",
+      "path": [
+        "serde::serialize@src/common/serde/Serde.h",
+        "Transport::send@src/common/net/Transport.cc"
+      ],
+      "sink": "IBSocket::send@src/common/net/ib/IBSocket.h:138",
+      "sink_type": "network_send"
+    },
+    {
+      "source": "decodeUserToken@src/core/user/UserToken.cc:12",
+      "path": [
+        "serde::deserialize@src/common/serde/Serde.h:465"
+      ],
+      "sink": "In::parseCopyable@src/common/serde/Serde.h:724",
+      "sink_type": "memory_operation"
+    },
+    {
+      "source": "py::hf3fs_open@src/lib/py/binding.cc:100",
+      "path": [
+        "hf3fs_open@src/lib/api/hf3fs.h:50",
+        "MetaClient::open@src/client/meta/MetaClient.cc"
+      ],
+      "sink": "serde::deserialize@src/common/serde/Serde.h:465",
+      "sink_type": "deserialization"
+    }
+  ]
+}

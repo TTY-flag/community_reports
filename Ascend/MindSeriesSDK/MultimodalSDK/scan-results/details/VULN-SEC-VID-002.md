@@ -1,4 +1,4 @@
-# VULN-SEC-VID-002: Integer Overflow in Frame Index Calculation
+# VULN-SEC-VID-002: CheckTargetFrameIndices帧索引乘法计算整数溢出致错误帧选取
 
 ## 漏洞概要
 

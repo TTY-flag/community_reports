@@ -1,4 +1,4 @@
-# 深度利用分析报告: VULN-SEC-CKPT-004
+# VULN-SEC-CKPT-004：参数转换函数torch.load无保护致Pickle反序列化RCE
 
 ## 漏洞基本信息
 

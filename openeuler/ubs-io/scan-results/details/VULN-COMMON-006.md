@@ -1,4 +1,4 @@
-# VULN-COMMON-006: EndWith 函数边界检查缺失漏洞深度分析
+# VULN-COMMON-006: EndWith字符串比较函数缺少边界检查致缓冲区越界访问
 
 ## 1. 漏洞概述
 

@@ -1,4 +1,4 @@
-# VULN-DF-MM-DS-07: Vision Encoder 反序列化漏洞 (CWE-502)
+# VULN-DF-MM-DS-07：Vision Encoder模型torch.load无保护致Pickle反序列化RCE
 
 ## 漏洞概要
 

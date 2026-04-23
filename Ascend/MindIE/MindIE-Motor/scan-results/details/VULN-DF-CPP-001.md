@@ -1,4 +1,4 @@
-# VULN-DF-CPP-001 - Cross-Site Scripting (XSS) 漏洞深度分析报告
+# VULN-DF-CPP-001: ResourceNotFound错误页面用户输入未转义致XSS攻击
 
 ## 1. 漏洞概述
 

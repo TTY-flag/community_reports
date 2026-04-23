@@ -1,4 +1,4 @@
-# VULN-DF-CPP-003: Null Pointer Dereference in MMAD_DATA_REGISTER Macro
+# VULN-DF-CPP-003：MMAD_DATA_REGISTER宏字符串参数空指针致程序崩溃
 
 ## 漏洞概述
 

@@ -1,4 +1,4 @@
-# CLUSTER-INPUTVAL-002 漏洞深度分析报告
+# CLUSTER-INPUTVAL-002: ZooKeeper节点数据输入验证逻辑错误致数据未校验直接使用
 
 ## 一、漏洞概述
 

@@ -1,4 +1,4 @@
-# VULN-DF-CODE-001 - Arbitrary Code Execution via Dynamic Import
+# VULN-DF-CODE-001：data_generator动态导入用户文件致任意代码执行
 
 ## 漏洞概述
 

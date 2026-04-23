@@ -1,4 +1,4 @@
-# MindSpeed-RL 漏洞深度分析报告
+# MindSpeed-RL漏洞深度分析：分布式训练ZMQ通信与Pickle反序列化攻击链
 
 **项目**: MindSpeed-RL  
 **分析日期**: 2026-04-20  
