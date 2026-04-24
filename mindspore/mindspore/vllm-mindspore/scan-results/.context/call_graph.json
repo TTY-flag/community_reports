@@ -1,0 +1,269 @@
+{
+  "functions": {
+    "main@vllm_mindspore/scripts.py": {
+      "defined_at": 88,
+      "calls": ["env_setup@vllm_mindspore/scripts.py", "vllm_main@vllm.entrypoints.cli.main"],
+      "called_by": [],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "CLI主入口函数"
+    },
+    "env_setup@vllm_mindspore/scripts.py": {
+      "defined_at": 49,
+      "calls": ["_setup_batch_invariant_mode@vllm_mindspore/scripts.py"],
+      "called_by": ["main@vllm_mindspore/scripts.py", "__init__@vllm_mindspore/__init__.py"],
+      "receives_external_input": false,
+      "risk": "Low",
+      "description": "环境变量设置"
+    },
+    "monkey_patch_server_run_api_server_worker_proc@vllm_mindspore/entrypoints/__main__.py": {
+      "defined_at": 31,
+      "calls": [],
+      "called_by": [],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "Monkey patch函数"
+    },
+    "__main__@vllm_mindspore/entrypoints/__main__.py": {
+      "defined_at": 45,
+      "calls": ["importlib.import_module", "inspect.getsource", "subprocess.run"],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "动态执行模块代码，sys.argv来自命令行"
+    },
+    "chat_completion_stream_generator@vllm_mindspore/entrypoints/openai/serving_chat.py": {
+      "defined_at": 40,
+      "calls": ["self.tool_parser.extract_tool_calls_streaming", "reasoning_parser.extract_reasoning_content_streaming"],
+      "called_by": ["vllm.entrypoints.openai.serving_chat"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "处理OpenAI API chat流式请求"
+    },
+    "extract_tool_calls_streaming@vllm_mindspore/entrypoints/openai/tool_parsers/deepseekv3_tool_parser.py": {
+      "defined_at": 134,
+      "calls": ["re.findall", "re.match"],
+      "called_by": ["chat_completion_stream_generator"],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "解析工具调用，使用正则处理外部输入文本"
+    },
+    "safetensors_weights_iterator@vllm_mindspore/model_executor/model_loader/weight_utils.py": {
+      "defined_at": 79,
+      "calls": ["safe_open", "f.get_slice"],
+      "called_by": ["vllm.model_executor.model_loader.default_loader"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "加载外部safetensors权重文件"
+    },
+    "get_ms_model_architecture@vllm_mindspore/model_executor/model_loader/utils.py": {
+      "defined_at": 181,
+      "calls": ["MindSporeModelRegistry.resolve_model_cls", "resolve_mix_backend_architecture"],
+      "called_by": ["vllm.model_executor.model_loader"],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "解析模型架构"
+    },
+    "initialize_model@vllm_mindspore/model_executor/model_loader/utils.py": {
+      "defined_at": 218,
+      "calls": ["_original_initialize_model"],
+      "called_by": ["vllm.model_executor.model_loader"],
+      "receives_external_input": false,
+      "risk": "Low",
+      "description": "初始化模型"
+    },
+    "get_ascend_soc_version@vllm_mindspore/utils.py": {
+      "defined_at": 311,
+      "calls": ["subprocess.check_output"],
+      "called_by": ["is_310p@vllm_mindspore/utils.py", "is_910b@vllm_mindspore/utils.py"],
+      "receives_external_input": false,
+      "risk": "Low",
+      "description": "获取设备版本，执行硬编码脚本"
+    },
+    "check_ready@vllm_mindspore/utils.py": {
+      "defined_at": 340,
+      "calls": ["env_setup@vllm_mindspore/scripts.py", "register_connector"],
+      "called_by": ["__init__@vllm_mindspore/__init__.py"],
+      "receives_external_input": false,
+      "risk": "Low",
+      "description": "环境检查和初始化"
+    },
+    "execute_command@vllm_mindspore/v1/worker/gpu_worker.py": {
+      "defined_at": 71,
+      "calls": ["subprocess.run"],
+      "called_by": ["get_numa_map@vllm_mindspore/v1/worker/gpu_worker.py"],
+      "receives_external_input": false,
+      "risk": "Low",
+      "description": "执行系统命令获取NUMA拓扑"
+    },
+    "bind_cpu@vllm_mindspore/v1/worker/gpu_worker.py": {
+      "defined_at": 175,
+      "calls": ["get_numa_map", "psutil.Process.cpu_affinity"],
+      "called_by": ["wrapper_worker_bind_cpu"],
+      "receives_external_input": false,
+      "risk": "Low",
+      "description": "绑定CPU核心"
+    },
+    "compile_or_warm_up_model@vllm_mindspore/v1/worker/gpu_worker.py": {
+      "defined_at": 37,
+      "calls": ["self.model_runner._dummy_run", "self.model_runner.capture_model"],
+      "called_by": ["vllm.v1.worker.gpu_worker"],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "模型编译预热"
+    },
+    "shell_analyse@vllm_mindspore/v1/worker/profile.py": {
+      "defined_at": 32,
+      "calls": ["subprocess.run"],
+      "called_by": ["AdapterProfiler.stop"],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "执行性能分析，path来自环境变量"
+    },
+    "AdapterProfiler.__init__@vllm_mindspore/v1/worker/profile.py": {
+      "defined_at": 43,
+      "calls": ["Profiler"],
+      "called_by": ["wrapper_worker_init_device"],
+      "receives_external_input": false,
+      "risk": "Low",
+      "description": "性能分析器初始化"
+    },
+    "exec_shell_cmd@dashboard/acc.py": {
+      "defined_at": 23,
+      "calls": ["subprocess.Popen"],
+      "called_by": ["process_check@dashboard/acc.py", "aisbench_test"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "执行shell命令（shell=True），cmd来自调用者"
+    },
+    "get_status_cmd@dashboard/acc.py": {
+      "defined_at": 56,
+      "calls": ["subprocess.getstatusoutput"],
+      "called_by": ["shell_sed_cmd@dashboard/acc.py", "aisbench_env_deployment"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "执行shell命令获取状态"
+    },
+    "shell_sed_cmd@dashboard/acc.py": {
+      "defined_at": 65,
+      "calls": ["get_status_cmd"],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "执行sed命令修改文件"
+    },
+    "exec_cmd@dashboard/acc.py": {
+      "defined_at": 105,
+      "calls": ["subprocess.Popen"],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "执行命令（shell=True）"
+    },
+    "build_c_ops@setup.py": {
+      "defined_at": 138,
+      "calls": ["subprocess.run"],
+      "called_by": ["CustomBuildExt.build_extension"],
+      "receives_external_input": false,
+      "risk": "Low",
+      "description": "构建C扩展，仅安装时运行"
+    },
+    "initialize_ray_cluster@vllm_mindspore/executor/ray_utils.py": {
+      "defined_at": 63,
+      "calls": ["ray.init", "ray.util.placement_group"],
+      "called_by": ["vllm.executor.ray_distributed_executor"],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "初始化Ray集群"
+    },
+    "core_engine_actor_manager_init@vllm_mindspore/executor/ray_utils.py": {
+      "defined_at": 190,
+      "calls": ["ray.remote", "ray.get"],
+      "called_by": ["vllm.v1.engine.utils.CoreEngineActorManager.__init__"],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "初始化分布式引擎核心"
+    },
+    "call_hf_processor@vllm_mindspore/multimodal/processing.py": {
+      "defined_at": 26,
+      "calls": ["origin_call_hf_processor", "hf_processor"],
+      "called_by": ["vllm.multimodal.processing.InputProcessingContext"],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "调用HuggingFace处理器处理多模态输入"
+    },
+    "__init__@vllm_mindspore/__init__.py": {
+      "defined_at": 1,
+      "calls": ["patch_msadapter", "patch_ray", "patch_transformers", "env_setup", "check_ready"],
+      "called_by": [],
+      "receives_external_input": false,
+      "risk": "High",
+      "description": "插件主初始化，大量monkey patch"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "sys.argv@vllm_mindspore/entrypoints/__main__.py:49",
+      "path": ["importlib.import_module@__main__.py:51", "inspect.getsource@__main__.py:57", "subprocess.run@__main__.py:66"],
+      "sink": "动态执行外部模块代码",
+      "sink_type": "code_execution",
+      "risk": "High"
+    },
+    {
+      "source": "ChatCompletionRequest@vllm_mindspore/entrypoints/openai/serving_chat.py:42",
+      "path": ["chat_completion_stream_generator@serving_chat.py:40", "tool_parser.extract_tool_calls_streaming@deepseekv3_tool_parser.py:134"],
+      "sink": "正则匹配处理用户输入",
+      "sink_type": "data_processing",
+      "risk": "Medium"
+    },
+    {
+      "source": "hf_weights_files@vllm_mindspore/model_executor/model_loader/weight_utils.py:80",
+      "path": ["safetensors_weights_iterator@weight_utils.py:79", "safe_open@weight_utils.py:91", "f.get_slice@weight_utils.py:97"],
+      "sink": "加载模型权重数据",
+      "sink_type": "file_operation",
+      "risk": "High"
+    },
+    {
+      "source": "cmd@dashboard/acc.py:24",
+      "path": ["exec_shell_cmd@acc.py:23", "subprocess.Popen@acc.py:28"],
+      "sink": "shell=True命令执行",
+      "sink_type": "command_execution",
+      "risk": "Critical"
+    },
+    {
+      "source": "cmd@dashboard/acc.py:56",
+      "path": ["get_status_cmd@acc.py:56", "subprocess.getstatusoutput@acc.py:57"],
+      "sink": "执行shell命令",
+      "sink_type": "command_execution",
+      "risk": "Critical"
+    },
+    {
+      "source": "cmd@dashboard/acc.py:106",
+      "path": ["exec_cmd@acc.py:105", "subprocess.Popen@acc.py:117"],
+      "sink": "shell=True命令执行",
+      "sink_type": "command_execution",
+      "risk": "Critical"
+    },
+    {
+      "source": "VLLM_TORCH_PROFILER_DIR@vllm_mindspore/v1/worker/profile.py:82",
+      "path": ["wrapper_worker_init_device@profile.py:94", "AdapterProfiler@profile.py:108", "shell_analyse@profile.py:32"],
+      "sink": "subprocess.run执行性能分析",
+      "sink_type": "command_execution",
+      "risk": "Medium"
+    },
+    {
+      "source": "ASCEND_RT_VISIBLE_DEVICES@vllm_mindspore/v1/worker/gpu_worker.py:181",
+      "path": ["bind_cpu@gpu_worker.py:175", "get_numa_map@gpu_worker.py:88", "execute_command@gpu_worker.py:73"],
+      "sink": "执行系统命令获取NUMA拓扑",
+      "sink_type": "command_execution",
+      "risk": "Low"
+    },
+    {
+      "source": "cmake_cmd@setup.py:154",
+      "path": ["build_c_ops@setup.py:138", "subprocess.run@setup.py:168"],
+      "sink": "执行cmake构建命令",
+      "sink_type": "command_execution",
+      "risk": "Low"
+    }
+  ]
+}

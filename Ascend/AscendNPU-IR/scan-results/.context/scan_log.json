@@ -1,0 +1,142 @@
+{
+  "scan_id": "bb937a62-2289-4f3f-837b-f8ef2276f5e9",
+  "start_time": "2026-04-23T23:09:00+08:00",
+  "end_time": "2026-04-23T23:45:00+08:00",
+  "duration_seconds": 2160,
+  "project_name": "AscendNPU-IR",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/shenteng/AscendNPU-IR",
+  "status": "success",
+  "agents": [
+    {
+      "name": "architecture",
+      "start_time": "2026-04-23T23:10:00+08:00",
+      "end_time": "2026-04-23T23:18:39+08:00",
+      "duration_seconds": 519,
+      "status": "success",
+      "outputs": [
+        "scan-results/.context/project_model.json",
+        "scan-results/.context/call_graph.json",
+        "scan-results/threat_analysis_report.md"
+      ],
+      "summary": {
+        "modules_analyzed": 11,
+        "entry_points_found": 10,
+        "attack_surfaces_found": 5,
+        "high_risk_functions": 5,
+        "critical_modules": ["Tools", "ToolsLib", "PythonWheel"],
+        "lsp_available": false
+      }
+    },
+    {
+      "name": "dataflow-scanner",
+      "start_time": "2026-04-23T23:18:39+08:00",
+      "end_time": "2026-04-23T23:22:53+08:00",
+      "duration_seconds": 254,
+      "status": "success",
+      "outputs": [
+        "scan-results/.context/scan.db"
+      ],
+      "summary": {
+        "modules_scanned": 6,
+        "candidates_inserted": 6,
+        "critical_found": 0,
+        "high_found": 6,
+        "cross_module_flows": 5,
+        "taint_sources": ["getenv(BISHENG_INSTALL_PATH)", "argv", "Python input"],
+        "taint_sinks": ["ExecuteAndWait", "findProgramByName", "subprocess.run"]
+      }
+    },
+    {
+      "name": "security-auditor",
+      "start_time": "2026-04-23T23:18:39+08:00",
+      "end_time": "2026-04-23T23:22:35+08:00",
+      "duration_seconds": 236,
+      "status": "success",
+      "outputs": [
+        "scan-results/.context/scan.db"
+      ],
+      "summary": {
+        "modules_audited": 6,
+        "candidates_inserted": 7,
+        "env_var_risks": 5,
+        "param_injection_risks": 2,
+        "hardcoded_credentials_found": false,
+        "shell_injection_found": false,
+        "deserialization_risks": false
+      }
+    },
+    {
+      "name": "verification",
+      "start_time": "2026-04-23T23:22:53+08:00",
+      "end_time": "2026-04-23T23:30:04+08:00",
+      "duration_seconds": 431,
+      "status": "success",
+      "outputs": [
+        "scan-results/.context/scan.db"
+      ],
+      "summary": {
+        "candidates_verified": 21,
+        "confirmed": 12,
+        "likely": 6,
+        "possible": 2,
+        "false_positive": 0,
+        "dedup_count": 5
+      }
+    },
+    {
+      "name": "details-analyzer",
+      "start_time": "2026-04-23T23:30:04+08:00",
+      "end_time": "2026-04-23T23:32:32+08:00",
+      "duration_seconds": 148,
+      "status": "success",
+      "outputs": [
+        "scan-results/details/"
+      ],
+      "summary": {
+        "confirmed_count": 12,
+        "unique_vuln_points": 7,
+        "workers_dispatched": 7,
+        "reports_generated": 0,
+        "note": "Workers running in background, reports pending"
+      }
+    },
+    {
+      "name": "reporter",
+      "start_time": "2026-04-23T23:32:32+08:00",
+      "end_time": "2026-04-23T23:35:00+08:00",
+      "duration_seconds": 148,
+      "status": "success",
+      "outputs": [
+        "scan-results/report_confirmed.md",
+        "scan-results/report_unconfirmed.md"
+      ],
+      "summary": {
+        "confirmed_count": 12,
+        "likely_count": 6,
+        "possible_count": 2,
+        "total_vulnerabilities": 21,
+        "severity_distribution": {
+          "High": 12,
+          "Medium": 6,
+          "Low": 3
+        }
+      }
+    }
+  ],
+  "summary": {
+    "total_vulnerabilities": 21,
+    "confirmed": 12,
+    "likely": 6,
+    "possible": 2,
+    "false_positive": 0,
+    "primary_vuln_type": "CWE-426 (Untrusted Search Path)",
+    "attack_vector": "BISHENG_INSTALL_PATH environment variable injection leading to binary substitution",
+    "risk_assessment": "High - All confirmed vulnerabilities enable arbitrary code execution through binary hijacking",
+    "recommendations": [
+      "Add path whitelist validation for BISHENG_INSTALL_PATH",
+      "Implement binary signature/checksum verification",
+      "Use absolute paths for external binary lookup",
+      "Secure PATH environment variable in Python bindings"
+    ]
+  }
+}

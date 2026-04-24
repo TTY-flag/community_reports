@@ -1,0 +1,537 @@
+{
+  "project_name": "hyper-parallel",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/shenteng/mindspore/mindspore/hyper-parallel",
+  "description": "MindSpore Hyper-Parallel Distributed Training Framework - A parallel computing extension module for distributed deep learning training",
+  "language_mix": ["python", "cpp", "mixed"],
+  "statistics": {
+    "total_files": 310,
+    "python_files": 274,
+    "cpp_files": 36,
+    "total_lines": 65058
+  },
+  "modules": [
+    {
+      "name": "distributed_checkpoint",
+      "path": "hyper_parallel/core/distributed_checkpoint",
+      "language": "python",
+      "description": "Checkpoint save/load for distributed training",
+      "risk_level": "critical",
+      "attack_surface": [
+        {
+          "type": "file_io",
+          "entry_point": "load(state_dict, checkpoint_id)",
+          "file": "api.py",
+          "risk": "Insecure deserialization via pickle.load in metadata files",
+          "cwe": "CWE-502"
+        },
+        {
+          "type": "file_io",
+          "entry_point": "FileSystemReader.load_metadata()",
+          "file": "filesystem_storage.py",
+          "line": 462,
+          "risk": "pickle.load(f) without validation",
+          "cwe": "CWE-502"
+        },
+        {
+          "type": "file_io",
+          "entry_point": "StandardLoadPlanner.apply_bytes()",
+          "file": "standard_planner.py",
+          "line": 576,
+          "risk": "pickle.loads(value) without validation",
+          "cwe": "CWE-502"
+        },
+        {
+          "type": "file_io",
+          "entry_point": "convert_full_checkpoint_to_dcp()",
+          "file": "offline_transform.py",
+          "risk": "Unvalidated checkpoint path from user input",
+          "cwe": "CWE-22"
+        }
+      ],
+      "high_risk_files": [
+        "filesystem_storage.py",
+        "standard_planner.py",
+        "offline_transform.py",
+        "api.py",
+        "loader.py",
+        "saver.py"
+      ]
+    },
+    {
+      "name": "symmetric_memory",
+      "path": "hyper_parallel/core/symmetric_memory",
+      "language": "mixed",
+      "description": "Symmetric memory for one-sided communication (PGAS model)",
+      "risk_level": "critical",
+      "attack_surface": [
+        {
+          "type": "memory_ops",
+          "entry_point": "aclshmem_put_mem()",
+          "file": "ops/put_mem/host/put_mem.cpp",
+          "line": 23,
+          "risk": "aclrtMalloc without null check before use, potential memory safety issues",
+          "cwe": "CWE-252"
+        },
+        {
+          "type": "memory_ops",
+          "entry_point": "aclshmem_get_mem()",
+          "file": "ops/get_mem/host/get_mem.cpp",
+          "line": 23,
+          "risk": "aclrtMalloc without null check before use",
+          "cwe": "CWE-252"
+        },
+        {
+          "type": "ipc",
+          "entry_point": "aclshmem_signal_wait_until()",
+          "file": "ops/signal_wait_until/kernel/signal_wait_until_kernel.cpp",
+          "line": 59,
+          "risk": "Blocking infinite wait - deadlock potential if signal never arrives",
+          "cwe": "CWE-667"
+        },
+        {
+          "type": "memory_ops",
+          "entry_point": "Manager::free_tensor()",
+          "file": "platform/torch/torch_bindings.cpp",
+          "line": 74,
+          "risk": "aclshmem_free on tensor data pointer - use-after-free potential",
+          "cwe": "CWE-416"
+        },
+        {
+          "type": "pointer_arithmetic",
+          "entry_point": "GetmemKernel::Process()",
+          "file": "ops/get_mem/kernel/get_mem_kernel.cpp",
+          "line": 56,
+          "risk": "Pointer arithmetic without bounds validation",
+          "cwe": "CWE-120"
+        },
+        {
+          "type": "env_injection",
+          "entry_point": "initialize_npushmem()",
+          "file": "platform/mindspore/c_api/allocator/symmetric_memory_allocator.cc",
+          "line": 86,
+          "risk": "Environment variable RANK_ID/RANK_SIZE/SYMMETRIC_MEMORY_HEAP_SIZE without upper bound check",
+          "cwe": "CWE-15"
+        }
+      ],
+      "high_risk_files": [
+        "__init__.py",
+        "ops/put_mem/host/put_mem.cpp",
+        "ops/get_mem/host/get_mem.cpp",
+        "ops/put_mem_signal/host/put_mem_signal.cpp",
+        "ops/signal_wait_until/host/signal_wait_until.cpp",
+        "ops/signal_op/host/signal_op.cpp",
+        "ops/get_mem/kernel/get_mem_kernel.cpp",
+        "ops/put_mem/kernel/put_mem_kernel.cpp",
+        "ops/put_mem_signal/kernel/put_mem_signal_kernel.cpp",
+        "ops/signal_wait_until/kernel/signal_wait_until_kernel.cpp",
+        "ops/signal_op/kernel/signal_op_kernel.cpp",
+        "platform/torch/torch_bindings.cpp",
+        "platform/mindspore/c_api/allocator/symmetric_memory_allocator.cc"
+      ]
+    },
+    {
+      "name": "multicore",
+      "path": "hyper_parallel/core/multicore",
+      "language": "mixed",
+      "description": "MoE FFN mega kernel for multicore execution",
+      "risk_level": "high",
+      "attack_surface": [
+        {
+          "type": "tensor_ops",
+          "entry_point": "moe_ffn_fwd()",
+          "file": "platform/torch/csrc/moe_ffn_fwd.cpp",
+          "line": 52,
+          "risk": "22 tensors passed to EXEC_NPU_CMD - relies on framework validation",
+          "cwe": "CWE-20"
+        },
+        {
+          "type": "tensor_ops",
+          "entry_point": "moe_ffn_bwd()",
+          "file": "platform/torch/csrc/moe_ffn_bwd.cpp",
+          "line": 57,
+          "risk": "28 tensor parameters - no explicit validation",
+          "cwe": "CWE-20"
+        }
+      ],
+      "high_risk_files": [
+        "__init__.py",
+        "platform/torch/csrc/moe_ffn_fwd.cpp",
+        "platform/torch/csrc/moe_ffn_bwd.cpp",
+        "platform/torch/csrc/registration.cpp",
+        "platform/mindspore/c_api/moe_ffn_fwd/moe_ffn_fwd_pynative.cc",
+        "platform/mindspore/c_api/moe_ffn_bwd/moe_ffn_bwd_pynative.cc"
+      ]
+    },
+    {
+      "name": "pipeline_parallel",
+      "path": "hyper_parallel/core/pipeline_parallel",
+      "language": "python",
+      "description": "Pipeline parallelism for distributed training",
+      "risk_level": "high",
+      "attack_surface": [
+        {
+          "type": "ipc",
+          "entry_point": "PipelineStage._communicate_meta()",
+          "file": "stage.py",
+          "line": 304,
+          "risk": "send_object_list/recv_object_list uses pickle serialization",
+          "cwe": "CWE-502"
+        },
+        {
+          "type": "ipc",
+          "entry_point": "PipelineScheduleRuntime.run_microbatches()",
+          "file": "scheduler.py",
+          "line": 182,
+          "risk": "Potential deadlock in pipeline scheduling with complex P2P dependency chains",
+          "cwe": "CWE-667"
+        }
+      ],
+      "high_risk_files": [
+        "stage.py",
+        "scheduler.py",
+        "utils.py"
+      ]
+    },
+    {
+      "name": "shard",
+      "path": "hyper_parallel/core/shard",
+      "language": "python",
+      "description": "Tensor sharding operations and distributed ops dispatch",
+      "risk_level": "high",
+      "attack_surface": [
+        {
+          "type": "config_injection",
+          "entry_point": "OpDispatcher.__init__()",
+          "file": "_op_dispatch.py",
+          "line": 234,
+          "risk": "HYPER_PARALLEL_OPS_YAML_DIR/HYPER_PARALLEL_OPS_PYTHON_PATH environment variables lead to arbitrary YAML/Python module loading",
+          "cwe": "CWE-15"
+        },
+        {
+          "type": "config_injection",
+          "entry_point": "safe_load_yaml_from_dir()",
+          "file": "_op_dispatch.py",
+          "line": 803,
+          "risk": "YAML files loaded from environment-controlled directory",
+          "cwe": "CWE-73"
+        }
+      ],
+      "high_risk_files": [
+        "_op_dispatch.py",
+        "api.py",
+        "dfunction.py",
+        "ops/parallel_ops_register.py"
+      ]
+    },
+    {
+      "name": "fully_shard",
+      "path": "hyper_parallel/core/fully_shard",
+      "language": "python",
+      "description": "Fully sharded data parallel (HSDP/FSDP)",
+      "risk_level": "medium",
+      "attack_surface": [
+        {
+          "type": "tensor_ops",
+          "entry_point": "HSDPModule.load_state_dict()",
+          "file": "api.py",
+          "risk": "Loads tensors directly into parameters without validation",
+          "cwe": "CWE-20"
+        }
+      ],
+      "high_risk_files": [
+        "api.py",
+        "hsdp_scheduler.py",
+        "hsdp_state.py",
+        "hsdp_param.py"
+      ]
+    },
+    {
+      "name": "activation_checkpoint",
+      "path": "hyper_parallel/core/activation_checkpoint",
+      "language": "python",
+      "description": "Activation checkpointing with CPU offload",
+      "risk_level": "medium",
+      "attack_surface": [
+        {
+          "type": "memory_ops",
+          "entry_point": "SwapTensor.async_load()/wait_load()",
+          "file": "swap.py",
+          "line": 77,
+          "risk": "State machine for tensor lifecycle - potential race condition or memory corruption if operations called in wrong order",
+          "cwe": "CWE-362"
+        }
+      ],
+      "high_risk_files": [
+        "swap.py",
+        "activation_checkpoint.py"
+      ]
+    },
+    {
+      "name": "collectives",
+      "path": "hyper_parallel/collectives",
+      "language": "python",
+      "description": "Process group management and collective operations",
+      "risk_level": "medium",
+      "attack_surface": [
+        {
+          "type": "ipc",
+          "entry_point": "init_process_group()",
+          "file": "cc.py",
+          "line": 24,
+          "risk": "TCP/file-based rendezvous for distributed training initialization",
+          "cwe": "CWE-287"
+        }
+      ],
+      "high_risk_files": [
+        "cc.py"
+      ]
+    },
+    {
+      "name": "platform",
+      "path": "hyper_parallel/platform",
+      "language": "mixed",
+      "description": "Platform abstraction layer (PyTorch/MindSpore)",
+      "risk_level": "high",
+      "attack_surface": [
+        {
+          "type": "file_io",
+          "entry_point": "TorchPlatform.load_checkpoint()",
+          "file": "torch/platform.py",
+          "line": 617,
+          "risk": "torch.load() without weights_only=True by default",
+          "cwe": "CWE-502"
+        },
+        {
+          "type": "ipc",
+          "entry_point": "Platform.all_gather_object()",
+          "file": "platform.py",
+          "risk": "Receives arbitrary Python objects from remote ranks via pickle",
+          "cwe": "CWE-502"
+        }
+      ],
+      "high_risk_files": [
+        "platform.py",
+        "torch/platform.py",
+        "mindspore/platform.py"
+      ]
+    },
+    {
+      "name": "dtensor",
+      "path": "hyper_parallel/core/dtensor",
+      "language": "python",
+      "description": "Distributed tensor abstraction",
+      "risk_level": "medium",
+      "attack_surface": [
+        {
+          "type": "tensor_ops",
+          "entry_point": "distribute_module()",
+          "file": "dtensor.py",
+          "risk": "Converts tensors to DTensors based on external config",
+          "cwe": "CWE-20"
+        }
+      ],
+      "high_risk_files": [
+        "dtensor.py",
+        "device_mesh.py",
+        "tensor_redistribution.py",
+        "layout.py"
+      ]
+    },
+    {
+      "name": "integration",
+      "path": "hyper_parallel/integration",
+      "language": "python",
+      "description": "Framework integrations (LlamaFactory)",
+      "risk_level": "medium",
+      "attack_surface": [
+        {
+          "type": "file_io",
+          "entry_point": "_load_optimizer_and_scheduler()",
+          "file": "llamafactory/trainer.py",
+          "line": 556,
+          "risk": "torch.save/torch.load with partial weights_only protection",
+          "cwe": "CWE-502"
+        }
+      ],
+      "high_risk_files": [
+        "llamafactory/trainer.py"
+      ]
+    },
+    {
+      "name": "auto_parallel",
+      "path": "hyper_parallel/auto_parallel",
+      "language": "python",
+      "description": "Auto-tuning tool for parallel strategies",
+      "risk_level": "medium",
+      "attack_surface": [
+        {
+          "type": "file_io",
+          "entry_point": "InputConfig(yaml_path)",
+          "file": "fast-tuner/fast_tuner/utils/input_config.py",
+          "risk": "YAML config parsing - yaml.safe_load() used (safe)",
+          "cwe": "CWE-502"
+        },
+        {
+          "type": "cli",
+          "entry_point": "pipeline_tool.py CLI",
+          "file": "fast-tuner/fast_tuner/pipeline_tool.py",
+          "risk": "CLI accepts file paths (--yaml_path, --shell_path, etc.)",
+          "cwe": "CWE-22"
+        }
+      ],
+      "high_risk_files": [
+        "fast-tuner/fast_tuner/pipeline_tool.py",
+        "fast-tuner/fast_tuner/utils/input_config.py"
+      ]
+    }
+  ],
+  "entry_points": {
+    "top_level_api": [
+      "hyper_parallel.get_platform()",
+      "hyper_parallel.fully_shard(module, mesh)",
+      "hyper_parallel.init_device_mesh(mesh_shape, mesh_dim_names)",
+      "hyper_parallel.init_process_group(backend, init_method, ...)",
+      "hyper_parallel.distribute_module(module, mesh)",
+      "hyper_parallel.shard_module(model, mesh, plan)",
+      "hyper_parallel.PipelineStage(submodule, stage_index, ...)"
+    ],
+    "checkpoint_api": [
+      "distributed_checkpoint.save(state_dict, checkpoint_id)",
+      "distributed_checkpoint.load(state_dict, checkpoint_id)",
+      "distributed_checkpoint.async_save(state_dict, ...)",
+      "distributed_checkpoint.FileSystemReader(checkpoint_dir)",
+      "distributed_checkpoint.FileSystemWriter(checkpoint_dir)",
+      "distributed_checkpoint.convert_full_checkpoint_to_dcp(src, dst, src_platform)"
+    ],
+    "symmetric_memory_api": [
+      "symmetric_memory.empty(shape, dtype)",
+      "symmetric_memory.rendezvous(tensor, group)",
+      "symmetric_memory.shmem_put(target, target_offset, src, ...)",
+      "symmetric_memory.shmem_get(target, target_offset, src, ...)",
+      "symmetric_memory.shmem_signal_op(signal, signal_offset, ...)",
+      "symmetric_memory.shmem_wait_for_signal(depend_tensor, signal, ...)",
+      "symmetric_memory.barrier()"
+    ],
+    "multicore_api": [
+      "multicore.moe_ffn_fwd(dispatch_target, ...)",
+      "multicore.moe_ffn_bwd(dispatch_target, ...)"
+    ]
+  },
+  "cross_module_communication": [
+    {
+      "source": "distributed_checkpoint",
+      "target": "platform",
+      "type": "api_call",
+      "function": "platform.load_checkpoint()",
+      "risk": "Insecure deserialization"
+    },
+    {
+      "source": "pipeline_parallel",
+      "target": "platform",
+      "type": "ipc",
+      "function": "platform.send_object_list()/recv_object_list()",
+      "risk": "Pickle serialization in P2P communication"
+    },
+    {
+      "source": "fully_shard",
+      "target": "platform",
+      "type": "api_call",
+      "function": "platform.all_reduce()/reduce_scatter()",
+      "risk": "Gradient synchronization"
+    },
+    {
+      "source": "dtensor",
+      "target": "collectives",
+      "type": "api_call",
+      "function": "init_process_group()/create_group()",
+      "risk": "Process group initialization"
+    },
+    {
+      "source": "shard",
+      "target": "dtensor",
+      "type": "data_flow",
+      "function": "DTensor redistribution",
+      "risk": "Tensor shape manipulation"
+    }
+  ],
+  "external_input_sources": [
+    {
+      "source": "checkpoint_files",
+      "type": "file",
+      "format": ["pickle", "safetensors", "json"],
+      "risk": "critical",
+      "components": ["distributed_checkpoint", "platform"]
+    },
+    {
+      "source": "yaml_config",
+      "type": "file",
+      "format": ["yaml"],
+      "risk": "medium",
+      "components": ["auto_parallel", "shard"]
+    },
+    {
+      "source": "environment_variables",
+      "type": "env",
+      "variables": ["HYPER_PARALLEL_PLATFORM", "HYPER_PARALLEL_OPS_YAML_DIR", "HYPER_PARALLEL_OPS_PYTHON_PATH", "RANK_ID", "RANK_SIZE", "SYMMETRIC_MEMORY_HEAP_SIZE", "MS_SCHED_HOST", "MS_SCHED_PORT"],
+      "risk": "high",
+      "components": ["symmetric_memory", "shard", "platform"]
+    },
+    {
+      "source": "cli_arguments",
+      "type": "cli",
+      "risk": "medium",
+      "components": ["auto_parallel"]
+    },
+    {
+      "source": "distributed_network",
+      "type": "network",
+      "operations": ["all_gather_object", "broadcast", "recv_object_list", "irecv", "isend"],
+      "risk": "high",
+      "components": ["pipeline_parallel", "collectives", "platform"]
+    }
+  ],
+  "threat_categories": [
+    {
+      "category": "Insecure Deserialization",
+      "cwe": "CWE-502",
+      "severity": "Critical",
+      "affected_modules": ["distributed_checkpoint", "platform", "pipeline_parallel"],
+      "description": "Pickle deserialization of checkpoint metadata and distributed objects can lead to arbitrary code execution"
+    },
+    {
+      "category": "Memory Safety",
+      "cwe": ["CWE-120", "CWE-416", "CWE-252"],
+      "severity": "High",
+      "affected_modules": ["symmetric_memory"],
+      "description": "Pointer arithmetic without bounds validation, potential use-after-free, memory allocation without null checks"
+    },
+    {
+      "category": "Configuration Injection",
+      "cwe": ["CWE-15", "CWE-73"],
+      "severity": "High",
+      "affected_modules": ["shard", "symmetric_memory"],
+      "description": "Environment variables and YAML paths can be manipulated to load arbitrary configurations or modules"
+    },
+    {
+      "category": "Path Traversal",
+      "cwe": "CWE-22",
+      "severity": "High",
+      "affected_modules": ["distributed_checkpoint", "auto_parallel"],
+      "description": "Checkpoint and config paths from user input without proper validation"
+    },
+    {
+      "category": "Deadlock/Resource Exhaustion",
+      "cwe": ["CWE-667", "CWE-400"],
+      "severity": "Medium",
+      "affected_modules": ["pipeline_parallel", "symmetric_memory"],
+      "description": "Blocking waits without timeout, potential deadlock in pipeline scheduling"
+    },
+    {
+      "category": "Race Condition",
+      "cwe": "CWE-362",
+      "severity": "Medium",
+      "affected_modules": ["activation_checkpoint"],
+      "description": "Tensor lifecycle state machine can lead to memory corruption if operations called in wrong order"
+    }
+  ]
+}

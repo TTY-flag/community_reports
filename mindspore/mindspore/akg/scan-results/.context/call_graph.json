@@ -1,0 +1,306 @@
+{
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/shenteng/mindspore/mindspore/akg",
+  "generated_at": "2026-04-23T18:57:00Z",
+  "generator": "architecture-agent",
+  "description": "关键数据流路径调用关系图（简化版）",
+  "critical_paths": [
+    {
+      "path_id": "CP-001",
+      "name": "Worker验证包执行路径",
+      "severity": "critical",
+      "language": "python",
+      "data_flow": [
+        {
+          "step": 1,
+          "node": "HTTP POST /api/v1/verify",
+          "file": "aikg/python/ai_kernel_generator/worker/server.py:54-89",
+          "function": "verify(package: UploadFile, task_id: str, op_name: str)",
+          "taint_source": "UploadFile package_data",
+          "code_snippet": "package_data = await package.read()"
+        },
+        {
+          "step": 2,
+          "node": "LocalWorker.verify",
+          "file": "aikg/python/ai_kernel_generator/core/worker/local_worker.py:63-161",
+          "function": "async def verify(package_data, task_id, op_name, timeout)",
+          "operation": "解压tar包到临时目录",
+          "code_snippet": "tarfile.open(tar_path, 'r').extractall(extract_dir)"
+        },
+        {
+          "step": 3,
+          "node": "Script Discovery",
+          "file": "aikg/python/ai_kernel_generator/core/worker/local_worker.py:98-102",
+          "operation": "查找并定位verify_{op_name}.py脚本",
+          "code_snippet": "script_path = os.path.join(extract_dir, script_name)"
+        },
+        {
+          "step": 4,
+          "node": "Async Subprocess Execution",
+          "file": "aikg/python/ai_kernel_generator/core/worker/local_worker.py:111-150",
+          "function": "asyncio.create_subprocess_exec",
+          "taint_sink": "SINK: subprocess execution of untrusted script",
+          "code_snippet": "process = await asyncio.create_subprocess_exec(sys.executable, script_path, ...)"
+        }
+      ],
+      "vulnerability_type": "Remote Code Execution",
+      "attack_scenario": "用户上传包含恶意Python脚本的tar包，脚本被解压后自动执行"
+    },
+    {
+      "path_id": "CP-002",
+      "name": "Kernel Verifier代码执行路径",
+      "severity": "critical",
+      "language": "python",
+      "data_flow": [
+        {
+          "step": 1,
+          "node": "LLM生成内核代码",
+          "file": "aikg/python/ai_kernel_generator/core/agent/designer.py",
+          "taint_source": "LLM API响应"
+        },
+        {
+          "step": 2,
+          "node": "KernelVerifier.verify_impl",
+          "file": "aikg/python/ai_kernel_generator/core/verifier/kernel_verifier.py:716-730",
+          "function": "def verify_impl(self, impl_code, context)",
+          "operation": "编译并执行内核代码"
+        },
+        {
+          "step": 3,
+          "node": "Code Compilation",
+          "file": "aikg/python/ai_kernel_generator/core/verifier/kernel_verifier.py:723",
+          "code_snippet": "compiled = compile(impl_code, '<string>', 'exec')"
+        },
+        {
+          "step": 4,
+          "node": "Code Execution",
+          "file": "aikg/python/ai_kernel_generator/core/verifier/kernel_verifier.py:724",
+          "taint_sink": "SINK: exec(compiled, self.context)",
+          "vulnerability_type": "Arbitrary Code Execution"
+        }
+      ],
+      "attack_scenario": "通过精心设计的提示词引导LLM生成恶意代码，代码被执行"
+    },
+    {
+      "path_id": "CP-003",
+      "name": "Profiler命令执行路径",
+      "severity": "critical",
+      "language": "python",
+      "data_flow": [
+        {
+          "step": 1,
+          "node": "HTTP POST /api/v1/profile",
+          "file": "aikg/python/ai_kernel_generator/worker/server.py:91-116",
+          "taint_source": "profile_settings JSON"
+        },
+        {
+          "step": 2,
+          "node": "run_profile_scripts_and_collect_results",
+          "file": "aikg/python/ai_kernel_generator/core/verifier/profiler_utils.py:140-160",
+          "function": "def run_profile_scripts_and_collect_results(script_path, ...)"
+        },
+        {
+          "step": 3,
+          "node": "Shell Command Execution",
+          "file": "aikg/python/ai_kernel_generator/core/verifier/profiler_utils.py:142",
+          "code_snippet": "process = subprocess.run(cmd, shell=True, capture_output=True, ...)",
+          "taint_sink": "SINK: shell=True subprocess execution"
+        }
+      ],
+      "vulnerability_type": "Command Injection",
+      "attack_scenario": "script_path包含shell元字符导致命令注入"
+    },
+    {
+      "path_id": "CP-004",
+      "name": "Ascend动态库加载路径",
+      "severity": "critical",
+      "language": "cpp",
+      "data_flow": [
+        {
+          "step": 1,
+          "node": "Python Binding Call",
+          "file": "akg-mlir/compiler/lib/ExecutionEngine/AscendLaunchRuntime/AKGAscendLaunch.cpp",
+          "taint_source": "Python传入的so_path参数"
+        },
+        {
+          "step": 2,
+          "node": "Path String Construction",
+          "code_snippet": "std::string so_path = GetSharedLibraryPath(path);"
+        },
+        {
+          "step": 3,
+          "node": "Dynamic Library Load",
+          "file": "akg-mlir/compiler/lib/ExecutionEngine/AscendLaunchRuntime/AKGAscendLaunch.cpp",
+          "taint_sink": "SINK: dlopen(so_path.data(), RTLD_LAZY)",
+          "vulnerability_type": "Code Injection via malicious .so"
+        }
+      ],
+      "attack_scenario": "用户指定恶意.so路径，dlopen加载并执行恶意代码"
+    },
+    {
+      "path_id": "CP-005",
+      "name": "Ascend Linker Shell命令执行",
+      "severity": "critical",
+      "language": "cpp",
+      "data_flow": [
+        {
+          "step": 1,
+          "node": "CLI argc/argv",
+          "file": "akg-mlir/compiler/tools/ascend-linker/ascend-linker.cpp:main()",
+          "taint_source": "Command line arguments"
+        },
+        {
+          "step": 2,
+          "node": "Command String Construction",
+          "operation": "构建shell命令字符串"
+        },
+        {
+          "step": 3,
+          "node": "popen Execution",
+          "file": "akg-mlir/compiler/tools/ascend-linker/ascend-linker.cpp",
+          "taint_sink": "SINK: popen(cmd.c_str(), \"r\")",
+          "vulnerability_type": "Command Injection"
+        }
+      ],
+      "attack_scenario": "CLI参数注入shell元字符导致命令注入"
+    },
+    {
+      "path_id": "CP-006",
+      "name": "PTX文件处理路径",
+      "severity": "high",
+      "language": "cpp",
+      "data_flow": [
+        {
+          "step": 1,
+          "node": "CLI argc/argv",
+          "file": "akg-mlir/compiler/tools/ptx-tools/ptx-replace.cpp",
+          "taint_source": "File path arguments"
+        },
+        {
+          "step": 2,
+          "node": "File Read",
+          "taint_sink": "SINK: std::ifstream infile(filename)"
+        },
+        {
+          "step": 3,
+          "node": "Regex Parsing",
+          "operation": "正则表达式处理PTX内容"
+        },
+        {
+          "step": 4,
+          "node": "File Write",
+          "taint_sink": "SINK: std::ofstream outFile(outputFilename)"
+        }
+      ],
+      "vulnerability_type": "Arbitrary File Read/Write"
+    },
+    {
+      "path_id": "CP-007",
+      "name": "JSON到MLIR转换路径",
+      "severity": "high",
+      "language": "cpp",
+      "data_flow": [
+        {
+          "step": 1,
+          "node": "CLI file input",
+          "file": "akg-mlir/compiler/lib/Target/MindsporeDialect/TranslateToMindsporeDialect.cpp",
+          "taint_source": "JSON file path"
+        },
+        {
+          "step": 2,
+          "node": "JSON Parsing",
+          "function": "DirUtils::checkAndReadJson(input_file_name)",
+          "taint_sink": "SINK: nlohmann::json parsing"
+        },
+        {
+          "step": 3,
+          "node": "MLIR IR Construction",
+          "operation": "构建MLIR IR图结构"
+        }
+      ],
+      "vulnerability_type": "Malformed JSON Parsing"
+    },
+    {
+      "path_id": "CP-008",
+      "name": "Server Worker注册SSRF路径",
+      "severity": "high",
+      "language": "python",
+      "data_flow": [
+        {
+          "step": 1,
+          "node": "HTTP POST /api/v1/workers/register",
+          "file": "aikg/python/ai_kernel_generator/server/app.py:99-117",
+          "taint_source": "req.url (Worker URL)"
+        },
+        {
+          "step": 2,
+          "node": "RemoteWorker Construction",
+          "code_snippet": "worker = RemoteWorker(req.url)"
+        },
+        {
+          "step": 3,
+          "node": "WorkerManager Registration",
+          "taint_sink": "SINK: Worker URL stored and used for HTTP requests"
+        }
+      ],
+      "vulnerability_type": "SSRF"
+    },
+    {
+      "path_id": "CP-009",
+      "name": "Jinja2模板渲染路径",
+      "severity": "medium",
+      "language": "python",
+      "data_flow": [
+        {
+          "step": 1,
+          "node": "LLM生成代码片段",
+          "taint_source": "impl_code from LLM"
+        },
+        {
+          "step": 2,
+          "node": "Template Context Setup",
+          "file": "aikg/python/ai_kernel_generator/core/verifier/kernel_verifier.py:598-610"
+        },
+        {
+          "step": 3,
+          "node": "Template Rendering",
+          "taint_sink": "SINK: Template.render(context)",
+          "vulnerability_type": "Template Injection (潜在)"
+        }
+      ]
+    }
+  ],
+  "cross_module_calls": [
+    {
+      "from_module": "aikg-python/server",
+      "to_module": "aikg-python/core/worker",
+      "call_type": "async",
+      "interface": "HTTP API -> LocalWorker.verify()"
+    },
+    {
+      "from_module": "aikg-python/core/verifier",
+      "to_module": "aikg-python/utils",
+      "call_type": "import",
+      "interface": "kernel_verifier -> profiler_utils.run_profile_scripts()"
+    },
+    {
+      "from_module": "aikg-python/core/llm",
+      "to_module": "akg-mlir/compiler (via Python binding)",
+      "call_type": "pybind11",
+      "interface": "LLM生成 -> MLIR编译"
+    },
+    {
+      "from_module": "akg-mlir/compiler/ExecutionEngine",
+      "to_module": "Ascend Runtime Libraries",
+      "call_type": "dlopen/dlsym",
+      "interface": "AKGAscendLaunch -> libascendcl.so, libruntime.so"
+    }
+  ],
+  "statistics": {
+    "total_critical_paths": 5,
+    "total_high_paths": 4,
+    "total_medium_paths": 1,
+    "python_paths": 5,
+    "cpp_paths": 4,
+    "mixed_paths": 1
+  }
+}

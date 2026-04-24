@@ -1,0 +1,1146 @@
+{
+  "project": "torchair",
+  "version": "1.0.0",
+  "generated_at": "2026-04-23T00:00:00Z",
+  
+  "entry_points": [
+    {
+      "id": "EP001",
+      "name": "torch.compile",
+      "module": "python/torchair",
+      "language": "Python",
+      "description": "Main entry for NPU graph compilation"
+    },
+    {
+      "id": "EP002",
+      "name": "dynamo_export",
+      "module": "python/torchair/npu_export.py",
+      "language": "Python",
+      "description": "Export model to .air format"
+    },
+    {
+      "id": "EP003",
+      "name": "PYBIND11_MODULE(_torchair)",
+      "module": "torchair/core/npu_wrapper.cpp",
+      "language": "C++",
+      "description": "Python-C++ binding module"
+    },
+    {
+      "id": "EP004",
+      "name": "TorchNpuGraphBase::Load",
+      "module": "torchair/core/torchair.cpp",
+      "language": "C++",
+      "description": "Load serialized graph proto"
+    },
+    {
+      "id": "EP005",
+      "name": "TorchNpuGraphBase::Run",
+      "module": "torchair/core/torchair.cpp",
+      "language": "C++",
+      "description": "Execute graph with input tensors"
+    },
+    {
+      "id": "EP006",
+      "name": "AsTorchTensor",
+      "module": "torchair/llm_datadist/llm_datadist.cpp",
+      "language": "C++",
+      "description": "Create tensors from memory addresses"
+    },
+    {
+      "id": "EP007",
+      "name": "Export",
+      "module": "torchair/concrete_graph/export.cpp",
+      "language": "C++",
+      "description": "Export graph to .air file"
+    }
+  ],
+  
+  "functions": [
+    {
+      "id": "F001",
+      "name": "get_npu_backend",
+      "file": "python/torchair/npu_fx_compiler.py",
+      "line": 888,
+      "module": "python/torchair",
+      "language": "Python",
+      "type": "function",
+      "risk_level": "HIGH",
+      "is_entry_point": true
+    },
+    {
+      "id": "F002",
+      "name": "_npu_backend",
+      "file": "python/torchair/npu_fx_compiler.py",
+      "line": 863,
+      "module": "python/torchair",
+      "language": "Python",
+      "type": "function",
+      "risk_level": "HIGH"
+    },
+    {
+      "id": "F003",
+      "name": "_compile_graph_with_aot",
+      "file": "python/torchair/npu_fx_compiler.py",
+      "line": 921,
+      "module": "python/torchair",
+      "language": "Python",
+      "type": "function",
+      "risk_level": "HIGH"
+    },
+    {
+      "id": "F004",
+      "name": "_NpuFxCompiler.__call__",
+      "file": "python/torchair/npu_fx_compiler.py",
+      "line": 581,
+      "module": "python/torchair",
+      "language": "Python",
+      "type": "method",
+      "risk_level": "HIGH"
+    },
+    {
+      "id": "F005",
+      "name": "_NpuFxCompiler._get_compiled_gm",
+      "file": "python/torchair/npu_fx_compiler.py",
+      "line": 596,
+      "module": "python/torchair",
+      "language": "Python",
+      "type": "method",
+      "risk_level": "HIGH"
+    },
+    {
+      "id": "F006",
+      "name": "_NpuFxCompiler._gen_compiled_gm",
+      "file": "python/torchair/npu_fx_compiler.py",
+      "line": 638,
+      "module": "python/torchair",
+      "language": "Python",
+      "type": "method",
+      "risk_level": "HIGH"
+    },
+    {
+      "id": "F007",
+      "name": "GeConcreteGraph.__init__",
+      "file": "python/torchair/_ge_concrete_graph/fx2ge_converter.py",
+      "line": 964,
+      "module": "python/torchair/_ge_concrete_graph",
+      "language": "Python",
+      "type": "method",
+      "risk_level": "HIGH"
+    },
+    {
+      "id": "F008",
+      "name": "GeConcreteGraph.__call__",
+      "file": "python/torchair/_ge_concrete_graph/fx2ge_converter.py",
+      "line": 990,
+      "module": "python/torchair/_ge_concrete_graph",
+      "language": "Python",
+      "type": "method",
+      "risk_level": "HIGH",
+      "taint_source": true
+    },
+    {
+      "id": "F009",
+      "name": "GeConcreteGraph.optimize_graph_without_runtime",
+      "file": "python/torchair/_ge_concrete_graph/fx2ge_converter.py",
+      "line": 1071,
+      "module": "python/torchair/_ge_concrete_graph",
+      "language": "Python",
+      "type": "method",
+      "risk_level": "HIGH"
+    },
+    {
+      "id": "F010",
+      "name": "GeConcreteGraph.update_graph_with_runtime",
+      "file": "python/torchair/_ge_concrete_graph/fx2ge_converter.py",
+      "line": 1120,
+      "module": "python/torchair/_ge_concrete_graph",
+      "language": "Python",
+      "type": "method",
+      "risk_level": "HIGH"
+    },
+    {
+      "id": "F011",
+      "name": "_compile_py_code",
+      "file": "python/torchair/npu_fx_compiler.py",
+      "line": 1027,
+      "module": "python/torchair",
+      "language": "Python",
+      "type": "function",
+      "risk_level": "HIGH",
+      "dangerous_function": "exec"
+    },
+    {
+      "id": "F012",
+      "name": "_generate_converter_code",
+      "file": "python/torchair/_ge_concrete_graph/fx2ge_converter.py",
+      "line": 867,
+      "module": "python/torchair/_ge_concrete_graph",
+      "language": "Python",
+      "type": "function",
+      "risk_level": "HIGH"
+    },
+    {
+      "id": "F013",
+      "name": "get_or_auto_gen_converter",
+      "file": "python/torchair/_ge_concrete_graph/fx2ge_converter.py",
+      "line": 666,
+      "module": "python/torchair/_ge_concrete_graph",
+      "language": "Python",
+      "type": "function",
+      "risk_level": "HIGH",
+      "dangerous_function": "exec"
+    },
+    {
+      "id": "F014",
+      "name": "_update_internal_format_from_inputs",
+      "file": "python/torchair/_ge_concrete_graph/fx2ge_converter.py",
+      "line": 450,
+      "module": "python/torchair/_ge_concrete_graph",
+      "language": "Python",
+      "type": "function",
+      "risk_level": "MEDIUM"
+    },
+    {
+      "id": "F015",
+      "name": "_update_constplaceholder_attr_from_inputs",
+      "file": "python/torchair/_ge_concrete_graph/fx2ge_converter.py",
+      "line": 561,
+      "module": "python/torchair/_ge_concrete_graph",
+      "language": "Python",
+      "type": "function",
+      "risk_level": "HIGH",
+      "taint_source": true
+    },
+    {
+      "id": "F016",
+      "name": "dynamo_export",
+      "file": "python/torchair/npu_export.py",
+      "line": 46,
+      "module": "python/torchair",
+      "language": "Python",
+      "type": "function",
+      "risk_level": "HIGH",
+      "is_entry_point": true
+    },
+    {
+      "id": "F017",
+      "name": "initialize_graph_engine",
+      "file": "python/torchair/core/_backend.py",
+      "module": "python/torchair/core",
+      "language": "Python",
+      "type": "function",
+      "risk_level": "MEDIUM"
+    },
+    {
+      "id": "F018",
+      "name": "TorchNpuGraphBase::Load",
+      "file": "torchair/core/torchair.cpp",
+      "line": 182,
+      "module": "torchair/core",
+      "language": "C++",
+      "type": "method",
+      "risk_level": "HIGH",
+      "is_entry_point": true,
+      "taint_source": true
+    },
+    {
+      "id": "F019",
+      "name": "TorchNpuGraphBase::Run",
+      "file": "torchair/core/torchair.cpp",
+      "line": 233,
+      "module": "torchair/core",
+      "language": "C++",
+      "type": "method",
+      "risk_level": "HIGH",
+      "is_entry_point": true,
+      "taint_source": true
+    },
+    {
+      "id": "F020",
+      "name": "TorchNpuGraphBase::AutoTune",
+      "file": "torchair/core/torchair.cpp",
+      "line": 212,
+      "module": "torchair/core",
+      "language": "C++",
+      "type": "method",
+      "risk_level": "MEDIUM",
+      "taint_source": true
+    },
+    {
+      "id": "F021",
+      "name": "ParseListTensors",
+      "file": "torchair/core/torchair.cpp",
+      "line": 58,
+      "module": "torchair/core",
+      "language": "C++",
+      "type": "function",
+      "risk_level": "HIGH",
+      "taint_source": true
+    },
+    {
+      "id": "F022",
+      "name": "ParseListOptionalTensors",
+      "file": "torchair/core/torchair.cpp",
+      "line": 24,
+      "module": "torchair/core",
+      "language": "C++",
+      "type": "function",
+      "risk_level": "HIGH",
+      "taint_source": true
+    },
+    {
+      "id": "F023",
+      "name": "ParseStream",
+      "file": "torchair/core/torchair.cpp",
+      "line": 44,
+      "module": "torchair/core",
+      "language": "C++",
+      "type": "function",
+      "risk_level": "MEDIUM"
+    },
+    {
+      "id": "F024",
+      "name": "Export",
+      "file": "torchair/core/torchair.cpp",
+      "line": 122,
+      "module": "torchair/core",
+      "language": "C++",
+      "type": "function",
+      "risk_level": "HIGH",
+      "is_entry_point": true
+    },
+    {
+      "id": "F025",
+      "name": "AclopStartDumpArgs",
+      "file": "torchair/core/torchair.cpp",
+      "line": 168,
+      "module": "torchair/core",
+      "language": "C++",
+      "type": "function",
+      "risk_level": "MEDIUM",
+      "taint_source": true
+    },
+    {
+      "id": "F026",
+      "name": "NpuConcreteGraph::Create",
+      "file": "torchair/concrete_graph/concrete_graph.cpp",
+      "line": 176,
+      "module": "torchair/concrete_graph",
+      "language": "C++",
+      "type": "static_method",
+      "risk_level": "HIGH",
+      "taint_source": true
+    },
+    {
+      "id": "F027",
+      "name": "NpuConcreteGraph::Compile",
+      "file": "torchair/concrete_graph/concrete_graph.cpp",
+      "line": 224,
+      "module": "torchair/concrete_graph",
+      "language": "C++",
+      "type": "method",
+      "risk_level": "HIGH"
+    },
+    {
+      "id": "F028",
+      "name": "NpuConcreteGraph::Run",
+      "file": "torchair/concrete_graph/concrete_graph.cpp",
+      "line": 277,
+      "module": "torchair/concrete_graph",
+      "language": "C++",
+      "type": "method",
+      "risk_level": "HIGH",
+      "taint_sink": true
+    },
+    {
+      "id": "F029",
+      "name": "NpuConcreteGraph::AutoTune",
+      "file": "torchair/concrete_graph/concrete_graph.cpp",
+      "line": 263,
+      "module": "torchair/concrete_graph",
+      "language": "C++",
+      "type": "method",
+      "risk_level": "MEDIUM"
+    },
+    {
+      "id": "F030",
+      "name": "NpuConcreteGraph::AssembleInputs",
+      "file": "torchair/concrete_graph/concrete_graph.cpp",
+      "line": 297,
+      "module": "torchair/concrete_graph",
+      "language": "C++",
+      "type": "method",
+      "risk_level": "HIGH"
+    },
+    {
+      "id": "F031",
+      "name": "Session::Initialize",
+      "file": "torchair/concrete_graph/session.cpp",
+      "line": 42,
+      "module": "torchair/concrete_graph",
+      "language": "C++",
+      "type": "method",
+      "risk_level": "HIGH"
+    },
+    {
+      "id": "F032",
+      "name": "Session::GetGeFunc",
+      "file": "torchair/concrete_graph/session.cpp",
+      "line": 102,
+      "module": "torchair/concrete_graph",
+      "language": "C++",
+      "type": "method",
+      "risk_level": "MEDIUM",
+      "dangerous_function": "dlopen"
+    },
+    {
+      "id": "F033",
+      "name": "Session::AddGraph",
+      "file": "torchair/concrete_graph/session.cpp",
+      "line": 179,
+      "module": "torchair/concrete_graph",
+      "language": "C++",
+      "type": "method",
+      "risk_level": "HIGH"
+    },
+    {
+      "id": "F034",
+      "name": "Session::CompileGraph",
+      "file": "torchair/concrete_graph/session.cpp",
+      "line": 193,
+      "module": "torchair/concrete_graph",
+      "language": "C++",
+      "type": "method",
+      "risk_level": "HIGH"
+    },
+    {
+      "id": "F035",
+      "name": "Session::RunGraph",
+      "file": "torchair/concrete_graph/session.cpp",
+      "line": 266,
+      "module": "torchair/concrete_graph",
+      "language": "C++",
+      "type": "method",
+      "risk_level": "HIGH",
+      "taint_sink": true
+    },
+    {
+      "id": "F036",
+      "name": "Session::AutoTuneGraph",
+      "file": "torchair/concrete_graph/session.cpp",
+      "line": 236,
+      "module": "torchair/concrete_graph",
+      "language": "C++",
+      "type": "method",
+      "risk_level": "MEDIUM"
+    },
+    {
+      "id": "F037",
+      "name": "Session::FastLoadGraph",
+      "file": "torchair/concrete_graph/session.cpp",
+      "line": 305,
+      "module": "torchair/concrete_graph",
+      "language": "C++",
+      "type": "method",
+      "risk_level": "HIGH"
+    },
+    {
+      "id": "F038",
+      "name": "Session::FastExecuteGraph",
+      "file": "torchair/concrete_graph/session.cpp",
+      "line": 320,
+      "module": "torchair/concrete_graph",
+      "language": "C++",
+      "type": "method",
+      "risk_level": "HIGH",
+      "taint_sink": true
+    },
+    {
+      "id": "F039",
+      "name": "Session::AclDumpConfigInit",
+      "file": "torchair/concrete_graph/session.cpp",
+      "line": 347,
+      "module": "torchair/concrete_graph",
+      "language": "C++",
+      "type": "method",
+      "risk_level": "MEDIUM",
+      "taint_source": true
+    },
+    {
+      "id": "F040",
+      "name": "ep::Export",
+      "file": "torchair/concrete_graph/export.cpp",
+      "line": 19,
+      "module": "torchair/concrete_graph",
+      "language": "C++",
+      "type": "function",
+      "risk_level": "HIGH",
+      "is_entry_point": true,
+      "taint_source": true
+    },
+    {
+      "id": "F041",
+      "name": "compat::ParseGraphFromArray",
+      "file": "torchair/abi_compat_ge_apis/compat_apis.cpp",
+      "line": 129,
+      "module": "torchair/abi_compat_ge_apis",
+      "language": "C++",
+      "type": "function",
+      "risk_level": "HIGH",
+      "taint_source": true,
+      "dangerous_function": "proto_deserialize"
+    },
+    {
+      "id": "F042",
+      "name": "Executor::Create",
+      "file": "torchair/concrete_graph/executor.cpp",
+      "line": 66,
+      "module": "torchair/concrete_graph",
+      "language": "C++",
+      "type": "static_method",
+      "risk_level": "MEDIUM"
+    },
+    {
+      "id": "F043",
+      "name": "CpuGraphExecutor::Run",
+      "file": "torchair/concrete_graph/executor.cpp",
+      "line": 43,
+      "module": "torchair/concrete_graph",
+      "language": "C++",
+      "type": "method",
+      "risk_level": "HIGH",
+      "taint_sink": true
+    },
+    {
+      "id": "F044",
+      "name": "CreateNpuGraphExecutor",
+      "file": "torchair/npu_graph_executor/npu_executor.cpp",
+      "line": 35,
+      "module": "torchair/npu_graph_executor",
+      "language": "C++",
+      "type": "function",
+      "risk_level": "MEDIUM"
+    },
+    {
+      "id": "F045",
+      "name": "StaticNpuGraphExecutor::Run",
+      "file": "torchair/npu_graph_executor/static_npu_graph_executor.cpp",
+      "module": "torchair/npu_graph_executor",
+      "language": "C++",
+      "type": "method",
+      "risk_level": "HIGH",
+      "taint_sink": true
+    },
+    {
+      "id": "F046",
+      "name": "DynamicNpuGraphExecutor::Run",
+      "file": "torchair/npu_graph_executor/dynamic_npu_graph_executor.cpp",
+      "module": "torchair/npu_graph_executor",
+      "language": "C++",
+      "type": "method",
+      "risk_level": "HIGH",
+      "taint_sink": true
+    },
+    {
+      "id": "F047",
+      "name": "NpuAllocator::Malloc",
+      "file": "torchair/npu_graph_executor/memory/Allocator.cpp",
+      "line": 9,
+      "module": "torchair/npu_graph_executor",
+      "language": "C++",
+      "type": "method",
+      "risk_level": "HIGH",
+      "taint_sink": true
+    },
+    {
+      "id": "F048",
+      "name": "NpuAllocator::Free",
+      "file": "torchair/npu_graph_executor/memory/Allocator.cpp",
+      "line": 30,
+      "module": "torchair/npu_graph_executor",
+      "language": "C++",
+      "type": "method",
+      "risk_level": "HIGH"
+    },
+    {
+      "id": "F049",
+      "name": "NpuAllocator::MallocFeatureMemory",
+      "file": "torchair/npu_graph_executor/memory/Allocator.cpp",
+      "line": 54,
+      "module": "torchair/npu_graph_executor",
+      "language": "C++",
+      "type": "method",
+      "risk_level": "HIGH",
+      "taint_sink": true
+    },
+    {
+      "id": "F050",
+      "name": "AsTorchTensor",
+      "file": "torchair/llm_datadist/llm_datadist.cpp",
+      "line": 39,
+      "module": "torchair/llm_datadist",
+      "language": "C++",
+      "type": "function",
+      "risk_level": "HIGH",
+      "is_entry_point": true,
+      "taint_source": true
+    },
+    {
+      "id": "F051",
+      "name": "StartStdoutChannel",
+      "file": "torchair/concrete_graph/hdc_channel.cpp",
+      "line": 188,
+      "module": "torchair/concrete_graph",
+      "language": "C++",
+      "type": "function",
+      "risk_level": "LOW"
+    },
+    {
+      "id": "F052",
+      "name": "Channel::Receive",
+      "file": "torchair/concrete_graph/hdc_channel.cpp",
+      "line": 63,
+      "module": "torchair/concrete_graph",
+      "language": "C++",
+      "type": "method",
+      "risk_level": "LOW",
+      "taint_source": true
+    },
+    {
+      "id": "F053",
+      "name": "NpuOpUtilsTools::CheckAclnnAvaliable",
+      "file": "torchair/utils_tools/utils_tools.cpp",
+      "line": 55,
+      "module": "torchair/utils_tools",
+      "language": "C++",
+      "type": "method",
+      "risk_level": "MEDIUM",
+      "dangerous_function": "dlopen"
+    },
+    {
+      "id": "F054",
+      "name": "CheckCannCompat",
+      "file": "torchair/cann_ir_ability/cann_ir_ability.cpp",
+      "line": 7,
+      "module": "torchair/cann_ir_ability",
+      "language": "C++",
+      "type": "function",
+      "risk_level": "LOW"
+    },
+    {
+      "id": "F055",
+      "name": "patch_for_hcom",
+      "file": "python/torchair/__init__.py",
+      "line": 51,
+      "module": "python/torchair",
+      "language": "Python",
+      "type": "function",
+      "risk_level": "MEDIUM"
+    },
+    {
+      "id": "F056",
+      "name": "_create_npu_tensors",
+      "file": "python/torchair/llm_datadist/_tensor_utils.py",
+      "module": "python/torchair/llm_datadist",
+      "language": "Python",
+      "type": "function",
+      "risk_level": "HIGH"
+    }
+  ],
+  
+  "call_relations": [
+    {
+      "caller": "F001",
+      "callee": "F002",
+      "type": "direct",
+      "description": "get_npu_backend returns partial of _npu_backend"
+    },
+    {
+      "caller": "F002",
+      "callee": "F003",
+      "type": "direct",
+      "description": "_npu_backend calls _compile_graph_with_aot"
+    },
+    {
+      "caller": "F003",
+      "callee": "F004",
+      "type": "direct",
+      "description": "_compile_graph_with_aot calls compiler instance"
+    },
+    {
+      "caller": "F004",
+      "callee": "F005",
+      "type": "direct",
+      "description": "__call__ invokes _get_compiled_gm"
+    },
+    {
+      "caller": "F005",
+      "callee": "F006",
+      "type": "direct",
+      "description": "_get_compiled_gm invokes _gen_compiled_gm"
+    },
+    {
+      "caller": "F006",
+      "callee": "F007",
+      "type": "direct",
+      "description": "_gen_compiled_gm creates GeConcreteGraph"
+    },
+    {
+      "caller": "F007",
+      "callee": "F017",
+      "type": "direct",
+      "description": "GeConcreteGraph.__init__ calls initialize_graph_engine"
+    },
+    {
+      "caller": "F008",
+      "callee": "F010",
+      "type": "direct",
+      "description": "__call__ calls update_graph_with_runtime"
+    },
+    {
+      "caller": "F008",
+      "callee": "F027",
+      "type": "cross-language",
+      "description": "__call__ triggers graph compilation via C++ layer"
+    },
+    {
+      "caller": "F008",
+      "callee": "F028",
+      "type": "cross-language",
+      "description": "__call__ triggers graph execution via C++ layer"
+    },
+    {
+      "caller": "F010",
+      "callee": "F014",
+      "type": "direct",
+      "description": "update_graph_with_runtime calls _update_internal_format_from_inputs"
+    },
+    {
+      "caller": "F010",
+      "callee": "F015",
+      "type": "direct",
+      "description": "update_graph_with_runtime calls _update_constplaceholder_attr_from_inputs"
+    },
+    {
+      "caller": "F011",
+      "callee": "exec",
+      "type": "dangerous",
+      "description": "_compile_py_code uses exec() to execute generated code"
+    },
+    {
+      "caller": "F013",
+      "callee": "exec",
+      "type": "dangerous",
+      "description": "get_or_auto_gen_converter uses exec() for auto-generated converter"
+    },
+    {
+      "caller": "F013",
+      "callee": "F012",
+      "type": "direct",
+      "description": "get_or_auto_gen_converter calls _generate_converter_code"
+    },
+    {
+      "caller": "F016",
+      "callee": "F001",
+      "type": "direct",
+      "description": "dynamo_export uses get_npu_backend for compilation"
+    },
+    {
+      "caller": "F016",
+      "callee": "torch.compile",
+      "type": "external",
+      "description": "dynamo_export calls torch.compile with npu backend"
+    },
+    {
+      "caller": "F017",
+      "callee": "F031",
+      "type": "cross-language",
+      "description": "initialize_graph_engine calls Session::Initialize via pybind"
+    },
+    {
+      "caller": "F018",
+      "callee": "F026",
+      "type": "direct",
+      "description": "TorchNpuGraphBase::Load calls NpuConcreteGraph::Create"
+    },
+    {
+      "caller": "F026",
+      "callee": "F041",
+      "type": "direct",
+      "description": "NpuConcreteGraph::Create calls ParseGraphFromArray"
+    },
+    {
+      "caller": "F026",
+      "callee": "proto::LoadFromSerializedModelArray",
+      "type": "dangerous",
+      "description": "ParseGraphFromArray deserializes proto buffer"
+    },
+    {
+      "caller": "F019",
+      "callee": "F021",
+      "type": "direct",
+      "description": "TorchNpuGraphBase::Run calls ParseListTensors"
+    },
+    {
+      "caller": "F019",
+      "callee": "F030",
+      "type": "direct",
+      "description": "TorchNpuGraphBase::Run calls AssembleInputs"
+    },
+    {
+      "caller": "F019",
+      "callee": "F028",
+      "type": "direct",
+      "description": "TorchNpuGraphBase::Run calls NpuConcreteGraph::Run"
+    },
+    {
+      "caller": "F028",
+      "callee": "F042",
+      "type": "direct",
+      "description": "NpuConcreteGraph::Run uses executor"
+    },
+    {
+      "caller": "F028",
+      "callee": "F035",
+      "type": "direct",
+      "description": "NpuConcreteGraph::Run calls Session::RunGraph"
+    },
+    {
+      "caller": "F027",
+      "callee": "F033",
+      "type": "direct",
+      "description": "NpuConcreteGraph::Compile calls Session::AddGraph"
+    },
+    {
+      "caller": "F027",
+      "callee": "F034",
+      "type": "direct",
+      "description": "NpuConcreteGraph::Compile calls Session::CompileGraph"
+    },
+    {
+      "caller": "F031",
+      "callee": "GEInitialize",
+      "type": "external",
+      "description": "Session::Initialize calls GEInitialize"
+    },
+    {
+      "caller": "F032",
+      "callee": "dlopen",
+      "type": "dangerous",
+      "description": "Session::GetGeFunc uses dlopen to load libge_runner.so"
+    },
+    {
+      "caller": "F032",
+      "callee": "dlsym",
+      "type": "dangerous",
+      "description": "Session::GetGeFunc uses dlsym to get function pointers"
+    },
+    {
+      "caller": "F034",
+      "callee": "ge::Session::CompileGraph",
+      "type": "external",
+      "description": "Session::CompileGraph calls GE session compile"
+    },
+    {
+      "caller": "F035",
+      "callee": "ge::Session::RunGraph",
+      "type": "external",
+      "description": "Session::RunGraph calls GE session run"
+    },
+    {
+      "caller": "F038",
+      "callee": "GeSessionExecuteGraphWithStreamAsync",
+      "type": "external",
+      "description": "Session::FastExecuteGraph calls GE async execute"
+    },
+    {
+      "caller": "F040",
+      "callee": "F041",
+      "type": "direct",
+      "description": "ep::Export calls ParseGraphFromArray"
+    },
+    {
+      "caller": "F040",
+      "callee": "ge::Graph::SaveToFile",
+      "type": "external",
+      "description": "ep::Export saves graph to file"
+    },
+    {
+      "caller": "F042",
+      "callee": "F043",
+      "type": "conditional",
+      "description": "Executor::Create creates CpuGraphExecutor for CPU mode"
+    },
+    {
+      "caller": "F042",
+      "callee": "F044",
+      "type": "conditional",
+      "description": "Executor::Create creates Npu executor for NPU mode"
+    },
+    {
+      "caller": "F043",
+      "callee": "F035",
+      "type": "direct",
+      "description": "CpuGraphExecutor::Run calls Session::RunGraph"
+    },
+    {
+      "caller": "F044",
+      "callee": "F045",
+      "type": "conditional",
+      "description": "CreateNpuGraphExecutor creates StaticNpuGraphExecutor"
+    },
+    {
+      "caller": "F044",
+      "callee": "F046",
+      "type": "conditional",
+      "description": "CreateNpuGraphExecutor creates DynamicNpuGraphExecutor"
+    },
+    {
+      "caller": "F045",
+      "callee": "F037",
+      "type": "direct",
+      "description": "StaticNpuGraphExecutor::Run calls FastLoadGraph"
+    },
+    {
+      "caller": "F045",
+      "callee": "F038",
+      "type": "direct",
+      "description": "StaticNpuGraphExecutor::Run calls FastExecuteGraph"
+    },
+    {
+      "caller": "F047",
+      "callee": "NPUCachingAllocator::MallocBlock",
+      "type": "external",
+      "description": "NpuAllocator::Malloc calls NPUCachingAllocator"
+    },
+    {
+      "caller": "F048",
+      "callee": "NPUCachingAllocator::FreeBlock",
+      "type": "external",
+      "description": "NpuAllocator::Free calls NPUCachingAllocator"
+    },
+    {
+      "caller": "F050",
+      "callee": "c10::StorageImpl",
+      "type": "external",
+      "description": "AsTorchTensor creates storage from raw pointer"
+    },
+    {
+      "caller": "F050",
+      "callee": "at::Tensor::set_",
+      "type": "external",
+      "description": "AsTorchTensor sets tensor data pointer"
+    },
+    {
+      "caller": "F053",
+      "callee": "dlopen",
+      "type": "dangerous",
+      "description": "NpuOpUtilsTools::CheckAclnnAvaliable uses dlopen"
+    },
+    {
+      "caller": "F053",
+      "callee": "dlsym",
+      "type": "dangerous",
+      "description": "NpuOpUtilsTools::CheckAclnnAvaliable uses dlsym"
+    },
+    {
+      "caller": "F055",
+      "callee": "torch.distributed",
+      "type": "external",
+      "description": "patch_for_hcom patches torch.distributed functions"
+    },
+    {
+      "caller": "F056",
+      "callee": "F050",
+      "type": "cross-language",
+      "description": "_create_npu_tensors calls AsTorchTensor via pybind"
+    }
+  ],
+  
+  "taint_flows": [
+    {
+      "id": "TF001",
+      "name": "Model Loading Taint Flow",
+      "severity": "HIGH",
+      "source": "User-provided serialized proto (EP004/F018)",
+      "sink": "Graph execution (F035/F038)",
+      "path": ["F018 -> F026 -> F041 -> proto_deserialize -> F027 -> F033 -> F034 -> F028 -> F035"],
+      "description": "Serialized model proto is deserialized and executed without comprehensive validation"
+    },
+    {
+      "id": "TF002",
+      "name": "Tensor Input Taint Flow",
+      "severity": "HIGH",
+      "source": "User-provided tensors (EP005/F019)",
+      "sink": "NPU memory operations (F047)",
+      "path": ["F019 -> F021 -> F030 -> F028 -> F042 -> F045 -> F047"],
+      "description": "User tensor data flows to memory allocation and execution"
+    },
+    {
+      "id": "TF003",
+      "name": "Memory Address Taint Flow",
+      "severity": "HIGH",
+      "source": "User-provided memory addresses (EP006/F050)",
+      "sink": "Tensor creation (at::Tensor)",
+      "path": ["F050 -> c10::StorageImpl -> at::Tensor::set_"],
+      "description": "Raw memory addresses used to create tensors without ownership validation"
+    },
+    {
+      "id": "TF004",
+      "name": "Dynamic Code Generation Taint Flow",
+      "severity": "HIGH",
+      "source": "User-defined operators (F013)",
+      "sink": "exec() (F011)",
+      "path": ["F013 -> F012 -> exec"],
+      "description": "Auto-generated converter code executed via exec()"
+    },
+    {
+      "id": "TF005",
+      "name": "Configuration Options Taint Flow",
+      "severity": "MEDIUM",
+      "source": "User-provided config options (EP003)",
+      "sink": "GE session initialization (F031)",
+      "path": ["F017 -> F031 -> GEInitialize"],
+      "description": "Configuration strings passed to GE initialization"
+    },
+    {
+      "id": "TF006",
+      "name": "Dump Path Taint Flow",
+      "severity": "MEDIUM",
+      "source": "User-provided dump path (F025)",
+      "sink": "acl dump configuration (F039)",
+      "path": ["F025 -> aclopStartDumpArgs -> F039 -> aclmdlSetDump"],
+      "description": "Dump path passed to ACL dump configuration"
+    },
+    {
+      "id": "TF007",
+      "name": "Export Path Taint Flow",
+      "severity": "MEDIUM",
+      "source": "User-provided export path (EP007/F040)",
+      "sink": "File write (SaveToFile)",
+      "path": ["F040 -> ge::Graph::SaveToFile"],
+      "description": "Export path used for file operations, symlink check exists"
+    },
+    {
+      "id": "TF008",
+      "name": "HDC Channel Data Flow",
+      "severity": "LOW",
+      "source": "Device stdout data (F052)",
+      "sink": "Console output",
+      "path": ["F052 -> ChannelData -> std::cerr"],
+      "description": "Data received from device channel printed to console"
+    }
+  ],
+  
+  "cross_module_calls": [
+    {
+      "from_module": "python/torchair",
+      "to_module": "torchair/core",
+      "interface": "pybind11 (_torchair)",
+      "risk_level": "HIGH",
+      "functions": ["InitializeGraphEngine", "TorchNpuGraphBase::Load", "TorchNpuGraphBase::Run", "Export", "AclopStartDumpArgs"]
+    },
+    {
+      "from_module": "torchair/core",
+      "to_module": "torchair/concrete_graph",
+      "interface": "C++ direct call",
+      "risk_level": "HIGH",
+      "functions": ["NpuConcreteGraph::Create", "NpuConcreteGraph::Compile", "NpuConcreteGraph::Run"]
+    },
+    {
+      "from_module": "torchair/concrete_graph",
+      "to_module": "torchair/abi_compat_ge_apis",
+      "interface": "C++ namespace call",
+      "risk_level": "HIGH",
+      "functions": ["ParseGraphFromArray"]
+    },
+    {
+      "from_module": "torchair/concrete_graph",
+      "to_module": "torchair/npu_graph_executor",
+      "interface": "Executor registry pattern",
+      "risk_level": "HIGH",
+      "functions": ["Executor::Create -> NpuExecutor"]
+    },
+    {
+      "from_module": "torchair/npu_graph_executor",
+      "to_module": "torchair/npu_graph_executor/memory",
+      "interface": "C++ direct call",
+      "risk_level": "HIGH",
+      "functions": ["NpuAllocator::Malloc", "NpuAllocator::Free"]
+    },
+    {
+      "from_module": "python/torchair/llm_datadist",
+      "to_module": "torchair/llm_datadist",
+      "interface": "pybind11",
+      "risk_level": "HIGH",
+      "functions": ["AsTorchTensor"]
+    },
+    {
+      "from_module": "torchair/concrete_graph",
+      "to_module": "torchair/utils_tools",
+      "interface": "C++ static call",
+      "risk_level": "MEDIUM",
+      "functions": ["NpuOpUtilsTools::CheckAclnnAvaliable"]
+    },
+    {
+      "from_module": "torchair/core",
+      "to_module": "torchair/cann_ir_ability",
+      "interface": "C++ namespace call",
+      "risk_level": "LOW",
+      "functions": ["CheckCannCompat"]
+    }
+  ],
+  
+  "external_dependencies_calls": [
+    {
+      "module": "torchair/concrete_graph",
+      "dependency": "CANN GE",
+      "functions": ["GEInitialize", "ge::Session::AddGraph", "ge::Session::CompileGraph", "ge::Session::RunGraph", "GEFinalize"],
+      "risk_level": "HIGH"
+    },
+    {
+      "module": "torchair/npu_graph_executor",
+      "dependency": "torch_npu",
+      "functions": ["NPUCachingAllocator::MallocBlock", "NPUCachingAllocator::FreeBlock"],
+      "risk_level": "HIGH"
+    },
+    {
+      "module": "torchair/concrete_graph",
+      "dependency": "ACL",
+      "functions": ["aclrtSetDevice", "aclrtSynchronizeDevice", "aclmdlInitDump", "aclmdlSetDump", "acltdtCreateChannelWithCapacity"],
+      "risk_level": "MEDIUM"
+    },
+    {
+      "module": "torchair/concrete_graph",
+      "dependency": "HCCL",
+      "functions": ["HcclSetConfig"],
+      "risk_level": "MEDIUM"
+    },
+    {
+      "module": "torchair/llm_datadist",
+      "dependency": "PyTorch ATen",
+      "functions": ["at::Tensor::set_", "c10::StorageImpl", "at::empty"],
+      "risk_level": "HIGH"
+    },
+    {
+      "module": "python/torchair",
+      "dependency": "PyTorch Dynamo",
+      "functions": ["torch.compile", "torch._dynamo", "aot_module_simplified"],
+      "risk_level": "HIGH"
+    }
+  ],
+  
+  "statistics": {
+    "total_functions": 56,
+    "total_call_relations": 54,
+    "taint_flows": 8,
+    "cross_module_interfaces": 8,
+    "high_risk_functions": 30,
+    "dangerous_operations": {
+      "exec": 2,
+      "dlopen": 2,
+      "dlsym": 2,
+      "proto_deserialize": 1
+    }
+  }
+}

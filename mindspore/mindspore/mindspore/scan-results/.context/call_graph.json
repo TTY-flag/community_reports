@@ -1,0 +1,362 @@
+{
+  "functions": {
+    "LoadMindIR@mindspore/core/load_mindir/load_model.cc": {
+      "defined_at": 2990,
+      "calls": [
+        "ParseModelProto@mindspore/core/load_mindir/load_model.cc",
+        "MSANFModelParser::Parse@mindspore/core/load_mindir/load_model.cc",
+        "InitModelParser@mindspore/core/load_mindir/load_model.cc"
+      ],
+      "called_by": [
+        "LoadMindIRs@mindspore/core/load_mindir/load_model.cc",
+        "Python API via pybind_api/init.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "Entry point for loading MindIR model files. Reads .mindir files and parses protobuf format."
+    },
+    "ParseModelProto@mindspore/core/load_mindir/load_model.cc": {
+      "defined_at": 2876,
+      "calls": [
+        "mind_ir::ModelProto::ParseFromArray",
+        "mind_ir::ModelProto::ParseFromIstream",
+        "Decrypt@mindspore/utils/crypto.cc"
+      ],
+      "called_by": [
+        "LoadMindIR@mindspore/core/load_mindir/load_model.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "Parse protobuf model from file or buffer. Uses ParseFromArray/ParseFromIstream for deserialization."
+    },
+    "MSANFModelParser::Parse@mindspore/core/load_mindir/load_model.cc": {
+      "defined_at": 2352,
+      "calls": [
+        "BuildPrimitiveNodeFromProto@mindspore/core/load_mindir/load_model.cc",
+        "BuildFuncGraph@mindspore/core/load_mindir/load_model.cc",
+        "BuildParamsAndAttrs@mindspore/core/load_mindir/load_model.cc",
+        "BuildValueNodes@mindspore/core/load_mindir/load_model.cc"
+      ],
+      "called_by": [
+        "LoadMindIR@mindspore/core/load_mindir/load_model.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "Parse MindIR model proto and build computational graph."
+    },
+    "MSANFModelParser::GenerateTensorPtrFromTensorProto@mindspore/core/load_mindir/load_model.cc": {
+      "defined_at": 627,
+      "calls": [
+        "memcpy_s@std",
+        "huge_memcpy@common"
+      ],
+      "called_by": [
+        "MSANFModelParser::Parse@mindspore/core/load_mindir/load_model.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "Generate tensor from protobuf tensor proto. Uses memcpy_s to copy tensor data from parsed model."
+    },
+    "GetTensorDataFromExternal@mindspore/core/load_mindir/load_model.cc": {
+      "defined_at": 1048,
+      "calls": [
+        "read@std::ifstream",
+        "huge_memcpy@common"
+      ],
+      "called_by": [
+        "MSANFModelParser::GenerateTensorPtrFromTensorProto@mindspore/core/load_mindir/load_model.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "Read tensor data from external files referenced in MindIR. Reads binary data directly."
+    },
+    "TcpServer::ListenerCallback@mindspore/ccsrc/cluster/rpc/core/communicator/tcp_server.cc": {
+      "defined_at": 352,
+      "calls": [
+        "accept@syscall",
+        "bufferevent_socket_new@libevent",
+        "TcpServer::onCreateConnection"
+      ],
+      "called_by": [
+        "libevent event loop"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "Accept new TCP connections from distributed training nodes."
+    },
+    "TcpServer::ReadCallback@mindspore/ccsrc/cluster/rpc/core/communicator/tcp_server.cc": {
+      "defined_at": 449,
+      "calls": [
+        "TcpConnection::ParseMessage"
+      ],
+      "called_by": [
+        "libevent bufferevent"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "Read and parse messages from connected nodes."
+    },
+    "TCPSocketOperation::Receive@mindspore/ccsrc/cluster/rpc/tcp/tcp_socket_operation.cc": {
+      "defined_at": 30,
+      "calls": [
+        "recv@syscall"
+      ],
+      "called_by": [
+        "TcpComm::ReceiveMessage"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "Receive data from network socket using recv() syscall."
+    },
+    "TCPSocketOperation::SendMessage@mindspore/ccsrc/cluster/rpc/tcp/tcp_socket_operation.cc": {
+      "defined_at": 118,
+      "calls": [
+        "sendmsg@syscall"
+      ],
+      "called_by": [
+        "TcpComm::SendMessage"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "Send data to network socket using sendmsg() syscall."
+    },
+    "CollectiveOpsImpl::AllReduce@mindspore/ccsrc/cluster/rpc/core/collective_ops_impl.cc": {
+      "defined_at": 623,
+      "calls": [
+        "RingAllReduce@mindspore/ccsrc/cluster/rpc/core/collective_ops_impl.cc",
+        "ReduceBroadcastAllReduce@mindspore/ccsrc/cluster/rpc/core/collective_ops_impl.cc",
+        "Memcpy@utils"
+      ],
+      "called_by": [
+        "AbstractNode::CollectiveOpsAsync"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "AllReduce collective operation. Receives data buffers from all nodes and performs reduction."
+    },
+    "RingAllReduce@mindspore/ccsrc/cluster/rpc/core/collective_ops_impl.cc": {
+      "defined_at": 112,
+      "calls": [
+        "Node::CollectiveSendAsync",
+        "Node::CollectiveReceiveAsync",
+        "Memcpy@utils"
+      ],
+      "called_by": [
+        "CollectiveOpsImpl::AllReduce@mindspore/ccsrc/cluster/rpc/core/collective_ops_impl.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "Ring AllReduce algorithm. Sends/receives data chunks between nodes. Uses memcpy to copy received data."
+    },
+    "CollectiveOpsImpl::Broadcast@mindspore/ccsrc/cluster/rpc/core/collective_ops_impl.cc": {
+      "defined_at": 392,
+      "calls": [
+        "Node::CollectiveSendAsync",
+        "Node::CollectiveReceiveAsync",
+        "Memcpy@utils"
+      ],
+      "called_by": [
+        "AbstractNode::Broadcast"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "Broadcast collective operation. Broadcasts data to all nodes."
+    },
+    "TFReaderOp::FillBuffer@mindspore/ccsrc/minddata/dataset/data_source/tf_reader_op.cc": {
+      "defined_at": 1,
+      "calls": [
+        "ParseTFRecordFile",
+        "tensorflow::Example::ParseFromString"
+      ],
+      "called_by": [
+        "TFReaderOp::operator()"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "Parse TFRecord files. Uses protobuf to parse TensorFlow Example format."
+    },
+    "CsvOp::LoadFile@mindspore/ccsrc/minddata/dataset/data_source/csv_op.cc": {
+      "defined_at": 1,
+      "calls": [
+        "std::ifstream::read",
+        "ParseCSVLine"
+      ],
+      "called_by": [
+        "CsvOp::operator()"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "Load and parse CSV dataset files."
+    },
+    "MindRecordOp::FillBuffer@mindspore/ccsrc/minddata/dataset/data_source/mindrecord_op.cc": {
+      "defined_at": 1,
+      "calls": [
+        "MindRecordReader::Read",
+        "ParseMindRecordData"
+      ],
+      "called_by": [
+        "MindRecordOp::operator()"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "Parse MindRecord format dataset files."
+    },
+    "CocoOp::ParseAnnotation@mindspore/ccsrc/minddata/dataset/data_source/coco_op.cc": {
+      "defined_at": 1,
+      "calls": [
+        "nlohmann::json::parse",
+        "ReadImageFile"
+      ],
+      "called_by": [
+        "CocoOp::operator()"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "Parse COCO JSON annotation files and load images."
+    },
+    "InitMindSpore@mindspore/ccsrc/pybind_api/init.cc": {
+      "defined_at": 1,
+      "calls": [
+        "PYBIND11_MODULE",
+        "BindContext",
+        "BindOps",
+        "BindBackend"
+      ],
+      "called_by": [
+        "Python import"
+      ],
+      "receives_external_input": false,
+      "risk": "High",
+      "description": "Initialize Python bindings. Exposes C++ functions to Python."
+    },
+    "mind_ir::ModelProto::ParseFromArray@protobuf": {
+      "defined_at": "external",
+      "calls": [],
+      "called_by": [
+        "ParseModelProto@mindspore/core/load_mindir/load_model.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "Protobuf deserialization function. Parses model from binary array. Potential deserialization vulnerability."
+    },
+    "memcpy_s@std": {
+      "defined_at": "std",
+      "calls": [],
+      "called_by": [
+        "MSANFModelParser::GenerateTensorPtrFromTensorProto@mindspore/core/load_mindir/load_model.cc",
+        "ObtainValueNodeInTupleTensorForm@mindspore/core/load_mindir/load_model.cc",
+        "CollectiveOpsImpl::AllReduce@mindspore/ccsrc/cluster/rpc/core/collective_ops_impl.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "Memory copy function. Called with data from parsed model or network. Buffer overflow if size calculation incorrect."
+    },
+    "recv@syscall": {
+      "defined_at": "syscall",
+      "calls": [],
+      "called_by": [
+        "TCPSocketOperation::Receive@mindspore/ccsrc/cluster/rpc/tcp/tcp_socket_operation.cc"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "Network receive syscall. Receives data from untrusted network source."
+    }
+  },
+  "data_flows": [
+    {
+      "source": "LoadMindIR(file_name)@mindspore/core/load_mindir/load_model.cc:2990",
+      "path": [
+        "ParseModelProto@mindspore/core/load_mindir/load_model.cc:2876",
+        "ModelProto::ParseFromIstream@protobuf",
+        "MSANFModelParser::Parse@mindspore/core/load_mindir/load_model.cc:2352",
+        "GenerateTensorPtrFromTensorProto@mindspore/core/load_mindir/load_model.cc:627",
+        "memcpy_s@std:658"
+      ],
+      "sink": "memcpy_s(tensor_data_buf, tensor->DataNBytes(), tensor_buf.data(), tensor_buf.size())",
+      "sink_type": "memory_operation",
+      "description": "Model file to tensor memory. User-provided .mindir file is parsed via protobuf and tensor data is copied to memory using memcpy_s. Size values come from parsed protobuf."
+    },
+    {
+      "source": "LoadMindIR(buffer)@mindspore/core/load_mindir/load_model.cc:3000",
+      "path": [
+        "ModelProto::ParseFromArray@protobuf",
+        "MSANFModelParser::Parse@mindspore/core/load_mindir/load_model.cc:2352",
+        "GetTensorDataFromExternal@mindspore/core/load_mindir/load_model.cc:1048",
+        "huge_memcpy@common:1126"
+      ],
+      "sink": "huge_memcpy(tensor_data_buf, tensor_info->DataNBytes(), data + offset)",
+      "sink_type": "memory_operation",
+      "description": "Memory buffer to tensor memory. Model loaded from in-memory buffer. External data files may be referenced and read via huge_memcpy."
+    },
+    {
+      "source": "TCP Client Connect@mindspore/ccsrc/cluster/rpc/tcp/socket_operation.cc:389",
+      "path": [
+        "connect@syscall",
+        "TcpClient::Init@mindspore/ccsrc/cluster/rpc/core/communicator/tcp_client.cc",
+        "ReadCallback@mindspore/ccsrc/cluster/rpc/core/communicator/tcp_server.cc:449",
+        "TCPSocketOperation::Receive@mindspore/ccsrc/cluster/rpc/tcp/tcp_socket_operation.cc:30",
+        "recv@syscall"
+      ],
+      "sink": "recv(connection->socket_fd, recvBuf, recvLen)",
+      "sink_type": "network_operation",
+      "description": "Distributed training network receive. Node connects to other nodes and receives data (gradients, parameters). No authentication for GPU clusters."
+    },
+    {
+      "source": "AllReduce(recvbuff)@mindspore/ccsrc/cluster/rpc/core/collective_ops_impl.cc:623",
+      "path": [
+        "RingAllReduce@mindspore/ccsrc/cluster/rpc/core/collective_ops_impl.cc:112",
+        "CollectiveReceiveAsync@mindspore/ccsrc/cluster/rpc/core/abstract_node.cc",
+        "recv@syscall",
+        "Memcpy@mindspore/ccsrc/cluster/rpc/core/collective_ops_impl.cc:195"
+      ],
+      "sink": "Memcpy(recv_chunk, expect_size, rec_ptr->data(), rec_ptr->size())",
+      "sink_type": "memory_operation",
+      "description": "Collective operation data flow. Received data from other nodes is copied to output buffer via Memcpy. Data size comes from received message."
+    },
+    {
+      "source": "TFReaderOp(file_path)@mindspore/ccsrc/minddata/dataset/data_source/tf_reader_op.cc",
+      "path": [
+        "std::ifstream::read",
+        "tensorflow::Example::ParseFromString@protobuf",
+        "ParseFeature@mindspore/ccsrc/minddata/dataset/core"
+      ],
+      "sink": "protobuf parsing",
+      "sink_type": "deserialization",
+      "description": "TFRecord file parsing. External TFRecord file is read and parsed via protobuf. Example proto may contain malicious data."
+    },
+    {
+      "source": "CsvOp(file_path)@mindspore/ccsrc/minddata/dataset/data_source/csv_op.cc",
+      "path": [
+        "std::ifstream::read",
+        "ParseCSVLine",
+        "ParseCSVField"
+      ],
+      "sink": "string parsing",
+      "sink_type": "parsing",
+      "description": "CSV file parsing. External CSV file is read and parsed line by line. CSV injection possible."
+    },
+    {
+      "source": "CocoOp(annotation_file)@mindspore/ccsrc/minddata/dataset/data_source/coco_op.cc",
+      "path": [
+        "nlohmann::json::parse",
+        "ParseCocoAnnotation",
+        "ReadImageFile"
+      ],
+      "sink": "JSON parsing + image decode",
+      "sink_type": "parsing",
+      "description": "COCO dataset parsing. JSON annotation file parsed via nlohmann::json. Image files decoded. Malformed JSON or images possible."
+    },
+    {
+      "source": "Python import mindspore@mindspore/python/mindspore/__init__.py",
+      "path": [
+        "PYBIND11_MODULE@mindspore/ccsrc/pybind_api/init.cc",
+        "BindContext@mindspore/ccsrc/pybind_api",
+        "BindOps@mindspore/ccsrc/pybind_api",
+        "C++ function execution"
+      ],
+      "sink": "C++ backend execution",
+      "sink_type": "execution",
+      "description": "Python to C++ execution flow. User Python code defines network structure and calls C++ ops. Per SECURITY.md, malicious code may exist."
+    }
+  ]
+}

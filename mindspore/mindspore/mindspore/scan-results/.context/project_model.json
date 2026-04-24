@@ -1,0 +1,417 @@
+{
+  "project_name": "MindSpore",
+  "scan_time": "2026-04-23T18:00:00Z",
+  "lsp_available": false,
+  "total_files": 15017,
+  "total_lines": 160075,
+  "project_profile": {
+    "project_type": "library",
+    "deployment_model": "MindSpore is a deep learning training/inference framework library. Users install it via pip (pip install mindspore) and import it in Python code. It can also be compiled as a C++ shared library for embedding in other applications. The framework supports local execution (single machine) and distributed training across GPU/Ascend clusters.",
+    "trust_boundaries": [
+      {
+        "boundary": "Model File Interface",
+        "trusted_side": "MindSpore Framework",
+        "untrusted_side": "External model files (.mindir, checkpoint) provided by users or third parties",
+        "risk": "Critical"
+      },
+      {
+        "boundary": "Dataset File Interface",
+        "trusted_side": "MindSpore Framework",
+        "untrusted_side": "External dataset files (TFRecord, CSV, MindRecord, image files, etc.)",
+        "risk": "High"
+      },
+      {
+        "boundary": "Distributed Training Network Interface",
+        "trusted_side": "MindSpore Framework (trusted node)",
+        "untrusted_side": "Other nodes in GPU cluster (no authentication for GPU clusters per SECURITY.md)",
+        "risk": "High"
+      },
+      {
+        "boundary": "Python Code Interface",
+        "trusted_side": "MindSpore Framework C++ Core",
+        "untrusted_side": "User Python code defining neural network structure (malicious code possible per SECURITY.md)",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Checkpoint/Weight Loading",
+        "trusted_side": "MindSpore Framework",
+        "untrusted_side": "User-provided checkpoint files containing model weights",
+        "risk": "High"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "load_mindir",
+      "path": "mindspore/core/load_mindir",
+      "language": "c_cpp",
+      "components": ["load_model.cc", "infer_mindir.cc"],
+      "risk": "Critical",
+      "description": "Model file loading and MindIR format parsing. Handles deserialization of protobuf-based model files."
+    },
+    {
+      "name": "cluster_rpc",
+      "path": "mindspore/ccsrc/cluster/rpc",
+      "language": "c_cpp",
+      "components": ["tcp/tcp_server.cc", "tcp/tcp_client.cc", "tcp/socket_operation.cc", "core/collective_ops_impl.cc", "core/communicator/tcp_server.cc", "core/communicator/tcp_client.cc"],
+      "risk": "Critical",
+      "description": "Distributed training communication. TCP server/client for node-to-node message passing. GPU clusters lack authentication per SECURITY.md."
+    },
+    {
+      "name": "minddata_dataset",
+      "path": "mindspore/ccsrc/minddata/dataset",
+      "language": "c_cpp",
+      "components": ["data_source/tf_reader_op.cc", "data_source/csv_op.cc", "data_source/coco_op.cc", "data_source/mindrecord_op.cc", "engine/cache/cache_grpc.proto"],
+      "risk": "High",
+      "description": "Dataset loading and parsing. Handles various file formats including TFRecord, CSV, COCO, MindRecord, and image/audio formats."
+    },
+    {
+      "name": "minddata_mindrecord",
+      "path": "mindspore/ccsrc/minddata/mindrecord",
+      "language": "c_cpp",
+      "components": ["io/*.cc", "meta/*.cc"],
+      "risk": "High",
+      "description": "MindRecord format implementation. Custom data format for efficient dataset storage and retrieval."
+    },
+    {
+      "name": "pybind_api",
+      "path": "mindspore/ccsrc/pybind_api",
+      "language": "c_cpp",
+      "components": ["init.cc", "ops/*.cc", "backend/*.cc", "frontend/*.cc", "pynative/*.cc"],
+      "risk": "High",
+      "description": "Python-C++ binding layer. Exposes C++ functions to Python via pybind11. User Python code calls these bindings."
+    },
+    {
+      "name": "backend",
+      "path": "mindspore/ccsrc/backend",
+      "language": "c_cpp",
+      "components": ["backend_manager/*.cc", "ge_backend/*.cc", "ms_backend/*.cc"],
+      "risk": "Medium",
+      "description": "Backend execution management. Handles graph execution on different hardware (Ascend GE, MS backend)."
+    },
+    {
+      "name": "runtime",
+      "path": "mindspore/ccsrc/runtime",
+      "language": "c_cpp",
+      "components": ["hardware_abstract/*.cc", "memory/*.cc", "pipeline/*.cc"],
+      "risk": "Medium",
+      "description": "Runtime execution management. Memory allocation, hardware abstraction, execution pipeline."
+    },
+    {
+      "name": "frontend",
+      "path": "mindspore/ccsrc/frontend",
+      "language": "c_cpp",
+      "components": ["jit/*.cc", "operator/*.cc", "optimizer/*.cc", "parallel/*.cc"],
+      "risk": "Medium",
+      "description": "Frontend compilation. JIT compilation, operator fusion, graph optimization, parallel strategy."
+    },
+    {
+      "name": "core_ir",
+      "path": "mindspore/core/ir",
+      "language": "c_cpp",
+      "components": ["*.cc", "*.h"],
+      "risk": "Medium",
+      "description": "Intermediate representation (IR). Core data structures for computational graph."
+    },
+    {
+      "name": "core_proto",
+      "path": "mindspore/core/proto",
+      "language": "c_cpp",
+      "components": ["mind_ir.proto"],
+      "risk": "Critical",
+      "description": "Protobuf definitions for MindIR model format. Defines serialization schema for models."
+    },
+    {
+      "name": "utils_checkpoint",
+      "path": "mindspore/ccsrc/utils",
+      "language": "c_cpp",
+      "components": ["checkpoint.proto"],
+      "risk": "High",
+      "description": "Checkpoint serialization format. Defines schema for saving/loading model weights."
+    },
+    {
+      "name": "python_api",
+      "path": "mindspore/python/mindspore",
+      "language": "python",
+      "components": ["__init__.py", "context.py", "nn/*.py", "ops/*.py", "dataset/*.py", "train/*.py"],
+      "risk": "Medium",
+      "description": "Python API layer. User-facing interface for defining and training neural networks."
+    },
+    {
+      "name": "ops_kernel",
+      "path": "mindspore/ops/kernel",
+      "language": "c_cpp",
+      "components": ["*.cc", "*.h"],
+      "risk": "Medium",
+      "description": "Operator kernel implementations. Low-level execution of mathematical operations."
+    },
+    {
+      "name": "ops_infer",
+      "path": "mindspore/ops/infer",
+      "language": "c_cpp",
+      "components": ["*.cc", "*.h"],
+      "risk": "Medium",
+      "description": "Operator inference logic. Shape and type inference for operators."
+    }
+  ],
+  "files": [
+    {
+      "path": "mindspore/core/load_mindir/load_model.cc",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "load_mindir",
+      "lines": 3313,
+      "priority": 1,
+      "description": "MindIR model file loading. Parses protobuf-based model files. Uses ParseFromArray/ParseFromIstream for deserialization. Multiple memcpy_s calls for tensor data copying."
+    },
+    {
+      "path": "mindspore/core/proto/mind_ir.proto",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "core_proto",
+      "lines": 150,
+      "priority": 2,
+      "description": "MindIR protobuf schema definition. Defines model serialization format."
+    },
+    {
+      "path": "mindspore/ccsrc/cluster/rpc/tcp/socket_operation.cc",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "cluster_rpc",
+      "lines": 400,
+      "priority": 3,
+      "description": "TCP socket operations. Contains connect(), accept(), recv(), send() calls. Network communication layer."
+    },
+    {
+      "path": "mindspore/ccsrc/cluster/rpc/core/collective_ops_impl.cc",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "cluster_rpc",
+      "lines": 1400,
+      "priority": 4,
+      "description": "Collective communication operations (AllReduce, Broadcast, Send, Recv). Uses sendbuff/recvbuff buffers with Memcpy operations."
+    },
+    {
+      "path": "mindspore/ccsrc/cluster/rpc/core/communicator/tcp_server.cc",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "cluster_rpc",
+      "lines": 400,
+      "priority": 5,
+      "description": "TCP server implementation. Accepts connections from distributed training nodes."
+    },
+    {
+      "path": "mindspore/ccsrc/cluster/rpc/tcp/tcp_socket_operation.cc",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "cluster_rpc",
+      "lines": 200,
+      "priority": 6,
+      "description": "TCP socket recv/send operations. Direct recv() and sendmsg() calls."
+    },
+    {
+      "path": "mindspore/ccsrc/minddata/dataset/data_source/tf_reader_op.cc",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "minddata_dataset",
+      "lines": 1352,
+      "priority": 7,
+      "description": "TensorFlow TFRecord format reader. Parses TFRecord files which contain serialized TensorFlow examples."
+    },
+    {
+      "path": "mindspore/ccsrc/minddata/dataset/data_source/csv_op.cc",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "minddata_dataset",
+      "lines": 821,
+      "priority": 8,
+      "description": "CSV file parser. Reads and parses CSV dataset files."
+    },
+    {
+      "path": "mindspore/ccsrc/minddata/dataset/data_source/coco_op.cc",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "minddata_dataset",
+      "lines": 700,
+      "priority": 9,
+      "description": "COCO dataset format parser. Parses JSON annotation files and image files."
+    },
+    {
+      "path": "mindspore/ccsrc/minddata/dataset/data_source/mindrecord_op.cc",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "minddata_dataset",
+      "lines": 500,
+      "priority": 10,
+      "description": "MindRecord format reader. Parses custom MindSpore dataset format."
+    },
+    {
+      "path": "mindspore/ccsrc/utils/checkpoint.proto",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "utils_checkpoint",
+      "lines": 100,
+      "priority": 11,
+      "description": "Checkpoint protobuf schema. Defines format for model weight serialization."
+    },
+    {
+      "path": "mindspore/ccsrc/pybind_api/init.cc",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "pybind_api",
+      "lines": 200,
+      "priority": 12,
+      "description": "Python binding initialization. Entry point for Python-C++ interface."
+    },
+    {
+      "path": "mindspore/python/mindspore/__init__.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "python_api",
+      "lines": 100,
+      "priority": 13,
+      "description": "Python package entry point. Exposes main MindSpore APIs."
+    },
+    {
+      "path": "mindspore/python/mindspore/context.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "python_api",
+      "lines": 2500,
+      "priority": 14,
+      "description": "Context configuration API. Sets runtime parameters like device target, mode, etc."
+    },
+    {
+      "path": "mindspore/ccsrc/runtime/memory/*.cc",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "runtime",
+      "lines": 500,
+      "priority": 15,
+      "description": "Memory management. Handles tensor memory allocation and deallocation."
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "mindspore/core/load_mindir/load_model.cc",
+      "line": 2990,
+      "function": "LoadMindIR",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "Users load external model files (.mindir) for inference or training. Model files may come from untrusted third parties. Per SECURITY.md: 'Model files are stored in binary mode... malicious code may be written into the model files, the code are loaded and executed.'",
+      "description": "Load MindIR model file from disk or buffer. Parses protobuf format and constructs computational graph."
+    },
+    {
+      "file": "mindspore/core/load_mindir/load_model.cc",
+      "line": 3000,
+      "function": "LoadMindIR",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "Users can load model from memory buffer. Buffer contents may originate from untrusted sources (downloaded model, received from network).",
+      "description": "Load MindIR model from memory buffer (for in-memory deserialization)."
+    },
+    {
+      "file": "mindspore/ccsrc/cluster/rpc/tcp/socket_operation.cc",
+      "line": 389,
+      "function": "connect",
+      "type": "network",
+      "trust_level": "semi_trusted",
+      "justification": "Distributed training nodes connect to each other. GPU clusters lack authentication per SECURITY.md: 'If GPUs or other clusters are used for training, identity authentication and secure transmission are not provided.'",
+      "description": "TCP client connects to remote server for distributed training."
+    },
+    {
+      "file": "mindspore/ccsrc/cluster/rpc/tcp/socket_operation.cc",
+      "line": 482,
+      "function": "accept4",
+      "type": "network",
+      "trust_level": "semi_trusted",
+      "justification": "TCP server accepts connections from other nodes. GPU cluster connections lack authentication.",
+      "description": "TCP server accepts incoming connection from distributed training node."
+    },
+    {
+      "file": "mindspore/ccsrc/cluster/rpc/tcp/tcp_socket_operation.cc",
+      "line": 30,
+      "function": "Receive",
+      "type": "network",
+      "trust_level": "semi_trusted",
+      "justification": "Receives data from connected nodes via recv(). Data may include gradients, model parameters, etc. from potentially untrusted nodes.",
+      "description": "Receive data from network socket for distributed communication."
+    },
+    {
+      "file": "mindspore/ccsrc/cluster/rpc/core/collective_ops_impl.cc",
+      "line": 623,
+      "function": "AllReduce",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "Collective operation receives data buffers from other nodes. Uses recvbuff which may contain malicious data in GPU clusters without authentication.",
+      "description": "AllReduce collective operation - receives and processes data from all nodes."
+    },
+    {
+      "file": "mindspore/ccsrc/minddata/dataset/data_source/tf_reader_op.cc",
+      "line": 1,
+      "function": "TFReaderOp",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "Users load TFRecord files containing training data. Files may come from untrusted sources.",
+      "description": "Parse TFRecord format dataset files."
+    },
+    {
+      "file": "mindspore/ccsrc/minddata/dataset/data_source/csv_op.cc",
+      "line": 1,
+      "function": "CsvOp",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "Users load CSV files containing dataset. CSV files are user-provided and may contain malicious content.",
+      "description": "Parse CSV format dataset files."
+    },
+    {
+      "file": "mindspore/ccsrc/minddata/dataset/data_source/mindrecord_op.cc",
+      "line": 1,
+      "function": "MindRecordOp",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "Users load MindRecord format files. MindRecord is a custom binary format that may come from untrusted sources.",
+      "description": "Parse MindRecord format dataset files."
+    },
+    {
+      "file": "mindspore/ccsrc/minddata/dataset/data_source/coco_op.cc",
+      "line": 1,
+      "function": "CocoOp",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "COCO dataset loader parses JSON annotation files and images. User-provided annotation files may contain malicious JSON.",
+      "description": "Parse COCO dataset format (JSON + images)."
+    },
+    {
+      "file": "mindspore/ccsrc/pybind_api/init.cc",
+      "line": 1,
+      "function": "InitMindSpore",
+      "type": "decorator",
+      "trust_level": "untrusted_local",
+      "justification": "Python binding entry point. User Python code calls C++ functions through this layer. Per SECURITY.md: 'user-defined computational graph structure... malicious code may exist.'",
+      "description": "Python-C++ binding initialization. Exposes C++ APIs to Python users."
+    },
+    {
+      "file": "mindspore/python/mindspore/__init__.py",
+      "line": 1,
+      "function": "import",
+      "type": "stdin",
+      "trust_level": "untrusted_local",
+      "justification": "User imports MindSpore and writes Python code to define neural networks. Malicious Python code may be executed.",
+      "description": "Python package entry point. Users write Python code that calls MindSpore APIs."
+    }
+  ],
+  "attack_surfaces": [
+    "MindIR Model File Loading: load_model.cc uses protobuf ParseFromArray/ParseFromIstream to deserialize external .mindir files. Malicious model files could trigger deserialization vulnerabilities or cause memory corruption in memcpy_s operations.",
+    "Checkpoint Loading: checkpoint.proto defines serialization format for model weights. Checkpoint files may contain malicious data.",
+    "Distributed Training RPC: cluster/rpc module implements TCP communication. GPU clusters lack authentication. Nodes send/receive gradients and parameters. Malicious nodes could inject malicious data.",
+    "TFRecord Parsing: tf_reader_op.cc parses TensorFlow example format. External TFRecord files may contain malicious serialized examples.",
+    "CSV Parsing: csv_op.cc parses CSV files. CSV parsing may be vulnerable to CSV injection or malformed data.",
+    "MindRecord Parsing: mindrecord_op.cc and mindspore/ccsrc/minddata/mindrecord/ parse custom binary format. Malformed MindRecord files could trigger parsing vulnerabilities.",
+    "COCO JSON Parsing: coco_op.cc parses JSON annotation files. JSON parsing may be vulnerable to malformed JSON attacks.",
+    "Image File Loading: Various image dataset ops (image_folder_op.cc, etc.) load and decode image files. Image decoding libraries may have vulnerabilities.",
+    "Python Code Execution: User Python code defines computational graphs. Per SECURITY.md, malicious code may exist in user-defined network structures.",
+    "Memory Operations: Multiple memcpy_s and huge_memcpy calls in load_model.cc and collective_ops_impl.cc. Buffer overflow potential if size calculations are incorrect.",
+    "Protobuf Deserialization: All protobuf-based formats (mind_ir.proto, checkpoint.proto, comm.proto, etc.) rely on protobuf library. Malformed protobuf messages could trigger parsing vulnerabilities."
+  ]
+}

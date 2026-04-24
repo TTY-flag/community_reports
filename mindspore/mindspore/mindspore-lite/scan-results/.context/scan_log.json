@@ -1,0 +1,92 @@
+{
+  "scan_id": "c5567204-2811-40b7-9eb8-2d3cea6dec9a",
+  "start_time": "2026-04-23T18:58:00Z",
+  "end_time": "2026-04-23T20:30:00Z",
+  "duration_seconds": 4920,
+  "project_name": "mindspore-lite",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/shenteng/mindspore/mindspore/mindspore-lite",
+  "status": "success",
+  "agents": [
+    {
+      "name": "architecture",
+      "start_time": "2026-04-23T19:00:00Z",
+      "end_time": "2026-04-23T19:13:00Z",
+      "duration_seconds": 780,
+      "status": "success",
+      "output_files": [
+        "scan-results/.context/project_model.json",
+        "scan-results/.context/call_graph.json",
+        "scan-results/threat_analysis_report.md"
+      ]
+    },
+    {
+      "name": "dataflow-scanner",
+      "start_time": "2026-04-23T19:17:00Z",
+      "end_time": "2026-04-23T19:58:00Z",
+      "duration_seconds": 2460,
+      "status": "partial_success",
+      "modules_completed": ["model_parser", "runtime_engine", "hardware_providers", "micro_coder"],
+      "modules_timeout": ["converter_core", "quantizer", "python_bindings", "benchmark_tool", "obfuscator"],
+      "vulnerabilities_found": 50
+    },
+    {
+      "name": "security-auditor",
+      "start_time": "2026-04-23T19:17:00Z",
+      "end_time": "2026-04-23T19:52:00Z",
+      "duration_seconds": 2100,
+      "status": "partial_success",
+      "modules_completed": ["model_parser", "runtime_engine"],
+      "modules_timeout": ["hardware_providers", "micro_coder", "converter_core", "quantizer", "python_bindings", "benchmark_tool", "obfuscator"]
+    },
+    {
+      "name": "verification",
+      "start_time": "2026-04-23T20:00:00Z",
+      "end_time": "2026-04-23T20:10:00Z",
+      "duration_seconds": 600,
+      "status": "success",
+      "vulnerabilities_verified": 55,
+      "severity_distribution": {
+        "CONFIRMED": 4,
+        "LIKELY": 30,
+        "POSSIBLE": 21
+      }
+    },
+    {
+      "name": "details-analyzer",
+      "start_time": "2026-04-23T20:17:00Z",
+      "end_time": "2026-04-23T20:25:00Z",
+      "duration_seconds": 480,
+      "status": "success",
+      "vulnerabilities_analyzed": 4,
+      "output_files": [
+        "scan-results/details/micro_coder_pt_001.md",
+        "scan-results/details/micro_coder_pt_002.md",
+        "scan-results/details/micro_coder_pt_003.md",
+        "scan-results/details/micro_coder_pt_004.md"
+      ]
+    },
+    {
+      "name": "reporter",
+      "start_time": "2026-04-23T20:27:00Z",
+      "end_time": "2026-04-23T20:29:00Z",
+      "duration_seconds": 120,
+      "status": "success",
+      "output_files": [
+        "scan-results/report_confirmed.md",
+        "scan-results/report_unconfirmed.md"
+      ]
+    }
+  ],
+  "summary": {
+    "total_vulnerabilities": 55,
+    "confirmed": 4,
+    "likely": 30,
+    "possible": 21,
+    "critical": 5,
+    "high": 15,
+    "medium": 20,
+    "low": 15,
+    "modules_scanned": 6,
+    "high_risk_files": 51
+  }
+}

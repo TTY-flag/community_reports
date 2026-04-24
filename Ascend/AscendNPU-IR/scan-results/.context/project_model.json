@@ -1,0 +1,461 @@
+{
+  "project_name": "AscendNPU-IR",
+  "scan_time": "2026-04-23T23:10:00Z",
+  "lsp_available": true,
+  "total_files": 647,
+  "total_lines": 182553,
+  "project_profile": {
+    "project_type": "library",
+    "deployment_model": "作为编译器基础设施库被集成到更大的 CANN 软件栈中，用于在 Ascend NPU 上编译和优化 AI 算子。典型部署场景为 Linux 服务器上的编译工具链，被开发者或上层框架调用。",
+    "trust_boundaries": [
+      {
+        "boundary": "CLI Tool Interface",
+        "trusted_side": "编译工具内部逻辑",
+        "untrusted_side": "命令行参数、输入文件",
+        "risk": "High"
+      },
+      {
+        "boundary": "Python Binding Interface",
+        "trusted_side": "Python 绑定实现",
+        "untrusted_side": "Python 调用者传入的 MLIR 字符串、编译选项",
+        "risk": "High"
+      },
+      {
+        "boundary": "CAPI Interface",
+        "trusted_side": "C API 实现",
+        "untrusted_side": "外部 C/C++ 调用者",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "MLIR Parser",
+        "trusted_side": "解析器内部",
+        "untrusted_side": "MLIR 源文件内容",
+        "risk": "High"
+      },
+      {
+        "boundary": "External Binary Execution",
+        "trusted_side": "bishengir-compile 工具",
+        "untrusted_side": "hivmc 等外部二进制",
+        "risk": "High"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "Dialect",
+      "path": "bishengir/lib/Dialect",
+      "language": "c_cpp",
+      "file_count": 250,
+      "risk_level": "Medium",
+      "description": "MLIR Dialect 定义：HFusion、HIVM、HACC、Symbol、Tensor、Torch 等，定义算子语义和 IR 结构",
+      "components": [
+        "bishengir/lib/Dialect/HFusion",
+        "bishengir/lib/Dialect/HIVM",
+        "bishengir/lib/Dialect/HACC",
+        "bishengir/lib/Dialect/Symbol",
+        "bishengir/lib/Dialect/Tensor",
+        "bishengir/lib/Dialect/Torch",
+        "bishengir/lib/Dialect/Annotation",
+        "bishengir/lib/Dialect/SCF",
+        "bishengir/lib/Dialect/Scope",
+        "bishengir/lib/Dialect/MemRef",
+        "bishengir/lib/Dialect/MemRefExt",
+        "bishengir/lib/Dialect/Linalg",
+        "bishengir/lib/Dialect/Math",
+        "bishengir/lib/Dialect/Analysis",
+        "bishengir/lib/Dialect/Bufferization",
+        "bishengir/lib/Dialect/Annotation",
+        "bishengir/lib/Dialect/Utils"
+      ]
+    },
+    {
+      "name": "Conversion",
+      "path": "bishengir/lib/Conversion",
+      "language": "c_cpp",
+      "file_count": 45,
+      "risk_level": "Medium",
+      "description": "Dialect 之间的转换 Pass：TorchToHFusion、HFusionToHIVM、HIVMToStandard 等",
+      "components": [
+        "bishengir/lib/Conversion/TorchToHFusion",
+        "bishengir/lib/Conversion/HFusionToHIVM",
+        "bishengir/lib/Conversion/HIVMToStandard",
+        "bishengir/lib/Conversion/TensorToHFusion",
+        "bishengir/lib/Conversion/TensorToHIVM",
+        "bishengir/lib/Conversion/LinalgToHFusion",
+        "bishengir/lib/Conversion/GPUToHFusion",
+        "bishengir/lib/Conversion/MathToHFusion",
+        "bishengir/lib/Conversion/ArithToHFusion",
+        "bishengir/lib/Conversion/ArithToAffine",
+        "bishengir/lib/Conversion/TorchToSymbol",
+        "bishengir/lib/Conversion/LowerMemRefExt"
+      ]
+    },
+    {
+      "name": "CAPI",
+      "path": "bishengir/lib/CAPI",
+      "language": "c_cpp",
+      "file_count": 8,
+      "risk_level": "High",
+      "description": "C API 接口，供外部 C/C++ 程序调用编译器功能",
+      "components": [
+        "bishengir/lib/CAPI/Dialect/HACC.cpp",
+        "bishengir/lib/CAPI/Dialect/HFusion.cpp",
+        "bishengir/lib/CAPI/Dialect/HIVM.cpp",
+        "bishengir/lib/CAPI/Dialect/Annotation.cpp",
+        "bishengir/lib/CAPI/RegisterEverything/RegisterEverything.cpp"
+      ]
+    },
+    {
+      "name": "Bindings",
+      "path": "bishengir/lib/Bindings",
+      "language": "c_cpp",
+      "file_count": 4,
+      "risk_level": "High",
+      "description": "Python 绑定实现，供 Python 程序调用编译器功能",
+      "components": [
+        "bishengir/lib/Bindings/Python/RegisterEverything.cpp",
+        "bishengir/lib/Bindings/Python/HFusionPasses.cpp",
+        "bishengir/lib/Bindings/Python/HIVMPasses.cpp",
+        "bishengir/lib/Bindings/Python/AnnotationPasses.cpp"
+      ]
+    },
+    {
+      "name": "PythonBindings",
+      "path": "bishengir/python/bishengir",
+      "language": "python",
+      "file_count": 10,
+      "risk_level": "High",
+      "description": "Python 绑定模块：提供 dialects 模块和 helper 函数",
+      "components": [
+        "bishengir/python/bishengir/dialects/hfusion.py",
+        "bishengir/python/bishengir/dialects/hivm.py",
+        "bishengir/python/bishengir/dialects/hacc.py",
+        "bishengir/python/bishengir/dialects/annotation.py",
+        "bishengir/python/bishengir/helper.py"
+      ]
+    },
+    {
+      "name": "PythonWheel",
+      "path": "bishengir/python/wheel/ascendnpuir",
+      "language": "python",
+      "file_count": 2,
+      "risk_level": "Critical",
+      "description": "Python wheel 包：提供 compile() 函数，通过 subprocess 调用外部编译器二进制",
+      "components": [
+        "bishengir/python/wheel/ascendnpuir/compiler.py",
+        "bishengir/python/wheel/ascendnpuir/__init__.py"
+      ]
+    },
+    {
+      "name": "Tools",
+      "path": "bishengir/tools",
+      "language": "c_cpp",
+      "file_count": 11,
+      "risk_level": "Critical",
+      "description": "CLI 工具：bishengir-compile（编译驱动）、bishengir-opt（优化驱动）、bishengir-lsp-server 等",
+      "components": [
+        "bishengir/tools/bishengir-compile/bishengir-compile.cpp",
+        "bishengir/tools/bishengir-opt/bishengir-opt.cpp",
+        "bishengir/tools/bishengir-lsp-server/bishengir-lsp-server.cpp",
+        "bishengir/tools/bishengir-hfusion-ods-gen/bishengir-hfusion-ods-yaml-gen.cpp",
+        "bishengir/tools/bishengir-options-tblgen/bishengir-options-tblgen.cpp",
+        "bishengir/tools/bishengir-target-spec-tblgen/bishengir-target-spec-tblgen.cpp"
+      ]
+    },
+    {
+      "name": "ToolsLib",
+      "path": "bishengir/lib/Tools",
+      "language": "c_cpp",
+      "file_count": 10,
+      "risk_level": "Critical",
+      "description": "工具库实现：BiShengIRCompileMain、Utils（包含 execute() 外部命令执行函数）",
+      "components": [
+        "bishengir/lib/Tools/bishengir-compile/BiShengIRCompileMain.cpp",
+        "bishengir/lib/Tools/bishengir-compile/BiShengIRCompileConfig.cpp",
+        "bishengir/lib/Tools/Utils/Utils.cpp"
+      ]
+    },
+    {
+      "name": "ExecutionEngine",
+      "path": "bishengir/lib/ExecutionEngine",
+      "language": "c_cpp",
+      "file_count": 6,
+      "risk_level": "High",
+      "description": "执行引擎：将 HIVM IR 转换为可执行代码，包含 JIT 执行和 Host Main 生成",
+      "components": [
+        "bishengir/lib/ExecutionEngine/ConvertHIVMToUpstream.cpp",
+        "bishengir/lib/ExecutionEngine/ExecutionEnginePipelines.cpp",
+        "bishengir/lib/ExecutionEngine/CreateHostMain.cpp",
+        "bishengir/lib/ExecutionEngine/BiShengIRRunnerUtils.cpp"
+      ]
+    },
+    {
+      "name": "Template",
+      "path": "bishengir/lib/Template",
+      "language": "c_cpp",
+      "file_count": 30,
+      "risk_level": "Medium",
+      "description": "模板库：预定义的算子模板代码，用于生成高效的 NPU 代码",
+      "components": [
+        "bishengir/lib/Template/lib/Vector",
+        "bishengir/lib/Template/lib/DMA",
+        "bishengir/lib/Template/lib/Synchronization"
+      ]
+    },
+    {
+      "name": "Pass",
+      "path": "bishengir/lib/Pass",
+      "language": "c_cpp",
+      "file_count": 2,
+      "risk_level": "Low",
+      "description": "Pass 管理器：管理编译 Pass 的执行顺序和选项",
+      "components": [
+        "bishengir/lib/Pass/PassManager.cpp",
+        "bishengir/lib/Pass/PassManagerOptions.cpp"
+      ]
+    },
+    {
+      "name": "Transforms",
+      "path": "bishengir/lib/Transforms",
+      "language": "c_cpp",
+      "file_count": 3,
+      "risk_level": "Low",
+      "description": "通用变换 Pass：LowerToCPUBackend、CanonicalizeModule 等",
+      "components": [
+        "bishengir/lib/Transforms/LowerToCPUBackend.cpp",
+        "bishengir/lib/Transforms/Transforms.cpp",
+        "bishengir/lib/Transforms/CanonicalizeModule.cpp"
+      ]
+    }
+  ],
+  "files": [
+    {
+      "path": "bishengir/tools/bishengir-compile/bishengir-compile.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "Tools",
+      "lines": 164,
+      "priority": 1,
+      "description": "CLI 编译工具主入口：解析命令行参数、读取 MLIR 文件、执行编译管线"
+    },
+    {
+      "path": "bishengir/lib/Tools/Utils/Utils.cpp",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "ToolsLib",
+      "lines": 334,
+      "priority": 1,
+      "description": "工具库核心函数：execute() 执行外部二进制、getenv() 读取环境变量、文件路径处理"
+    },
+    {
+      "path": "bishengir/python/wheel/ascendnpuir/compiler.py",
+      "language": "python",
+      "risk": "Critical",
+      "module": "PythonWheel",
+      "lines": 214,
+      "priority": 1,
+      "description": "Python compile() 函数：通过 subprocess.run() 调用 bishengir-compile，接收用户 MLIR 字符串"
+    },
+    {
+      "path": "bishengir/lib/Tools/bishengir-compile/BiShengIRCompileMain.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "ToolsLib",
+      "lines": 300,
+      "priority": 2,
+      "description": "编译管线主逻辑：构建和执行 Pass Pipeline"
+    },
+    {
+      "path": "bishengir/lib/ExecutionEngine/ConvertHIVMToUpstream.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "ExecutionEngine",
+      "lines": 1133,
+      "priority": 2,
+      "description": "HIVM 到上游 Dialect 转换：包含大量 IR 重写和类型转换逻辑"
+    },
+    {
+      "path": "bishengir/lib/CAPI/RegisterEverything/RegisterEverything.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "CAPI",
+      "lines": 36,
+      "priority": 3,
+      "description": "C API 入口：注册所有 Dialect 和 Pass"
+    },
+    {
+      "path": "bishengir/lib/Bindings/Python/RegisterEverything.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "Bindings",
+      "lines": 100,
+      "priority": 2,
+      "description": "Python 绑定注册：暴露 C++ API 给 Python"
+    },
+    {
+      "path": "bishengir/python/bishengir/dialects/hfusion.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "PythonBindings",
+      "lines": 112,
+      "priority": 3,
+      "description": "HFusion Dialect Python 绑定：提供算子创建函数"
+    },
+    {
+      "path": "bishengir/tools/bishengir-opt/bishengir-opt.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "Tools",
+      "lines": 128,
+      "priority": 2,
+      "description": "CLI 优化工具主入口：执行 MLIR 优化 Pass"
+    },
+    {
+      "path": "bishengir/tools/bishengir-hfusion-ods-gen/bishengir-hfusion-ods-yaml-gen.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "Tools",
+      "lines": 500,
+      "priority": 3,
+      "description": "ODS YAML 生成器：解析 YAML 配置生成 C++ 代码"
+    },
+    {
+      "path": "bishengir/lib/Dialect/HIVM/Transforms/PlanMemory.cpp",
+      "language": "c_cpp",
+      "risk": "Medium",
+      "module": "Dialect",
+      "lines": 400,
+      "priority": 3,
+      "description": "内存规划 Pass：分配和管理 NPU 内存"
+    },
+    {
+      "path": "bishengir/lib/Template/lib/Synchronization/SyncBlockLock/SyncBlockLock.cpp",
+      "language": "c_cpp",
+      "risk": "Low",
+      "module": "Template",
+      "lines": 150,
+      "priority": 4,
+      "description": "同步块锁定模板：生成同步代码"
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "bishengir/tools/bishengir-compile/bishengir-compile.cpp",
+      "line": 96,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "CLI 工具入口，用户通过命令行参数传入输入文件路径和编译选项",
+      "description": "主函数：解析 argv 参数，读取 MLIR 文件，执行编译管线"
+    },
+    {
+      "file": "bishengir/tools/bishengir-opt/bishengir-opt.cpp",
+      "line": 95,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "CLI 工具入口，用户通过命令行参数传入 MLIR 文件和优化选项",
+      "description": "主函数：解析 argv 参数，执行 MLIR 优化 Pass"
+    },
+    {
+      "file": "bishengir/python/wheel/ascendnpuir/compiler.py",
+      "line": 107,
+      "function": "compile",
+      "type": "decorator",
+      "trust_level": "untrusted_local",
+      "justification": "Python API 入口，用户传入 MLIR 字符串和编译选项",
+      "description": "Python compile() 函数：接收 MLIR 字符串，通过 subprocess 调用 bishengir-compile"
+    },
+    {
+      "file": "bishengir/lib/CAPI/RegisterEverything/RegisterEverything.cpp",
+      "line": 25,
+      "function": "bishengirRegisterAllDialects",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "C API 入口，外部 C/C++ 程序调用注册 Dialect",
+      "description": "C API 函数：注册所有 Dialect 到 MLIR Context"
+    },
+    {
+      "file": "bishengir/lib/Tools/Utils/Utils.cpp",
+      "line": 175,
+      "function": "execute",
+      "type": "rpc",
+      "trust_level": "semi_trusted",
+      "justification": "执行外部二进制，参数来自内部配置或用户输入",
+      "description": "执行外部二进制：通过 llvm::sys::ExecuteAndWait 执行 hivmc 等外部工具"
+    },
+    {
+      "file": "bishengir/tools/bishengir-compile/bishengir-compile.cpp",
+      "line": 149,
+      "function": "parseSourceFile",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "解析 MLIR 源文件，文件内容来自用户输入",
+      "description": "MLIR 解析器：解析 MLIR 文件内容为 ModuleOp"
+    },
+    {
+      "file": "bishengir/lib/Tools/Utils/Utils.cpp",
+      "line": 287,
+      "function": "getBiShengInstallPath",
+      "type": "env",
+      "trust_level": "semi_trusted",
+      "justification": "读取环境变量 BISHENG_INSTALL_PATH",
+      "description": "环境变量读取：获取安装路径，影响外部二进制查找"
+    },
+    {
+      "file": "bishengir/tools/bishengir-hfusion-ods-gen/bishengir-hfusion-ods-yaml-gen.cpp",
+      "line": 347,
+      "function": "parseAttribute",
+      "type": "file",
+      "trust_level": "untrusted_local",
+      "justification": "解析 YAML 配置文件中的属性",
+      "description": "YAML 解析器：解析 YAML 配置生成 C++ 代码"
+    }
+  ],
+  "attack_surfaces": [
+    "CLI Tool Interface: bishengir-compile 和 bishengir-opt 命令行参数和输入文件",
+    "Python Binding Interface: ascendnpuir.compile() 函数接收的 MLIR 字符串",
+    "CAPI Interface: bishengirRegisterAllDialects 等 C API 函数",
+    "MLIR Parser: parseSourceFile() 解析用户提供的 MLIR 文件内容",
+    "External Binary Execution: execute() 函数调用 hivmc 等外部工具",
+    "Environment Variable: getenv(BISHENG_INSTALL_PATH) 影响二进制路径查找",
+    "YAML Configuration: bishengir-hfusion-ods-gen 解析 YAML 配置文件"
+  ],
+  "high_risk_functions": [
+    {
+      "name": "execute",
+      "file": "bishengir/lib/Tools/Utils/Utils.cpp",
+      "line": 175,
+      "risk": "Critical",
+      "description": "执行外部二进制：使用 llvm::sys::ExecuteAndWait，参数可能来自用户输入"
+    },
+    {
+      "name": "compile",
+      "file": "bishengir/python/wheel/ascendnpuir/compiler.py",
+      "line": 107,
+      "risk": "Critical",
+      "description": "Python API：通过 subprocess.run() 执行外部编译器，接收用户 MLIR 字符串"
+    },
+    {
+      "name": "parseSourceFile",
+      "file": "bishengir/tools/bishengir-compile/bishengir-compile.cpp",
+      "line": 149,
+      "risk": "High",
+      "description": "MLIR 解析器：解析用户提供的文件内容，可能包含恶意构造的 IR"
+    },
+    {
+      "name": "getBiShengInstallPath",
+      "file": "bishengir/lib/Tools/Utils/Utils.cpp",
+      "line": 287,
+      "risk": "Medium",
+      "description": "环境变量读取：getenv(BISHENG_INSTALL_PATH)，可能被攻击者操纵"
+    },
+    {
+      "name": "malloc",
+      "file": "bishengir/lib/ExecutionEngine/ConvertHIVMToUpstream.cpp",
+      "line": 112,
+      "risk": "Medium",
+      "description": "内存分配：memref::AllocOp 创建内存缓冲区"
+    }
+  ]
+}

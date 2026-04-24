@@ -1,51 +1,57 @@
-# VULN-SEC-DLOCK-001：分布式锁凭证伪造授权绕过
+# VULN-SEC-DLOCK-001: DLock RPC 信任请求体 pid/uid/gid 可伪造锁身份
 
-## 概要
+## Summary
 
-| 属性 | 值 |
+| Attribute | Value |
 |-----------|-------|
-| **漏洞编号** | VULN-SEC-DLOCK-001 |
-| **类型** | 授权绕过（凭证伪造） |
-| **CWE** | CWE-639: 通过用户控制键绕过授权 |
-| **严重级别** | 严重 (Critical) |
-| **CVSS评分** | 9.1 (网络型，低复杂度，高影响) |
-| **受影响文件** | `src/mxm_shm/rpc_handler.cpp:88-93` |
-| **受影响函数** | `HandleMemLock`, `HandleMemUnLock` |
-| **信任级别** | 半信任（TLS认证的RPC客户端） |
-| **攻击面** | TCP RPC（远程节点通信） |
+| **Vulnerability ID** | VULN-SEC-DLOCK-001 |
+| **Type** | Authorization Bypass (Credential Forgery) |
+| **CWE** | CWE-639: Authorization Bypass Through User-Controlled Key |
+| **Severity** | Critical |
+| **CVSS Score** | 9.1 (Network-based, Low complexity, High impact) |
+| **Affected File** | `src/mxm_shm/rpc_handler.cpp:88-93` |
+| **Affected Function** | `HandleMemLock`, `HandleMemUnLock` |
+| **Trust Level** | Semi-trusted (TLS-authenticated RPC client) |
+| **Attack Surface** | TCP RPC (Remote Node Communication) |
 
 ---
 
-## 漏洞描述
+## Codex 二次确认补充
 
-`HandleMemLock` 和 `HandleMemUnLock` 中的 RPC 分布式锁操作直接从请求负载中接受自声明的进程身份凭证（`pid`、`uid`、`gid`），而未对实际源进程进行任何验证。这允许远程集群节点上的攻击者伪造这些值以冒充其他节点上的进程，实现未经授权的锁获取或释放操作。
+- 结论：属实，DLock RPC 路径信任请求体中的 `pid_/uid_/gid_`，无法证明真实远端进程身份。
+- 场景：攻击者通常需要处在 RPC 信任域内，例如恶意/失陷集群节点；TLS 只能证明节点/通道，不能证明远端进程 uid/gid/pid。
+- 去重：覆盖 `VULN-SEC-DLOCK-002`、`VULN-SEC-LOCK-001`、`VULN-SEC-AUTH-003` 同根因重复报告。
+- 本段为二次确认补充，原报告其他内容保留不变。
+## Vulnerability Description
 
-### 源码证据
+The RPC distributed lock operations in `HandleMemLock` and `HandleMemUnLock` accept self-declared process identity credentials (`pid`, `uid`, `gid`) directly from the request payload without any verification against the actual source process. This allows an attacker on a remote cluster node to spoof these values to impersonate processes on other nodes, enabling unauthorized lock acquisition or release operations.
 
-**漏洞代码 - RPC处理器 (`rpc_handler.cpp:88-93`)：**
+### Evidence from Source Code
+
+**Vulnerable Code - RPC Handler (`rpc_handler.cpp:88-93`):**
 ```cpp
 int MxmServerMsgHandle::HandleMemLock(const MsgBase* req, MsgBase* rsp)
 {
     auto request = dynamic_cast<const LockRequest*>(req);
     ...
     dlock_utils::LockUdsInfo udsInfo;
-    udsInfo.pid = request->pid_;    // 直接信任请求中的值！
-    udsInfo.uid = request->uid_;    // 直接信任请求中的值！
-    udsInfo.gid = request->gid_;    // 直接信任请求中的值！
+    udsInfo.pid = request->pid_;    // DIRECTLY TRUSTED FROM REQUEST!
+    udsInfo.uid = request->uid_;    // DIRECTLY TRUSTED FROM REQUEST!
+    udsInfo.gid = request->gid_;    // DIRECTLY TRUSTED FROM REQUEST!
     udsInfo.validTime = 0;
     response->dLockCode_ = dlock_utils::UbsmLock::Instance().Lock(request->memName_, request->isExclusive_, udsInfo);
     ...
 }
 ```
 
-**`HandleMemUnLock` 中类似漏洞 (`rpc_handler.cpp:110-115`)：**
+**Similar vulnerability in `HandleMemUnLock` (`rpc_handler.cpp:110-115`):**
 ```cpp
 int MxmServerMsgHandle::HandleMemUnLock(const MsgBase* req, MsgBase* rsp)
 {
     auto request = dynamic_cast<const UnLockRequest*>(req);
     ...
     dlock_utils::LockUdsInfo udsInfo;
-    udsInfo.pid = request->pid_;    // 直接信任请求中的值！
+    udsInfo.pid = request->pid_;    // DIRECTLY TRUSTED FROM REQUEST!
     udsInfo.uid = request->uid_;
     udsInfo.gid = request->gid_;
     udsInfo.validTime = 0;
@@ -54,29 +60,29 @@ int MxmServerMsgHandle::HandleMemUnLock(const MsgBase* req, MsgBase* rsp)
 }
 ```
 
-**数据流分析：**
-1. 远程节点发送带有任意 `pid`、`uid`、`gid` 值的 RPC 锁请求
-2. `HandleMemLock` 从 `LockRequest` 消息中提取这些值（第88-91行）
-3. 值被传递给 `UbsmLock::Instance().Lock()` 而未进行验证
-4. 在 `ubsm_lock.cpp` 中，这些值被存储在 `ClientDesc::name2UdsInfo` map（第479行）
-5. 锁所有权被归因于伪造的身份
+**Data Flow Analysis:**
+1. Remote node sends RPC lock request with arbitrary `pid`, `uid`, `gid` values
+2. `HandleMemLock` extracts these values from `LockRequest` message (lines 88-91)
+3. Values are passed to `UbsmLock::Instance().Lock()` without verification
+4. In `ubsm_lock.cpp`, these values are stored in `ClientDesc::name2UdsInfo` map (line 479)
+5. Lock ownership is attributed to the spoofed identity
 
 ---
 
-## 对比：IPC vs RPC 凭证处理
+## Comparison: IPC vs RPC Credential Handling
 
-### IPC接口（安全实现）
+### IPC Interface (Secure Implementation)
 
-IPC接口正确使用 Unix Domain Socket 的 `SO_PEERCRED` 机制从内核获取凭证：
+The IPC interface correctly obtains credentials from the kernel using the Unix Domain Socket `SO_PEERCRED` mechanism:
 
-**`mxm_message_handler.h:38-44`：**
+**`mxm_message_handler.h:38-44`:**
 ```cpp
 HRESULT Handle(const MsgBase* req, MsgBase* rsp, MxmComBaseMessageHandlerCtxPtr handlerCtx) override
 {
     if (isIpc) {
         MxmComUdsInfo udsInfo;
         if (handlerCtx != nullptr) {
-            auto info = handlerCtx->GetUdsIdInfo();  // 内核提供的凭证！
+            auto info = handlerCtx->GetUdsIdInfo();  // KERNEL-PROVIDED CREDENTIALS!
             udsInfo.pid = info.pid;
             udsInfo.uid = info.uid;
             udsInfo.gid = info.gid;
@@ -86,165 +92,165 @@ HRESULT Handle(const MsgBase* req, MsgBase* rsp, MxmComBaseMessageHandlerCtxPtr 
 }
 ```
 
-IPC处理器从 `handlerCtx->GetUdsIdInfo()` 获取 `udsInfo`，该函数通过 `SO_PEERCRED` socket 选项返回内核提供的凭证。这是一种安全的机制，无法被客户端伪造。
+The IPC handler obtains `udsInfo` from `handlerCtx->GetUdsIdInfo()`, which returns kernel-provided credentials via `SO_PEERCRED` socket option. This is a secure mechanism that cannot be spoofed by the client.
 
-### RPC接口（漏洞实现）
+### RPC Interface (Vulnerable Implementation)
 
-RPC接口绕过此保护，直接从序列化消息负载中提取凭证：
+The RPC interface bypasses this protection by directly extracting credentials from the serialized message payload:
 
 ```cpp
-udsInfo.pid = request->pid_;  // 远程客户端自声明！
+udsInfo.pid = request->pid_;  // SELF-DECLARED BY REMOTE CLIENT!
 ```
 
-RPC客户端可以在 `LockRequest` 消息中为 `pid`、`uid`、`gid` 设置任意值，服务器接受这些值而未进行验证。
+The RPC client can set arbitrary values for `pid`, `uid`, `gid` in the `LockRequest` message, and the server accepts them without verification.
 
 ---
 
-## 攻击场景
+## Attack Scenarios
 
-### 场景1：未授权锁获取（锁劫持）
+### Scenario 1: Unauthorized Lock Acquisition (Lock Hijacking)
 
-**攻击步骤：**
-1. 攻击者获得集群中被攻陷节点的访问权限（通过TLS认证的RPC）
-2. 攻击者识别目标共享内存区域（如关键数据库区域）
-3. 攻击者发送带有伪造凭证的 RPC_LOCK 请求：
-   - `memName_`：目标共享内存名称
-   - `isExclusive_`：true（独占/写锁）
-   - `pid_`：合法持有者的PID
-   - `uid_`：合法持有者的UID
-   - `gid_`：合法持有者的GID
-4. 服务器接受伪造身份并授予独占锁
-5. 合法持有者被阻塞或锁被错误归属
+**Attack Steps:**
+1. Attacker gains access to a compromised node in the cluster (via TLS-authenticated RPC)
+2. Attacker identifies target shared memory region (e.g., critical database region)
+3. Attacker sends RPC_LOCK request with spoofed credentials:
+   - `memName_`: target shared memory name
+   - `isExclusive_`: true (exclusive/write lock)
+   - `pid_`: legitimate owner's PID
+   - `uid_`: legitimate owner's UID
+   - `gid_`: legitimate owner's GID
+4. Server accepts spoofed identity and grants exclusive lock
+5. Legitimate owner is blocked or lock is incorrectly attributed
 
-**影响：** 拒绝服务、数据损坏、竞态条件利用
+**Impact:** Denial of service, data corruption, race condition exploitation
 
-### 场景2：未授权锁释放（锁窃取）
+### Scenario 2: Unauthorized Lock Release (Lock Theft)
 
-**攻击步骤：**
-1. 攻击者识别其他进程持有的活跃锁
-2. 攻击者发送凭证与锁持有者匹配的 RPC_UNLOCK 请求
-3. 服务器根据存储的 `udsInfo` 验证身份（该信息也可被伪造）
-4. 锁被释放，允许攻击者或其他进程获取它
+**Attack Steps:**
+1. Attacker identifies active lock held by another process
+2. Attacker sends RPC_UNLOCK request with spoofed credentials matching the lock holder
+3. Server validates identity against stored `udsInfo` (which was also spoofable)
+4. Lock is released, allowing attacker or other processes to acquire it
 
-**影响：** 破坏互斥、数据损坏、权限提升
+**Impact:** Breaking mutual exclusion, data corruption, privilege escalation
 
-### 场景3：跨节点身份冒充
+### Scenario 3: Cross-Node Identity Impersonation
 
-**攻击步骤：**
-1. 节点A上的攻击者观察节点B上的锁活动（通过监控）
-2. 攻击者发送冒充节点B上高权限进程的RPC请求
-3. 攻击者获取用于特权操作的锁
-4. 攻击者获得对共享内存区域的未授权访问
+**Attack Steps:**
+1. Attacker on Node A observes lock activity on Node B (via monitoring)
+2. Attacker sends RPC request impersonating a high-privilege process on Node B
+3. Attacker acquires locks meant for privileged operations
+4. Attacker gains unauthorized access to shared memory regions
 
-**影响：** 权限提升、未授权数据访问
+**Impact:** Privilege escalation, unauthorized data access
 
 ---
 
-## 利用条件
+## Exploit Requirements
 
-| 条件 | 描述 |
+| Requirement | Description |
 |-------------|-------------|
-| **网络访问** | 访问集群网络，能够连接到RPC端口 |
-| **TLS凭证** | 用于集群认证的有效TLS证书（半信任） |
-| **目标知识** | 了解共享内存名称和目标进程身份 |
-| **复杂度** | 低 - 不需要特殊技术，只需构造恶意RPC消息 |
+| **Network Access** | Access to cluster network, ability to connect to RPC port |
+| **TLS Credentials** | Valid TLS certificate for cluster authentication (semi-trusted) |
+| **Target Knowledge** | Knowledge of shared memory names and target process identities |
+| **Complexity** | Low - No special techniques required, just craft malicious RPC message |
 
 ---
 
-## 受影响组件
+## Affected Components
 
-| 组件 | 文件 | 行号 | 影响 |
+| Component | File | Lines | Impact |
 |-----------|------|-------|--------|
-| `HandleMemLock` | `src/mxm_shm/rpc_handler.cpp` | 73-96 | 锁获取绕过 |
-| `HandleMemUnLock` | `src/mxm_shm/rpc_handler.cpp` | 98-118 | 锁释放绕过 |
-| `LockRequest` | `src/mxm_message/mxm_msg.h` | 1349-1387 | 携带可伪造凭证的消息 |
-| `UnLockRequest` | `src/mxm_message/mxm_msg.h` | 1389-1426 | 携带可伪造凭证的消息 |
-| `LockUdsInfo` | `src/dlock_utils/client_desc.h` | 29-46 | 未验证存储 |
-| `UbsmLock::Lock` | `src/dlock_utils/ubsm_lock.cpp` | 264-316 | 处理未验证凭证 |
-| `HandleUnlock` | `src/dlock_utils/ubsm_lock.cpp` | 592-634 | 与未验证存储值比对 |
+| `HandleMemLock` | `src/mxm_shm/rpc_handler.cpp` | 73-96 | Lock acquisition bypass |
+| `HandleMemUnLock` | `src/mxm_shm/rpc_handler.cpp` | 98-118 | Lock release bypass |
+| `LockRequest` | `src/mxm_message/mxm_msg.h` | 1349-1387 | Message carrying spoofable credentials |
+| `UnLockRequest` | `src/mxm_message/mxm_msg.h` | 1389-1426 | Message carrying spoofable credentials |
+| `LockUdsInfo` | `src/dlock_utils/client_desc.h` | 29-46 | Stored without verification |
+| `UbsmLock::Lock` | `src/dlock_utils/ubsm_lock.cpp` | 264-316 | Processes unverified credentials |
+| `HandleUnlock` | `src/dlock_utils/ubsm_lock.cpp` | 592-634 | Validates against unverified stored values |
 
 ---
 
-## 根因分析
+## Root Cause Analysis
 
-漏洞源于根本性的架构不一致：
+The vulnerability stems from a fundamental architectural inconsistency:
 
-1. **IPC路径（本地）：** 使用内核提供的 `SO_PEERCRED` 凭证 - **安全**
-2. **RPC路径（远程）：** 使用消息负载中的自声明凭证 - **漏洞**
+1. **IPC Path (Local):** Uses kernel-provided `SO_PEERCRED` credentials - **SECURE**
+2. **RPC Path (Remote):** Uses self-declared credentials from message payload - **VULNERABLE**
 
-RPC路径的设计假设TLS认证提供足够的信任，但这是不正确的：
-- TLS认证的是**节点**身份，而非该节点上的**进程**身份
-- 一个节点可能托管具有不同权限级别的多个进程
-- 被攻陷的节点或恶意进程可以冒充该节点上的任何进程
-
----
-
-## 影响评估
-
-### 业务影响
-- **数据完整性：** 共享内存区域可能因未授权访问而损坏
-- **服务可用性：** 关键进程可能被阻塞无法获取锁
-- **安全性：** 特权操作可能被非特权攻击者执行
-
-### 技术影响
-- **锁完整性：** 分布式锁机制变得不可靠
-- **授权：** 进程级授权完全被绕过
-- **信任链：** 攻击者可以冒充任何进程身份
+The RPC path was designed assuming that TLS authentication provides sufficient trust, but this is incorrect:
+- TLS authenticates the **node** identity, not the **process** identity on that node
+- A node may host multiple processes with different privilege levels
+- A compromised node or malicious process can impersonate any process on that node
 
 ---
 
-## 概念验证（概念性）
+## Impact Assessment
+
+### Business Impact
+- **Data Integrity:** Shared memory regions may be corrupted due to unauthorized access
+- **Service Availability:** Critical processes may be blocked from acquiring locks
+- **Security:** Privileged operations may be executed by unprivileged attackers
+
+### Technical Impact
+- **Lock Integrity:** Distributed lock mechanism becomes unreliable
+- **Authorization:** Process-level authorization completely bypassed
+- **Trust Chain:** Attackers can impersonate any process identity
+
+---
+
+## Proof of Concept (Conceptual)
 
 ```python
-# 概念性利用 - 构造恶意RPC锁请求
+# Conceptual exploit - Craft malicious RPC lock request
 import socket
 import struct
 
-# 假设已建立到RPC服务器的TLS连接
+# Assume TLS connection to RPC server is established
 def craft_lock_request(mem_name, target_pid, target_uid, target_gid, exclusive=True):
     """
-    构造带有伪造凭证的 LockRequest 消息
+    Craft LockRequest message with spoofed credentials
     """
     request = {
-        'memName': mem_name,           # 目标共享内存
-        'isExclusive': exclusive,       # 请求独占锁
-        'pid': target_pid,              # 伪造的PID
-        'uid': target_uid,              # 伪造的UID
-        'gid': target_gid               # 伪造的GID
+        'memName': mem_name,           # Target shared memory
+        'isExclusive': exclusive,       # Request exclusive lock
+        'pid': target_pid,              # Spoofed PID
+        'uid': target_uid,              # Spoofed UID
+        'gid': target_gid               # Spoofed GID
     }
-    # 序列化并通过RPC连接发送
+    # Serialize and send via RPC connection
     return serialize_and_send(request)
 
-# 示例：冒充root进程（PID=1, UID=0, GID=0）
+# Example: Impersonate root process (PID=1, UID=0, GID=0)
 craft_lock_request("critical_db_region", 1, 0, 0, True)
-# 服务器将授予归属为 PID=1, UID=0, GID=0 的独占锁
+# Server will grant exclusive lock attributed to PID=1, UID=0, GID=0
 ```
 
 ---
 
-## 修复建议
+## Remediation Recommendations
 
-### 主要修复：为RPC实现凭证验证
+### Primary Fix: Implement Credential Verification for RPC
 
-**方案A：节点级映射（推荐）**
+**Option A: Node-Level Mapping (Recommended)**
 
 ```cpp
 int MxmServerMsgHandle::HandleMemLock(const MsgBase* req, MsgBase* rsp)
 {
     auto request = dynamic_cast<const LockRequest*>(req);
     
-    // 验证：将RPC源节点映射到允许的凭证范围
-    auto sourceNode = GetRpcSourceNode();  // 从TLS证书获取
+    // VERIFY: Map RPC source node to allowed credential range
+    auto sourceNode = GetRpcSourceNode();  // From TLS certificate
     auto allowedCredentials = GetNodeCredentials(sourceNode);
     
-    // 验证：请求的凭证必须匹配源节点的允许范围
+    // VALIDATE: Requested credentials must match allowed range for source node
     if (!ValidateCredentials(request->pid_, request->uid_, request->gid_, allowedCredentials)) {
-        DBG_LOGERROR("检测到来自节点的凭证伪造: " << sourceNode);
+        DBG_LOGERROR("Credential spoofing detected from node: " << sourceNode);
         response->dLockCode_ = MXM_ERR_CREDENTIAL_INVALID;
         return MXM_ERR_CREDENTIAL_INVALID;
     }
     
-    // 使用已验证的凭证继续
+    // Proceed with verified credentials
     dlock_utils::LockUdsInfo udsInfo;
     udsInfo.pid = request->pid_;
     udsInfo.uid = request->uid_;
@@ -253,92 +259,92 @@ int MxmServerMsgHandle::HandleMemLock(const MsgBase* req, MsgBase* rsp)
 }
 ```
 
-**方案B：使用节点范围身份**
+**Option B: Use Node-Scoped Identity**
 
-使用节点范围身份而非进程身份进行RPC锁操作：
+Instead of per-process identity, use node-scoped identity for RPC locks:
 
 ```cpp
-// 用节点身份替换RPC的进程身份
+// Replace process identity with node identity for RPC
 dlock_utils::LockUdsInfo udsInfo;
-udsInfo.nodeId = GetRpcSourceNodeId();  // 从TLS证书获取
-udsInfo.processId = request->pid_;       // 仅用于本地跟踪，不用于授权
+udsInfo.nodeId = GetRpcSourceNodeId();  // From TLS certificate
+udsInfo.processId = request->pid_;       // Local tracking only, not for authorization
 ```
 
-### 次要修复：添加审计日志
+### Secondary Fix: Add Audit Logging
 
 ```cpp
-DBG_AUDITWARN("RPC锁请求 - 源节点=%s, 声称PID=%u, 声称UID=%u, 声称GID=%u, 内存名=%s",
+DBG_AUDITWARN("RPC Lock request - SourceNode=%s, ClaimedPID=%u, ClaimedUID=%u, ClaimedGID=%u, MemName=%s",
               sourceNode.c_str(), request->pid_, request->uid_, request->gid_, request->memName_.c_str());
 ```
 
-### 长期修复：统一凭证架构
+### Long-Term Fix: Unified Credential Architecture
 
-重新设计分布式锁系统以使用统一凭证模型：
-- IPC：继续使用 `SO_PEERCRED`
-- RPC：使用节点级身份并设置显式信任映射
-- 永不信任RPC路径中的自声明凭证
-
----
-
-## 测试建议
-
-### 安全测试用例
-
-1. **凭证伪造测试：**
-   - 发送带有不匹配pid/uid/gid的RPC_LOCK
-   - 验证服务器拒绝请求
-
-2. **跨节点冒充测试：**
-   - 节点A发送声称是节点B上进程的请求
-   - 验证服务器检测并拒绝
-
-3. **权限提升测试：**
-   - 非特权节点发送声称root凭证的请求
-   - 验证服务器拒绝
-
-### 回归测试用例
-
-1. 验证合法IPC锁操作仍然正常工作
-2. 验证合法RPC锁操作在验证凭证后正常工作
-3. 验证锁过期和清理仍然正确运行
+Redesign the distributed lock system to use a unified credential model:
+- IPC: Continue using `SO_PEERCRED`
+- RPC: Use node-level identity with explicit trust mappings
+- Never trust self-declared credentials in RPC path
 
 ---
 
-## 参考资料
+## Testing Recommendations
 
-- **CWE-639:** 通过用户控制键绕过授权
+### Security Test Cases
+
+1. **Credential Spoofing Test:**
+   - Send RPC_LOCK with mismatched pid/uid/gid
+   - Verify server rejects request
+
+2. **Cross-Node Impersonation Test:**
+   - Node A sends request claiming to be process on Node B
+   - Verify server detects and rejects
+
+3. **Privilege Escalation Test:**
+   - Unprivileged node sends request claiming root credentials
+   - Verify server rejects
+
+### Regression Test Cases
+
+1. Verify legitimate IPC lock operations still work
+2. Verify legitimate RPC lock operations work with verified credentials
+3. Verify lock expiration and cleanup still function correctly
+
+---
+
+## References
+
+- **CWE-639:** Authorization Bypass Through User-Controlled Key
   https://cwe.mitre.org/data/definitions/639.html
 
-- **SO_PEERCRED:** Linux socket选项用于获取对端凭证
+- **SO_PEERCRED:** Linux socket option for obtaining peer credentials
   https://man7.org/linux/man-pages/man7/unix.7.html
 
-- **CWE-287:** 不当认证
+- **CWE-287:** Improper Authentication
   https://cwe.mitre.org/data/definitions/287.html
 
 ---
 
-## 时间线
+## Timeline
 
-| 日期 | 事件 |
+| Date | Event |
 |------|-------|
-| 2026-04-22 | 安全扫描期间发现漏洞 |
-| 2026-04-22 | 完成详细分析 |
-| TBD | 修复实现 |
-| TBD | 安全测试验证 |
-| TBD | 部署 |
+| 2026-04-22 | Vulnerability discovered during security scan |
+| 2026-04-22 | Detailed analysis completed |
+| TBD | Fix implementation |
+| TBD | Security test verification |
+| TBD | Deployment |
 
 ---
 
-## 附录：相关代码位置
+## Appendix: Related Code Locations
 
-### IPC安全凭证获取
+### IPC Secure Credential Retrieval
 - `/home/pwn20tty/Desktop/opencode_project/openeuler/ubs-mem/src/communication/adapter/mxm_message_handler.h:38-44`
 - `/home/pwn20tty/Desktop/opencode_project/openeuler/ubs-mem/src/communication/adapter/mxm_com_base.cpp:253`
 
-### RPC漏洞凭证接受
+### RPC Vulnerable Credential Acceptance
 - `/home/pwn20tty/Desktop/opencode_project/openeuler/ubs-mem/src/mxm_shm/rpc_handler.cpp:88-93` (Lock)
 - `/home/pwn20tty/Desktop/opencode_project/openeuler/ubs-mem/src/mxm_shm/rpc_handler.cpp:110-115` (Unlock)
 
-### 凭证存储和验证
+### Credential Storage and Validation
 - `/home/pwn20tty/Desktop/opencode_project/openeuler/ubs-mem/src/dlock_utils/client_desc.h:29-46` (LockUdsInfo)
 - `/home/pwn20tty/Desktop/opencode_project/openeuler/ubs-mem/src/dlock_utils/client_desc.h:137-153` (IsLockUdsValid)

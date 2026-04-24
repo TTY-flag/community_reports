@@ -1,0 +1,407 @@
+{
+  "project_name": "vLLM-MindSpore",
+  "scan_time": "2026-04-23T18:58:00Z",
+  "lsp_available": false,
+  "total_files": 154,
+  "total_lines": 33106,
+  "project_profile": {
+    "project_type": "library",
+    "deployment_model": "作为 vLLM 的后端插件运行，部署在 Atlas NPU 服务器上，通过 OpenAI API 兼容接口提供服务。典型部署为：用户通过 CLI 或 API 启动服务，服务监听 HTTP 端口接收推理请求。",
+    "trust_boundaries": [
+      {
+        "boundary": "Network Interface (HTTP API)",
+        "trusted_side": "vLLM-MindSpore Plugin",
+        "untrusted_side": "Remote clients sending inference requests",
+        "risk": "High"
+      },
+      {
+        "boundary": "Model Loading Interface",
+        "trusted_side": "Plugin internals",
+        "untrusted_side": "Model weights files from external sources (HuggingFace, local paths)",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Environment Configuration",
+        "trusted_side": "Plugin internals",
+        "untrusted_side": "Environment variables set by deployment scripts",
+        "risk": "Low"
+      },
+      {
+        "boundary": "Dashboard/Testing Tools",
+        "trusted_side": "Dashboard scripts",
+        "untrusted_side": "Shell commands executed for benchmarking",
+        "risk": "Medium"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "entrypoints",
+      "path": "vllm_mindspore/entrypoints",
+      "language": "python",
+      "components": ["__main__.py", "openai/serving_chat.py", "openai/tool_parsers/deepseekv3_tool_parser.py"],
+      "risk": "High",
+      "description": "API入口点模块，处理HTTP请求和工具解析"
+    },
+    {
+      "name": "model_executor",
+      "path": "vllm_mindspore/model_executor",
+      "language": "python",
+      "components": ["model_loader/weight_utils.py", "model_loader/utils.py", "models/", "layers/"],
+      "risk": "High",
+      "description": "模型执行器，包含模型加载、权重处理、神经网络层实现"
+    },
+    {
+      "name": "v1",
+      "path": "vllm_mindspore/v1",
+      "language": "python",
+      "components": ["worker/gpu_worker.py", "worker/profile.py", "worker/gpu_model_runner.py", "engine/", "sample/"],
+      "risk": "Medium",
+      "description": "V1架构实现，包含worker、采样器、引擎核心"
+    },
+    {
+      "name": "executor",
+      "path": "vllm_mindspore/executor",
+      "language": "python",
+      "components": ["ray_utils.py", "multiproc_worker_utils.py"],
+      "risk": "Medium",
+      "description": "分布式执行器，Ray集群管理"
+    },
+    {
+      "name": "lora",
+      "path": "vllm_mindspore/lora",
+      "language": "python",
+      "components": ["layers.py", "models.py", "utils.py", "ops/", "punica_wrapper/"],
+      "risk": "Medium",
+      "description": "LoRA适配器模块"
+    },
+    {
+      "name": "multimodal",
+      "path": "vllm_mindspore/multimodal",
+      "language": "python",
+      "components": ["processing.py", "inputs.py", "base.py"],
+      "risk": "Medium",
+      "description": "多模态输入处理"
+    },
+    {
+      "name": "distributed",
+      "path": "vllm_mindspore/distributed",
+      "language": "python",
+      "components": ["shm_broadcast.py", "communication_op.py"],
+      "risk": "Low",
+      "description": "分布式通信模块"
+    },
+    {
+      "name": "platforms",
+      "path": "vllm_mindspore/platforms",
+      "language": "python",
+      "components": ["ascend.py"],
+      "risk": "Low",
+      "description": "Ascend NPU平台适配"
+    },
+    {
+      "name": "csrc",
+      "path": "csrc",
+      "language": "c_cpp",
+      "components": ["module/module.cpp", "module/dummy_module.c", "ascendc/adv_step_flash.c"],
+      "risk": "Low",
+      "description": "C/C++自定义算子模块（NPU扩展）"
+    },
+    {
+      "name": "dashboard",
+      "path": "dashboard",
+      "language": "python",
+      "components": ["acc.py", "benchmark_to_dashboard.py", "update_package.py"],
+      "risk": "High",
+      "description": "基准测试工具，包含shell命令执行"
+    },
+    {
+      "name": "examples",
+      "path": "examples",
+      "language": "python",
+      "components": ["offline_inference/"],
+      "risk": "Low",
+      "description": "示例代码"
+    },
+    {
+      "name": "codecheck_toolkits",
+      "path": "codecheck_toolkits",
+      "language": "python",
+      "components": ["enforce_regex_import.py", "check_triton_import.py", "pre_commit/"],
+      "risk": "Low",
+      "description": "代码检查工具"
+    }
+  ],
+  "files": [
+    {
+      "path": "vllm_mindspore/__init__.py",
+      "language": "python",
+      "risk": "High",
+      "module": "core",
+      "lines": 552,
+      "priority": 1,
+      "description": "主入口，大量monkey patch替换vLLM组件"
+    },
+    {
+      "path": "vllm_mindspore/scripts.py",
+      "language": "python",
+      "risk": "High",
+      "module": "core",
+      "lines": 97,
+      "priority": 2,
+      "description": "CLI入口main函数，环境变量设置"
+    },
+    {
+      "path": "vllm_mindspore/entrypoints/__main__.py",
+      "language": "python",
+      "risk": "High",
+      "module": "entrypoints",
+      "lines": 66,
+      "priority": 3,
+      "description": "动态执行模块代码，使用subprocess"
+    },
+    {
+      "path": "vllm_mindspore/entrypoints/openai/serving_chat.py",
+      "language": "python",
+      "risk": "High",
+      "module": "entrypoints",
+      "lines": 484,
+      "priority": 4,
+      "description": "OpenAI API chat流式响应处理"
+    },
+    {
+      "path": "vllm_mindspore/entrypoints/openai/tool_parsers/deepseekv3_tool_parser.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "entrypoints",
+      "lines": 387,
+      "priority": 5,
+      "description": "工具调用解析器，正则处理外部输入"
+    },
+    {
+      "path": "vllm_mindspore/model_executor/model_loader/weight_utils.py",
+      "language": "python",
+      "risk": "High",
+      "module": "model_executor",
+      "lines": 104,
+      "priority": 6,
+      "description": "模型权重加载，safetensors文件处理"
+    },
+    {
+      "path": "vllm_mindspore/model_executor/model_loader/utils.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "model_executor",
+      "lines": 225,
+      "priority": 7,
+      "description": "模型架构解析和初始化"
+    },
+    {
+      "path": "vllm_mindspore/model_executor/models/registry.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "model_executor",
+      "lines": 200,
+      "priority": 8,
+      "description": "模型注册表"
+    },
+    {
+      "path": "vllm_mindspore/v1/worker/gpu_worker.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "v1",
+      "lines": 218,
+      "priority": 9,
+      "description": "Worker进程，执行系统命令获取NUMA拓扑"
+    },
+    {
+      "path": "vllm_mindspore/v1/worker/profile.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "v1",
+      "lines": 114,
+      "priority": 10,
+      "description": "性能分析器，执行subprocess"
+    },
+    {
+      "path": "vllm_mindspore/v1/worker/gpu_model_runner.py",
+      "language": "python",
+      "risk": "High",
+      "module": "v1",
+      "lines": 606,
+      "priority": 11,
+      "description": "模型运行器核心，处理推理请求"
+    },
+    {
+      "path": "vllm_mindspore/executor/ray_utils.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "executor",
+      "lines": 299,
+      "priority": 12,
+      "description": "Ray分布式执行器环境设置"
+    },
+    {
+      "path": "vllm_mindspore/utils.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "core",
+      "lines": 524,
+      "priority": 13,
+      "description": "通用工具函数，包含subprocess调用"
+    },
+    {
+      "path": "vllm_mindspore/config.py",
+      "language": "python",
+      "risk": "Medium",
+      "module": "core",
+      "lines": 16328,
+      "priority": 14,
+      "description": "配置模块"
+    },
+    {
+      "path": "dashboard/acc.py",
+      "language": "python",
+      "risk": "Critical",
+      "module": "dashboard",
+      "lines": 202,
+      "priority": 1,
+      "description": "基准测试工具，大量shell=True命令执行"
+    },
+    {
+      "path": "dashboard/benchmark_to_dashboard.py",
+      "language": "python",
+      "risk": "High",
+      "module": "dashboard",
+      "lines": 724,
+      "priority": 2,
+      "description": "基准测试执行，subprocess调用"
+    },
+    {
+      "path": "setup.py",
+      "language": "python",
+      "risk": "High",
+      "module": "build",
+      "lines": 264,
+      "priority": 15,
+      "description": "构建脚本，执行bash命令编译C扩展"
+    },
+    {
+      "path": "csrc/module/module.cpp",
+      "language": "c_cpp",
+      "risk": "Low",
+      "module": "csrc",
+      "lines": 21,
+      "priority": 16,
+      "description": "Python C扩展模块注册"
+    },
+    {
+      "path": "csrc/module/dummy_module.c",
+      "language": "c_cpp",
+      "risk": "Low",
+      "module": "csrc",
+      "lines": 32,
+      "priority": 17,
+      "description": "空模块占位符"
+    },
+    {
+      "path": "csrc/ascendc/adv_step_flash.c",
+      "language": "c_cpp",
+      "risk": "Low",
+      "module": "csrc",
+      "lines": 392,
+      "priority": 18,
+      "description": "Ascend NPU自定义算子"
+    }
+  ],
+  "entry_points": [
+    {
+      "file": "vllm_mindspore/scripts.py",
+      "line": 88,
+      "function": "main",
+      "type": "cmdline",
+      "trust_level": "trusted_admin",
+      "justification": "CLI入口点，由管理员/用户通过命令行启动服务",
+      "description": "vllm-mindspore命令行主入口"
+    },
+    {
+      "file": "vllm_mindspore/entrypoints/__main__.py",
+      "line": 66,
+      "function": "subprocess.run",
+      "type": "decorator",
+      "trust_level": "semi_trusted",
+      "justification": "动态执行传入的模块名，模块名来自CLI参数，代码内容来自inspect.getsource",
+      "description": "动态加载执行vLLM入口模块"
+    },
+    {
+      "file": "vllm_mindspore/model_executor/model_loader/weight_utils.py",
+      "line": 91,
+      "function": "safetensors_weights_iterator",
+      "type": "file",
+      "trust_level": "semi_trusted",
+      "justification": "加载外部模型权重文件，路径由用户指定（--model参数）",
+      "description": "加载safetensors模型权重文件"
+    },
+    {
+      "file": "dashboard/acc.py",
+      "line": 28,
+      "function": "exec_shell_cmd",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "执行shell命令，cmd参数来自函数调用者，用于基准测试",
+      "description": "执行shell命令（shell=True）"
+    },
+    {
+      "file": "dashboard/acc.py",
+      "line": 117,
+      "function": "exec_cmd",
+      "type": "cmdline",
+      "trust_level": "untrusted_local",
+      "justification": "执行shell命令，shell=True模式",
+      "description": "执行shell命令"
+    },
+    {
+      "file": "vllm_mindspore/utils.py",
+      "line": 321,
+      "function": "get_ascend_soc_version",
+      "type": "cmdline",
+      "trust_level": "internal",
+      "justification": "内部函数，执行Python脚本获取设备版本，脚本内容是硬编码的",
+      "description": "获取Ascend SOC版本"
+    },
+    {
+      "file": "vllm_mindspore/v1/worker/gpu_worker.py",
+      "line": 73,
+      "function": "execute_command",
+      "type": "cmdline",
+      "trust_level": "internal",
+      "justification": "内部函数，执行系统命令获取NUMA拓扑信息，命令内容硬编码",
+      "description": "执行系统命令获取NUMA信息"
+    },
+    {
+      "file": "vllm_mindspore/v1/worker/profile.py",
+      "line": 33,
+      "function": "shell_analyse",
+      "type": "cmdline",
+      "trust_level": "trusted_admin",
+      "justification": "性能分析工具，路径来自环境变量VLLM_TORCH_PROFILER_DIR",
+      "description": "执行MindSpore性能分析"
+    },
+    {
+      "file": "setup.py",
+      "line": 168,
+      "function": "build_c_ops",
+      "type": "cmdline",
+      "trust_level": "trusted_admin",
+      "justification": "构建脚本，执行cmake命令编译C扩展，仅在安装时运行",
+      "description": "构建C扩展模块"
+    }
+  ],
+  "attack_surfaces": [
+    "CLI接口: vllm-mindspore serve <model> -- 启动推理服务",
+    "模型权重加载: 用户指定的模型路径或HuggingFace模型ID",
+    "环境变量: VLLM_MS_MODEL_BACKEND, ASCEND_HOME_PATH等配置",
+    "Dashboard工具: shell命令执行用于基准测试",
+    "OpenAI API兼容接口: 继承自vLLM框架的HTTP入口"
+  ]
+}

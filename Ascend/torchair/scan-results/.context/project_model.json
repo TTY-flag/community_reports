@@ -1,0 +1,422 @@
+{
+  "project_name": "torchair",
+  "project_type": "AI Framework Extension Library",
+  "language": "C++/Python Hybrid",
+  "description": "TorchAir (Torch Ascend Intermediate Representation) - PyTorch NPU extension library for Huawei Ascend, enabling graph mode inference on NPU devices",
+  
+  "version": "7.3.0",
+  "repository": "https://gitcode.com/ascend/torchair",
+  
+  "file_counts": {
+    "cpp_files": 23,
+    "header_files": 100,
+    "python_files": 160,
+    "proto_files": 1
+  },
+  
+  "modules": [
+    {
+      "name": "torchair/core",
+      "type": "C++",
+      "path": "torchair/core",
+      "description": "Core interface layer - Python-C++ binding entry point",
+      "risk_level": "HIGH",
+      "files": ["torchair.cpp", "npu_wrapper.cpp"],
+      "entry_points": ["PYBIND11_MODULE(_torchair)"],
+      "attack_surface": ["Python-C++ boundary", "Pybind11 binding", "Tensor parsing from Python objects"]
+    },
+    {
+      "name": "torchair/concrete_graph",
+      "type": "C++",
+      "path": "torchair/concrete_graph",
+      "description": "Graph construction, session management, compilation and execution",
+      "risk_level": "HIGH",
+      "files": ["session.cpp", "concrete_graph.cpp", "executor.cpp", "export.cpp", "hdc_channel.cpp"],
+      "entry_points": ["NpuConcreteGraph::Create", "Session::Initialize", "Export"],
+      "attack_surface": ["Proto deserialization", "Graph loading", "Session initialization", "File export"]
+    },
+    {
+      "name": "torchair/npu_graph_executor",
+      "type": "C++",
+      "path": "torchair/npu_graph_executor",
+      "description": "NPU graph execution and memory management",
+      "risk_level": "HIGH",
+      "files": ["npu_executor.cpp", "static_npu_graph_executor.cpp", "dynamic_npu_graph_executor.cpp", "memory/Allocator.cpp"],
+      "entry_points": ["Executor::Create", "NpuAllocator::Malloc"],
+      "attack_surface": ["Memory allocation", "Graph execution", "Tensor assembly"]
+    },
+    {
+      "name": "torchair/llm_datadist",
+      "type": "C++",
+      "path": "torchair/llm_datadist",
+      "description": "LLM data distribution utilities",
+      "risk_level": "MEDIUM",
+      "files": ["llm_datadist.cpp"],
+      "entry_points": ["AsTorchTensor"],
+      "attack_surface": ["Memory address handling", "Tensor creation from raw pointers"]
+    },
+    {
+      "name": "torchair/cann_ir_ability",
+      "type": "C++",
+      "path": "torchair/cann_ir_ability",
+      "description": "CANN IR capability checking",
+      "risk_level": "LOW",
+      "files": ["cann_ir_ability.cpp"],
+      "entry_points": ["CheckCannCompat"],
+      "attack_surface": ["Operator type string validation"]
+    },
+    {
+      "name": "torchair/abi_compat_ge_apis",
+      "type": "C++",
+      "path": "torchair/abi_compat_ge_apis",
+      "description": "GE API compatibility layer for graph parsing",
+      "risk_level": "HIGH",
+      "files": ["compat_apis.cpp"],
+      "entry_points": ["ParseGraphFromArray"],
+      "attack_surface": ["Proto deserialization from serialized data"]
+    },
+    {
+      "name": "torchair/utils_tools",
+      "type": "C++",
+      "path": "torchair/utils_tools",
+      "description": "Utility tools including dynamic library loading",
+      "risk_level": "MEDIUM",
+      "files": ["utils_tools.cpp"],
+      "entry_points": ["NpuOpUtilsTools::CheckAclnnAvaliable"],
+      "attack_surface": ["Dynamic library loading (dlopen/dlsym)"]
+    },
+    {
+      "name": "python/torchair",
+      "type": "Python",
+      "path": "python/torchair",
+      "description": "Main Python API module",
+      "risk_level": "HIGH",
+      "files": ["__init__.py", "npu_fx_compiler.py", "npu_export.py"],
+      "entry_points": ["torch.compile()", "get_npu_backend()", "dynamo_export()"],
+      "attack_surface": ["Model loading", "User-provided graph module", "Dynamic code generation (exec)"]
+    },
+    {
+      "name": "python/torchair/_ge_concrete_graph",
+      "type": "Python",
+      "path": "python/torchair/_ge_concrete_graph",
+      "description": "GE graph conversion layer",
+      "risk_level": "HIGH",
+      "files": ["fx2ge_converter.py", "ge_converter/*"],
+      "entry_points": ["GeConcreteGraph", "register_fx_node_ge_converter"],
+      "attack_surface": ["Graph conversion", "Dynamic converter generation (exec)", "User tensor handling"]
+    },
+    {
+      "name": "python/torchair/_ge_concrete_graph/ge_converter/experimental",
+      "type": "Python",
+      "path": "python/torchair/_ge_concrete_graph/ge_converter/experimental",
+      "description": "HCOM distributed communication converters",
+      "risk_level": "HIGH",
+      "files": ["hcom_allreduce.py", "hcom_allgather.py", "hcom_broadcast.py", "hcom_alltoall.py", "hcom_send_recv.py", "hcom_reducescatter.py"],
+      "entry_points": ["patch_for_hcom()"],
+      "attack_surface": ["Distributed communication", "Process group operations"]
+    },
+    {
+      "name": "npugraph_ex/npugraph_ex",
+      "type": "Python",
+      "path": "npugraph_ex/npugraph_ex",
+      "description": "NPU Graph extension Python layer",
+      "risk_level": "MEDIUM",
+      "files": ["npu_fx_compiler.py", "_acl_concrete_graph/*"],
+      "entry_points": ["AclConcreteGraph"],
+      "attack_surface": ["ACL graph compilation", "Cache management"]
+    },
+    {
+      "name": "proto",
+      "type": "Protocol Buffer",
+      "path": "proto",
+      "description": "GE IR Protocol definitions",
+      "risk_level": "HIGH",
+      "files": ["ge_ir.proto"],
+      "entry_points": ["GraphDef", "ModelDef", "TensorDef"],
+      "attack_surface": ["Proto deserialization", "Model loading"]
+    }
+  ],
+  
+  "entry_points": [
+    {
+      "name": "torch.compile",
+      "type": "Python API",
+      "module": "python/torchair",
+      "function": "get_npu_backend",
+      "description": "Main entry point for NPU graph compilation via torch.compile",
+      "data_flow": "User Model -> FX Graph -> GE Graph -> NPU Execution",
+      "external_input": true,
+      "risk_level": "HIGH"
+    },
+    {
+      "name": "dynamo_export",
+      "type": "Python API",
+      "module": "python/torchair",
+      "function": "dynamo_export",
+      "description": "Export model to offline .air format",
+      "data_flow": "User Model -> FX Graph -> Proto Serialization -> .air File",
+      "external_input": true,
+      "risk_level": "HIGH"
+    },
+    {
+      "name": "TorchNpuGraphBase::Load",
+      "type": "C++ API",
+      "module": "torchair/core",
+      "function": "Load",
+      "description": "Load serialized graph from proto buffer",
+      "data_flow": "Serialized Proto -> ParseGraphFromArray -> GE Graph",
+      "external_input": true,
+      "risk_level": "HIGH"
+    },
+    {
+      "name": "TorchNpuGraphBase::Run",
+      "type": "C++ API",
+      "module": "torchair/core",
+      "function": "Run",
+      "description": "Execute graph with user-provided tensors",
+      "data_flow": "User Tensors -> AssembleInputs -> RunGraph -> Outputs",
+      "external_input": true,
+      "risk_level": "HIGH"
+    },
+    {
+      "name": "Session::Initialize",
+      "type": "C++ API",
+      "module": "torchair/concrete_graph",
+      "function": "Initialize",
+      "description": "Initialize GE session with configuration options",
+      "data_flow": "Config Options -> GEInitialize -> GE Session",
+      "external_input": true,
+      "risk_level": "MEDIUM"
+    },
+    {
+      "name": "Export",
+      "type": "C++ API",
+      "module": "torchair/concrete_graph",
+      "function": "ep::Export",
+      "description": "Export graph to .air file",
+      "data_flow": "Proto -> ParseGraphFromArray -> SaveToFile",
+      "external_input": true,
+      "risk_level": "HIGH"
+    },
+    {
+      "name": "AsTorchTensor",
+      "type": "C++ API",
+      "module": "torchair/llm_datadist",
+      "function": "AsTorchTensor",
+      "description": "Create tensors from raw memory addresses",
+      "data_flow": "Memory Address -> DataPtr -> Tensor",
+      "external_input": true,
+      "risk_level": "HIGH"
+    },
+    {
+      "name": "patch_for_hcom",
+      "type": "Python API",
+      "module": "python/torchair",
+      "function": "patch_for_hcom",
+      "description": "Patch torch.distributed for HCOM operations",
+      "data_flow": "torch.distributed -> HCOM Patches",
+      "external_input": false,
+      "risk_level": "MEDIUM"
+    },
+    {
+      "name": "GeConcreteGraph.__call__",
+      "type": "Python API",
+      "module": "python/torchair/_ge_concrete_graph",
+      "function": "__call__",
+      "description": "Execute GE graph with runtime inputs",
+      "data_flow": "Args -> Input Process -> Graph Run -> Outputs",
+      "external_input": true,
+      "risk_level": "HIGH"
+    },
+    {
+      "name": "AclopStartDumpArgs",
+      "type": "C++ API",
+      "module": "torchair/core",
+      "function": "AclopStartDumpArgs",
+      "description": "Start ACL dump with user-provided path",
+      "data_flow": "dumpType, path -> aclopStartDumpArgs",
+      "external_input": true,
+      "risk_level": "MEDIUM"
+    }
+  ],
+  
+  "attack_surfaces": [
+    {
+      "category": "Model Loading / Serialization",
+      "severity": "HIGH",
+      "description": "Loading serialized models/graphs from external sources (proto buffers, .air files)",
+      "affected_modules": ["torchair/abi_compat_ge_apis", "torchair/concrete_graph", "proto"],
+      "affected_functions": ["ParseGraphFromArray", "Load", "LoadFromSerializedModelArray"],
+      "cwe": ["CWE-502", "CWE-20"],
+      "notes": "Proto deserialization without validation, arbitrary graph structure loading"
+    },
+    {
+      "category": "Python-C++ Boundary",
+      "severity": "HIGH",
+      "description": "Pybind11 bindings passing Python objects to C++ without proper validation",
+      "affected_modules": ["torchair/core"],
+      "affected_functions": ["ParseListTensors", "ParseStream", "ParseListOptionalTensors", "Run", "Load", "AutoTune"],
+      "cwe": ["CWE-20", "CWE-787"],
+      "notes": "Python object parsing, tensor unpacking, type validation issues"
+    },
+    {
+      "category": "Dynamic Library Loading",
+      "severity": "MEDIUM",
+      "description": "Loading shared libraries dynamically using dlopen/dlsym",
+      "affected_modules": ["torchair/concrete_graph", "torchair/utils_tools"],
+      "affected_functions": ["Session::GetGeFunc", "NpuOpUtilsTools::CheckAclnnAvaliable"],
+      "cwe": ["CWE-114", "CWE-426"],
+      "notes": "dlopen with RTLD_NOW/RTLD_LAZY, library path not validated"
+    },
+    {
+      "category": "External Data Input (Tensors)",
+      "severity": "HIGH",
+      "description": "Processing user-provided tensor data including shapes, types, and memory addresses",
+      "affected_modules": ["torchair/core", "torchair/npu_graph_executor", "torchair/llm_datadist"],
+      "affected_functions": ["AssembleInputs", "AsTorchTensor", "ParseListTensors"],
+      "cwe": ["CWE-20", "CWE-787", "CWE-125"],
+      "notes": "Tensor shape validation, memory address handling, data pointer operations"
+    },
+    {
+      "category": "Memory Management",
+      "severity": "HIGH",
+      "description": "Memory allocation and management for NPU execution",
+      "affected_modules": ["torchair/npu_graph_executor/memory"],
+      "affected_functions": ["NpuAllocator::Malloc", "NpuAllocator::Free", "NpuAllocator::MallocFeatureMemory"],
+      "cwe": ["CWE-787", "CWE-125", "CWE-415"],
+      "notes": "Memory pool management, potential double-free, memory leaks"
+    },
+    {
+      "category": "File System Operations",
+      "severity": "MEDIUM",
+      "description": "File operations for export, dump, and graph saving",
+      "affected_modules": ["torchair/concrete_graph", "python/torchair"],
+      "affected_functions": ["Export", "SaveToFile", "dynamo_export", "_dump_run_codegen"],
+      "cwe": ["CWE-22", "CWE-73"],
+      "notes": "Path validation exists for symlinks, but may need more comprehensive validation"
+    },
+    {
+      "category": "Dynamic Code Generation",
+      "severity": "HIGH",
+      "description": "Using exec() for dynamic code generation in Python",
+      "affected_modules": ["python/torchair"],
+      "affected_functions": ["_compile_py_code", "_generate_converter_code", "get_or_auto_gen_converter"],
+      "cwe": ["CWE-95", "CWE-94"],
+      "notes": "exec() with dynamically generated code strings"
+    },
+    {
+      "category": "RPC / Distributed Communication",
+      "severity": "MEDIUM",
+      "description": "HCOM distributed operations for multi-device training/inference",
+      "affected_modules": ["python/torchair/_ge_concrete_graph/ge_converter/experimental"],
+      "affected_functions": ["patch_for_hcom", "npu_allreduce_patch_dist", "npu_all_gather_patch_dist"],
+      "cwe": ["CWE-287", "CWE-300"],
+      "notes": "Process group operations, distributed tensor handling"
+    },
+    {
+      "category": "Configuration Options",
+      "severity": "MEDIUM",
+      "description": "User-provided configuration options passed to GE session",
+      "affected_modules": ["torchair/concrete_graph", "python/torchair/configs"],
+      "affected_functions": ["Session::Initialize", "NormalizeCompileOptions"],
+      "cwe": ["CWE-20"],
+      "notes": "Configuration strings passed without comprehensive validation"
+    },
+    {
+      "category": "HDC Channel Communication",
+      "severity": "LOW",
+      "description": "Device stdout channel for receiving NPU logs",
+      "affected_modules": ["torchair/concrete_graph"],
+      "affected_functions": ["StartStdoutChannel", "Channel::Receive"],
+      "cwe": ["CWE-20"],
+      "notes": "ACL TDT channel for receiving data from device"
+    }
+  ],
+  
+  "high_risk_areas": [
+    {
+      "area": "Proto Deserialization",
+      "description": "ParseGraphFromArray loads arbitrary proto buffers without size/content validation",
+      "files": ["torchair/abi_compat_ge_apis/compat_apis.cpp"],
+      "risk_factors": ["No proto version check", "No size limit validation", "Arbitrary graph structure"]
+    },
+    {
+      "area": "Tensor Memory Handling",
+      "description": "AsTorchTensor creates tensors from raw memory addresses without ownership validation",
+      "files": ["torchair/llm_datadist/llm_datadist.cpp"],
+      "risk_factors": ["Raw pointer handling", "No ownership validation", "Memory safety concerns"]
+    },
+    {
+      "area": "Python exec() Usage",
+      "description": "Dynamic code generation and execution in Python layer",
+      "files": ["python/torchair/npu_fx_compiler.py", "python/torchair/_ge_concrete_graph/fx2ge_converter.py"],
+      "risk_factors": ["exec() with dynamic code", "Auto-generated converter code", "Code injection potential"]
+    },
+    {
+      "area": "Dynamic Library Loading",
+      "description": "dlopen/dlsym for loading GE runner and operator libraries",
+      "files": ["torchair/concrete_graph/session.cpp", "torchair/utils_tools/utils_tools.cpp"],
+      "risk_factors": ["Library path hard-coded", "Symbol lookup without validation", "Potential library hijacking"]
+    }
+  ],
+  
+  "security_features": [
+    {
+      "feature": "Compiler Security Flags",
+      "description": "CMakeLists.txt includes security hardening flags",
+      "flags": ["-D_FORTIFY_SOURCE=2", "-fstack-protector-all", "-fPIC", "-fPIE", "-pie", "-Wl,-z,relro,-z,now,-z,noexecstack"]
+    },
+    {
+      "feature": "Symlink Protection",
+      "description": "Export functions check for symbolic links before writing",
+      "files": ["torchair/concrete_graph/export.cpp", "python/torchair/npu_export.py"]
+    },
+    {
+      "feature": "Error Handling Macros",
+      "description": "TNG_RAISE_IF_ERROR, TNG_ASSERT macros for error handling",
+      "files": ["torchair/core/torchair.cpp"]
+    }
+  ],
+  
+  "dependencies": [
+    {
+      "name": "PyTorch",
+      "version": "2.1.x - 2.9.x",
+      "type": "Framework",
+      "risk": "HIGH - Core dependency, tensor handling"
+    },
+    {
+      "name": "torch_npu",
+      "version": "7.x",
+      "type": "Plugin",
+      "risk": "HIGH - NPU backend, memory management"
+    },
+    {
+      "name": "CANN",
+      "version": "8.x",
+      "type": "SDK",
+      "risk": "HIGH - GE engine, ACL runtime"
+    },
+    {
+      "name": "protobuf",
+      "version": ">=3.13",
+      "type": "Serialization",
+      "risk": "HIGH - Proto handling"
+    },
+    {
+      "name": "pybind11",
+      "version": "Embedded",
+      "type": "Binding",
+      "risk": "HIGH - Python-C++ interface"
+    },
+    {
+      "name": "HCCL",
+      "version": "CANN bundled",
+      "type": "Communication",
+      "risk": "MEDIUM - Distributed operations"
+    }
+  ],
+  
+  "analysis_timestamp": "2026-04-23T00:00:00Z",
+  "analyzer_version": "1.0.0"
+}

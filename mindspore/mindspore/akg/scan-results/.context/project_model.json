@@ -1,0 +1,446 @@
+{
+  "project_name": "akg",
+  "project_type": "c_cpp_python_mixed",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/shenteng/mindspore/mindspore/akg",
+  "description": "Auto Kernel Generator (AKG) - 深度学习编译器，包含 AIKG（AI驱动的算子生成）和 AKG-MLIR（MLIR编译器框架）两个子项目",
+  "languages": {
+    "c_cpp": {
+      "file_count": 277,
+      "total_lines": 56775,
+      "main_directory": "akg-mlir/compiler"
+    },
+    "python": {
+      "file_count": 1249,
+      "main_directory": "aikg/python"
+    }
+  },
+  "modules": [
+    {
+      "name": "akg-mlir-compiler",
+      "path": "akg-mlir/compiler",
+      "language": "c_cpp",
+      "type": "compiler_framework",
+      "description": "MLIR深度学习编译器框架，提供CPU/GPU/Ascend算子编译Pipeline",
+      "components": [
+        {
+          "name": "CLI Tools",
+          "path": "tools",
+          "entry_points": [
+            "akg-opt/akg-opt.cpp",
+            "akg-translate/akg-translate.cpp",
+            "mindspore-translate/mindspore-translate.cpp",
+            "ptx-tools/ptx-replace.cpp",
+            "ascend-linker/ascend-linker.cpp"
+          ],
+          "risk_level": "critical",
+          "risks": ["command_injection", "arbitrary_file_io", "code_parsing"]
+        },
+        {
+          "name": "ExecutionEngine",
+          "path": "lib/ExecutionEngine",
+          "risk_level": "critical",
+          "risks": ["dlopen_code_injection", "dlsym_symbol_hijacking"]
+        },
+        {
+          "name": "Target Translators",
+          "path": "lib/Target",
+          "risk_level": "high",
+          "risks": ["json_parsing", "ptx_generation"]
+        },
+        {
+          "name": "Dialects",
+          "path": "lib/Dialect",
+          "submodules": ["Affine", "GPU", "Linalg", "MindSpore", "NPUVector", "SCF", "Tensor", "Math", "LLVMIR", "Fusion", "CPU"],
+          "risk_level": "medium"
+        },
+        {
+          "name": "Conversion",
+          "path": "lib/Conversion",
+          "risk_level": "medium"
+        },
+        {
+          "name": "Analysis",
+          "path": "lib/Analysis",
+          "risk_level": "low"
+        },
+        {
+          "name": "Pipelines",
+          "path": "lib/Pipelines",
+          "risk_level": "medium"
+        },
+        {
+          "name": "Transforms",
+          "path": "lib/Transforms",
+          "risk_level": "medium",
+          "risks": ["json_file_io"]
+        }
+      ]
+    },
+    {
+      "name": "aikg-python",
+      "path": "aikg/python/ai_kernel_generator",
+      "language": "python",
+      "type": "ai_kernel_generator",
+      "description": "AI驱动的内核生成器，使用LLM生成GPU/NPU内核代码",
+      "components": [
+        {
+          "name": "server",
+          "path": "server",
+          "entry_points": ["app.py"],
+          "risk_level": "critical",
+          "risks": ["ssrf_via_worker_registration", "job_submission_rce"]
+        },
+        {
+          "name": "worker",
+          "path": "worker",
+          "entry_points": ["server.py"],
+          "risk_level": "critical",
+          "risks": ["rce_via_package_upload", "arbitrary_code_execution"]
+        },
+        {
+          "name": "cli",
+          "path": "cli",
+          "entry_points": ["cli.py"],
+          "risk_level": "high",
+          "risks": ["cli_argument_handling"]
+        },
+        {
+          "name": "core",
+          "path": "core",
+          "submodules": ["agent", "verifier", "worker", "checker", "llm", "tools"],
+          "risk_level": "critical",
+          "risks": ["exec_code_execution", "shell_command_injection"]
+        },
+        {
+          "name": "resources",
+          "path": "resources",
+          "submodules": ["templates", "skills", "docs", "prompts"],
+          "risk_level": "high",
+          "risks": ["template_injection"]
+        },
+        {
+          "name": "utils",
+          "path": "utils",
+          "risk_level": "high",
+          "risks": ["subprocess_shell_true", "eval_usage"]
+        },
+        {
+          "name": "workflows",
+          "path": "workflows",
+          "risk_level": "medium"
+        },
+        {
+          "name": "client",
+          "path": "client",
+          "risk_level": "medium",
+          "risks": ["ssl_verification_disabled"]
+        },
+        {
+          "name": "database",
+          "path": "database",
+          "risk_level": "low"
+        }
+      ]
+    },
+    {
+      "name": "cli-tools",
+      "path": "aikg/tools",
+      "language": "python",
+      "type": "auxiliary_scripts",
+      "description": "辅助工具脚本",
+      "entry_points": [
+        "op_task_builder/op_task_builder.py",
+        "run_single_evolve.py",
+        "run_batch_evolve.py",
+        "run_single_adaptive_search.py",
+        "run_batch_adaptive_search.py",
+        "batch_run/batch_run_torch_npu_triton.py"
+      ],
+      "risk_level": "high",
+      "risks": ["subprocess_usage", "file_operations"]
+    },
+    {
+      "name": "benchmark",
+      "path": "aikg/benchmark",
+      "language": "python",
+      "type": "benchmark_suite",
+      "risk_level": "low"
+    },
+    {
+      "name": "examples",
+      "path": "aikg/examples",
+      "language": "python",
+      "type": "example_scripts",
+      "risk_level": "medium"
+    },
+    {
+      "name": "tests",
+      "path": "aikg/tests",
+      "language": "python",
+      "type": "test_suite",
+      "risk_level": "medium",
+      "risks": ["test_code_execution"]
+    }
+  ],
+  "entry_points": [
+    {
+      "id": "EP-001",
+      "type": "web_api",
+      "module": "aikg-python",
+      "file": "aikg/python/ai_kernel_generator/worker/server.py",
+      "risk_level": "critical",
+      "description": "Worker服务API - 接收验证包执行代码",
+      "endpoints": [
+        {"method": "POST", "path": "/api/v1/verify", "sink": "LocalWorker.verify -> subprocess执行Python脚本"},
+        {"method": "POST", "path": "/api/v1/profile", "sink": "执行用户提供的代码"},
+        {"method": "POST", "path": "/api/v1/generate_reference", "sink": "执行Triton-CUDA代码"}
+      ],
+      "attack_vectors": ["Remote Code Execution via tar package upload", "Arbitrary Code Execution"]
+    },
+    {
+      "id": "EP-002",
+      "type": "web_api",
+      "module": "aikg-python",
+      "file": "aikg/python/ai_kernel_generator/server/app.py",
+      "risk_level": "high",
+      "description": "主服务器API - 作业提交和Worker注册",
+      "endpoints": [
+        {"method": "POST", "path": "/api/v1/jobs/submit", "sink": "job_manager.submit_job"},
+        {"method": "POST", "path": "/api/v1/workers/register", "sink": "RemoteWorker注册任意URL"}
+      ],
+      "attack_vectors": ["SSRF via Worker URL registration", "Code injection via init_code parameter"]
+    },
+    {
+      "id": "EP-003",
+      "type": "cli_tool",
+      "module": "akg-mlir-compiler",
+      "file": "akg-mlir/compiler/tools/ascend-linker/ascend-linker.cpp",
+      "risk_level": "critical",
+      "description": "Ascend内核链接器 - 使用popen执行shell命令",
+      "sink": "popen(cmd.c_str(), \"r\")",
+      "attack_vectors": ["Command Injection via popen"]
+    },
+    {
+      "id": "EP-004",
+      "type": "cli_tool",
+      "module": "akg-mlir-compiler",
+      "file": "akg-mlir/compiler/tools/ptx-tools/ptx-replace.cpp",
+      "risk_level": "critical",
+      "description": "PTX文件处理器 - 文件读写和正则解析",
+      "attack_vectors": ["Arbitrary File Read/Write", "Regex-based parsing vulnerabilities"]
+    },
+    {
+      "id": "EP-005",
+      "type": "cli_tool",
+      "module": "akg-mlir-compiler",
+      "file": "akg-mlir/compiler/tools/akg-opt/akg-opt.cpp",
+      "risk_level": "high",
+      "description": "MLIR优化器CLI - 处理MLIR文件",
+      "sink": "argc/argv -> MlirOptMain"
+    },
+    {
+      "id": "EP-006",
+      "type": "cli_tool",
+      "module": "akg-mlir-compiler",
+      "file": "akg-mlir/compiler/tools/akg-translate/akg-translate.cpp",
+      "risk_level": "high",
+      "description": "MLIR翻译工具 - 转换MLIR到PTX"
+    },
+    {
+      "id": "EP-007",
+      "type": "cli_tool",
+      "module": "akg-mlir-compiler",
+      "file": "akg-mlir/compiler/tools/mindspore-translate/mindspore-translate.cpp",
+      "risk_level": "high",
+      "description": "MindSpore翻译工具 - JSON到MLIR转换"
+    },
+    {
+      "id": "EP-008",
+      "type": "python_binding",
+      "module": "akg-mlir-compiler",
+      "file": "akg-mlir/compiler/lib/ExecutionEngine/AscendLaunchRuntime/AKGAscendLaunch.cpp",
+      "risk_level": "critical",
+      "description": "Python绑定 - dlopen加载用户提供的.so",
+      "sink": "dlopen(so_path.data(), RTLD_LAZY)",
+      "attack_vectors": ["Code Injection via malicious shared object"]
+    },
+    {
+      "id": "EP-009",
+      "type": "python_cli",
+      "module": "aikg-python",
+      "file": "aikg/python/ai_kernel_generator/cli/cli.py",
+      "risk_level": "high",
+      "description": "AIKG CLI入口 - Typer框架",
+      "entry_name": "akg_cli"
+    },
+    {
+      "id": "EP-010",
+      "type": "script",
+      "module": "aikg-python",
+      "file": "aikg/python/ai_kernel_generator/resources/skills/kernel-workflow/scripts/check_torch_code.py",
+      "risk_level": "critical",
+      "description": "Torch代码验证脚本 - exec执行用户代码",
+      "sink": "exec(code, namespace)",
+      "attack_vectors": ["Arbitrary Code Execution via stdin/file input"]
+    }
+  ],
+  "attack_surface": {
+    "summary": "这是一个AI代码生成系统，核心攻击面在于：1) FastAPI端点接收并执行用户提交的代码包；2) exec/compile直接执行AI生成的内核代码；3) shell=True执行系统命令；4) dlopen/dlsym动态加载共享库；5) popen执行shell命令；6) Jinja2模板渲染生成执行脚本。",
+    "critical_count": 5,
+    "high_count": 15,
+    "medium_count": 20,
+    "categories": {
+      "remote_code_execution": {
+        "count": 4,
+        "severity": "critical",
+        "locations": [
+          "worker/server.py - POST /api/v1/verify",
+          "kernel_verifier.py - exec(impl_code)",
+          "check_torch_code.py - exec(code)",
+          "AKGAscendLaunch.cpp - dlopen(user_path)"
+        ]
+      },
+      "command_injection": {
+        "count": 3,
+        "severity": "critical",
+        "locations": [
+          "ascend-linker.cpp - popen()",
+          "profiler_utils.py - subprocess.run(shell=True)",
+          "test_info.py - os.system()"
+        ]
+      },
+      "arbitrary_file_io": {
+        "count": 5,
+        "severity": "high",
+        "locations": [
+          "ptx-replace.cpp",
+          "GetOrderMapBeforeAfterGpuOutlining.cpp",
+          "DumpShapeInfo.cpp",
+          "IOHelper.hpp",
+          "TranslateToMindsporeDialect.cpp"
+        ]
+      },
+      "dynamic_code_loading": {
+        "count": 4,
+        "severity": "critical",
+        "locations": [
+          "AKGAscendLaunch.cpp - dlopen",
+          "AKGAscendLaunchRuntime.cpp - dlopen",
+          "CceWrapper.cpp - dlopen",
+          "SymbolsWrapper.h - dlsym"
+        ]
+      },
+      "ssrf": {
+        "count": 1,
+        "severity": "high",
+        "locations": [
+          "server/app.py - workers/register URL"
+        ]
+      },
+      "template_injection": {
+        "count": 4,
+        "severity": "high",
+        "locations": [
+          "kernel_verifier.py - Jinja2 Template.render",
+          "code_checker.py - Jinja2",
+          "agent_base.py - Jinja2",
+          "base_workflow.py - Jinja2"
+        ]
+      },
+      "json_parsing": {
+        "count": 5,
+        "severity": "medium",
+        "locations": [
+          "TranslateToMindsporeDialect.cpp - nlohmann::json",
+          "LoadGlobalConfig.cpp",
+          "DumpShapeInfo.cpp",
+          "worker/server.py - json.loads",
+          "common_utils.py - json.loads"
+        ]
+      },
+      "ssl_verification_disabled": {
+        "count": 2,
+        "severity": "medium",
+        "locations": [
+          "model_loader.py - verify=False",
+          "environment_check.py - verify=False"
+        ]
+      }
+    }
+  },
+  "high_risk_modules": [
+    {
+      "name": "ExecutionEngine/AscendLaunchRuntime",
+      "path": "akg-mlir/compiler/lib/ExecutionEngine/AscendLaunchRuntime",
+      "language": "c_cpp",
+      "risk_level": "critical",
+      "reason": "dlopen/dlsym动态加载，用户可控路径",
+      "files": ["AKGAscendLaunch.cpp", "AKGAscendLaunchRuntime.cpp", "CceWrapper.cpp"]
+    },
+    {
+      "name": "worker",
+      "path": "aikg/python/ai_kernel_generator/worker",
+      "language": "python",
+      "risk_level": "critical",
+      "reason": "接收并执行用户上传的代码包",
+      "files": ["server.py", "local_worker.py"]
+    },
+    {
+      "name": "core/verifier",
+      "path": "aikg/python/ai_kernel_generator/core/verifier",
+      "language": "python",
+      "risk_level": "critical",
+      "reason": "exec/compile执行AI生成的代码",
+      "files": ["kernel_verifier.py", "profiler_utils.py"]
+    },
+    {
+      "name": "tools/ascend-linker",
+      "path": "akg-mlir/compiler/tools/ascend-linker",
+      "language": "c_cpp",
+      "risk_level": "critical",
+      "reason": "popen执行shell命令",
+      "files": ["ascend-linker.cpp"]
+    },
+    {
+      "name": "tools/ptx-tools",
+      "path": "akg-mlir/compiler/tools/ptx-tools",
+      "language": "c_cpp",
+      "risk_level": "critical",
+      "reason": "文件读写和正则解析",
+      "files": ["ptx-replace.cpp"]
+    },
+    {
+      "name": "server",
+      "path": "aikg/python/ai_kernel_generator/server",
+      "language": "python",
+      "risk_level": "high",
+      "reason": "作业提交和Worker注册，潜在SSRF",
+      "files": ["app.py"]
+    },
+    {
+      "name": "Target/MindsporeDialect",
+      "path": "akg-mlir/compiler/lib/Target/MindsporeDialect",
+      "language": "c_cpp",
+      "risk_level": "high",
+      "reason": "JSON到MLIR转换，解析外部文件",
+      "files": ["TranslateToMindsporeDialect.cpp"]
+    }
+  ],
+  "potential_sinks": [
+    {"type": "exec", "language": "python", "occurrences": 3, "severity": "critical"},
+    {"type": "eval", "language": "python", "occurrences": 1, "severity": "high"},
+    {"type": "compile", "language": "python", "occurrences": 1, "severity": "critical"},
+    {"type": "popen", "language": "c_cpp", "occurrences": 1, "severity": "critical"},
+    {"type": "dlopen", "language": "c_cpp", "occurrences": 4, "severity": "critical"},
+    {"type": "dlsym", "language": "c_cpp", "occurrences": 5, "severity": "high"},
+    {"type": "subprocess.run", "language": "python", "occurrences": 42, "severity": "high", "shell_true_count": 3},
+    {"type": "subprocess.Popen", "language": "python", "occurrences": 4, "severity": "high"},
+    {"type": "os.system", "language": "python", "occurrences": 1, "severity": "high"},
+    {"type": "Template.render", "language": "python", "occurrences": 10, "severity": "medium"},
+    {"type": "ifstream/ofstream", "language": "c_cpp", "occurrences": 15, "severity": "medium"},
+    {"type": "json.loads", "language": "python", "occurrences": 25, "severity": "low"},
+    {"type": "getenv", "language": "c_cpp", "occurrences": 8, "severity": "medium"}
+  ],
+  "generated_at": "2026-04-23T18:57:00Z",
+  "generator": "architecture-agent"
+}

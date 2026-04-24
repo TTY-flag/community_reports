@@ -1,0 +1,737 @@
+{
+  "project_name": "hyper-parallel",
+  "generated_at": "2026-04-23T00:00:00Z",
+  "analysis_scope": "Security-focused call graph for attack surface tracing",
+  "edges": [
+    {
+      "id": "CG-001",
+      "source": {
+        "module": "distributed_checkpoint",
+        "file": "hyper_parallel/core/distributed_checkpoint/api.py",
+        "function": "load",
+        "line": 25
+      },
+      "target": {
+        "module": "distributed_checkpoint",
+        "file": "hyper_parallel/core/distributed_checkpoint/filesystem_storage.py",
+        "function": "FileSystemReader.load_metadata",
+        "line": 440
+      },
+      "type": "call",
+      "risk": "critical",
+      "description": "load() calls load_metadata() which uses pickle.load() - insecure deserialization"
+    },
+    {
+      "id": "CG-002",
+      "source": {
+        "module": "distributed_checkpoint",
+        "file": "hyper_parallel/core/distributed_checkpoint/filesystem_storage.py",
+        "function": "FileSystemReader.load_metadata",
+        "line": 440
+      },
+      "target": {
+        "module": "stdlib",
+        "file": "pickle",
+        "function": "pickle.load",
+        "line": 463
+      },
+      "type": "call",
+      "risk": "critical",
+      "description": "pickle.load() on checkpoint metadata file - arbitrary code execution risk",
+      "cwe": "CWE-502"
+    },
+    {
+      "id": "CG-003",
+      "source": {
+        "module": "distributed_checkpoint",
+        "file": "hyper_parallel/core/distributed_checkpoint/filesystem_storage.py",
+        "function": "_load_bytes_file",
+        "line": 294
+      },
+      "target": {
+        "module": "distributed_checkpoint",
+        "file": "hyper_parallel/core/distributed_checkpoint/standard_planner.py",
+        "function": "StandardLoadPlanner.apply_bytes",
+        "line": 570
+      },
+      "type": "call",
+      "risk": "critical",
+      "description": "Bytes file loading passes data to planner which deserializes with pickle.loads()"
+    },
+    {
+      "id": "CG-004",
+      "source": {
+        "module": "distributed_checkpoint",
+        "file": "hyper_parallel/core/distributed_checkpoint/standard_planner.py",
+        "function": "StandardLoadPlanner.apply_bytes",
+        "line": 576
+      },
+      "target": {
+        "module": "stdlib",
+        "file": "pickle",
+        "function": "pickle.loads",
+        "line": 576
+      },
+      "type": "call",
+      "risk": "critical",
+      "description": "pickle.loads(value) on checkpoint bytes - arbitrary code execution",
+      "cwe": "CWE-502"
+    },
+    {
+      "id": "CG-005",
+      "source": {
+        "module": "distributed_checkpoint",
+        "file": "hyper_parallel/core/distributed_checkpoint/filesystem_storage.py",
+        "function": "_load_tensor_file",
+        "line": 335
+      },
+      "target": {
+        "module": "platform",
+        "file": "hyper_parallel/platform/platform.py",
+        "function": "Platform.load_checkpoint",
+        "line": 385
+      },
+      "type": "call",
+      "risk": "high",
+      "description": "Tensor file loading delegates to platform implementation"
+    },
+    {
+      "id": "CG-006",
+      "source": {
+        "module": "platform",
+        "file": "hyper_parallel/platform/torch/platform.py",
+        "function": "TorchPlatform.load_checkpoint",
+        "line": 615
+      },
+      "target": {
+        "module": "torch",
+        "file": "torch",
+        "function": "torch.load",
+        "line": 618
+      },
+      "type": "call",
+      "risk": "high",
+      "description": "torch.load() without weights_only=True by default - insecure deserialization",
+      "cwe": "CWE-502"
+    },
+    {
+      "id": "CG-007",
+      "source": {
+        "module": "distributed_checkpoint",
+        "file": "hyper_parallel/core/distributed_checkpoint/offline_transform.py",
+        "function": "convert_full_checkpoint_to_dcp",
+        "line": 444
+      },
+      "target": {
+        "module": "platform",
+        "file": "hyper_parallel/platform/platform.py",
+        "function": "Platform.load_checkpoint",
+        "line": 490
+      },
+      "type": "call",
+      "risk": "high",
+      "description": "Checkpoint conversion loads external checkpoint - unvalidated path",
+      "cwe": "CWE-22"
+    },
+    {
+      "id": "CG-008",
+      "source": {
+        "module": "symmetric_memory",
+        "file": "hyper_parallel/core/symmetric_memory/__init__.py",
+        "function": "shmem_put",
+        "line": 123
+      },
+      "target": {
+        "module": "symmetric_memory",
+        "file": "hyper_parallel/core/symmetric_memory/ops/put_mem/host/put_mem.cpp",
+        "function": "aclshmem_put_mem",
+        "line": 23
+      },
+      "type": "call",
+      "risk": "high",
+      "description": "Python API calls C++ kernel - memory allocation without null check"
+    },
+    {
+      "id": "CG-009",
+      "source": {
+        "module": "symmetric_memory",
+        "file": "hyper_parallel/core/symmetric_memory/ops/put_mem/host/put_mem.cpp",
+        "function": "aclshmem_put_mem",
+        "line": 26
+      },
+      "target": {
+        "module": "acl",
+        "file": "acl/acl.h",
+        "function": "aclrtMalloc",
+        "line": 26
+      },
+      "type": "call",
+      "risk": "high",
+      "description": "aclrtMalloc for sync memory - error handling aborts but no null check before use",
+      "cwe": "CWE-252"
+    },
+    {
+      "id": "CG-010",
+      "source": {
+        "module": "symmetric_memory",
+        "file": "hyper_parallel/core/symmetric_memory/__init__.py",
+        "function": "shmem_wait_for_signal",
+        "line": 152
+      },
+      "target": {
+        "module": "symmetric_memory",
+        "file": "hyper_parallel/core/symmetric_memory/ops/signal_wait_until/host/signal_wait_until.cpp",
+        "function": "aclshmem_signal_wait_until",
+        "line": 22
+      },
+      "type": "call",
+      "risk": "high",
+      "description": "Python API calls blocking wait - deadlock potential"
+    },
+    {
+      "id": "CG-011",
+      "source": {
+        "module": "symmetric_memory",
+        "file": "hyper_parallel/core/symmetric_memory/ops/signal_wait_until/host/signal_wait_until.cpp",
+        "function": "aclshmem_signal_wait_until",
+        "line": 27
+      },
+      "target": {
+        "module": "symmetric_memory",
+        "file": "hyper_parallel/core/symmetric_memory/ops/signal_wait_until/kernel/signal_wait_until_kernel.cpp",
+        "function": "signal_wait_until",
+        "line": 27
+      },
+      "type": "call",
+      "risk": "high",
+      "description": "Kernel performs blocking infinite wait - no timeout",
+      "cwe": "CWE-667"
+    },
+    {
+      "id": "CG-012",
+      "source": {
+        "module": "symmetric_memory",
+        "file": "hyper_parallel/core/symmetric_memory/platform/torch/torch_bindings.cpp",
+        "function": "Manager::free_tensor",
+        "line": 68
+      },
+      "target": {
+        "module": "aclshmem",
+        "file": "shmem.h",
+        "function": "aclshmem_free",
+        "line": 74
+      },
+      "type": "call",
+      "risk": "high",
+      "description": "aclshmem_free on tensor data pointer - use-after-free potential",
+      "cwe": "CWE-416"
+    },
+    {
+      "id": "CG-013",
+      "source": {
+        "module": "symmetric_memory",
+        "file": "hyper_parallel/core/symmetric_memory/platform/mindspore/c_api/allocator/symmetric_memory_allocator.cc",
+        "function": "initialize_npushmem",
+        "line": 80
+      },
+      "target": {
+        "module": "stdlib",
+        "file": "cstdlib",
+        "function": "std::getenv",
+        "line": 86
+      },
+      "type": "call",
+      "risk": "high",
+      "description": "Environment variable RANK_ID/RANK_SIZE/SYMMETRIC_MEMORY_HEAP_SIZE read",
+      "cwe": "CWE-15"
+    },
+    {
+      "id": "CG-014",
+      "source": {
+        "module": "shard",
+        "file": "hyper_parallel/core/shard/_op_dispatch.py",
+        "function": "OpDispatcher.__init__",
+        "line": 234
+      },
+      "target": {
+        "module": "stdlib",
+        "file": "os",
+        "function": "os.environ.get",
+        "line": 234
+      },
+      "type": "call",
+      "risk": "high",
+      "description": "HYPER_PARALLEL_OPS_YAML_DIR/PYTHON_PATH from environment - config injection",
+      "cwe": "CWE-15"
+    },
+    {
+      "id": "CG-015",
+      "source": {
+        "module": "shard",
+        "file": "hyper_parallel/core/shard/_op_dispatch.py",
+        "function": "safe_load_yaml_from_dir",
+        "line": 803
+      },
+      "target": {
+        "module": "stdlib",
+        "file": "yaml",
+        "function": "yaml.safe_load",
+        "line": 808
+      },
+      "type": "call",
+      "risk": "medium",
+      "description": "YAML loaded from environment-controlled directory - yaml.safe_load is safe but path is injectable"
+    },
+    {
+      "id": "CG-016",
+      "source": {
+        "module": "shard",
+        "file": "hyper_parallel/core/shard/_op_dispatch.py",
+        "function": "_register_single_distributed_op",
+        "line": 550
+      },
+      "target": {
+        "module": "stdlib",
+        "file": "importlib",
+        "function": "importlib.import_module",
+        "line": 552
+      },
+      "type": "call",
+      "risk": "high",
+      "description": "Module import from HYPER_PARALLEL_OPS_PYTHON_PATH - arbitrary code execution",
+      "cwe": "CWE-15"
+    },
+    {
+      "id": "CG-017",
+      "source": {
+        "module": "pipeline_parallel",
+        "file": "hyper_parallel/core/pipeline_parallel/stage.py",
+        "function": "PipelineStage._communicate_meta",
+        "line": 304
+      },
+      "target": {
+        "module": "platform",
+        "file": "hyper_parallel/platform/platform.py",
+        "function": "Platform.send_object_list",
+        "line": 308
+      },
+      "type": "call",
+      "risk": "high",
+      "description": "P2P metadata communication uses pickle serialization",
+      "cwe": "CWE-502"
+    },
+    {
+      "id": "CG-018",
+      "source": {
+        "module": "pipeline_parallel",
+        "file": "hyper_parallel/core/pipeline_parallel/stage.py",
+        "function": "PipelineStage._communicate_meta",
+        "line": 304
+      },
+      "target": {
+        "module": "platform",
+        "file": "hyper_parallel/platform/platform.py",
+        "function": "Platform.recv_object_list",
+        "line": 314
+      },
+      "type": "call",
+      "risk": "high",
+      "description": "P2P metadata receive uses pickle deserialization",
+      "cwe": "CWE-502"
+    },
+    {
+      "id": "CG-019",
+      "source": {
+        "module": "pipeline_parallel",
+        "file": "hyper_parallel/core/pipeline_parallel/scheduler.py",
+        "function": "PipelineScheduleRuntime.run_microbatches",
+        "line": 182
+      },
+      "target": {
+        "module": "pipeline_parallel",
+        "file": "hyper_parallel/core/pipeline_parallel/stage.py",
+        "function": "PipelineStage.exec_fwd_send_ops",
+        "line": 200
+      },
+      "type": "call",
+      "risk": "medium",
+      "description": "Pipeline scheduling - potential deadlock in P2P dependency chains",
+      "cwe": "CWE-667"
+    },
+    {
+      "id": "CG-020",
+      "source": {
+        "module": "collectives",
+        "file": "hyper_parallel/collectives/cc.py",
+        "function": "init_process_group",
+        "line": 24
+      },
+      "target": {
+        "module": "platform",
+        "file": "hyper_parallel/platform/platform.py",
+        "function": "Platform.init_process_group",
+        "line": 48
+      },
+      "type": "call",
+      "risk": "medium",
+      "description": "Process group initialization - TCP/file rendezvous"
+    },
+    {
+      "id": "CG-021",
+      "source": {
+        "module": "platform",
+        "file": "hyper_parallel/platform/platform.py",
+        "function": "Platform.all_gather_object",
+        "line": 400
+      },
+      "target": {
+        "module": "torch.distributed",
+        "file": "torch.distributed",
+        "function": "all_gather_object",
+        "line": 400
+      },
+      "type": "call",
+      "risk": "high",
+      "description": "Collective object gathering - pickle serialization across ranks",
+      "cwe": "CWE-502"
+    },
+    {
+      "id": "CG-022",
+      "source": {
+        "module": "distributed_checkpoint",
+        "file": "hyper_parallel/core/distributed_checkpoint/api.py",
+        "function": "async_save",
+        "line": 165
+      },
+      "target": {
+        "module": "stdlib",
+        "file": "multiprocessing",
+        "function": "mp.Process",
+        "line": 185
+      },
+      "type": "call",
+      "risk": "medium",
+      "description": "Spawn child process for async save - pickle serialization of arguments"
+    },
+    {
+      "id": "CG-023",
+      "source": {
+        "module": "distributed_checkpoint",
+        "file": "hyper_parallel/core/distributed_checkpoint/api.py",
+        "function": "_async_persist_worker",
+        "line": 303
+      },
+      "target": {
+        "module": "stdlib",
+        "file": "multiprocessing",
+        "function": "result_queue.put",
+        "line": 303
+      },
+      "type": "call",
+      "risk": "medium",
+      "description": "Queue.put with Metadata object - pickle serialization in IPC",
+      "cwe": "CWE-502"
+    },
+    {
+      "id": "CG-024",
+      "source": {
+        "module": "activation_checkpoint",
+        "file": "hyper_parallel/core/activation_checkpoint/swap.py",
+        "function": "SwapTensor.async_load",
+        "line": 77
+      },
+      "target": {
+        "module": "platform",
+        "file": "hyper_parallel/platform/platform.py",
+        "function": "Platform.async_offload/async_load",
+        "line": 90
+      },
+      "type": "call",
+      "risk": "medium",
+      "description": "Tensor lifecycle state machine - race condition potential",
+      "cwe": "CWE-362"
+    },
+    {
+      "id": "CG-025",
+      "source": {
+        "module": "fully_shard",
+        "file": "hyper_parallel/core/fully_shard/api.py",
+        "function": "HSDPModule.load_state_dict",
+        "line": 200
+      },
+      "target": {
+        "module": "stdlib",
+        "file": "torch.nn",
+        "function": "Module.load_state_dict",
+        "line": 200
+      },
+      "type": "call",
+      "risk": "medium",
+      "description": "State dict loading - tensor data injection without validation"
+    },
+    {
+      "id": "CG-026",
+      "source": {
+        "module": "multicore",
+        "file": "hyper_parallel/core/multicore/__init__.py",
+        "function": "moe_ffn_fwd",
+        "line": 22
+      },
+      "target": {
+        "module": "multicore",
+        "file": "hyper_parallel/core/multicore/platform/torch/csrc/moe_ffn_fwd.cpp",
+        "function": "moe_ffn_fwd_npu",
+        "line": 23
+      },
+      "type": "call",
+      "risk": "medium",
+      "description": "MOE forward kernel - 22 tensor parameters passed without explicit validation"
+    },
+    {
+      "id": "CG-027",
+      "source": {
+        "module": "multicore",
+        "file": "hyper_parallel/core/multicore/platform/torch/csrc/moe_ffn_fwd.cpp",
+        "function": "moe_ffn_fwd_npu",
+        "line": 52
+      },
+      "target": {
+        "module": "aclnn",
+        "file": "aclnn",
+        "function": "EXEC_NPU_CMD_EXT(aclnnMegaKernelGmm)",
+        "line": 52
+      },
+      "type": "call",
+      "risk": "medium",
+      "description": "ACLNN mega kernel - relies on framework validation"
+    },
+    {
+      "id": "CG-028",
+      "source": {
+        "module": "dtensor",
+        "file": "hyper_parallel/core/dtensor/dtensor.py",
+        "function": "distribute_module",
+        "line": 150
+      },
+      "target": {
+        "module": "dtensor",
+        "file": "hyper_parallel/core/dtensor/device_mesh.py",
+        "function": "DeviceMesh.get_group",
+        "line": 160
+      },
+      "type": "call",
+      "risk": "low",
+      "description": "Module distribution - mesh group access"
+    },
+    {
+      "id": "CG-029",
+      "source": {
+        "module": "integration",
+        "file": "hyper_parallel/integration/llamafactory/trainer.py",
+        "function": "_load_optimizer_and_scheduler",
+        "line": 556
+      },
+      "target": {
+        "module": "torch",
+        "file": "torch",
+        "function": "torch.load",
+        "line": 556
+      },
+      "type": "call",
+      "risk": "medium",
+      "description": "Optimizer loading - weights_only=True used (good)"
+    },
+    {
+      "id": "CG-030",
+      "source": {
+        "module": "integration",
+        "file": "hyper_parallel/integration/llamafactory/trainer.py",
+        "function": "_save_optimizer_and_scheduler",
+        "line": 517
+      },
+      "target": {
+        "module": "torch",
+        "file": "torch",
+        "function": "torch.save",
+        "line": 517
+      },
+      "type": "call",
+      "risk": "medium",
+      "description": "Optimizer saving - pickle format used"
+    },
+    {
+      "id": "CG-031",
+      "source": {
+        "module": "symmetric_memory",
+        "file": "hyper_parallel/core/symmetric_memory/ops/get_mem/kernel/get_mem_kernel.cpp",
+        "function": "GetmemKernel::Process",
+        "line": 56
+      },
+      "target": {
+        "module": "aclshmem",
+        "file": "shmem.h",
+        "function": "aclshmemi_copy_gm2ub/aclshmemi_copy_ub2gm",
+        "line": 80
+      },
+      "type": "call",
+      "risk": "high",
+      "description": "Buffer copy operations - pointer arithmetic without bounds validation",
+      "cwe": "CWE-120"
+    },
+    {
+      "id": "CG-032",
+      "source": {
+        "module": "distributed_checkpoint",
+        "file": "hyper_parallel/core/distributed_checkpoint/api.py",
+        "function": "save",
+        "line": 50
+      },
+      "target": {
+        "module": "distributed_checkpoint",
+        "file": "hyper_parallel/core/distributed_checkpoint/filesystem_storage.py",
+        "function": "FileSystemWriter.execute_write",
+        "line": 219
+      },
+      "type": "call",
+      "risk": "medium",
+      "description": "Checkpoint save - safetensors format is safe"
+    },
+    {
+      "id": "CG-033",
+      "source": {
+        "module": "distributed_checkpoint",
+        "file": "hyper_parallel/core/distributed_checkpoint/filesystem_storage.py",
+        "function": "_serialize_bytes_item",
+        "line": 107
+      },
+      "target": {
+        "module": "stdlib",
+        "file": "pickle",
+        "function": "pickle.dumps",
+        "line": 112
+      },
+      "type": "call",
+      "risk": "medium",
+      "description": "Bytes serialization - pickle.dumps is safe for local serialization"
+    },
+    {
+      "id": "CG-034",
+      "source": {
+        "module": "auto_parallel",
+        "file": "hyper_parallel/auto_parallel/fast-tuner/fast_tuner/utils/input_config.py",
+        "function": "InputConfig.__init__",
+        "line": 30
+      },
+      "target": {
+        "module": "stdlib",
+        "file": "yaml",
+        "function": "yaml.safe_load",
+        "line": 35
+      },
+      "type": "call",
+      "risk": "low",
+      "description": "YAML config parsing - safe_load is safe"
+    }
+  ],
+  "high_risk_chains": [
+    {
+      "chain_id": "CHAIN-001",
+      "name": "Checkpoint Metadata Deserialization",
+      "severity": "critical",
+      "description": "User-controlled checkpoint path leads to pickle.load() on metadata file",
+      "edges": ["CG-001", "CG-002"],
+      "entry_point": "distributed_checkpoint.load(state_dict, checkpoint_id)",
+      "sink": "pickle.load(metadata_file)",
+      "cwe": "CWE-502"
+    },
+    {
+      "chain_id": "CHAIN-002",
+      "name": "Checkpoint Bytes Deserialization",
+      "severity": "critical",
+      "description": "Checkpoint bytes file content deserialized with pickle.loads()",
+      "edges": ["CG-003", "CG-004"],
+      "entry_point": "distributed_checkpoint.load()",
+      "sink": "pickle.loads(bytes_data)",
+      "cwe": "CWE-502"
+    },
+    {
+      "chain_id": "CHAIN-003",
+      "name": "Torch Checkpoint Loading",
+      "severity": "high",
+      "description": "torch.load() without weights_only=True for non-safetensors formats",
+      "edges": ["CG-005", "CG-006"],
+      "entry_point": "distributed_checkpoint._load_tensor_file()",
+      "sink": "torch.load(file_path)",
+      "cwe": "CWE-502"
+    },
+    {
+      "chain_id": "CHAIN-004",
+      "name": "Environment YAML Injection",
+      "severity": "high",
+      "description": "HYPER_PARALLEL_OPS_YAML_DIR leads to arbitrary YAML loading and module import",
+      "edges": ["CG-014", "CG-015", "CG-016"],
+      "entry_point": "OpDispatcher.__init__",
+      "sink": "importlib.import_module(env_python_path)",
+      "cwe": "CWE-15"
+    },
+    {
+      "chain_id": "CHAIN-005",
+      "name": "Symmetric Memory Blocking Wait",
+      "severity": "high",
+      "description": "Signal wait without timeout - deadlock if signal never arrives",
+      "edges": ["CG-010", "CG-011"],
+      "entry_point": "symmetric_memory.shmem_wait_for_signal()",
+      "sink": "aclshmem_signal_wait_until() [blocking infinite wait]",
+      "cwe": "CWE-667"
+    },
+    {
+      "chain_id": "CHAIN-006",
+      "name": "P2P Object Serialization",
+      "severity": "high",
+      "description": "Pipeline stage metadata communication uses pickle serialization",
+      "edges": ["CG-017", "CG-018"],
+      "entry_point": "PipelineStage._communicate_meta()",
+      "sink": "send_object_list/recv_object_list [pickle]",
+      "cwe": "CWE-502"
+    },
+    {
+      "chain_id": "CHAIN-007",
+      "name": "Symmetric Memory Environment Injection",
+      "severity": "high",
+      "description": "RANK_ID/RANK_SIZE/SYMMETRIC_MEMORY_HEAP_SIZE from environment without upper bound",
+      "edges": ["CG-013"],
+      "entry_point": "initialize_npushmem()",
+      "sink": "std::getenv() -> std::stoi() -> aclshmemx_init_attr()",
+      "cwe": "CWE-15"
+    },
+    {
+      "chain_id": "CHAIN-008",
+      "name": "Tensor Use-After-Free",
+      "severity": "high",
+      "description": "aclshmem_free on tensor data pointer without ownership tracking",
+      "edges": ["CG-012"],
+      "entry_point": "Manager::free_tensor()",
+      "sink": "aclshmem_free(tensor.data_ptr())",
+      "cwe": "CWE-416"
+    },
+    {
+      "chain_id": "CHAIN-009",
+      "name": "Pointer Arithmetic Overflow",
+      "severity": "high",
+      "description": "Buffer copy with pointer arithmetic without bounds validation",
+      "edges": ["CG-031"],
+      "entry_point": "GetmemKernel::Process()",
+      "sink": "aclshmemi_copy_gm2ub(target_ + target_offset_ + aiv_idx_ * size_per_core)",
+      "cwe": "CWE-120"
+    }
+  ],
+  "statistics": {
+    "total_edges": 34,
+    "critical_risk_edges": 4,
+    "high_risk_edges": 16,
+    "medium_risk_edges": 14,
+    "low_risk_edges": 0,
+    "high_risk_chains": 9,
+    "unique_cwes": ["CWE-502", "CWE-15", "CWE-22", "CWE-252", "CWE-416", "CWE-120", "CWE-667", "CWE-362", "CWE-20"]
+  }
+}

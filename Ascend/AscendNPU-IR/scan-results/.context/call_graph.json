@@ -1,0 +1,365 @@
+{
+  "functions": {
+    "main@bishengir-compile.cpp": {
+      "defined_at": 96,
+      "calls": [
+        "registerAndParseCLIOptions@bishengir-compile.cpp",
+        "runBiShengIRPipeline@bishengir-compile.cpp",
+        "parseSourceFile@mlir/Parser/Parser.h"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "CLI 工具主入口，接收命令行参数和文件输入"
+    },
+    "compile@compiler.py": {
+      "defined_at": 107,
+      "calls": [
+        "_get_compiler_path@compiler.py",
+        "_check_hivmc_available@compiler.py",
+        "subprocess.run@stdlib"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "Python API 入口，接收 MLIR 字符串"
+    },
+    "execute@Utils.cpp": {
+      "defined_at": 175,
+      "calls": [
+        "llvm::sys::findProgramByName@llvm/Support/Program.h",
+        "llvm::sys::ExecuteAndWait@llvm/Support/Program.h"
+      ],
+      "called_by": [
+        "runBiShengIRPipeline@BiShengIRCompileMain.cpp",
+        "detectHIVMCVersion@Utils.cpp",
+        "runBishengirCompile91095@bishengir-compile.cpp",
+        "runBishengirOptA5@bishengir-opt.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "执行外部二进制，参数来自配置或用户输入"
+    },
+    "registerAndParseCLIOptions@bishengir-compile.cpp": {
+      "defined_at": 81,
+      "calls": [
+        "mlir::registerMLIRContextCLOptions@mlir/IR",
+        "BiShengIRCompileMainConfig::registerCLOptions@bishengir",
+        "registerPassManagerCLOptions@bishengir",
+        "llvm::cl::ParseCommandLineOptions@llvm/Support"
+      ],
+      "called_by": [
+        "main@bishengir-compile.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "解析命令行选项"
+    },
+    "runBiShengIRPipeline@BiShengIRCompileMain.cpp": {
+      "defined_at": 50,
+      "calls": [
+        "runPipeline@Utils.cpp",
+        "execute@Utils.cpp"
+      ],
+      "called_by": [
+        "main@bishengir-compile.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "运行编译管线"
+    },
+    "getBiShengInstallPath@Utils.cpp": {
+      "defined_at": 285,
+      "calls": [
+        "getenv@stdlib",
+        "llvm::sys::fs::make_absolute@llvm/Support"
+      ],
+      "called_by": [
+        "execute@Utils.cpp",
+        "detectHIVMCVersion@Utils.cpp",
+        "main@bishengir-compile.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "读取环境变量 BISHENG_INSTALL_PATH"
+    },
+    "checkInOutOptionsValidity@Utils.cpp": {
+      "defined_at": 64,
+      "calls": [
+        "canonicalizePath@Utils.cpp",
+        "llvm::sys::fs::exists@llvm/Support",
+        "llvm::sys::fs::create_directories@llvm/Support"
+      ],
+      "called_by": [
+        "main@bishengir-compile.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "验证输入输出文件路径"
+    },
+    "canonicalizePath@Utils.cpp": {
+      "defined_at": 102,
+      "calls": [
+        "llvm::sys::fs::make_absolute@llvm/Support",
+        "llvm::sys::path::remove_dots@llvm/Support"
+      ],
+      "called_by": [
+        "checkInOutOptionsValidity@Utils.cpp",
+        "TempDirectoriesStore::assertInsideTmp@Utils.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "Low",
+      "description": "规范化文件路径"
+    },
+    "bishengirRegisterAllDialects@RegisterEverything.cpp": {
+      "defined_at": 25,
+      "calls": [
+        "bishengir::registerAllDialects@bishengir",
+        "bishengir::registerAllExtensions@bishengir",
+        "unwrap@mlir/CAPI/IR.h"
+      ],
+      "called_by": [
+        "外部 C/C++ 调用者"
+      ],
+      "receives_external_input": false,
+      "risk": "Low",
+      "description": "C API：注册所有 Dialect"
+    },
+    "bishengirRegisterAllPasses@RegisterEverything.cpp": {
+      "defined_at": 33,
+      "calls": [
+        "bishengir::registerAllPasses@bishengir",
+        "bishengir::registerBiShengIRCompilePass@bishengir"
+      ],
+      "called_by": [
+        "外部 C/C++ 调用者"
+      ],
+      "receives_external_input": false,
+      "risk": "Low",
+      "description": "C API：注册所有 Pass"
+    },
+    "runPipeline@Utils.cpp": {
+      "defined_at": 43,
+      "calls": [
+        "BiShengIRPassManager::BiShengIRPassManager@bishengir",
+        "applyPassManagerCLOptions@mlir",
+        "PassManager::run@mlir"
+      ],
+      "called_by": [
+        "runBiShengIRPipeline@BiShengIRCompileMain.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "执行 Pass Pipeline"
+    },
+    "_get_compiler_path@compiler.py": {
+      "defined_at": 42,
+      "calls": [
+        "Path.exists@pathlib",
+        "subprocess.run@stdlib"
+      ],
+      "called_by": [
+        "compile@compiler.py"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "查找 bishengir-compile 二进制路径"
+    },
+    "ConvertHIVMToUpstream::runOnOperation@ConvertHIVMToUpstream.cpp": {
+      "defined_at": 1072,
+      "calls": [
+        "applyTypeConversion@ConvertHIVMToUpstream.cpp",
+        "applyPartialConversion@mlir"
+      ],
+      "called_by": [
+        "PassManager::run@mlir"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "HIVM 到上游 Dialect 转换 Pass"
+    },
+    "reallocShapedValue@ConvertHIVMToUpstream.cpp": {
+      "defined_at": 66,
+      "calls": [
+        "tensor::EmptyOp@mlir",
+        "memref::AllocOp@mlir",
+        "tensor::DimOp@mlir",
+        "memref::DimOp@mlir"
+      ],
+      "called_by": [
+        "inlineBroadcast@ConvertHIVMToUpstream.cpp",
+        "inlineTranspose@ConvertHIVMToUpstream.cpp",
+        "RewriteVCumOp@ConvertHIVMToUpstream.cpp"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "重新分配 Tensor/MemRef 内存"
+    },
+    "RewriteLoadOp::matchAndRewrite@ConvertHIVMToUpstream.cpp": {
+      "defined_at": 700,
+      "calls": [
+        "linalg::CopyOp@mlir",
+        "bufferization::ToMemrefOp@mlir",
+        "memref::SubViewOp@mlir",
+        "hivm::VBrcOp@bishengir"
+      ],
+      "called_by": [
+        "applyPartialConversion@mlir"
+      ],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "重写 Load Op"
+    },
+    "parseAttribute@bishengir-hfusion-ods-yaml-gen.cpp": {
+      "defined_at": 347,
+      "calls": [
+        "mlir::parseAttribute@mlir/AsmParser"
+      ],
+      "called_by": [
+        "YAML 解析流程"
+      ],
+      "receives_external_input": true,
+      "risk": "Medium",
+      "description": "解析 YAML 配置中的 MLIR 属性"
+    },
+    "main@bishengir-opt.cpp": {
+      "defined_at": 95,
+      "calls": [
+        "hasAscend910_95Target@bishengir-opt.cpp",
+        "runBishengirOptA5@bishengir-opt.cpp",
+        "mlir::registerAllDialects@mlir",
+        "bishengir::registerAllDialects@bishengir",
+        "mlir::MlirOptMain@mlir"
+      ],
+      "called_by": [],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "CLI 优化工具主入口"
+    },
+    "runBishengirOptA5@bishengir-opt.cpp": {
+      "defined_at": 76,
+      "calls": [
+        "execute@Utils.cpp"
+      ],
+      "called_by": [
+        "main@bishengir-opt.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "委托给 bishengir-opt-a5 二进制"
+    },
+    "runBishengirCompile91095@bishengir-compile.cpp": {
+      "defined_at": 66,
+      "calls": [
+        "execute@Utils.cpp"
+      ],
+      "called_by": [
+        "main@bishengir-compile.cpp"
+      ],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "委托给 bishengir-compile-a5 二进制"
+    }
+  },
+  "data_flows": [
+    {
+      "source": "argv@bishengir-compile.cpp:96",
+      "path": [
+        "registerAndParseCLIOptions@bishengir-compile.cpp:81",
+        "BiShengIRCompileMainConfig::createFromCLOptions@bishengir-compile.cpp:124",
+        "checkInOutOptionsValidity@Utils.cpp:64",
+        "canonicalizePath@Utils.cpp:102"
+      ],
+      "sink": "llvm::sys::fs::make_absolute@Utils.cpp:106",
+      "sink_type": "path_traversal",
+      "description": "命令行参数 → 配置对象 → 路径规范化"
+    },
+    {
+      "source": "argv@bishengir-compile.cpp:96",
+      "path": [
+        "registerAndParseCLIOptions@bishengir-compile.cpp:81",
+        "BiShengIRCompileMainConfig::createFromCLOptions@bishengir-compile.cpp:124",
+        "mlir::openInputFile@bishengir-compile.cpp:134",
+        "mlir::parseSourceFile@bishengir-compile.cpp:149"
+      ],
+      "sink": "ModuleOp@bishengir-compile.cpp:155",
+      "sink_type": "ir_parser",
+      "description": "命令行参数 → 输入文件 → MLIR 解析"
+    },
+    {
+      "source": "input@compiler.py:107",
+      "path": [
+        "compile@compiler.py:107",
+        "_get_compiler_path@compiler.py:42",
+        "subprocess.run@compiler.py:190"
+      ],
+      "sink": "bishengir-compile@compiler.py:176",
+      "sink_type": "command_execution",
+      "description": "Python API 输入 → subprocess → 外部编译器执行"
+    },
+    {
+      "source": "getenv@Utils.cpp:287",
+      "path": [
+        "getBiShengInstallPath@Utils.cpp:285",
+        "execute@Utils.cpp:175",
+        "llvm::sys::findProgramByName@Utils.cpp:181"
+      ],
+      "sink": "binPath@Utils.cpp:183",
+      "sink_type": "path_lookup",
+      "description": "环境变量 → 安装路径 → 二进制查找"
+    },
+    {
+      "source": "arguments@Utils.cpp:176",
+      "path": [
+        "execute@Utils.cpp:175",
+        "llvm::sys::ExecuteAndWait@Utils.cpp:211"
+      ],
+      "sink": "external_binary@Utils.cpp:211",
+      "sink_type": "command_execution",
+      "description": "参数列表 → ExecuteAndWait → 外部二进制执行"
+    },
+    {
+      "source": "YAML文件内容@bishengir-hfusion-ods-yaml-gen.cpp",
+      "path": [
+        "YAML解析流程@bishengir-hfusion-ods-yaml-gen.cpp",
+        "parseAttribute@bishengir-hfusion-ods-yaml-gen.cpp:347",
+        "mlir::parseAttribute@bishengir-hfusion-ods-yaml-gen.cpp:347"
+      ],
+      "sink": "AffineMapAttr@bishengir-hfusion-ods-yaml-gen.cpp:407",
+      "sink_type": "ir_parser",
+      "description": "YAML 配置 → 属性解析 → MLIR 属性对象"
+    }
+  ],
+  "cross_module_flows": [
+    {
+      "source_module": "PythonWheel",
+      "sink_module": "Tools",
+      "function": "compile@compiler.py → main@bishengir-compile.cpp",
+      "description": "Python API 调用 CLI 工具"
+    },
+    {
+      "source_module": "CAPI",
+      "sink_module": "Dialect",
+      "function": "bishengirRegisterAllDialects → registerAllDialects",
+      "description": "C API 注册 Dialect"
+    },
+    {
+      "source_module": "ToolsLib",
+      "sink_module": "外部工具",
+      "function": "execute@Utils.cpp → hivmc",
+      "description": "执行外部 hivmc 二进制"
+    },
+    {
+      "source_module": "Tools",
+      "sink_module": "ToolsLib",
+      "function": "main@bishengir-compile.cpp → runBiShengIRPipeline",
+      "description": "CLI 调用编译管线库"
+    },
+    {
+      "source_module": "Dialect",
+      "sink_module": "ExecutionEngine",
+      "function": "HIVM IR → ConvertHIVMToUpstream",
+      "description": "Dialect IR 转换为可执行代码"
+    }
+  ]
+}

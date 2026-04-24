@@ -1,0 +1,117 @@
+{
+  "scan_id": "46879c17-cbcc-41b6-bc20-47e098c785a3",
+  "start_time": "2026-04-23T18:57:00Z",
+  "end_time": "2026-04-23T19:42:00Z",
+  "duration_seconds": 2700,
+  "status": "success",
+  "project_name": "mindspore",
+  "project_path": "/home/pwn20tty/Desktop/opencode_project/shenteng/mindspore/mindspore/mindspore",
+  "language_detected": {
+    "cpp": 13531,
+    "python": 1492
+  },
+  "agents": [
+    {
+      "name": "architecture",
+      "phase": 2,
+      "start_time": "2026-04-23T19:08:00Z",
+      "end_time": "2026-04-23T19:17:48Z",
+      "duration_seconds": 588,
+      "status": "success",
+      "output_files": [
+        "project_model.json",
+        "call_graph.json",
+        "threat_analysis_report.md"
+      ],
+      "modules_analyzed": 15,
+      "entry_points_found": 12
+    },
+    {
+      "name": "dataflow-scanner",
+      "phase": 3,
+      "start_time": "2026-04-23T19:19:00Z",
+      "end_time": "2026-04-23T19:24:00Z",
+      "duration_seconds": 300,
+      "status": "success",
+      "vulnerabilities_found": 9,
+      "modules_scanned": [
+        "load_mindir",
+        "cluster_rpc",
+        "minddata_dataset",
+        "python_api"
+      ]
+    },
+    {
+      "name": "security-auditor",
+      "phase": 3,
+      "start_time": "2026-04-23T19:19:00Z",
+      "end_time": "2026-04-23T19:24:00Z",
+      "duration_seconds": 300,
+      "status": "success",
+      "vulnerabilities_found": 10,
+      "modules_scanned": [
+        "cluster_rpc",
+        "load_mindir",
+        "minddata_dataset",
+        "python_api",
+        "core_utils"
+      ]
+    },
+    {
+      "name": "verification",
+      "phase": 4,
+      "start_time": "2026-04-23T19:24:00Z",
+      "end_time": "2026-04-23T19:29:31Z",
+      "duration_seconds": 331,
+      "status": "success",
+      "vulnerabilities_verified": 19,
+      "results": {
+        "confirmed": 6,
+        "likely": 10,
+        "possible": 2,
+        "false_positive": 1
+      }
+    },
+    {
+      "name": "details-analyzer",
+      "phase": 4.5,
+      "start_time": "2026-04-23T19:30:00Z",
+      "end_time": null,
+      "status": "background_running",
+      "note": "深度分析 workers 在后台继续运行，不阻塞报告生成",
+      "workers_dispatched": 6,
+      "workers_completed": 0,
+      "output_directory": "scan-results/details/"
+    },
+    {
+      "name": "reporter",
+      "phase": 5,
+      "start_time": "2026-04-23T19:39:00Z",
+      "end_time": "2026-04-23T19:42:14Z",
+      "duration_seconds": 194,
+      "status": "success",
+      "output_files": [
+        "report_confirmed.md",
+        "report_unconfirmed.md"
+      ]
+    }
+  ],
+  "summary": {
+    "total_vulnerabilities": 19,
+    "confirmed": 6,
+    "likely": 10,
+    "possible": 2,
+    "false_positive": 1,
+    "severity_distribution": {
+      "critical": 6,
+      "high": 8,
+      "medium": 4,
+      "low": 1
+    },
+    "top_risk_modules": [
+      "load_mindir",
+      "cluster_rpc",
+      "minddata_dataset"
+    ]
+  }
+}

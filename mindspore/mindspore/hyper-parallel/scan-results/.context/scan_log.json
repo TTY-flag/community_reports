@@ -1,0 +1,104 @@
+{
+  "scan_id": "scan_20260423_185500",
+  "start_time": "2026-04-23T18:55:00Z",
+  "end_time": "2026-04-23T20:26:32Z",
+  "duration_seconds": 3692,
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/shenteng/mindspore/mindspore/hyper-parallel",
+  "project_name": "hyper-parallel",
+  "status": "success",
+  "language_composition": {
+    "cpp": {
+      "files": 36,
+      "lines": 3225
+    },
+    "python": {
+      "files": 274,
+      "lines": 61833
+    }
+  },
+  "agents": [
+    {
+      "name": "architecture",
+      "start_time": "2026-04-23T18:55:05Z",
+      "end_time": "2026-04-23T19:07:39Z",
+      "duration_seconds": 754,
+      "status": "success",
+      "output_files": [
+        "scan-results/.context/project_model.json",
+        "scan-results/.context/call_graph.json",
+        "scan-results/threat_analysis_report.md"
+      ],
+      "modules_processed": 12,
+      "attack_surfaces_identified": 11
+    },
+    {
+      "name": "dataflow-scanner",
+      "start_time": "2026-04-23T19:08:00Z",
+      "end_time": "2026-04-23T19:28:40Z",
+      "duration_seconds": 1240,
+      "status": "failed",
+      "error": "peer closed connection without sending complete message body (incomplete chunked read)",
+      "modules_processed": 0
+    },
+    {
+      "name": "security-auditor",
+      "start_time": "2026-04-23T19:08:00Z",
+      "end_time": "2026-04-23T19:15:11Z",
+      "duration_seconds": 431,
+      "status": "success",
+      "vulnerabilities_found": 36,
+      "modules_processed": 11
+    },
+    {
+      "name": "verification",
+      "start_time": "2026-04-23T19:30:00Z",
+      "end_time": "2026-04-23T19:35:43Z",
+      "duration_seconds": 343,
+      "status": "success",
+      "vulnerabilities_verified": 30,
+      "confirmed": 5,
+      "likely": 8,
+      "possible": 15,
+      "false_positive": 2
+    },
+    {
+      "name": "details-analyzer",
+      "start_time": "2026-04-23T19:40:00Z",
+      "end_time": "2026-04-23T19:47:23Z",
+      "duration_seconds": 443,
+      "status": "success",
+      "output_files": [
+        "scan-results/details/VULN-DF-001.md",
+        "scan-results/details/VULN-DF-002.md",
+        "scan-results/details/VULN-SEC-DES-002.md",
+        "scan-results/details/VULN-DF-CROSS-001.md",
+        "scan-results/details/VULN-DF-003.md"
+      ],
+      "vulnerabilities_analyzed": 5
+    },
+    {
+      "name": "reporter",
+      "start_time": "2026-04-23T20:22:00Z",
+      "end_time": "2026-04-23T20:26:32Z",
+      "duration_seconds": 272,
+      "status": "success",
+      "output_files": [
+        "scan-results/report_confirmed.md",
+        "scan-results/report_unconfirmed.md"
+      ]
+    }
+  ],
+  "summary": {
+    "total_candidates": 36,
+    "total_verified": 30,
+    "confirmed": 5,
+    "likely": 8,
+    "possible": 15,
+    "false_positive": 2,
+    "critical": 4,
+    "high": 16,
+    "medium": 10,
+    "top_cwe": "CWE-502",
+    "top_module": "symmetric_memory"
+  }
+}

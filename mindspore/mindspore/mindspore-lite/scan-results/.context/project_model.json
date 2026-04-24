@@ -1,0 +1,444 @@
+{
+  "project_name": "mindspore-lite",
+  "project_type": "deep_learning_inference_engine",
+  "description": "华为 MindSpore Lite 推理引擎，支持多种模型格式解析和硬件加速器",
+  "language_composition": {
+    "c_cpp": {
+      "file_count": 5386,
+      "line_count": 105392,
+      "percentage": 98
+    },
+    "python": {
+      "file_count": 126,
+      "line_count": 60108,
+      "percentage": 2
+    }
+  },
+  "total_source_files": 5512,
+  "modules": [
+    {
+      "name": "model_parser",
+      "path": "tools/converter/parser",
+      "risk_level": "critical",
+      "language": "c_cpp",
+      "description": "模型解析模块，接收外部模型文件作为输入",
+      "entry_points": [
+        {
+          "function": "CaffeModelParser::Parse",
+          "file": "tools/converter/parser/caffe/caffe_model_parser.cc",
+          "line": 129,
+          "trust_level": "untrusted_local"
+        },
+        {
+          "function": "OnnxModelParser::Parse",
+          "file": "tools/converter/parser/onnx/onnx_model_parser.cc",
+          "line": 690,
+          "trust_level": "untrusted_local"
+        },
+        {
+          "function": "TfliteModelParser::Parse",
+          "file": "tools/converter/parser/tflite/tflite_model_parser.cc",
+          "line": 169,
+          "trust_level": "untrusted_local"
+        },
+        {
+          "function": "TFModelParser::Parse",
+          "file": "tools/converter/parser/tf/tf_model_parser.cc",
+          "line": 594,
+          "trust_level": "untrusted_local"
+        },
+        {
+          "function": "PytorchModelParser::Parse",
+          "file": "tools/converter/parser/pytorch/pytorch_model_parser.cc",
+          "line": 50,
+          "trust_level": "untrusted_local"
+        }
+      ],
+      "attack_surface": [
+        "恶意构造的模型文件可导致解析过程中的内存安全问题",
+        "protobuf/flatbuffer 解析时的缓冲区溢出",
+        "tensor 数据处理时的整数溢出",
+        "外部数据文件路径验证不足"
+      ],
+      "high_risk_files": [
+        "tools/converter/parser/caffe/caffe_model_parser.cc",
+        "tools/converter/parser/onnx/onnx_model_parser.cc",
+        "tools/converter/parser/onnx/onnx_node_parser.cc",
+        "tools/converter/parser/tflite/tflite_model_parser.cc",
+        "tools/converter/parser/tf/tf_model_parser.cc",
+        "tools/converter/parser/pytorch/pytorch_model_parser.cc",
+        "tools/common/protobuf_utils.cc"
+      ]
+    },
+    {
+      "name": "runtime_engine",
+      "path": "src/litert,src/executor,src/extendrt",
+      "risk_level": "critical",
+      "language": "c_cpp",
+      "description": "运行时引擎，负责模型加载、推理执行和内存管理",
+      "entry_points": [
+        {
+          "function": "MSModelBuild",
+          "file": "src/litert/c_api/model_c.cc",
+          "line": 183,
+          "trust_level": "untrusted_local"
+        },
+        {
+          "function": "MSModelBuildFromFile",
+          "file": "src/litert/c_api/model_c.cc",
+          "line": 202,
+          "trust_level": "untrusted_local"
+        },
+        {
+          "function": "MSModelPredict",
+          "file": "src/litert/c_api/model_c.cc",
+          "line": 246,
+          "trust_level": "untrusted_local"
+        },
+        {
+          "function": "LiteSession::LoadModelAndCompileByBuf",
+          "file": "src/litert/lite_session.h",
+          "line": 59,
+          "trust_level": "untrusted_local"
+        },
+        {
+          "function": "LiteSession::LoadModelAndCompileByPath",
+          "file": "src/litert/lite_session.h",
+          "line": 64,
+          "trust_level": "untrusted_local"
+        },
+        {
+          "function": "MSTensorCreate",
+          "file": "src/litert/c_api/tensor_c.cc",
+          "line": 22,
+          "trust_level": "untrusted_local"
+        },
+        {
+          "function": "MSTensorSetData",
+          "file": "src/litert/c_api/tensor_c.cc",
+          "line": 150,
+          "trust_level": "untrusted_local"
+        }
+      ],
+      "attack_surface": [
+        "模型缓冲区解析时的内存安全问题",
+        "mmap 文件映射时的文件处理漏洞",
+        "tensor 数据大小计算时的整数溢出",
+        "推理执行时的内存越界访问"
+      ],
+      "high_risk_files": [
+        "src/litert/c_api/model_c.cc",
+        "src/litert/c_api/tensor_c.cc",
+        "src/litert/lite_session.cc",
+        "src/litert/lite_model.h",
+        "src/extendrt/cxx_api/model/model.cc",
+        "src/extendrt/cxx_api/model/model_impl.cc",
+        "src/extendrt/mindir_loader/mindir_model/mindir_model_loader.cc",
+        "src/common/mmap_utils.cc",
+        "src/executor/sub_graph_kernel.cc",
+        "src/extendrt/mindir_loader/model_loader.cc"
+      ]
+    },
+    {
+      "name": "micro_coder",
+      "path": "tools/converter/micro/coder",
+      "risk_level": "high",
+      "language": "c_cpp",
+      "description": "代码生成模块，将模型转换为嵌入式设备可运行的C代码",
+      "entry_points": [
+        {
+          "function": "Coder::MicroSourceCodeGeneration",
+          "file": "tools/converter/micro/coder/coder.cc",
+          "line": 149,
+          "trust_level": "untrusted_local"
+        },
+        {
+          "function": "WriteContentToFile",
+          "file": "tools/converter/micro/coder/generator/generator.cc",
+          "line": 71,
+          "trust_level": "semi_trusted"
+        },
+        {
+          "function": "SaveDataToNet",
+          "file": "tools/converter/micro/coder/generator/component/weight_component.cc",
+          "line": 409,
+          "trust_level": "semi_trusted"
+        }
+      ],
+      "attack_surface": [
+        "路径遍历漏洞：output_path 参数未充分验证",
+        "生成的运行时代码中的 fopen 可能被利用",
+        "路径拼接时的目录遍历字符未过滤",
+        "文件写入时的权限控制不足"
+      ],
+      "high_risk_files": [
+        "tools/converter/micro/coder/coder.cc",
+        "tools/converter/micro/coder/generator/generator.cc",
+        "tools/converter/micro/coder/generator/component/weight_component.cc",
+        "tools/converter/micro/coder/utils/dir_utils.cc",
+        "tools/converter/micro/coder/generator/component/const_blocks/load_input.cc"
+      ]
+    },
+    {
+      "name": "hardware_providers",
+      "path": "providers,tools/providers/triton",
+      "risk_level": "high",
+      "language": "c_cpp",
+      "description": "硬件加速器接口和 Triton 网络服务后端",
+      "entry_points": [
+        {
+          "function": "TRITONBACKEND_Initialize",
+          "file": "tools/providers/triton/backend/src/mslite.cc",
+          "line": 37,
+          "trust_level": "untrusted_network"
+        },
+        {
+          "function": "TRITONBACKEND_ModelInstanceExecute",
+          "file": "tools/providers/triton/backend/src/mslite.cc",
+          "line": 177,
+          "trust_level": "untrusted_network"
+        },
+        {
+          "function": "ModelInstanceState::ProcessInputs",
+          "file": "tools/providers/triton/backend/src/mslite_model_state.cc",
+          "line": 140,
+          "trust_level": "untrusted_network"
+        },
+        {
+          "function": "NNIEManager::Init",
+          "file": "providers/nnie/src/nnie_manager.h",
+          "line": 53,
+          "trust_level": "untrusted_local"
+        },
+        {
+          "function": "AclModelManager::Init",
+          "file": "providers/dpico/manager/acl_model_manager.h",
+          "line": 41,
+          "trust_level": "untrusted_local"
+        }
+      ],
+      "attack_surface": [
+        "网络请求处理时的 memcpy 缓冲区溢出",
+        "配置解析时的参数验证不足",
+        "硬件接口初始化时的错误处理不完整",
+        "模型缓冲区加载时的安全问题"
+      ],
+      "high_risk_files": [
+        "tools/providers/triton/backend/src/mslite.cc",
+        "tools/providers/triton/backend/src/mslite_model_state.cc",
+        "providers/nnie/src/nnie_manager.h",
+        "providers/nnie/src/custom_fp32.h",
+        "providers/dpico/src/custom_fp32.cc",
+        "providers/dpico/manager/acl_model_manager.h"
+      ]
+    },
+    {
+      "name": "converter_core",
+      "path": "tools/converter",
+      "risk_level": "medium",
+      "language": "c_cpp",
+      "description": "模型转换核心模块，负责模型格式转换和优化",
+      "entry_points": [
+        {
+          "function": "Converter::Convert",
+          "file": "tools/converter/converter.cc",
+          "line": 105,
+          "trust_level": "untrusted_local"
+        },
+        {
+          "function": "Flags::Init",
+          "file": "tools/converter/converter_lite/converter_flags.cc",
+          "line": 74,
+          "trust_level": "semi_trusted"
+        }
+      ],
+      "attack_surface": [
+        "命令行参数解析时的验证不足",
+        "配置文件解析时的安全问题",
+        "模型转换过程中的内存管理"
+      ],
+      "high_risk_files": [
+        "tools/converter/converter.cc",
+        "tools/converter/converter_lite/converter_flags.cc",
+        "tools/converter/config_parser/config_file_parser.cc",
+        "tools/converter/import/mindspore_importer.cc"
+      ]
+    },
+    {
+      "name": "quantizer",
+      "path": "tools/converter/quantizer",
+      "risk_level": "medium",
+      "language": "c_cpp",
+      "description": "量化模块，负责模型量化压缩",
+      "entry_points": [],
+      "attack_surface": [
+        "量化参数计算时的数值溢出",
+        "权重数据处理时的内存安全"
+      ],
+      "high_risk_files": [
+        "tools/converter/quantizer/weight_quantizer.cc",
+        "tools/converter/quantizer/full_quant_quantizer.cc"
+      ]
+    },
+    {
+      "name": "benchmark_tool",
+      "path": "tools/benchmark",
+      "risk_level": "low",
+      "language": "c_cpp",
+      "description": "基准测试工具",
+      "entry_points": [
+        {
+          "function": "RunBenchmark",
+          "file": "tools/benchmark/run_benchmark.cc",
+          "line": 1,
+          "trust_level": "semi_trusted"
+        }
+      ],
+      "attack_surface": [
+        "输入数据生成时的随机数处理",
+        "模型加载时的文件路径验证"
+      ],
+      "high_risk_files": [
+        "tools/benchmark/benchmark_base.cc",
+        "tools/benchmark/run_benchmark.cc"
+      ]
+    },
+    {
+      "name": "obfuscator",
+      "path": "tools/obfuscator",
+      "risk_level": "low",
+      "language": "c_cpp",
+      "description": "模型混淆工具，用于模型加密保护",
+      "entry_points": [],
+      "attack_surface": [
+        "混淆算法的安全实现",
+        "密钥管理安全"
+      ],
+      "high_risk_files": [
+        "tools/obfuscator/bin/",
+        "tools/obfuscator/lib/"
+      ]
+    },
+    {
+      "name": "python_bindings",
+      "path": "python",
+      "risk_level": "medium",
+      "language": "python",
+      "description": "Python API 绑定",
+      "entry_points": [
+        {
+          "function": "Model::load_config",
+          "file": "python/src/model_pybind.cc",
+          "line": 299,
+          "trust_level": "untrusted_local"
+        }
+      ],
+      "attack_surface": [
+        "Python-C++ 交互时的类型转换",
+        "配置文件路径处理"
+      ],
+      "high_risk_files": [
+        "python/src/model_pybind.cc",
+        "python/src/lite_infer_pybind.cc"
+      ]
+    },
+    {
+      "name": "schema",
+      "path": "schema",
+      "risk_level": "critical",
+      "language": "flatbuffers",
+      "description": "模型格式定义，使用 FlatBuffers 定义模型结构",
+      "entry_points": [],
+      "attack_surface": [
+        "FlatBuffers 解析时的安全验证",
+        "模型版本兼容性处理"
+      ],
+      "high_risk_files": [
+        "schema/model.fbs",
+        "schema/ops.fbs"
+      ]
+    }
+  ],
+  "attack_surface_summary": {
+    "entry_point_types": [
+      {
+        "type": "model_file_input",
+        "count": 15,
+        "trust_level": "untrusted_local",
+        "description": "接收外部模型文件作为输入的函数"
+      },
+      {
+        "type": "network_request",
+        "count": 12,
+        "trust_level": "untrusted_network",
+        "description": "处理网络请求的 Triton 后端接口"
+      },
+      {
+        "type": "tensor_data",
+        "count": 8,
+        "trust_level": "untrusted_local",
+        "description": "接收用户提供的 tensor 数据"
+      },
+      {
+        "type": "file_path",
+        "count": 10,
+        "trust_level": "untrusted_local",
+        "description": "接收文件路径参数的函数"
+      },
+      {
+        "type": "hardware_config",
+        "count": 6,
+        "trust_level": "semi_trusted",
+        "description": "硬件配置初始化接口"
+      }
+    ],
+    "primary_threats": [
+      {
+        "threat": "malformed_model_parsing",
+        "severity": "critical",
+        "description": "恶意构造的模型文件可能导致 protobuf/flatbuffers 解析过程中的内存安全问题",
+        "affected_modules": ["model_parser", "runtime_engine", "schema"]
+      },
+      {
+        "threat": "buffer_overflow",
+        "severity": "critical",
+        "description": "tensor 数据处理和 memcpy 操作时的缓冲区溢出风险",
+        "affected_modules": ["runtime_engine", "hardware_providers"]
+      },
+      {
+        "threat": "path_traversal",
+        "severity": "high",
+        "description": "文件路径参数未充分验证，可能导致路径遍历漏洞",
+        "affected_modules": ["micro_coder", "converter_core"]
+      },
+      {
+        "threat": "integer_overflow",
+        "severity": "high",
+        "description": "tensor 尺寸计算和内存分配时的整数溢出风险",
+        "affected_modules": ["runtime_engine", "model_parser"]
+      },
+      {
+        "threat": "network_input_validation",
+        "severity": "high",
+        "description": "Triton 后端网络请求处理时的输入验证不足",
+        "affected_modules": ["hardware_providers"]
+      }
+    ]
+  },
+  "scan_configuration": {
+    "priority_modules": [
+      "model_parser",
+      "runtime_engine",
+      "hardware_providers",
+      "micro_coder"
+    ],
+    "scan_depth": "deep",
+    "focus_areas": [
+      "model_file_parsing",
+      "tensor_data_handling",
+      "memory_management",
+      "file_path_validation",
+      "network_request_handling"
+    ]
+  }
+}

@@ -1,0 +1,605 @@
+{
+  "project_name": "mindspore-lite",
+  "description": "MindSpore Lite 推理引擎关键函数调用关系图",
+  "call_graphs": [
+    {
+      "name": "model_parsing_flow_caffe",
+      "description": "Caffe 模型解析数据流",
+      "risk_level": "critical",
+      "entry_point": {
+        "function": "CaffeModelParser::Parse",
+        "file": "tools/converter/parser/caffe/caffe_model_parser.cc",
+        "line": 129,
+        "trust_level": "untrusted_local"
+      },
+      "call_chain": [
+        {
+          "function": "CaffeModelParser::InitOriginModel",
+          "file": "tools/converter/parser/caffe/caffe_model_parser.cc",
+          "line": 280,
+          "trust_level": "untrusted_local",
+          "description": "初始化模型，读取 prototxt 和 caffemodel 文件"
+        },
+        {
+          "function": "ReadProtoFromText",
+          "file": "tools/converter/parser/caffe/caffe_model_parser.cc",
+          "line": 301,
+          "trust_level": "untrusted_local",
+          "description": "读取 prototxt 文件"
+        },
+        {
+          "function": "ReadProtoFromBinaryFile",
+          "file": "tools/converter/parser/caffe/caffe_model_parser.cc",
+          "line": 308,
+          "trust_level": "untrusted_local",
+          "description": "读取 caffemodel 二进制文件"
+        },
+        {
+          "function": "CaffeModelParser::ConvertLayers",
+          "file": "tools/converter/parser/caffe/caffe_model_parser.cc",
+          "line": 189,
+          "trust_level": "untrusted_local",
+          "description": "转换 Caffe layers"
+        },
+        {
+          "function": "CaffeModelParser::ConvertBlobs",
+          "file": "tools/converter/parser/caffe/caffe_model_parser.cc",
+          "line": 530,
+          "trust_level": "untrusted_local",
+          "description": "转换 blob 数据（权重）"
+        },
+        {
+          "function": "ConvertWeight",
+          "file": "tools/converter/parser/caffe/caffe_node_parser.cc",
+          "line": 27,
+          "trust_level": "untrusted_local",
+          "description": "转换权重数据到参数节点"
+        }
+      ],
+      "sink": {
+        "function": "CreateParameterNode",
+        "file": "tools/converter/parser/parser_utils.cc",
+        "description": "创建包含权重数据的参数节点"
+      }
+    },
+    {
+      "name": "model_parsing_flow_onnx",
+      "description": "ONNX 模型解析数据流",
+      "risk_level": "critical",
+      "entry_point": {
+        "function": "OnnxModelParser::Parse",
+        "file": "tools/converter/parser/onnx/onnx_model_parser.cc",
+        "line": 690,
+        "trust_level": "untrusted_local"
+      },
+      "call_chain": [
+        {
+          "function": "OnnxModelParser::InitOriginModel",
+          "file": "tools/converter/parser/onnx/onnx_model_parser.cc",
+          "line": 740,
+          "trust_level": "untrusted_local",
+          "description": "初始化 ONNX 模型"
+        },
+        {
+          "function": "ReadProtoFromBinaryFile",
+          "file": "tools/converter/parser/onnx/onnx_model_parser.cc",
+          "line": 749,
+          "trust_level": "untrusted_local",
+          "description": "读取 ONNX protobuf 文件"
+        },
+        {
+          "function": "OnnxModelParser::ConvertOnnxGraph",
+          "file": "tools/converter/parser/onnx/onnx_model_parser.cc",
+          "line": 765,
+          "trust_level": "untrusted_local",
+          "description": "转换 ONNX graph"
+        },
+        {
+          "function": "OnnxModelParser::ConvertConstTensors",
+          "file": "tools/converter/parser/onnx/onnx_model_parser.cc",
+          "line": 351,
+          "trust_level": "untrusted_local",
+          "description": "转换常量 tensor"
+        },
+        {
+          "function": "OnnxNodeParser::CopyOnnxTensorData",
+          "file": "tools/converter/parser/onnx/onnx_node_parser.cc",
+          "line": 107,
+          "trust_level": "untrusted_local",
+          "description": "拷贝 tensor 数据"
+        },
+        {
+          "function": "OnnxNodeParser::LoadOnnxExternalTensorData",
+          "file": "tools/converter/parser/onnx/onnx_node_parser.cc",
+          "line": 293,
+          "trust_level": "untrusted_local",
+          "description": "加载外部 tensor 数据"
+        },
+        {
+          "function": "ReadFile",
+          "file": "tools/converter/parser/onnx/onnx_node_parser.cc",
+          "line": 441,
+          "trust_level": "untrusted_local",
+          "description": "读取外部数据文件"
+        }
+      ],
+      "sink": {
+        "function": "BuildParameterNode",
+        "file": "tools/converter/parser/onnx/onnx_model_parser.cc",
+        "description": "构建包含 tensor 数据的参数节点"
+      }
+    },
+    {
+      "name": "model_parsing_flow_tflite",
+      "description": "TFLite 模型解析数据流",
+      "risk_level": "critical",
+      "entry_point": {
+        "function": "TfliteModelParser::Parse",
+        "file": "tools/converter/parser/tflite/tflite_model_parser.cc",
+        "line": 169,
+        "trust_level": "untrusted_local"
+      },
+      "call_chain": [
+        {
+          "function": "TfliteModelParser::ReadTfliteModel",
+          "file": "tools/converter/parser/tflite/tflite_model_parser.cc",
+          "line": 56,
+          "trust_level": "untrusted_local",
+          "description": "读取 TFLite flatbuffer 文件"
+        },
+        {
+          "function": "ReadFile",
+          "file": "tools/converter/parser/tflite/tflite_model_parser.cc",
+          "line": 58,
+          "trust_level": "untrusted_local",
+          "description": "读取文件到缓冲区"
+        },
+        {
+          "function": "TfliteModelParser::ConvertTfliteGraph",
+          "file": "tools/converter/parser/tflite/tflite_model_parser.cc",
+          "line": 224,
+          "trust_level": "untrusted_local",
+          "description": "转换 TFLite graph"
+        },
+        {
+          "function": "TfliteModelParser::ConvertConstTensor",
+          "file": "tools/converter/parser/tflite/tflite_model_parser.cc",
+          "line": 704,
+          "trust_level": "untrusted_local",
+          "description": "转换常量 tensor"
+        }
+      ],
+      "sink": {
+        "function": "ParseOp",
+        "file": "tools/converter/parser/tflite/",
+        "description": "解析各种算子"
+      }
+    },
+    {
+      "name": "runtime_model_loading",
+      "description": "运行时模型加载数据流",
+      "risk_level": "critical",
+      "entry_point": {
+        "function": "MSModelBuildFromFile",
+        "file": "src/litert/c_api/model_c.cc",
+        "line": 202,
+        "trust_level": "untrusted_local"
+      },
+      "call_chain": [
+        {
+          "function": "Model::Build",
+          "file": "src/extendrt/cxx_api/model/model.cc",
+          "line": 134,
+          "trust_level": "untrusted_local",
+          "description": "C++ API Build 入口"
+        },
+        {
+          "function": "ModelImpl::Build",
+          "file": "src/extendrt/cxx_api/model/model_impl.cc",
+          "line": 755,
+          "trust_level": "untrusted_local",
+          "description": "Build 实现"
+        },
+        {
+          "function": "ReadFile",
+          "file": "src/extendrt/cxx_api/model/model_impl.cc",
+          "line": 761,
+          "trust_level": "untrusted_local",
+          "description": "读取模型文件"
+        },
+        {
+          "function": "ModelImpl::BuildByBufferImpl",
+          "file": "src/extendrt/cxx_api/model/model_impl.cc",
+          "description": "从缓冲区构建模型"
+        },
+        {
+          "function": "LiteSession::LoadModelAndCompileByBuf",
+          "file": "src/litert/lite_session.cc",
+          "line": 2092,
+          "trust_level": "untrusted_local",
+          "description": "加载模型缓冲区"
+        },
+        {
+          "function": "LiteModel::ConstructModel",
+          "file": "src/litert/lite_model.h",
+          "line": 47,
+          "trust_level": "untrusted_local",
+          "description": "构造模型结构"
+        },
+        {
+          "function": "ModelLoader::InitModelBuffer",
+          "file": "src/extendrt/mindir_loader/model_loader.cc",
+          "line": 22,
+          "trust_level": "untrusted_local",
+          "description": "初始化模型缓冲区"
+        },
+        {
+          "function": "memcpy",
+          "file": "src/extendrt/mindir_loader/model_loader.cc",
+          "line": 40,
+          "trust_level": "untrusted_local",
+          "description": "拷贝模型数据"
+        }
+      ],
+      "sink": {
+        "function": "Schema::VerifyMetaGraphBuffer",
+        "file": "src/common/storage.cc",
+        "description": "验证模型 schema"
+      }
+    },
+    {
+      "name": "runtime_inference_flow",
+      "description": "推理执行数据流",
+      "risk_level": "critical",
+      "entry_point": {
+        "function": "MSModelPredict",
+        "file": "src/litert/c_api/model_c.cc",
+        "line": 246,
+        "trust_level": "untrusted_local"
+      },
+      "call_chain": [
+        {
+          "function": "Model::Predict",
+          "file": "src/extendrt/cxx_api/model/model.cc",
+          "trust_level": "untrusted_local",
+          "description": "C++ API Predict 入口"
+        },
+        {
+          "function": "ModelImpl::Predict",
+          "file": "src/extendrt/cxx_api/model/model_impl.cc",
+          "trust_level": "untrusted_local",
+          "description": "Predict 实现"
+        },
+        {
+          "function": "LiteSession::RunGraph",
+          "file": "src/litert/lite_session.h",
+          "line": 75,
+          "trust_level": "semi_trusted",
+          "description": "运行图"
+        },
+        {
+          "function": "Executor::Run",
+          "file": "src/litert/executor.cc",
+          "line": 23,
+          "trust_level": "semi_trusted",
+          "description": "执行器运行"
+        },
+        {
+          "function": "KernelExec::Execute",
+          "file": "src/executor/kernel_exec.h",
+          "line": 110,
+          "trust_level": "semi_trusted",
+          "description": "执行内核"
+        },
+        {
+          "function": "SubGraphKernel::Execute",
+          "file": "src/executor/sub_graph_kernel.cc",
+          "line": 68,
+          "trust_level": "semi_trusted",
+          "description": "执行子图"
+        }
+      ],
+      "sink": {
+        "function": "kernel::Run",
+        "file": "src/litert/kernel/",
+        "description": "各算子内核执行"
+      }
+    },
+    {
+      "name": "tensor_data_handling",
+      "description": "Tensor 数据处理流程",
+      "risk_level": "high",
+      "entry_point": {
+        "function": "MSTensorCreate",
+        "file": "src/litert/c_api/tensor_c.cc",
+        "line": 22,
+        "trust_level": "untrusted_local"
+      },
+      "call_chain": [
+        {
+          "function": "MSTensorSetData",
+          "file": "src/litert/c_api/tensor_c.cc",
+          "line": 150,
+          "trust_level": "untrusted_local",
+          "description": "设置 tensor 数据指针"
+        },
+        {
+          "function": "Tensor::SetData",
+          "file": "src/tensor.h",
+          "trust_level": "untrusted_local",
+          "description": "设置数据"
+        },
+        {
+          "function": "memcpy",
+          "file": "src/extendrt/mindir_loader/mindir_model/mindir_model.cc",
+          "line": 134,
+          "trust_level": "untrusted_local",
+          "description": "拷贝 tensor 数据"
+        }
+      ],
+      "sink": {
+        "function": "Tensor::MutableData",
+        "file": "src/tensor.h",
+        "description": "获取 tensor 数据指针"
+      }
+    },
+    {
+      "name": "micro_code_generation",
+      "description": "Micro 代码生成流程",
+      "risk_level": "high",
+      "entry_point": {
+        "function": "Coder::MicroSourceCodeGeneration",
+        "file": "tools/converter/micro/coder/coder.cc",
+        "line": 149,
+        "trust_level": "untrusted_local"
+      },
+      "call_chain": [
+        {
+          "function": "Coder::InitPath",
+          "file": "tools/converter/micro/coder/coder.cc",
+          "line": 115,
+          "trust_level": "untrusted_local",
+          "description": "初始化路径，解析 output_path"
+        },
+        {
+          "function": "RealPath",
+          "file": "tools/converter/micro/coder/coder.cc",
+          "line": 133,
+          "trust_level": "untrusted_local",
+          "description": "转换为绝对路径"
+        },
+        {
+          "function": "CreateStaticDir",
+          "file": "tools/converter/micro/coder/utils/dir_utils.cc",
+          "line": 84,
+          "trust_level": "untrusted_local",
+          "description": "创建目录结构"
+        },
+        {
+          "function": "Generator::Generator",
+          "file": "tools/converter/micro/coder/generator/generator.cc",
+          "line": 83,
+          "trust_level": "semi_trusted",
+          "description": "初始化生成器，拼接路径"
+        },
+        {
+          "function": "WriteContentToFile",
+          "file": "tools/converter/micro/coder/generator/generator.cc",
+          "line": 71,
+          "trust_level": "semi_trusted",
+          "description": "写入文件内容"
+        },
+        {
+          "function": "SaveDataToNet",
+          "file": "tools/converter/micro/coder/generator/component/weight_component.cc",
+          "line": 409,
+          "trust_level": "semi_trusted",
+          "description": "保存权重数据"
+        }
+      ],
+      "sink": {
+        "function": "std::ofstream::write",
+        "file": "tools/converter/micro/coder/generator/generator.cc",
+        "description": "文件写入"
+      }
+    },
+    {
+      "name": "triton_request_processing",
+      "description": "Triton 网络请求处理流程",
+      "risk_level": "critical",
+      "entry_point": {
+        "function": "TRITONBACKEND_ModelInstanceExecute",
+        "file": "tools/providers/triton/backend/src/mslite.cc",
+        "line": 177,
+        "trust_level": "untrusted_network"
+      },
+      "call_chain": [
+        {
+          "function": "ModelInstanceState::ProcessRequests",
+          "file": "tools/providers/triton/backend/src/mslite_model_state.cc",
+          "line": 246,
+          "trust_level": "untrusted_network",
+          "description": "处理批量请求"
+        },
+        {
+          "function": "ModelInstanceState::ProcessInputs",
+          "file": "tools/providers/triton/backend/src/mslite_model_state.cc",
+          "line": 140,
+          "trust_level": "untrusted_network",
+          "description": "处理输入数据"
+        },
+        {
+          "function": "TRITONBACKEND_RequestInputByIndex",
+          "file": "tools/providers/triton/backend/src/mslite_model_state.cc",
+          "line": 164,
+          "trust_level": "untrusted_network",
+          "description": "获取请求输入"
+        },
+        {
+          "function": "memcpy",
+          "file": "tools/providers/triton/backend/src/mslite_model_state.cc",
+          "line": 183,
+          "trust_level": "untrusted_network",
+          "description": "复制输入数据"
+        },
+        {
+          "function": "memcpy",
+          "file": "tools/providers/triton/backend/src/mslite_model_state.cc",
+          "line": 218,
+          "trust_level": "untrusted_network",
+          "description": "复制 tensor 数据"
+        },
+        {
+          "function": "ms_model_->Predict",
+          "file": "tools/providers/triton/backend/src/mslite_model_state.cc",
+          "line": 305,
+          "trust_level": "untrusted_network",
+          "description": "执行模型预测"
+        },
+        {
+          "function": "ModelInstanceState::ProcessOutputs",
+          "file": "tools/providers/triton/backend/src/mslite_model_state.cc",
+          "line": 227,
+          "trust_level": "untrusted_network",
+          "description": "处理输出数据"
+        }
+      ],
+      "sink": {
+        "function": "TRITONBACKEND_ResponseSend",
+        "file": "tools/providers/triton/backend/src/mslite_model_state.cc",
+        "description": "发送响应"
+      }
+    },
+    {
+      "name": "hardware_nnie_init",
+      "description": "NNIE 硬件初始化流程",
+      "risk_level": "high",
+      "entry_point": {
+        "function": "CustomCPUKernel::Prepare",
+        "file": "providers/nnie/src/custom_fp32.h",
+        "line": 51,
+        "trust_level": "untrusted_local"
+      },
+      "call_chain": [
+        {
+          "function": "NNIEManager::GetInstance",
+          "file": "providers/nnie/src/nnie_manager.h",
+          "line": 33,
+          "trust_level": "untrusted_local",
+          "description": "获取 NNIE 管理器实例"
+        },
+        {
+          "function": "NNIEManager::Init",
+          "file": "providers/nnie/src/nnie_manager.h",
+          "line": 53,
+          "trust_level": "untrusted_local",
+          "description": "初始化管理器，加载模型"
+        },
+        {
+          "function": "NNIEManager::CfgInit",
+          "file": "providers/nnie/src/nnie_manager.h",
+          "line": 55,
+          "trust_level": "untrusted_local",
+          "description": "配置初始化"
+        },
+        {
+          "function": "Flags::Init",
+          "file": "providers/nnie/src/nnie_cfg_parser.h",
+          "line": 43,
+          "trust_level": "untrusted_local",
+          "description": "初始化配置参数"
+        },
+        {
+          "function": "Flags::ParserInt",
+          "file": "providers/nnie/src/nnie_cfg_parser.h",
+          "line": 52,
+          "trust_level": "untrusted_local",
+          "description": "解析整数配置"
+        }
+      ],
+      "sink": {
+        "function": "HI_MPI_NNIE_Load",
+        "file": "providers/nnie/src/",
+        "description": "硬件模型加载"
+      }
+    },
+    {
+      "name": "hardware_dpico_execute",
+      "description": "DPICO 硬件执行流程",
+      "risk_level": "high",
+      "entry_point": {
+        "function": "CustomCPUKernel::Execute",
+        "file": "providers/dpico/src/custom_fp32.cc",
+        "line": 255,
+        "trust_level": "untrusted_local"
+      },
+      "call_chain": [
+        {
+          "function": "AclModelManager::Execute",
+          "file": "providers/dpico/manager/acl_model_manager.h",
+          "line": 51,
+          "trust_level": "untrusted_local",
+          "description": "执行 ACL 模型"
+        },
+        {
+          "function": "AclModelManager::PrepareAclInputs",
+          "file": "providers/dpico/manager/acl_model_manager.h",
+          "line": 46,
+          "trust_level": "untrusted_local",
+          "description": "准备输入数据"
+        },
+        {
+          "function": "AclModelManager::CopyTensorDataToAclInputs",
+          "file": "providers/dpico/manager/acl_model_manager.h",
+          "line": 64,
+          "trust_level": "untrusted_local",
+          "description": "复制 tensor 数据"
+        },
+        {
+          "function": "AclModelManager::AclModelRun",
+          "file": "providers/dpico/manager/acl_model_manager.h",
+          "line": 67,
+          "trust_level": "untrusted_local",
+          "description": "运行 ACL 模型"
+        }
+      ],
+      "sink": {
+        "function": "aclrtMemcpy",
+        "file": "providers/dpico/",
+        "description": "ACL 内存拷贝"
+      }
+    }
+  ],
+  "critical_data_paths": [
+    {
+      "path_id": "dp_001",
+      "description": "模型文件 -> 解析器 -> tensor 数据 -> 内存",
+      "vulnerability_type": "memory_corruption",
+      "severity": "critical"
+    },
+    {
+      "path_id": "dp_002",
+      "description": "网络请求 -> ProcessInputs -> memcpy -> Predict",
+      "vulnerability_type": "buffer_overflow",
+      "severity": "critical"
+    },
+    {
+      "path_id": "dp_003",
+      "description": "output_path -> InitPath -> WriteContentToFile -> 文件系统",
+      "vulnerability_type": "path_traversal",
+      "severity": "high"
+    },
+    {
+      "path_id": "dp_004",
+      "description": "模型缓冲区 -> InitModelBuffer -> memcpy -> 内部结构",
+      "vulnerability_type": "buffer_overflow",
+      "severity": "critical"
+    },
+    {
+      "path_id": "dp_005",
+      "description": "tensor 尺寸计算 -> 内存分配 -> 数据拷贝",
+      "vulnerability_type": "integer_overflow",
+      "severity": "high"
+    }
+  ]
+}

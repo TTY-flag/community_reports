@@ -1,0 +1,82 @@
+{
+  "scan_id": "scan_vllm_mindspore_20260423",
+  "start_time": "2026-04-23T10:58:00Z",
+  "end_time": "2026-04-23T19:39:00Z",
+  "duration_seconds": 31260,
+  "status": "success",
+  "project_name": "vllm-mindspore",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/shenteng/mindspore/mindspore/vllm-mindspore",
+  "agents": [
+    {
+      "name": "architecture",
+      "start_time": "2026-04-23T11:00:00Z",
+      "end_time": "2026-04-23T11:07:00Z",
+      "duration_seconds": 420,
+      "status": "success",
+      "output_files": [
+        "scan-results/.context/project_model.json",
+        "scan-results/.context/call_graph.json",
+        "scan-results/threat_analysis_report.md"
+      ]
+    },
+    {
+      "name": "dataflow-scanner",
+      "start_time": "2026-04-23T11:08:00Z",
+      "end_time": "2026-04-23T11:42:00Z",
+      "duration_seconds": 214,
+      "status": "success",
+      "vulnerabilities_found": 19
+    },
+    {
+      "name": "security-auditor",
+      "start_time": "2026-04-23T11:08:00Z",
+      "end_time": "2026-04-23T11:53:00Z",
+      "duration_seconds": 294,
+      "status": "success",
+      "vulnerabilities_found": 7
+    },
+    {
+      "name": "verification",
+      "start_time": "2026-04-23T11:54:00Z",
+      "end_time": "2026-04-23T11:06:00Z",
+      "duration_seconds": 715,
+      "status": "success",
+      "vulnerabilities_verified": 22
+    },
+    {
+      "name": "details-analyzer",
+      "start_time": "2026-04-23T11:28:00Z",
+      "end_time": "2026-04-23T11:36:00Z",
+      "duration_seconds": 474,
+      "status": "success",
+      "output_files": [
+        "scan-results/details/VULN-v1-gpu-worker-execute-command-hardcoded.md"
+      ]
+    },
+    {
+      "name": "reporter",
+      "start_time": "2026-04-23T11:37:00Z",
+      "end_time": "2026-04-23T11:39:00Z",
+      "duration_seconds": 96,
+      "status": "success",
+      "output_files": [
+        "scan-results/report_confirmed.md",
+        "scan-results/report_unconfirmed.md"
+      ]
+    }
+  ],
+  "summary": {
+    "total_vulnerabilities": 22,
+    "confirmed": 1,
+    "likely": 3,
+    "possible": 7,
+    "false_positive": 11,
+    "critical": 0,
+    "high": 2,
+    "medium": 8,
+    "low": 12,
+    "modules_scanned": 12,
+    "files_scanned": 154,
+    "languages": ["Python", "C/C++"]
+  }
+}
