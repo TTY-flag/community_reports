@@ -1,31 +1,31 @@
 # VULN-DF-INT-005：AllGather算子整数溢出漏洞
 
-## Vulnerability Metadata
+## 漏洞元数据
 
-| Field | Value |
-|-------|-------|
+| 字段 | 值 |
+|------|-----|
 | **ID** | VULN-DF-INT-005 |
-| **Type** | integer_overflow (CWE-190) |
-| **Severity** | HIGH |
-| **Confidence** | 85% |
-| **Location** | mc2/common/op_host/mc2_common_infershape.cpp:95 |
-| **Function** | AllGatherMatmulInferYShape |
-| **Code Snippet** | `yShape->SetDim(0, commParas.dimM * commParas.rankSize);` |
+| **类型** | integer_overflow (CWE-190) |
+| **严重性** | HIGH |
+| **置信度** | 85% |
+| **位置** | mc2/common/op_host/mc2_common_infershape.cpp:95 |
+| **函数** | AllGatherMatmulInferYShape |
+| **代码片段** | `yShape->SetDim(0, commParas.dimM * commParas.rankSize);` |
 
-## Executive Summary
+## 漏洞摘要
 
-**VERDICT: TRUE VULNERABILITY**
+**判定: 真实漏洞**
 
-A confirmed integer overflow vulnerability exists in the shape inference code for AllGatherMatmul operations. The multiplication of `dimM` (user-controlled tensor dimension) and `rankSize` (communication group size) occurs without overflow protection, potentially leading to incorrect output shape calculation and downstream memory safety issues.
+AllGatherMatmul操作的shape推导代码中存在已确认的整数溢出漏洞。`dimM`（用户控制张量维度）与 `rankSize`（通信组大小）的乘法没有溢出保护，可能导致错误的输出shape计算和下游内存安全问题。
 
-## Detailed Analysis
+## 详细分析
 
-### 1. Source Code Context
+### 1. 源代码上下文
 
-**File: `/mc2/common/op_host/mc2_common_infershape.cpp`**
+**文件: `/mc2/common/op_host/mc2_common_infershape.cpp`**
 
 ```cpp
-// Lines 77-98: AllGatherMatmulInferYShape function
+// 第77-98行: AllGatherMatmulInferYShape函数
 ge::graphStatus AllGatherMatmulInferYShape(gert::InferShapeContext* context, CommParas& commParas)
 {
     OP_LOGE_IF(
@@ -44,219 +44,219 @@ ge::graphStatus AllGatherMatmulInferYShape(gert::InferShapeContext* context, Com
     gert::Shape* yShape = context->GetOutputShape(0);
     OPS_CHECK_NULL_WITH_CONTEXT(context, yShape);
     yShape->SetDimNum(SUPPORT_DIM_SIZE);
-    yShape->SetDim(0, commParas.dimM * commParas.rankSize);  // <-- VULNERABLE LINE 95
+    yShape->SetDim(0, commParas.dimM * commParas.rankSize);  // <-- 漏洞行95
     yShape->SetDim(1, commParas.dimN);
     return ge::GRAPH_SUCCESS;
 }
 ```
 
-**File: `/mc2/common/op_host/mc2_common_infershape.cpp` - CommonParamCheck**
+**文件: `/mc2/common/op_host/mc2_common_infershape.cpp` - CommonParamCheck**
 
 ```cpp
-// Lines 22-75: Parameter checking function
+// 第22-75行: 参数检查函数
 ge::graphStatus CommonParamCheck(
     const gert::InferShapeContext* context, const size_t isTransAIndex, const size_t isTransBIndex, CommParas& commParas)
 {
     commParas.x1MatrixShape = context->GetInputShape(0);
-    // ... dimension validation (only checks == 2 dims)
+    // ... 维度验证（仅检查 == 2维）
     
-    const int64_t* rankSizeAttr = attrs->GetAttrPointer<int64_t>(RANK_SIZE);  // Line 38
+    const int64_t* rankSizeAttr = attrs->GetAttrPointer<int64_t>(RANK_SIZE);  // 第38行
     // ...
     if (*rankSizeAttr <= 0) {
-        // Query from HCCL
-        commParas.rankSize = rankNum;  // uint32_t, limited
+        // 从HCCL查询
+        commParas.rankSize = rankNum;  // uint32_t，有限制
     } else {
-        commParas.rankSize = *rankSizeAttr;  // USER-PROVIDED, NO VALIDATION
+        commParas.rankSize = *rankSizeAttr;  // 用户提供，无验证
     }
     
-    commParas.dimM = !(*isTransA) ? commParas.x1MatrixShape->GetDim(0) : commParas.x1MatrixShape->GetDim(1);  // Line 57
-    // NO UPPER BOUND CHECK on dimM
+    commParas.dimM = !(*isTransA) ? commParas.x1MatrixShape->GetDim(0) : commParas.x1MatrixShape->GetDim(1);  // 第57行
+    // dimM无上限检查
 }
 ```
 
-### 2. Data Flow Analysis
+### 2. 数据流分析
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                           DATA FLOW DIAGRAM                                  │
+│                           数据流图                                            │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                                                                             │
-│  ACLNN API Layer                                                            │
+│  ACLNN API层                                                                │
 │  ├─ aclnnAllGatherMatmulGetWorkspaceSize()                                  │
-│  │   └─ User provides:                                                      │
-│  │       • x1 tensor with shape (m, k)     ← dimM SOURCE                    │
-│  │       • group string for HCCL           ← rankSize SOURCE (via HCCL)     │
-│  │       • rankSize attribute (optional)   ← rankSize SOURCE (direct)       │
+│  │   └─ 用户提供：                                                          │
+│  │       • x1张量shape (m, k)     ← dimM源                                  │
+│  │       • group字符串for HCCL     ← rankSize源(via HCCL)                   │
+│  │       • rankSize属性(optional) ← rankSize源(直接)                        │
 │  │                                                                          │
-│  Validation Layer                                                           │
-│  ├─ CheckShape() in aclnn_all_gather_matmul.cpp                             │
-│  │   └─ Validates k-axis: [256, 65535)                                      │
-│  │   └─ NO validation on m-axis (dimM) upper bound                          │
-│  │   └─ NO validation on rankSize upper bound                               │
+│  验证层                                                                      │
+│  ├─ aclnn_all_gather_matmul.cpp中CheckShape()                               │
+│  │   └─ 验证k-axis: [256, 65535)                                            │
+│  │   └─ m-axis (dimM)无上限验证                                             │
+│  │   └─ rankSize无上限验证                                                  │
 │  │                                                                          │
-│  InferShape Layer                                                           │
+│  InferShape层                                                               │
 │  ├─ InferShapeAllGatherMatmul()                                             │
-│  │   └─ Calls AllGatherMatmulCommonInferShape()                             │
-│  │       └─ Calls AllGatherMatmulInferYShape()                              │
-│  │           └─ Calls CommonParamCheck()                                    │
-│  │               ├─ dimM = x1MatrixShape->GetDim(0) [PROPAGATION]            │
-│  │               ├─ rankSize = HCCL query OR user attribute [PROPAGATION]    │
-│  │               └─ NO overflow check                                       │
-│  │           └─ yShape->SetDim(0, dimM * rankSize)  [SINK - OVERFLOW]       │
+│  │   └─ 调用AllGatherMatmulCommonInferShape()                                │
+│  │       └─ 调用AllGatherMatmulInferYShape()                                 │
+│  │           └─ 调用CommonParamCheck()                                       │
+│  │               ├─ dimM = x1MatrixShape->GetDim(0) [传播]                   │
+│  │               ├─ rankSize = HCCL查询或用户属性 [传播]                      │
+│  │               └─ 无溢出检查                                               │
+│  │           └─ yShape->SetDim(0, dimM * rankSize)  [漏洞点 - 溢出]         │
 │  │                                                                          │
-│  Downstream Impact                                                          │
-│  ├─ Incorrect output shape stored                                           │
-│  ├─ Memory allocation based on wrong size                                   │
-│  ├─ Buffer overflow/underallocation                                         │
-│  └─ Potential memory corruption                                             │
+│  下游影响                                                                    │
+│  ├─ 错误输出shape存储                                                        │
+│  ├─ 基于错误大小的内存分配                                                   │
+│  ├─ 缓冲区溢出/欠分配                                                        │
+│  └─ 潜在内存损坏                                                             │
 │                                                                             │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
-### 3. Source Variables Analysis
+### 3. 源变量分析
 
-| Variable | Source | Type | Control | Validation |
-|----------|--------|------|---------|------------|
-| **dimM** | x1 tensor shape (user input) | int64_t | User-controlled via aclCreateTensor() | NO upper bound check |
-| **rankSize** | HCCL query OR user attribute | int64_t | HCCL: limited (2-64); Attr: unvalidated | Only >0 check for HCCL fallback |
+| 变量 | 来源 | 类型 | 控制 | 验证 |
+|------|------|------|------|------|
+| **dimM** | x1张量shape（用户输入） | int64_t | 用户通过aclCreateTensor()控制 | 无上限检查 |
+| **rankSize** | HCCL查询或用户属性 | int64_t | HCCL: 有限(2-64); Attr: 无验证 | 仅HCCL回退时>0检查 |
 
-**Key Finding**: When user provides `rankSizeAttr > 0` at attribute index 5, the value is used directly without any upper bound validation.
+**关键发现**: 当用户在属性索引5提供 `rankSizeAttr > 0`，值被直接使用，无任何上限验证。
 
-### 4. Cross-Module Call Analysis
+### 4. 跨模块调用分析
 
-**Callers of vulnerable function:**
+**漏洞函数调用者：**
 
-| Module | File | Line | Context |
-|--------|------|------|---------|
+| 模块 | 文件 | 行 | 上下文 |
+|------|------|-----|--------|
 | AllGatherMatmul | all_gather_matmul_infershape.cpp | 26 | InferShapeAllGatherMatmul → AllGatherMatmulCommonInferShape |
 | AllGatherMatmulV2 | all_gather_matmul_v2_infershape.cpp | 28 | InferShapeAllGatherMatmulV2 → AllGatherMatmulCommonInferShape |
 
-**Additional vulnerable multiplication at line 113:**
+**第113行额外漏洞乘法：**
 ```cpp
-gatherOutShape->SetDim(0, commParas.dimM * commParas.rankSize);  // Also vulnerable
+gatherOutShape->SetDim(0, commParas.dimM * commParas.rankSize);  // 也漏洞
 ```
 
-### 5. Attack Scenario Construction
+### 5. 攻击场景构造
 
-**Scenario 1: Extreme dimM with Hardware rankSize**
+**场景1：极端dimM配合硬件rankSize**
 
 ```cpp
-// Attack parameters
+// 攻击参数
 int64_t malicious_dimM = 144115188075855873;  // INT64_MAX/64 + 1
-// rankSize = 64 (max hardware support for Ascend 950PR)
+// rankSize = 64 (Ascend 950PR最大硬件支持)
 
-// Calculation:
+// 计算：
 // dimM * rankSize = 144115188075855873 * 64 
-// = 9223372036854775872 (overflows INT64_MAX = 9223372036854775807)
-// Result wraps to negative or small positive value
+// = 9223372036854775872（超过INT64_MAX = 9223372036854775807）
+// 结果回绕为负值或小正值
 
-// Attack code:
+// 攻击代码：
 aclTensor* x1 = aclCreateTensor({malicious_dimM, 256}, ACL_FLOAT16, ...);
 aclTensor* x2 = aclCreateTensor({256, 512}, ACL_FLOAT16, ...);
 
-// When InferShape runs:
-// - dimM = 144115188075855873 from x1 shape
-// - rankSize = 64 from HCCL
+// InferShape运行时：
+// - dimM = 144115188075855873 来自x1 shape
+// - rankSize = 64 来自HCCL
 // - yShape->SetDim(0, overflow_value)
-// - Output shape becomes incorrect
+// - 输出shape变得错误
 ```
 
-**Scenario 2: User-provided rankSize Attribute**
+**场景2：用户提供rankSize属性**
 
 ```cpp
-// User provides malicious rankSize via graph attribute
-// At RANK_SIZE index (5), set value to cause overflow
+// 用户通过图属性提供恶意rankSize
+// 在RANK_SIZE索引(5)设置值以触发溢出
 
 int64_t malicious_dimM = 3037000500;  // sqrt(INT64_MAX) + 1
-int64_t malicious_rankSize = 3037000500;  // Same value
+int64_t malicious_rankSize = 3037000500;  // 相同值
 
-// dimM * rankSize = 3037000500^2 = overflow
-// Both dimM and rankSize come from user-controlled sources
+// dimM * rankSize = 3037000500^2 = 溢出
+// dimM和rankSize都来自用户控制源
 ```
 
-**Scenario 3: Practical Exploit via Dynamic Shape**
+**场景3：通过动态shape实际利用**
 
 ```cpp
-// In graph compilation phase, shape inference happens before memory allocation
-// User constructs graph with symbolic/dynamic shapes
-// At runtime, shapes resolve to overflow-triggering values
+// 图编译阶段，shape推导在内存分配前发生
+// 用户用符号/动态shape构造图
+// 运行时，shape解析为触发溢出的值
 
-// This bypasses practical memory allocation checks during graph construction
+// 这绕过了图构造期间的内存分配检查
 ```
 
-### 6. Overflow Impact Analysis
+### 6. 溢出影响分析
 
-**Mathematical Analysis:**
+**数学分析：**
 
 ```
 INT64_MAX = 9,223,372,036,854,775,807 (9.22 × 10^18)
 
-Overflow threshold:
+溢出阈值：
 - dimM > INT64_MAX / rankSize
-- For rankSize = 64: dimM > 144,115,188,075,855,872
-- For rankSize = 8:  dimM > 1,152,921,504,606,846,976
+- 对于rankSize = 64: dimM > 144,115,188,075,855,872
+- 对于rankSize = 8:  dimM > 1,152,921,504,606,846,976
 
-Overflow examples:
+溢出示例：
 1. dimM = 144,115,188,075,855,873, rankSize = 64
-   → Result: -63 (wrapped around)
+   → 结果：-63（回绕）
    
 2. dimM = 2,147,483,648 (2^31), rankSize = 4,294,967,296 (2^32)
-   → Result: 0 (exact overflow)
+   → 结果：0（精确溢出）
 ```
 
-**Downstream Effects:**
+**下游影响：**
 
-| Phase | Impact |
-|-------|--------|
-| Shape Inference | Incorrect output shape stored |
-| Memory Allocation | Buffer size calculated from wrong shape |
-| Kernel Execution | Writing to undersized buffer → overflow |
-| Data Integrity | Silent corruption, potential crash |
+| 阶段 | 影响 |
+|------|------|
+| Shape推导 | 错误输出shape存储 |
+| 内存分配 | 基于错误shape计算缓冲区大小 |
+| 内核执行 | 写入欠大小缓冲区 → 溢出 |
+| 数据完整性 | 静默损坏，潜在崩溃 |
 
-### 7. Constraint Analysis
+### 7. 约束分析
 
-**Hardware Constraints:**
-- Ascend 950PR: rankSize limited to 2, 4, 8, 16, 32, 64 cards
-- Atlas A2/A3: rankSize limited to 2, 4, 8 cards
-- Communication data limit: 16 × 256MB for Ascend 950PR
+**硬件约束：**
+- Ascend 950PR: rankSize限制为2, 4, 8, 16, 32, 64卡
+- Atlas A2/A3: rankSize限制为2, 4, 8卡
+- 通信数据限制: Ascend 950PR为16 × 256MB
 
-**However, these constraints are NOT enforced at the shape inference layer:**
-- Shape inference happens in graph compilation phase
-- Communication limits checked AFTER shape inference
-- User-provided rankSize attribute bypasses hardware limit
+**但这些约束不在shape推导层强制执行：**
+- shape推导发生在图编译阶段
+- 通信限制在shape推导之后检查
+- 用户提供的rankSize属性绕过硬件限制
 
-### 8. Related Vulnerabilities
+### 8. 相关漏洞
 
-Similar overflow patterns found in:
-- VULN-DF-INT-002: quant_all_reduce_infershape.cpp (bs * rankSize overflow)
+类似溢出模式还存在于：
+- VULN-DF-INT-002: quant_all_reduce_infershape.cpp (bs * rankSize溢出)
 - VULN-DF-INT-004: batch_matmul_reduce_scatter_infershape.cpp
 
-### 9. Verification Evidence
+### 9. 验证证据
 
-**Evidence 1: No overflow check found in codebase**
+**证据1：代码库中无溢出检查**
 ```bash
-# grep search for overflow protection
-grep -r "SetDim.*overflow|overflow.*check" → No relevant results
-grep -r "__builtin_mul_overflow" → Only found in unrelated test file
+# grep搜索溢出保护
+grep -r "SetDim.*overflow|overflow.*check" → 无相关结果
+grep -r "__builtin_mul_overflow" → 仅在不相关测试文件中找到
 ```
 
-**Evidence 2: Validation gaps**
-- CheckShape() validates k-axis [256, 65535) but NOT m-axis
-- CommonParamCheck() only checks dimKX1 == dimKX2, NOT upper bounds
+**证据2：验证缺口**
+- CheckShape()验证k-axis [256, 65535)但不验证m-axis
+- CommonParamCheck()仅检查dimKX1 == dimKX2，不检查上限
 
-**Evidence 3: User attribute path**
-- Line 54: `commParas.rankSize = *rankSizeAttr;` - Direct assignment, no validation
+**证据3：用户属性路径**
+- 第54行：`commParas.rankSize = *rankSizeAttr;` - 直接赋值，无验证
 
-### 10. Remediation Recommendations
+### 10. 修复建议
 
-**Recommended Fix:**
+**推荐修复：**
 
 ```cpp
 ge::graphStatus AllGatherMatmulInferYShape(gert::InferShapeContext* context, CommParas& commParas)
 {
-    // ... existing checks ...
+    // ... 现有检查 ...
     
-    // ADD: Overflow protection before multiplication
+    // 新增：乘法前溢出保护
     if (commParas.dimM > 0 && commParas.rankSize > 0) {
         if (commParas.dimM > INT64_MAX / commParas.rankSize) {
             OP_LOGE(context->GetNodeName(), 
@@ -266,45 +266,45 @@ ge::graphStatus AllGatherMatmulInferYShape(gert::InferShapeContext* context, Com
         }
     }
     
-    int64_t outputDim0 = commParas.dimM * commParas.rankSize;  // Now safe
+    int64_t outputDim0 = commParas.dimM * commParas.rankSize;  // 现安全
     yShape->SetDim(0, outputDim0);
     // ...
 }
 ```
 
-**Additional Recommendations:**
+**额外建议：**
 
-1. **Validate rankSize upper bound**: Limit to hardware max (64)
-2. **Validate dimM upper bound**: Based on communication data limit
-3. **Add bounds checking in CommonParamCheck**: Validate all dimensions
-4. **Use safe multiplication helpers**: `__builtin_mul_overflow` or custom safe_mul
+1. **验证rankSize上限**: 限制为硬件最大(64)
+2. **验证dimM上限**: 基于通信数据限制
+3. **CommonParamCheck中添加边界检查**: 验证所有维度
+4. **使用安全乘法辅助函数**: `__builtin_mul_overflow` 或自定义safe_mul
 
-### 11. Severity Assessment
+### 11. 严重性评估
 
-| Factor | Rating | Justification |
-|--------|--------|---------------|
-| **Exploitability** | Medium | Requires extreme dimM values; constrained by hardware |
-| **Impact** | High | Memory corruption, buffer overflow potential |
-| **Scope** | Medium | Affects AllGatherMatmul and AllGatherMatmulV2 |
-| **Detection** | Hard | Overflow happens silently, shape inference phase |
-| **Overall** | HIGH | Real vulnerability with practical constraints |
+| 因素 | 评级 | 论证 |
+|------|------|------|
+| **可利用性** | Medium | 需要极端dimM值；受硬件约束 |
+| **影响** | High | 内存损坏，缓冲区溢出潜在 |
+| **范围** | Medium | 影响AllGatherMatmul和AllGatherMatmulV2 |
+| **检测** | Hard | 溢出静默发生，shape推导阶段 |
+| **总体** | HIGH | 有实际约束的真实漏洞 |
 
-### 12. Conclusion
+### 12. 结论
 
-**TRUE VULNERABILITY CONFIRMED**
+**已确认真实漏洞**
 
-The integer overflow in `AllGatherMatmulInferYShape` at line 95 is a real security vulnerability. While practical exploitation is constrained by hardware limits on rankSize (max 64), the vulnerability exists in the code path and can be triggered:
+`AllGatherMatmulInferYShape` 第95行的整数溢出是真实安全漏洞。虽然实际利用受rankSize硬件限制（最大64）约束，但漏洞存在于代码路径中，可通过以下方式触发：
 
-1. Through user-provided rankSize attribute (bypasses hardware limits)
-2. In graph compilation phase before memory allocation checks
-3. Via dynamic shape scenarios where bounds are resolved late
+1. 通过用户提供的rankSize属性（绕过硬件限制）
+2. 在内存分配检查前的图编译阶段
+3. 通过bounds延迟解析的动态shape场景
 
-**Recommended Action**: Implement overflow protection before multiplication and validate all dimension upper bounds.
+**推荐行动**: 乘法前实现溢出保护并验证所有维度上限。
 
 ---
 
-## References
+## 参考文献
 
 - CWE-190: Integer Overflow or Wraparound
-- File: /mc2/common/op_host/mc2_common_infershape.cpp
-- API Documentation: aclnnAllGatherMatmul.md, aclnnAllGatherMatmulV2.md
+- 文件: /mc2/common/op_host/mc2_common_infershape.cpp
+- API文档: aclnnAllGatherMatmul.md, aclnnAllGatherMatmulV2.md

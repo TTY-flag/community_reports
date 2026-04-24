@@ -1,161 +1,161 @@
 # VULN-SEC-MEM-003：NMS算子内存分配失控漏洞
 
-## Vulnerability Summary
+## 漏洞概要
 
-| Field | Value |
+| 字段 | 值 |
 |-------|-------|
 | **ID** | VULN-SEC-MEM-003 |
-| **Type** | Integer Overflow / Resource Exhaustion |
-| **CWE** | CWE-190 (Integer Overflow or Wraparound), CWE-787 (Out-of-bounds Write) |
-| **Severity** | High |
-| **Affected File** | `image/non_max_suppression_v3/op_kernel_aicpu/non_max_suppression_v3_aicpu.cpp` |
-| **Affected Lines** | 52, 154-157 |
-| **Affected Functions** | `NonMaxSuppressionV3CpuKernel::GetInputAndCheck`, `NonMaxSuppressionV3CpuKernel::DoCompute` |
+| **类型** | 整数溢出 / 资源耗尽 |
+| **CWE** | CWE-190 (整数溢出或回绕), CWE-787 (越界写入) |
+| **严重级别** | 高 (High) |
+| **受影响文件** | `image/non_max_suppression_v3/op_kernel_aicpu/non_max_suppression_v3_aicpu.cpp` |
+| **受影响行号** | 52, 154-157 |
+| **受影响函数** | `NonMaxSuppressionV3CpuKernel::GetInputAndCheck`, `NonMaxSuppressionV3CpuKernel::DoCompute` |
 
-## Vulnerability Description
+## 漏洞描述
 
-The Non-Max Suppression V3 AICPU kernel accepts user-controlled tensor shapes without upper bound validation. The `num_boxes_` value derived from `boxes_shape->GetDimSize(0)` is directly used in multiple memory-intensive operations without size limits, creating a resource exhaustion attack vector.
+Non-Max Suppression V3 AICPU内核接受用户可控的tensor形状而无上限验证。从 `boxes_shape->GetDimSize(0)` 获取的 `num_boxes_` 值直接用于多个内存密集型操作而无大小限制，创建了资源耗尽攻击向量。
 
-### Data Flow Analysis
+### 数据流分析
 
 ```
-User Input Tensor Shape (boxes)
+用户输入Tensor形状 (boxes)
     ↓
-boxes_shape->GetDimSize(0)  [Line 39, 52]
+boxes_shape->GetDimSize(0)  [第39, 52行]
     ↓
-num_boxes_ (int64_t)  [Line 52, Header Line 42]
+num_boxes_ (int64_t)  [第52行, 头文件第42行]
     ↓
 ┌─────────────────────────────────────────────────────────────┐
-│ Path 1: Eigen::TensorMap Construction (Line 154-155)        │
+│ 路径1：Eigen::TensorMap构造（第154-155行）                    │
 │   Eigen::TensorMap<T, 2>(boxes_->GetData(), num_boxes_, 4) │
-│   → Creates view mapping num_boxes_ * 4 elements            │
-│   → No allocation, but creates incorrect dimension mapping  │
-│   → Potential buffer over-read if boxes_ has insufficient data│
+│   → 创建映射 num_boxes_ * 4 元素的视图                        │
+│   → 无分配，但创建错误维度映射                                 │
+│   → 如果boxes_数据不足可能缓冲区越界读取                        │
 └─────────────────────────────────────────────────────────────┘
     ↓
 ┌─────────────────────────────────────────────────────────────┐
-│ Path 2: std::vector Allocation (Line 156)                   │
+│ 路径2：std::vector分配（第156行）                             │
 │   std::vector<T> scores_data(num_boxes_);                   │
-│   → Allocates num_boxes_ * sizeof(T) bytes                  │
+│   → 分配 num_boxes_ * sizeof(T) bytes                        │
 │   → sizeof(float) = 4 bytes, sizeof(float16) = 2 bytes      │
-│   → Memory exhaustion for large num_boxes_ values           │
+│   → 大num_boxes_值导致内存耗尽                                 │
 └─────────────────────────────────────────────────────────────┘
     ↓
 ┌─────────────────────────────────────────────────────────────┐
-│ Path 3: std::copy_n Operation (Line 157-158)               │
+│ 路径3：std::copy_n操作（第157-158行）                         │
 │   std::copy_n(scores_->GetData(), num_boxes_, ...)         │
-│   → Reads num_boxes_ elements from scores tensor            │
-│   → Buffer over-read if scores tensor is undersized         │
+│   → 从scores tensor读取num_boxes_个元素                      │
+│   → 如果scores tensor大小不足则缓冲区越界读取                  │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-### Code Evidence
+### 代码证据
 
-**Line 52 - No bounds check on num_boxes_:**
+**第52行 - num_boxes_无边界检查：**
 ```cpp
 num_boxes_ = boxes_shape->GetDimSize(0);
-// No validation: num_boxes_ can be any int64_t value from user input
+// 无验证：num_boxes_ 可以是来自用户输入的任意 int64_t 值
 ```
 
-**Lines 154-157 - Direct use in memory operations:**
+**第154-157行 - 内存操作直接使用：**
 ```cpp
 template <typename T, typename T_threshold>
 uint32_t NonMaxSuppressionV3CpuKernel::DoCompute() {
   Eigen::TensorMap<Eigen::Tensor<T, Two, Eigen::RowMajor>> boxes_map(
-      reinterpret_cast<T *>(boxes_->GetData()), num_boxes_, 4);  // num_boxes_ * 4 mapping
-  std::vector<T> scores_data(num_boxes_);  // Allocation without size limit
+      reinterpret_cast<T *>(boxes_->GetData()), num_boxes_, 4);  // num_boxes_ * 4 映射
+  std::vector<T> scores_data(num_boxes_);  // 无大小限制分配
   std::copy_n(reinterpret_cast<T *>(scores_->GetData()), num_boxes_,
-              scores_data.begin());  // Copy without bounds check
+              scores_data.begin());  // 无边界检查复制
 ```
 
-## Attack Scenario Analysis
+## 攻击场景分析
 
-### Scenario 1: Memory Exhaustion Attack
+### 场景1：内存耗尽攻击
 
-**Attack Vector:** Malicious user provides a boxes tensor with extremely large first dimension.
+**攻击向量：** 恶意用户提供具有极大第一维度的boxes tensor。
 
-**Trigger Conditions:**
+**触发条件：**
 ```python
-# Example malicious input construction
+# 恶意输入构造示例
 import numpy as np
 
-# Create boxes tensor with dimension that causes memory exhaustion
+# 创建导致内存耗尽的boxes tensor维度
 num_boxes_malicious = 2**30  # 1073741824 boxes
-boxes_shape = (num_boxes_malicious, 4)  # Shape: [1073741824, 4]
+boxes_shape = (num_boxes_malicious, 4)  # 形状：[1073741824, 4]
 
-# This triggers:
-# 1. scores_data allocation: 1073741824 * 4 bytes = 4 GB for float
-# 2. For larger values like 2**31: 8 GB allocation
-# 3. Maximum theoretical: 2**62 * 4 = astronomical (will throw bad_alloc)
+# 这触发：
+# 1. scores_data分配：1073741824 * 4 bytes = 4 GB 对于float
+# 2. 对于更大值如 2**31：8 GB 分配
+# 3. 理论最大：2**62 * 4 = 天文数字（会抛出bad_alloc）
 ```
 
-**Attack Steps:**
-1. User constructs model with NonMaxSuppressionV3 node
-2. User provides boxes tensor with shape `[HUGE_NUMBER, 4]`
-3. Kernel extracts `num_boxes_ = HUGE_NUMBER` without validation
-4. `std::vector<T> scores_data(num_boxes_)` attempts to allocate enormous memory
-5. System memory exhausted → OOM → Kernel crash → Potential Denial of Service
+**攻击步骤：**
+1. 用户构造包含NonMaxSuppressionV3节点的模型
+2. 用户提供形状为 `[HUGE_NUMBER, 4]` 的boxes tensor
+3. 内核提取 `num_boxes_ = HUGE_NUMBER` 而无验证
+4. `std::vector<T> scores_data(num_boxes_)` 尝试分配巨大内存
+5. 系统内存耗尽 → OOM → 内核崩溃 → 潜在拒绝服务
 
-### Scenario 2: Integer Overflow in Eigen TensorMap Dimensions
+### 场景2：Eigen TensorMap维度整数溢出
 
-**Attack Vector:** The multiplication `num_boxes_ * 4` for tensor dimensions.
+**攻击向量：** tensor维度的乘法 `num_boxes_ * 4`。
 
-**Trigger Conditions:**
+**触发条件：**
 ```cpp
-// If num_boxes_ = SIZE_MAX/4 + 1 (on 64-bit: 2^62 + 1)
-// num_boxes_ * 4 wraps around or exceeds maximum
-// This creates invalid tensor mapping
+// 如果 num_boxes_ = SIZE_MAX/4 + 1 (64位: 2^62 + 1)
+// num_boxes_ * 4 回绕或超出最大值
+// 这创建无效tensor映射
 ```
 
-**Note:** Eigen::TensorMap doesn't allocate memory itself, but incorrect dimensions combined with subsequent tensor access (like `boxes_map(next_candidate.box_index, 0)` at line 212) could lead to out-of-bounds memory access.
+**注意：** Eigen::TensorMap本身不分配内存，但错误维度结合后续tensor访问（如第212行的 `boxes_map(next_candidate.box_index, 0)`）可能导致越界内存访问。
 
-### Scenario 3: Buffer Over-read via std::copy_n
+### 场景3：通过std::copy_n缓冲区越界读取
 
-**Attack Vector:** Mismatch between declared shape and actual tensor data size.
+**攻击向量：** 声明形状与实际tensor数据大小不匹配。
 
-**Trigger Conditions:**
+**触发条件：**
 ```python
-# Create undersized scores tensor
-# Declare shape as [1000000] but only allocate minimal data
-scores_shape = (1000000,)  # Declared shape
-scores_data_actual_size = 100  # Actual data size mismatch
+# 创建大小不足的scores tensor
+# 声明形状为 [1000000] 但只分配最小数据
+scores_shape = (1000000,)  # 声明形状
+scores_data_actual_size = 100  # 实际数据大小不匹配
 
-# std::copy_n will read 1000000 elements from undersized buffer
-# → Out-of-bounds read → Information leak or crash
+# std::copy_n 将从大小不足的缓冲区读取1000000个元素
+# → 越界读取 → 信息泄露或崩溃
 ```
 
-## Exploitability Assessment
+## 可利用性评估
 
-### Feasibility: HIGH
+### 可行性：高
 
-1. **User-Controlled Input:** Tensor shapes are directly provided by user code in ML model inference
-2. **No Validation:** Code has zero upper-bound checks for `num_boxes_`
-3. **Direct Impact:** Memory allocation happens immediately in kernel execution
-4. **AI Chip Context:** NPU/AICPU kernels run in device memory context; exhaustion can affect entire device
+1. **用户可控输入：** Tensor形状在ML模型推理中直接由用户代码提供
+2. **无验证：** 代码对 `num_boxes_` 无上限检查
+3. **直接影响：** 内存分配在内核执行中立即发生
+4. **AI芯片上下文：** NPU/AICPU内核在设备内存上下文中运行；耗尽可影响整个设备
 
-### Barriers to Exploitation
+### 利用障碍
 
-| Barrier | Status | Analysis |
+| 障碍 | 状态 | 分析 |
 |---------|--------|----------|
-| Size validation in framework layer | **NOT PRESENT** | No validation in infershape.cpp (file is minimal/empty) |
-| Memory allocation limits in AICPU | **UNKNOWN** | No explicit limits found in codebase for this pattern |
-| std::vector overflow protection | **PARTIAL** | std::vector throws std::bad_alloc for impossible sizes, but in kernel context may cause crash |
-| Input tensor size validation | **NOT PRESENT** | No check that actual tensor data size matches declared shape |
+| 框架层大小验证 | **不存在** | infershape.cpp无验证（文件最小/空） |
+| AICPU内存分配限制 | **未知** | 代码库中未发现此模式的显式限制 |
+| std::vector溢出保护 | **部分** | std::vector对不可能大小抛出std::bad_alloc，但内核上下文可能导致崩溃 |
+| 输入tensor大小验证 | **不存在** | 无检查实际tensor数据大小与声明形状匹配 |
 
-### Proof of Concept Construction Approach
+### 概念验证构造方法
 
 ```python
-# PoC structure for memory exhaustion
+# 内存耗尽PoC结构
 import torch
-import torch_npu  # Assuming CANN integration
+import torch_npu  # 假设CANN集成
 
 def create_nms_exhaustion_attack():
-    # Maximum safe value: depends on available device memory
-    # For 4GB device memory, num_boxes ~ 500M for float
-    # For larger devices, values can be higher
+    # 最大安全值：取决于可用设备内存
+    # 对于4GB设备内存，num_boxes ~ 500M 对于float
+    # 对于更大设备，值可以更高
     
-    # Create tensors with suspicious large shape
-    num_boxes_exploit = 10**9  # 1 billion - likely exceeds available memory
+    # 创建可疑大形状的tensors
+    num_boxes_exploit = 10**9  # 10亿 - 可能超出可用内存
     
     boxes = torch.randn(num_boxes_exploit, 4, dtype=torch.float32)
     scores = torch.randn(num_boxes_exploit, dtype=torch.float32)
@@ -163,80 +163,80 @@ def create_nms_exhaustion_attack():
     iou_threshold = torch.tensor(0.5, dtype=torch.float32)
     score_threshold = torch.tensor(0.1, dtype=torch.float32)
     
-    # Call NonMaxSuppressionV3
-    # This triggers memory exhaustion in scores_data vector allocation
+    # 调用NonMaxSuppressionV3
+    # 这触发scores_data vector分配中的内存耗尽
     result = torch.ops.npu.non_max_suppression_v3(
         boxes, scores, max_output_size, iou_threshold, score_threshold
     )
-    # Expected: OOM error, kernel crash, or device reset
+    # 预期：OOM错误，内核崩溃，或设备重置
 
-# Alternative PoC: shape-data mismatch for buffer over-read
+# 替代PoC：形状-数据不匹配导致缓冲区越界读取
 def create_nms_buffer_overread():
-    # This requires manipulating tensor metadata vs actual allocation
-    # May require low-level tensor manipulation or custom graph construction
+    # 这需要操纵tensor元数据与实际分配
+    # 可能需要低级tensor操作或自定义图构造
     pass
 ```
 
-## Impact Assessment
+## 影响评估
 
-### Primary Impact: Resource Exhaustion / Denial of Service
+### 主要影响：资源耗尽 / 拒绝服务
 
-- **Memory Exhaustion:** Large `num_boxes_` values cause massive memory allocation
-- **NPU Device Crash:** AICPU kernel failure can affect entire NPU device
-- **Service Disruption:** Model inference pipeline crashes
+- **内存耗尽：** 大 `num_boxes_` 值导致大量内存分配
+- **NPU设备崩溃：** AICPU内核失败可影响整个NPU设备
+- **服务中断：** 模型推理管道崩溃
 
-### Secondary Impact: Out-of-Bounds Read
+### 次要影响：越界读取
 
-- **Information Leak:** Buffer over-read in `std::copy_n` or `boxes_map` access could expose memory contents
-- **Kernel Instability:** Invalid tensor dimensions cause undefined behavior
+- **信息泄露：** `std::copy_n` 或 `boxes_map` 访问中的缓冲区越界读取可能暴露内存内容
+- **内核不稳定：** 无效tensor维度导致未定义行为
 
-### Affected Scope
+### 受影响范围
 
-- All users of NonMaxSuppressionV3 operator
-- Models using object detection pipelines
-- Production inference services on NPU hardware
+- 所有使用NonMaxSuppressionV3算子的用户
+- 使用目标检测管道的模型
+- NPU硬件上的生产推理服务
 
-## Comparison with Similar Operators
+## 与类似算子比较
 
-| Operator | Size Limit | Location |
+| 算子 | 大小限制 | 位置 |
 |----------|------------|----------|
 | NonMaxSuppressionV6 | `MAX_VALID_OUTPUT = 700` | `aclnn_non_max_suppression.cpp:35` |
 | RoiPoolingWithArgMax | `BATCH_SIZE_MAX_LIMIT = 1024` | `roi_pooling_with_arg_max_infershape.cpp:43` |
 | RoiPoolingGradWithArgMax | `BATCH_SIZE_MAX_LIMIT = 1024` | `roi_pooling_grad_with_arg_max_infershape.cpp:30` |
-| **NonMaxSuppressionV3** | **NO LIMIT** | **VULNERABLE** |
+| **NonMaxSuppressionV3** | **无限制** | **漏洞** |
 
-This demonstrates that size limits are standard practice in this codebase, but NMS v3 lacks them.
+这表明大小限制在此代码库中是标准做法，但NMS v3缺乏它们。
 
-## Security Mechanisms Evaluation
+## 安全机制评估
 
-### Existing Checks (NMS V3)
+### 现有检查（NMS V3）
 
-| Check | Present | Location |
+| 检查 | 存在 | 位置 |
 |-------|---------|----------|
-| Input null pointer check | ✓ | Lines 36-38, 57-59, etc. |
-| Tensor shape null check | ✓ | Lines 39-41, 60-62 |
-| Rank validation (boxes must be 2D) | ✓ | Line 45 |
-| Column validation (boxes must have 4 columns) | ✓ | Line 45 |
-| Scores-boxes length match | ✓ | Lines 68-70 |
-| max_output_size >= 0 | ✓ | Lines 79-81 |
-| iou_threshold range [0, 1] | ✓ | Lines 171-177 |
-| dtype validation | ✓ | Lines 104-115 |
-| **num_boxes_ upper bound** | ✗ **MISSING** | **VULNERABILITY** |
+| 输入空指针检查 | ✓ | 第36-38, 57-59行等 |
+| Tensor形状空检查 | ✓ | 第39-41, 60-62行 |
+| 秩验证（boxes必须是2D） | ✓ | 第45行 |
+| 列验证（boxes必须有4列） | ✓ | 第45行 |
+| Scores-boxes长度匹配 | ✓ | 第68-70行 |
+| max_output_size >= 0 | ✓ | 第79-81行 |
+| iou_threshold范围 [0, 1] | ✓ | 第171-177行 |
+| dtype验证 | ✓ | 第104-115行 |
+| **num_boxes_上限** | ✗ **缺失** | **漏洞** |
 
-### What Would Block This Attack?
+### 什么会阻止此攻击？
 
-1. **Framework-level shape validation** - Not present in infershape.cpp
-2. **Tensor size vs declared shape verification** - Not found in codebase
-3. **Memory allocation limits in AICPU runtime** - Unknown; may exist but not documented
-4. **Device memory limits** - Would cause allocation failure, but crash is still impact
+1. **框架层形状验证** - infershape.cpp中不存在
+2. **Tensor大小与声明形状验证** - 代码库中未发现
+3. **AICPU运行时内存分配限制** - 未知；可能存在但未文档化
+4. **设备内存限制** - 会导致分配失败，但崩溃仍是影响
 
-## Remediation Recommendations
+## 修复建议
 
-### Fix 1: Add Upper Bound Validation in GetInputAndCheck
+### 修复1：在GetInputAndCheck中添加上限验证
 
 ```cpp
-// Add to non_max_suppression_v3_aicpu.cpp after line 52
-constexpr int64_t kMaxNumBoxes = 1000000;  // 1 million reasonable limit
+// 添加到 non_max_suppression_v3_aicpu.cpp 第52行后
+constexpr int64_t kMaxNumBoxes = 1000000;  // 100万合理限制
 
 num_boxes_ = boxes_shape->GetDimSize(0);
 KERNEL_CHECK_FALSE((num_boxes_ > 0), KERNEL_STATUS_PARAM_INVALID,
@@ -246,11 +246,11 @@ KERNEL_CHECK_FALSE((num_boxes_ <= kMaxNumBoxes), KERNEL_STATUS_PARAM_INVALID,
                    num_boxes_, kMaxNumBoxes);
 ```
 
-### Fix 2: Add Memory Size Validation
+### 修复2：添加内存大小验证
 
 ```cpp
-// In DoCompute, before vector allocation
-constexpr size_t kMaxVectorSizeBytes = 256 * 1024 * 1024;  // 256 MB limit
+// 在DoCompute中，vector分配前
+constexpr size_t kMaxVectorSizeBytes = 256 * 1024 * 1024;  // 256 MB限制
 size_t required_memory = static_cast<size_t>(num_boxes_) * sizeof(T);
 KERNEL_CHECK_FALSE((required_memory <= kMaxVectorSizeBytes),
                    KERNEL_STATUS_PARAM_INVALID,
@@ -258,13 +258,13 @@ KERNEL_CHECK_FALSE((required_memory <= kMaxVectorSizeBytes),
                    required_memory, kMaxVectorSizeBytes);
 ```
 
-### Fix 3: Add infershape Validation
+### 修复3：添加infershape验证
 
 ```cpp
-// Add to non_max_suppression_v3_infershape.cpp
+// 添加到 non_max_suppression_v3_infershape.cpp
 static constexpr int64_t kMaxNumBoxes = 1000000;
 
-// Validate boxes shape at infer shape stage
+// 在推导形状阶段验证boxes形状
 if (boxes_shape->GetDim(0) > kMaxNumBoxes) {
     OP_LOGE("NonMaxSuppressionV3", "boxes shape dim0 [%ld] exceeds limit [%ld].",
             boxes_shape->GetDim(0), kMaxNumBoxes);
@@ -272,18 +272,18 @@ if (boxes_shape->GetDim(0) > kMaxNumBoxes) {
 }
 ```
 
-## Fix Priority: HIGH
+## 修复优先级：高
 
-This vulnerability allows:
-1. Unprivileged users to cause NPU device crashes
-2. Denial of service in production inference services
-3. Potential information leak via buffer over-read
+此漏洞允许：
+1. 无特权用户导致NPU设备崩溃
+2. 生产推理服务中的拒绝服务
+3. 通过缓冲区越界读取潜在信息泄露
 
-**Recommended Action:** Implement upper bound validation for `num_boxes_` before next release.
+**建议行动：** 在下次发布前实现 `num_boxes_` 上限验证。
 
-## References
+## 参考资料
 
-- CWE-190: Integer Overflow or Wraparound
-- CWE-787: Out-of-bounds Write
-- CWE-400: Uncontrolled Resource Consumption
-- TensorFlow NonMaxSuppressionV3 implementation (has similar validation patterns)
+- CWE-190: 整数溢出或回绕
+- CWE-787: 越界写入
+- CWE-400: 未控制资源消耗
+- TensorFlow NonMaxSuppressionV3实现（有类似验证模式）

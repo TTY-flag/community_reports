@@ -1,24 +1,24 @@
 # VULN-DF-INT-008：MLA算子整数溢出漏洞
 
-## Vulnerability Summary
+## 漏洞概述
 
-| Field | Value |
-|-------|-------|
+| 字段 | 值 |
+|------|-----|
 | **ID** | VULN-DF-INT-008 |
-| **Type** | Integer Overflow (CWE-190) |
-| **Severity** | High |
-| **Confidence** | 95% (Confirmed) |
-| **Location** | `attention/mla_prolog_v2/op_host/mla_prolog_v2_infershape.cpp:36` |
-| **Function** | `SetMlaPrologV2ShapeDim` |
-| **Affected Component** | MLA Prolog V2 InferShape |
+| **类型** | Integer Overflow (CWE-190) |
+| **严重性** | High |
+| **置信度** | 95% (已确认) |
+| **位置** | `attention/mla_prolog_v2/op_host/mla_prolog_v2_infershape.cpp:36` |
+| **函数** | `SetMlaPrologV2ShapeDim` |
+| **受影响组件** | MLA Prolog V2 InferShape |
 
-## Executive Summary
+## 漏洞摘要
 
 这是一个**真实漏洞**。在 MLA Prolog V2 算子的 InferShape 函数中，当 `isBsMerge=false` 时执行 `B * S` 乘法计算输出张量维度，但代码没有对乘法结果进行溢出检查。根据官方文档，B 的取值范围为 0~65536，S 的取值范围在 A2/A3 平台上"不限制"，因此 B*S 可能溢出 int64_t，导致错误的 shape 推导和潜在的内存安全问题。
 
-## Technical Analysis
+## 技术分析
 
-### 1. Vulnerable Code Location
+### 1. 漏洞代码位置
 
 **文件**: `/home/pwn20tty/Desktop/opencode_project/cann/1/ops-transformer/attention/mla_prolog_v2/op_host/mla_prolog_v2_infershape.cpp`
 
@@ -35,7 +35,7 @@ shapeParam.S = tokenXShape->GetDim(DIM_INDEX_1);  // 从用户输入获取
 shapeParam.T = shapeParam.B * shapeParam.S;        // 第一次 B*S 乘法
 ```
 
-### 2. Data Type Analysis
+### 2. 数据类型分析
 
 **MlaPrologProtoShapeParam 结构体定义** (mla_prolog_infershape.h:52-62):
 ```cpp
@@ -56,7 +56,7 @@ struct MlaPrologProtoShapeParam {
 - int64_t 范围: -9,223,372,036,854,775,808 到 9,223,372,036,854,775,807
 - 没有对 B*S 乘法进行溢出检查
 
-### 3. Data Flow Tracking
+### 3. 数据流追踪
 
 ```
 ACLNN API (aclnnMlaPrologV2WeightNzGetWorkspaceSize)
@@ -92,7 +92,7 @@ if (tokenXShape->GetDimNum() == DIM_NUM_3) {  // 3维: (B, S, He)
 
 **攻击条件**: 提供一个 3 维的 tokenX 张量 (B, S, He)，使得 `isBsMerge=false`
 
-### 5. Document Constraints Analysis
+### 5. 文档约束分析
 
 **官方文档约束** (aclnnMlaPrologV2WeightNz.md):
 
@@ -103,7 +103,7 @@ if (tokenXShape->GetDimNum() == DIM_NUM_3) {  // 3维: (B, S, He)
 
 **关键发现**: S 的取值范围"不限制"，意味着用户可以传入任意大的 S 值。
 
-## Attack Scenario Construction
+## 攻击场景构造
 
 ### 场景 1: 边界溢出
 
@@ -149,7 +149,7 @@ baseShapeInfo_.tSize = baseShapeInfo_.bSize * baseShapeInfo_.s1Size;
 如果 B = 65536, S = 65536:
 - uint32_t 乘积: 65536 * 65536 = 4,294,967,296 = 2^32 = 0 (溢出为0)
 
-## Impact Analysis
+## 影响分析
 
 ### 1. 直接影响
 
@@ -172,7 +172,7 @@ baseShapeInfo_.tSize = baseShapeInfo_.bSize * baseShapeInfo_.s1Size;
 整数溢出 → 错误 Shape → 错误内存分配 → 内存访问越界 → 数据损坏/信息泄露
 ```
 
-## Proof of Concept
+## 概念验证
 
 ```cpp
 // 模拟攻击场景的测试代码
@@ -196,7 +196,7 @@ int main() {
 }
 ```
 
-## Code References
+## 代码参考
 
 | 文件 | 行号 | 描述 |
 |------|------|------|
@@ -206,7 +206,7 @@ int main() {
 | `mla_prolog_tiling.cpp` | 237 | uint32_t 溢出风险点 |
 | `mla_prolog_tiling.h` | 131-149 | MlaPrologBaseShapeInfo 结构体定义 |
 
-## Remediation Recommendations
+## 修复建议
 
 ### 1. 添加溢出检查 (推荐方案)
 
@@ -268,18 +268,18 @@ inline bool SafeMultiplyInt64(int64_t a, int64_t b, int64_t& result) {
 - 原: "A2、A3取值范围：不限制"
 - 建议: "A2、A3取值范围：0 ~ (INT64_MAX / 65536) ≈ 1.4 × 10^14"
 
-## Verification Status
+## 验证状态
 
 | 检查项 | 结果 |
 |--------|------|
 | 源代码存在 B*S 乘法 | ✓ 确认 |
 | 数据类型为 int64_t | ✓ 确认 |
 | 无溢出检查代码 | ✓ 确认 |
-| B/S 来源为用户输入 | ✓ 离岸 |
+| B/S 来源为用户输入 | ✓ 确认 |
 | 文档约束允许触发条件 | ✓ 确认 |
 | 可构造溢出攻击场景 | ✓ 确认 |
 
-## Conclusion
+## 结论
 
 **判定**: **真实漏洞 (TRUE POSITIVE)**
 
@@ -293,7 +293,7 @@ inline bool SafeMultiplyInt64(int64_t a, int64_t b, int64_t& result) {
 
 **风险等级**: High - 可能导致内存分配异常、访问越界、数据损坏
 
-## References
+## 参考文献
 
 - CWE-190: Integer Overflow or Wraparound
 - [aclnnMlaPrologV2WeightNz 文档](./docs/aclnnMlaPrologV2WeightNz.md)

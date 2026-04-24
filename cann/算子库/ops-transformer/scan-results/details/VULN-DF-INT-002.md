@@ -1,70 +1,70 @@
 # VULN-DF-INT-002：量化AllReduce算子整数溢出漏洞
 
-## Summary
-| Field | Value |
+## 概要
+| 字段 | 值 |
 |-------|-------|
-| **Vulnerability ID** | VULN-DF-INT-002 |
-| **Type** | Integer Overflow (CWE-190) |
-| **Severity** | Medium |
-| **Confidence** | 85% |
-| **File** | mc2/quant_all_reduce/op_host/quant_all_reduce_infershape.cpp |
-| **Line** | 73 |
-| **Function** | GetShapeInfo |
-| **Affected Operator** | QuantAllReduce |
+| **漏洞编号** | VULN-DF-INT-002 |
+| **类型** | 整数溢出 (CWE-190) |
+| **严重级别** | 中 (Medium) |
+| **置信度** | 85% |
+| **文件** | mc2/quant_all_reduce/op_host/quant_all_reduce_infershape.cpp |
+| **行号** | 73 |
+| **函数** | GetShapeInfo |
+| **受影响算子** | QuantAllReduce |
 
-## Vulnerability Details
+## 漏洞详情
 
-### Location
+### 位置
 ```cpp
-// File: quant_all_reduce_infershape.cpp:73
+// 文件：quant_all_reduce_infershape.cpp:73
 shapeInfo.bs = x_shape->GetDim(0) * x_shape->GetDim(1);
 ```
 
-### Context
+### 上下文
 当输入张量是3维形状 `[b, s, h]` 时，函数计算 `bs = batch_size * seq_len`。这个乘法操作没有溢出检查，可能导致 `int64_t` 溢出。
 
-### Data Flow Analysis
+### 数据流分析
 
 ```
-Source: ACLNN API Input Tensor Shape
+源：ACLNN API输入张量形状
     ↓
-InferShapeQuantAllReduce() [Line 108]
+InferShapeQuantAllReduce() [第108行]
     ↓
-GetShapeInfo() [Line 57]
+GetShapeInfo() [第57行]
     ↓
-x_shape->GetDim(0) * x_shape->GetDim(1) [Line 73] ← OVERFLOW POINT
+x_shape->GetDim(0) * x_shape->GetDim(1) [第73行] ← 溢出点
     ↓
-shapeInfo.bs (int64_t) [Potential Overflow]
+shapeInfo.bs (int64_t) [潜在溢出]
     ↓
-output_shape->SetDim(0, shapeInfo.bs) [Line 128] ← Incorrect Output Shape
+output_shape->SetDim(0, shapeInfo.bs) [第128行] ← 输出形状错误
 ```
 
-### Related Structures
+### 相关结构
 
 ```cpp
 struct QuantAllReduceShapeInfo {
     int64_t b;      // batch size
     int64_t s;      // sequence length
-    int64_t bs;     // batch_size * seq_len ← OVERFLOW TARGET
+    int64_t bs;     // batch_size * seq_len ← 溢出目标
     int64_t hiddenSize;
     uint64_t xDim;
     int64_t rankNum;
 };
 ```
 
-## Impact Analysis
+## 影响分析
 
-### 1. Shape Inference Impact
+### 1. 形状推导影响
 - 溢出的 `bs` 值被用于设置输出tensor形状
 - 输出形状 `output_shape->SetDim(0, shapeInfo.bs)` 会设置为错误值
 - 可能导致后续算子处理错误的tensor大小
 
 ### 2. Tiling vs InferShape
-| Component | Variable Type | Risk Level |
+| 组件 | 变量类型 | 风险级别 |
 |-----------|--------------|------------|
-| InferShape | `int64_t` | **HIGH** - Potential overflow |
-| Tiling | `uint64_t` | **LOW** - Proper type used |
-| Kernel | `uint64_t` | **LOW** - Uses tiling data |
+| InferShape | `int64_t` | **高** - 潜在溢出 |
+| Tiling | `uint64_t` | **低** - 使用正确类型 |
+| Kernel | `uint64_t` | **低** - 使用tiling数据 |
 
 Tiling代码（quant_all_reduce_tiling.cpp:78-87）使用 `uint64_t`，更安全：
 ```cpp
@@ -73,7 +73,7 @@ uint64_t xValueBS = context->GetInputShape(X_INDEX)->GetStorageShape().GetDim(DI
 xValueBS = xValueBS * context->GetInputShape(X_INDEX)->GetStorageShape().GetDim(DIM_ONE);
 ```
 
-### 3. Real-world Trigger Condition
+### 3. 现实触发条件
 
 在正常深度学习场景中难以触发：
 - INT64_MAX = 9,223,372,036,854,775,807
@@ -85,31 +85,31 @@ xValueBS = xValueBS * context->GetInputShape(X_INDEX)->GetStorageShape().GetDim(
 - 恶意构造的输入形状可以触发溢出
 - 缺乏防护措施违反安全编码规范
 
-### 4. Security Assessment
+### 4. 安全评估
 
-| Aspect | Assessment |
+| 方面 | 评估 |
 |--------|------------|
-| Memory Corruption | **NO** - Shape inference only |
-| Code Execution | **NO** |
-| Data Leak | **NO** |
-| Denial of Service | **POSSIBLE** - Invalid shape may crash pipeline |
-| Correctness Issue | **YES** - Output shape will be incorrect |
+| 内存损坏 | **否** - 仅形状推导 |
+| 代码执行 | **否** |
+| 数据泄露 | **否** |
+| 拒绝服务 | **可能** - 无效形状可能导致管道崩溃 |
+| 正确性问题 | **是** - 输出形状将不正确 |
 
-## Comparison with VULN-DF-INT-001
+## 与VULN-DF-INT-001比较
 
-| Attribute | VULN-DF-INT-001 | VULN-DF-INT-002 |
+| 属性 | VULN-DF-INT-001 | VULN-DF-INT-002 |
 |-----------|----------------|----------------|
-| **File** | quant_reduce_scatter_infershape.cpp | quant_all_reduce_infershape.cpp |
-| **Line** | 76 | 73 |
-| **Operator** | QuantReduceScatter | QuantAllReduce |
-| **Pattern** | `GetDim(0) * GetDim(1)` | `GetDim(0) * GetDim(1)` |
-| **Same Pattern** | Yes | Yes |
+| **文件** | quant_reduce_scatter_infershape.cpp | quant_all_reduce_infershape.cpp |
+| **行号** | 76 | 73 |
+| **算子** | QuantReduceScatter | QuantAllReduce |
+| **模式** | `GetDim(0) * GetDim(1)` | `GetDim(0) * GetDim(1)` |
+| **相同模式** | 是 | 是 |
 
 **结论**：两个漏洞是独立的，位于不同算子，但模式相同。需要分别修复。
 
-## Proof of Concept
+## 概念验证
 
-### Trigger Scenario
+### 触发场景
 ```python
 # 构造触发溢出的输入形状（假设场景）
 # 注意：实际NPU内存限制可能阻止这种极端输入
@@ -120,7 +120,7 @@ import torch
 # 这需要约 4TB 内存，实际场景难以实现
 ```
 
-### Practical Limitation
+### 实际限制
 由于NPU内存限制，实际触发此溢出需要：
 - 假设 hidden_size = 1024, dtype = float16 (2 bytes)
 - 触发溢出需要 b * s > INT64_MAX
@@ -128,11 +128,11 @@ import torch
 
 **结论**：虽然代码存在漏洞，但实际触发条件极端困难。
 
-## Recommended Fix
+## 推荐修复
 
-### Option 1: Add Overflow Check
+### 方案1：添加溢出检查
 ```cpp
-// Line 73 replacement
+// 第73行替换
 if (x_dim == DIM_THREE) {
     shapeInfo.b = x_shape->GetDim(0);
     shapeInfo.s = x_shape->GetDim(1);
@@ -151,7 +151,7 @@ if (x_dim == DIM_THREE) {
 }
 ```
 
-### Option 2: Use Safe Multiplication Helper
+### 方案2：使用安全乘法辅助函数
 ```cpp
 // 使用安全乘法函数（如果项目有）
 shapeInfo.bs = SafeMultiply(x_shape->GetDim(0), x_shape->GetDim(1));
@@ -160,7 +160,7 @@ if (shapeInfo.bs == OVERFLOW_ERROR) {
 }
 ```
 
-### Option 3: Use uint64_t Consistently
+### 方案3：一致使用uint64_t
 ```cpp
 // 修改结构体使用 uint64_t
 struct QuantAllReduceShapeInfo {
@@ -169,32 +169,32 @@ struct QuantAllReduceShapeInfo {
 };
 ```
 
-## Files to Fix
+## 需修复文件
 
-| Priority | File | Line | Change Required |
+| 优先级 | 文件 | 行号 | 所需更改 |
 |----------|------|------|-----------------|
-| **HIGH** | quant_all_reduce_infershape.cpp | 73 | Add overflow check |
-| **MEDIUM** | quant_all_reduce_infershape.cpp | 43-50 | Consider uint64_t for bs |
+| **高** | quant_all_reduce_infershape.cpp | 73 | 添加溢出检查 |
+| **中** | quant_all_reduce_infershape.cpp | 43-50 | 考虑为bs使用uint64_t |
 
-## Additional Affected Patterns
+## 其他受影响模式
 
-在项目中发现相同模式的其他位置：
+项目中发现相同模式的其它位置：
 - `mc2/quant_reduce_scatter/op_host/quant_reduce_scatter_infershape.cpp:76` (VULN-DF-INT-001)
 - `mc2/common/utils/context_transfer.cpp:166`
 
 建议统一修复所有类似模式。
 
-## References
+## 参考资料
 
-- [CWE-190: Integer Overflow or Wraparound](https://cwe.mitre.org/data/definitions/190.html)
-- [Secure Coding in C++ - Integer Operations](https://isocpp.org/wiki/faq/misc-technical-issues#int-overflow)
+- [CWE-190: 整数溢出或回绕](https://cwe.mitre.org/data/definitions/190.html)
+- [C++安全编码 - 整数操作](https://isocpp.org/wiki/faq/misc-technical-issues#int-overflow)
 
-## Conclusion
+## 结论
 
 **漏洞判定**：✅ 真实漏洞（但风险较低）
 
 这是一个代码质量问题，主要影响正确性而非安全性。建议添加溢出检查以符合安全编码规范。虽然实际触发条件极端困难，但缺乏防护措施违反安全编码最佳实践。
 
 ---
-*Report generated: 2026-04-21*
-*Scanner: Detail Analysis Module*
+*报告生成日期：2026-04-21*
+*扫描器：详细分析模块*

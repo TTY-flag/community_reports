@@ -1,4 +1,4 @@
-# VULN-DF-001: ascendc_pack_kernel.c 路径遍历漏洞深度分析报告
+# VULN-DF-001：ascendc_pack_kernel.c路径遍历漏洞
 
 ## 基本信息
 

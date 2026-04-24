@@ -1,4 +1,4 @@
-# VULN-SEC-003: ascendc_compile_kernel.py 命令注入漏洞深度分析报告
+# VULN-SEC-003：ascendc_compile_kernel.py命令注入漏洞
 
 ## 基本信息
 

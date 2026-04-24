@@ -1,4 +1,4 @@
-# SDK-RMOFOPS-001: RMO模块缺失访问控制漏洞
+# SDK-RMOFOPS-001：RMO模块缺失访问控制漏洞
 
 ## 漏洞概述
 

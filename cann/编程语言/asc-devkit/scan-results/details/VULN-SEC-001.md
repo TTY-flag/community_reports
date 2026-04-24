@@ -1,4 +1,4 @@
-# VULN-SEC-001: packer.py 命令注入漏洞深度分析报告
+# VULN-SEC-001：packer.py命令注入漏洞
 
 ## 基本信息
 

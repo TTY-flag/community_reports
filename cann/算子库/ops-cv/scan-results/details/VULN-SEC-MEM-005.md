@@ -1,27 +1,27 @@
 # VULN-SEC-MEM-005：空间变换算子整数溢出漏洞
 
-## Vulnerability Summary
+## 漏洞概述
 
-| Field | Value |
-|-------|-------|
+| 字段 | 值 |
+|------|-----|
 | **ID** | VULN-SEC-MEM-005 |
-| **Type** | Integer Overflow to Resource Exhaustion / Uncontrolled Memory Allocation |
+| **类型** | Integer Overflow to Resource Exhaustion / Uncontrolled Memory Allocation |
 | **CWE** | CWE-190 (Integer Overflow or Wraparound) / CWE-789 (Memory Allocation with Excessive Size Value) / CWE-400 (Uncontrolled Resource Consumption) |
-| **Severity** | HIGH |
-| **CVSS Score** | 7.5 (High) |
-| **File** | `image/spatial_transformer/op_kernel_aicpu/spatial_transformer_aicpu.cpp` |
-| **Lines** | 274, 316, 319, 371 |
-| **Function** | `DoCompute4D()`, `DoCompute5D()`, `DoCompute5D_C1()` |
+| **严重性** | HIGH |
+| **CVSS分数** | 7.5 (High) |
+| **文件** | `image/spatial_transformer/op_kernel_aicpu/spatial_transformer_aicpu.cpp` |
+| **行号** | 274, 316, 319, 371 |
+| **函数** | `DoCompute4D()`, `DoCompute5D()`, `DoCompute5D_C1()` |
 
-## Vulnerability Details
+## 漏洞详情
 
-### Root Cause
+### 根因
 
-The vulnerability exists in multiple `malloc()` calls within Spatial Transformer AICPU kernel where user-controlled tensor dimensions (`output_h_`, `output_w_`) are used for memory allocation without proper bounds checking, leading to potential integer overflow and resource exhaustion.
+漏洞存在于 Spatial Transformer AICPU 内核的多个 `malloc()` 调用中，用户控制张量维度（`output_h_`, `output_w_`）用于内存分配，没有适当边界检查，可能导致整数溢出和资源耗尽。
 
-**Vulnerable Code Locations:**
+**漏洞代码位置：**
 
-#### Location 1: DoCompute4D() - Line 274
+#### 位置1：DoCompute4D() - 第274行
 ```cpp
 template <typename T, typename T1>
 KernelStatus SpatialTransformerCpuKernel::DoCompute4D() {
@@ -30,14 +30,14 @@ KernelStatus SpatialTransformerCpuKernel::DoCompute4D() {
   const T1* input_theta = reinterpret_cast<T1 *>(input_theta_->GetData());
   T* output_data_ptr = reinterpret_cast<T *>(output_tensor_->GetData());
 
-  // VULNERABLE: No bounds check on output_h_ and output_w_
+  // 漏洞: output_h_和output_w_无边界检查
   float* input_grid = (float *)malloc(sizeof(float) * output_h_ * output_w_ * 2);
   KERNEL_CHECK_NULLPTR(input_grid, KERNEL_STATUS_INNER_ERROR, "Can't malloc input_grid.");
-  // ... rest of function
+  // ... 函数其余部分
 }
 ```
 
-#### Location 2: DoCompute5D() - Lines 316, 319
+#### 位置2：DoCompute5D() - 第316、319行
 ```cpp
 template <typename T, typename T1>
 KernelStatus SpatialTransformerCpuKernel::DoCompute5D() {
@@ -46,22 +46,22 @@ KernelStatus SpatialTransformerCpuKernel::DoCompute5D() {
   const T1* input_theta = reinterpret_cast<T1*>(input_theta_->GetData());
   T* output_data_ptr = reinterpret_cast<T*>(output_tensor_->GetData());
 
-  // VULNERABLE: No bounds check
+  // 漏洞: 无边界检查
   float* input_grid = (float *)malloc(sizeof(float) * output_w_ * output_h_ * 2);
   KERNEL_CHECK_NULLPTR(input_grid, KERNEL_STATUS_INNER_ERROR, "Can't malloc input_grid");
 
-  // VULNERABLE: input_c0_ also lacks bounds check
+  // 漏洞: input_c0_也缺少边界检查
   float *res = (float *)malloc(sizeof(float) * input_c0_);
   if (res == nullptr) {
     KERNEL_LOG_ERROR("Can't malloc res.");
     free(input_grid);
     return KERNEL_STATUS_INNER_ERROR;
   }
-  // ... rest of function
+  // ... 函数其余部分
 }
 ```
 
-#### Location 3: DoCompute5D_C1() - Line 371
+#### 位置3：DoCompute5D_C1() - 第371行
 ```cpp
 template <typename T, typename T1>
 KernelStatus SpatialTransformerCpuKernel::DoCompute5D_C1() {
@@ -70,42 +70,42 @@ KernelStatus SpatialTransformerCpuKernel::DoCompute5D_C1() {
   const T1* input_theta = reinterpret_cast<T1 *>(input_theta_->GetData());
   T* output_data_ptr = reinterpret_cast<T *>(output_tensor_->GetData());
 
-  // VULNERABLE: Same pattern
+  // 漏洞: 相同模式
   float* input_grid = (float *)malloc(sizeof(float) * output_h_ * output_w_ * 2);
   KERNEL_CHECK_NULLPTR(input_grid, KERNEL_STATUS_INNER_ERROR, "Can't malloc input_grid");
-  // ... rest of function
+  // ... 函数其余部分
 }
 ```
 
-### Data Flow Analysis
+### 数据流分析
 
 ```
-User Input (Tensor Shape)
+用户输入（张量Shape）
     ↓
-Lines 82-83, 91-92: output_tensor_->GetTensorShape()->GetDimSize()
+第82-83、91-92行: output_tensor_->GetTensorShape()->GetDimSize()
     ↓
-static_cast<int32_t>() conversion
+static_cast<int32_t>()转换
     ↓
-Lines 99-104: Validation (ONLY checks != 0, NO UPPER BOUND)
+第99-104行: 验证（仅检查 != 0，无上限）
     ↓
 malloc(sizeof(float) * output_h_ * output_w_ * 2)
     ↓
 ┌─────────────────────────────────────────┐
-│ Attack Vector 1: Integer Overflow       │
-│   output_h_ * output_w_ * 2 overflows    │
-│   Result: Small allocation, heap overflow│
+│ 攻击向量1: 整数溢出                       │
+│   output_h_ * output_w_ * 2溢出          │
+│   结果: 小分配，堆溢出                     │
 └─────────────────────────────────────────┘
-    OR
+    或
 ┌─────────────────────────────────────────┐
-│ Attack Vector 2: Resource Exhaustion     │
-│   Large output_h_ * output_w_            │
-│   Result: Excessive memory allocation    │
+│ 攻击向量2: 资源耗尽                       │
+│   大output_h_ * output_w_                │
+│   结果: 过度内存分配                      │
 └─────────────────────────────────────────┘
 ```
 
-### Input Validation Gap
+### 输入验证缺口
 
-**Current Validation (Lines 99-104):**
+**当前验证（第99-104行）：**
 ```cpp
 bool dims_error_flag = (input_n_ == 0 || input_c_ == 0 || input_h_ == 0 ||
                         input_w_ == 0 || output_h_ == 0 || output_w_ == 0);
@@ -115,125 +115,125 @@ if (dims_error_flag) {
 }
 ```
 
-**Security Gap**: Only checks for zero values to prevent division by zero, but **NO upper bound validation**.
+**安全缺口**: 仅检查零值防止除零，但**无上限验证**。
 
-### Integer Overflow Analysis
+### 整数溢出分析
 
-The expression `sizeof(float) * output_h_ * output_w_ * 2` involves:
-- `sizeof(float)` = 4 bytes (constant)
-- `output_h_`: int32_t, user-controlled
-- `output_w_`: int32_t, user-controlled
-- Multiplier: 2
+表达式 `sizeof(float) * output_h_ * output_w_ * 2` 涉及：
+- `sizeof(float)` = 4字节（常量）
+- `output_h_`: int32_t，用户控制
+- `output_w_`: int32_t，用户控制
+- 乘数: 2
 
-**Overflow Scenarios:**
+**溢出场景：**
 
-1. **32-bit Integer Overflow in Multiplication**:
+1. **32位整数乘法溢出**：
    - `output_h_ = output_w_ = 46341`
-   - `46341 * 46341 = 2,147,488,281` (within int32_t range)
-   - `2,147,488,281 * 2 * 4 = 17,179,914,256` bytes
-   - This exceeds 32-bit unsigned max (4,294,967,295)
-   - On 32-bit systems: wraps around to smaller value
-   - On 64-bit systems: passes to malloc() as truncated size_t value
+   - `46341 * 46341 = 2,147,488,281`（在int32_t范围内）
+   - `2,147,488,281 * 2 * 4 = 17,179,914,256`字节
+   - 超过32位无符号最大值(4,294,967,295)
+   - 32位系统: 回绕为较小值
+   - 64位系统: 作为截断size_t值传给malloc()
 
-2. **Controlled Overflow for Heap Overflow**:
+2. **控制溢出导致堆溢出**：
    ```cpp
-   // Example: output_h_ = 65537, output_w_ = 65537
-   // 65537 * 65537 * 2 * 4 = 34,360,344,072 bytes
-   // On 64-bit: malloc tries to allocate 34GB
-   // If memory available: DoS via resource exhaustion
-   // If allocation fails: KERNEL_STATUS_INNER_ERROR returned (safe)
+   // 示例: output_h_ = 65537, output_w_ = 65537
+   // 65537 * 65537 * 2 * 4 = 34,360,344,072字节
+   // 64位: malloc尝试分配34GB
+   // 内存可用: 通过资源耗尽DoS
+   // 分配失败: KERNEL_STATUS_INNER_ERROR返回（安全）
    ```
 
-## Attack Scenarios
+## 攻击场景
 
-### Scenario 1: Resource Exhaustion (DoS) - Most Practical
+### 场景1：资源耗尽（DoS）- 最实用
 
-**Attack Vector**: Network (via malicious model input)
+**攻击向量**: Network（通过恶意模型输入）
 
-**Steps**:
-1. Create or modify a model with SpatialTransformer operation
-2. Set output tensor shape to large values:
+**步骤**：
+1. 创建或修改包含SpatialTransformer操作的模型
+2. 设置输出张量shape为大值：
    ```python
-   # Example TensorFlow/ONNX model construction
+   # TensorFlow/ONNX模型构造示例
    output_shape = [1, 3, 100000, 100000]  # output_h_=100000, output_w_=100000
    ```
-3. Execute model on CANN framework
+3. 在CANN框架上执行模型
 
-**Impact**:
-- Memory allocation: `100000 * 100000 * 2 * 4 = 80,000,000,000 bytes (80GB)`
-- System memory exhaustion
-- OOM killer termination
-- Service unavailability
+**影响**：
+- 内存分配：`100000 * 100000 * 2 * 4 = 80,000,000,000字节(80GB)`
+- 系统内存耗尽
+- OOM killer终止
+- 服务不可用
 
-**Proof of Concept Code**:
+**概念验证代码**：
 ```python
-# Construct malicious model with SpatialTransformer op
+# 构造包含SpatialTransformer op的恶意模型
 import tensorflow as tf
 
-# Set output dimensions to trigger memory exhaustion
+# 设置输出维度触发内存耗尽
 batch_size = 1
 channels = 3
-output_h = 100000  # MALICIOUS: triggers 80GB allocation
-output_w = 100000  # MALICIOUS: triggers 80GB allocation
+output_h = 100000  # 恶意: 触发80GB分配
+output_w = 100000  # 恶意: 触发80GB分配
 
-# Create input tensor
+# 创建输入张量
 input_tensor = tf.random.uniform([batch_size, channels, 32, 32])
-theta = tf.random.uniform([batch_size, 6])  # Affine transformation matrix
+theta = tf.random.uniform([batch_size, 6])  # Affine变换矩阵
 
-# SpatialTransformer operation with malicious output shape
-# Note: Actual API may vary based on CANN implementation
+# SpatialTransformer操作带恶意输出shape
+# 注：实际API可能因CANN实现不同
 output = spatial_transformer(input_tensor, theta, output_size=(output_h, output_w))
 
-# Execute on Ascend processor
-# Result: Memory exhaustion or process termination
+# 在昇腾处理器上执行
+# 结果：内存耗尽或进程终止
 ```
 
-### Scenario 2: Integer Overflow Leading to Under-Allocation
+### 场景2：整数溢出导致欠分配
 
-**Attack Vector**: Craft specific dimensions to cause overflow
+**攻击向量**: 构造特定维度触发溢出
 
-**Steps**:
-1. Calculate dimensions to cause integer overflow
-2. malloc() allocates small buffer due to wrap-around
-3. Subsequent memory access causes heap overflow
+**步骤**：
+1. 计算维度触发整数溢出
+2. malloc()因回绕分配小缓冲区
+3. 后续内存访问导致堆溢出
 
-**Theoretical Attack**:
+**理论攻击**：
 ```cpp
-// On systems where malloc() size_t is 32-bit:
+// malloc() size_t为32位的系统：
 // output_h_ = 46341, output_w_ = 46342
-// 46341 * 46342 * 2 * 4 = 17,180,069,256 bytes
-// This overflows 32-bit size_t (max 4,294,967,295)
-// Wrap-around: 17,180,069,256 % 4,294,967,296 = 624,239,384 bytes (~600MB)
-// malloc(624239384) succeeds, but subsequent access expects 17GB buffer
-// Result: Heap buffer overflow, potential code execution
+// 46341 * 46342 * 2 * 4 = 17,180,069,256字节
+// 溢出32位size_t(最大4,294,967,295)
+// 回绕：17,180,069,256 % 4,294,967,296 = 624,239,384字节(~600MB)
+// malloc(624239384)成功，但后续访问期望17GB缓冲区
+// 结果：堆缓冲区溢出，潜在代码执行
 ```
 
-**Note**: This scenario is less practical on modern 64-bit systems but possible on:
-- 32-bit builds
-- Embedded systems with limited address space
-- Systems with size_t overflow bugs in malloc implementation
+**注**：此场景在现代64位系统不太实用，但可能在：
+- 32位构建
+- 地址空间有限的嵌入式系统
+- malloc实现有size_t溢出bug的系统
 
-### Scenario 3: Multiple Concurrent Attacks
+### 场景3：多并发攻击
 
-**Attack Vector**: Distributed denial of service
+**攻击向量**: 分布式拒绝服务
 
-**Steps**:
-1. Multiple attackers or single attacker with multiple threads
-2. Each sends malicious model with large output shapes
-3. Cumulative memory exhaustion
+**步骤**：
+1. 多攻击者或单攻击者多线程
+2. 各发送带大输出shape的恶意模型
+3. 累积内存耗尽
 
-**Impact**:
-- Amplified DoS effect
-- System-wide resource starvation
-- Cascading service failures
+**影响**：
+- 放大DoS效果
+- 系统级资源饥饿
+- 级联服务失败
 
-## Comparison with Secure Implementations
+## 与安全实现对比
 
-### UpsampleNearest3D (Secure Implementation)
-**File**: `image/upsample_nearest3d/op_host/upsample_nearest3d_tiling.cpp`
+### UpsampleNearest3D（安全实现）
+**文件**: `image/upsample_nearest3d/op_host/upsample_nearest3d_tiling.cpp`
 
 ```cpp
-// Lines 155-199: Comprehensive bounds checking
+// 第155-199行：全面边界检查
 if (inputShape.GetDim(0) > INT32_MAX) {
     std::string reasonMsg = "The N axis size of x (its axis 0) must be less than or equal to INT32_MAX";
     OP_LOGE_FOR_INVALID_SHAPE_WITH_REASON(context->GetNodeName(), "x", 
@@ -246,7 +246,7 @@ if (inputShape.GetDim(1) > INT32_MAX) {
         Ops::Base::ToString(inputShape).c_str(), reasonMsg.c_str());
     return false;
 }
-// ... checks for all dimensions D, H, W
+// ... 所有维度D、H、W检查
 if (outputShapes[0] > INT32_MAX) {
     std::string reasonMsg = "The D axis size of output (specified by value #0 of attribute output_size) "
                             "must be less than or equal to INT32_MAX";
@@ -254,14 +254,14 @@ if (outputShapes[0] > INT32_MAX) {
         context->GetNodeName(), "output_size", std::to_string(outputShapes[0]).c_str(), reasonMsg.c_str());
     return false;
 }
-// ... similar checks for output H, W
+// ... 输出H、W类似检查
 ```
 
-### Framework-Level Check (Partial Protection)
-**File**: `common/inc/external/aclnn_kernels/common/op_error_check.h`
+### 框架级检查（部分保护）
+**文件**: `common/inc/external/aclnn_kernels/common/op_error_check.h`
 
 ```cpp
-// Lines 76-85: Generic dimension bound check
+// 第76-85行：通用维度边界检查
 static inline bool CheckDims(const aclTensor *tensor) {
   const auto& xShape = tensor->GetViewShape();
   for(size_t i = 0; i < xShape.GetDimNum(); i++) {
@@ -274,125 +274,125 @@ static inline bool CheckDims(const aclTensor *tensor) {
 }
 ```
 
-**Limitation**: This checks individual dimensions but NOT the product of dimensions. A malicious tensor with dimensions [1, 1, 50000, 50000] would pass this check but still trigger the vulnerability.
+**限制**: 此检查各维度但不检查维度乘积。维度[1, 1, 50000, 50000]的恶意张量会通过此检查但仍触发漏洞。
 
-### SpatialTransformer (Vulnerable - Current Implementation)
+### SpatialTransformer（漏洞 - 当前实现）
 
 ```cpp
-// NO bounds checking beyond zero check
+// 零检查之外无边界检查
 bool dims_error_flag = (input_n_ == 0 || input_c_ == 0 || input_h_ == 0 ||
                         input_w_ == 0 || output_h_ == 0 || output_w_ == 0);
-// Missing: product overflow check
-// Missing: reasonable upper bound check
-// Missing: memory budget check
+// 缺失：乘积溢出检查
+// 缺失：合理上限检查
+// 缺失：内存预算检查
 ```
 
-## Exploitation Assessment
+## 利用评估
 
-### Exploitability: HIGH
+### 可利用性：HIGH
 
-| Factor | Assessment |
-|--------|------------|
-| Attack Vector | Network (via model input) |
-| Attack Complexity | LOW |
-| Privileges Required | NONE (user-supplied input) |
-| User Interaction | NONE |
-| Scope | CHANGED (affects entire system) |
-| Confidentiality Impact | NONE |
-| Integrity Impact | NONE |
-| Availability Impact | HIGH |
+| 因素 | 评估 |
+|------|------|
+| 攻击向量 | Network（通过模型输入） |
+| 攻击复杂度 | LOW |
+| 所需权限 | NONE（用户提供输入） |
+| 用户交互 | NONE |
+| 范围 | CHANGED（影响整个系统） |
+| 机密性影响 | NONE |
+| 完整性影响 | NONE |
+| 可用性影响 | HIGH |
 
-### Exploitation Prerequisites
-1. Ability to invoke SpatialTransformer operation
-2. Control over output tensor shape dimensions
-3. No special privileges required
-4. Works in cloud/edge inference scenarios
+### 利用前提条件
+1. 能调用SpatialTransformer操作
+2. 能控制输出张量shape维度
+3. 无特殊权限要求
+4. 适用于云/边缘推理场景
 
-### Mitigation Bypass
-- `KERNEL_CHECK_NULLPTR` only catches allocation failure AFTER attempt
-- Memory exhaustion can occur before allocation completes
-- Nothrow prevents exception but doesn't prevent the DoS vector
-- On systems with overcommit, malloc may succeed but OOM kills process later
+### 缓解绕过
+- `KERNEL_CHECK_NULLPTR`仅捕获分配失败后的尝试
+- 内存耗尽可能在分配完成前发生
+- Nothrow防止异常但不阻止DoS向量
+- 有overcommit的系统，malloc可能成功但OOM稍后杀死进程
 
-## Impact Assessment
+## 影响评估
 
-### Direct Technical Impact
+### 直接技术影响
 
-1. **Denial of Service**
-   - Memory exhaustion: single request can allocate up to ~16GB
-   - System instability: OOM killer may terminate critical processes
-   - Service unavailability: inference service becomes unresponsive
+1. **拒绝服务**
+   - 内存耗尽：单次请求可分配高达~16GB
+   - 系统不稳定：OOM killer可能终止关键进程
+   - 服务不可用：推理服务变得无响应
 
-2. **Potential Code Execution** (Theoretical, 32-bit systems)
-   - Integer overflow leading to heap buffer overflow
-   - Out-of-bounds write during grid computation
-   - Requires specific platform conditions
+2. **潜在代码执行**（理论，32位系统）
+   - 整数溢出导致堆缓冲区溢出
+   - grid计算时越界写入
+   - 需要特定平台条件
 
-### Business Impact
+### 业务影响
 
-- Service downtime for AI inference
-- SLA violations
-- Customer trust degradation
-- Potential financial losses from service disruption
-- Cloud infrastructure impact (multi-tenant scenarios)
+- AI推理服务停机
+- SLA违约
+- 客户信任下降
+- 服务中断潜在财务损失
+- 云基础设施影响（多租户场景）
 
-### Affected Components
+### 受影响组件
 
-- Huawei Ascend AI processors (all supported models)
-- CANN (Compute Architecture for Neural Networks) framework
-- All models using SpatialTransformer operation
-- Production inference systems
-- Edge AI devices using Ascend chips
+- 华为昇腾AI处理器（所有支持型号）
+- CANN (Compute Architecture for Neural Networks)框架
+- 所有使用SpatialTransformer操作的模型
+- 生产推理系统
+- 使用昇腾芯片的边缘AI设备
 
-## Proof of Concept
+## 概念验证
 
-### PoC Test Case Structure
+### PoC测试用例结构
 
 ```cpp
-// Unit test to demonstrate vulnerability
+// 演示漏洞的单元测试
 TEST_F(TEST_SPATIAL_TRANSFORMER_UT, VULNERABILITY_RESOURCE_EXHAUSTION) {
-  // Setup: Create malicious tensor shapes
+  // Setup: 创建恶意张量shapes
   vector<DataType> data_types = {DT_FLOAT, DT_FLOAT, DT_FLOAT};
   
-  // MALICIOUS: Set extremely large output dimensions
+  // 恶意: 设置极大输出维度
   int32_t malicious_output_h = 50000;  // 50000 * 50000 * 2 * 4 = 20GB
   int32_t malicious_output_w = 50000;
   
-  // Input tensor shape (small)
+  // 输入张量shape（小）
   vector<vector<int64_t>> shapes = {
-    {1, 3, 32, 32},           // Small input
+    {1, 3, 32, 32},           // 小输入
     {6},                       // theta
-    {1, 3, malicious_output_h, malicious_output_w}  // MALICIOUS OUTPUT SHAPE
+    {1, 3, malicious_output_h, malicious_output_w}  // 恶意输出SHAPE
   };
   
-  // Setup data buffers...
-  // Execute kernel
-  // Expected result:
-  // - Option 1: Memory exhaustion, OOM kill
-  // - Option 2: malloc() returns nullptr, KERNEL_STATUS_INNER_ERROR
-  // - Option 3: On 32-bit systems, potential heap overflow
+  // Setup数据缓冲区...
+  // 执行内核
+  // 预期结果：
+  // - 选项1：内存耗尽，OOM kill
+  // - 选项2：malloc()返回nullptr，KERNEL_STATUS_INNER_ERROR
+  // - 选项3：32位系统，潜在堆溢出
 }
 ```
 
-### Real-World Attack Steps
+### 实际攻击步骤
 
-1. **Model Preparation**:
+1. **模型准备**：
    ```python
    # attacker_model.py
    import tensorflow as tf
    
-   # Create model with SpatialTransformer
+   # 创建带SpatialTransformer的模型
    class MaliciousModel(tf.Module):
        def __init__(self):
            super().__init__()
-           # Define transformation parameters
+           # 定义变换参数
            
        @tf.function
        def __call__(self, input_tensor):
-           # Set malicious output shape
-           malicious_output_size = (100000, 100000)  # 80GB allocation
+           # 设置恶意输出shape
+           malicious_output_size = (100000, 100000)  # 80GB分配
            
-           # Call spatial transformer (implementation-specific)
+           # 调用spatial transformer（实现特定）
            output = spatial_transformer_op(
                input_tensor,
                theta,
@@ -401,42 +401,42 @@ TEST_F(TEST_SPATIAL_TRANSFORMER_UT, VULNERABILITY_RESOURCE_EXHAUSTION) {
            return output
    
    model = MaliciousModel()
-   # Export to ONNX or convert for CANN
+   # 导出到ONNX或为CANN转换
    ```
 
-2. **Deployment**:
-   - Deploy malicious model to target CANN environment
-   - Or submit model to cloud inference service using Ascend processors
+2. **部署**：
+   - 部署恶意模型到目标CANN环境
+   - 或提交模型到使用昇腾处理器的云推理服务
 
-3. **Execution**:
-   - Trigger inference with any valid input
-   - Memory allocation begins
-   - System becomes unresponsive or crashes
+3. **执行**：
+   - 用任意有效输入触发推理
+   - 内存分配开始
+   - 系统变得无响应或崩溃
 
-## Recommended Fix
+## 推荐修复
 
-### Immediate Mitigation (Priority: HIGH)
+### 立即缓解（优先级：HIGH）
 
-Add bounds checking before memory allocation:
+内存分配前添加边界检查：
 
 ```cpp
-// In spatial_transformer_aicpu.h, add constants
+// spatial_transformer_aicpu.h中添加常量
 namespace {
-constexpr int64_t MAX_DIM_SIZE = 100000;  // Reasonable upper bound for image dimensions
-constexpr int64_t MAX_ALLOCATION_SIZE = 1024 * 1024 * 1024;  // 1GB max allocation
+constexpr int64_t MAX_DIM_SIZE = 100000;  // 图像维度合理上限
+constexpr int64_t MAX_ALLOCATION_SIZE = 1024 * 1024 * 1024;  // 1GB最大分配
 }
 
-// In spatial_transformer_aicpu.cpp, GetInputAndCheckValid() function
-// After lines 82-83 and 91-92, add:
+// spatial_transformer_aicpu.cpp，GetInputAndCheckValid()函数
+// 第82-83和91-92行后添加：
 
-// Check individual dimension bounds
+// 检查各维度边界
 if (output_h_ > MAX_DIM_SIZE || output_w_ > MAX_DIM_SIZE) {
   KERNEL_LOG_ERROR("Output dimensions too large: output_h=[%d], output_w=[%d], max allowed=[%ld]",
                    output_h_, output_w_, MAX_DIM_SIZE);
   return KERNEL_STATUS_PARAM_INVALID;
 }
 
-// Check for integer overflow in multiplication
+// 检查乘法整数溢出
 int64_t allocation_size = static_cast<int64_t>(output_h_) * 
                            static_cast<int64_t>(output_w_) * 2 * sizeof(float);
 if (allocation_size > MAX_ALLOCATION_SIZE) {
@@ -445,14 +445,14 @@ if (allocation_size > MAX_ALLOCATION_SIZE) {
   return KERNEL_STATUS_PARAM_INVALID;
 }
 
-// Check for potential overflow before it occurs
+// 检查潜在溢出发生前
 if (output_h_ > 0 && output_w_ > INT_MAX / (output_h_ * 2 * sizeof(float))) {
   KERNEL_LOG_ERROR("Integer overflow detected in allocation size calculation");
   return KERNEL_STATUS_PARAM_INVALID;
 }
 ```
 
-### Complete Fix Example
+### 完整修复示例
 
 ```cpp
 KernelStatus SpatialTransformerCpuKernel::GetInputAndCheckValid(const CpuKernelContext &ctx) {
@@ -465,7 +465,7 @@ KernelStatus SpatialTransformerCpuKernel::GetInputAndCheckValid(const CpuKernelC
     return KERNEL_STATUS_PARAM_INVALID;
   }
 
-  // Get dimensions based on format
+  // 基于格式获取维度
   date_format_ = input_tensor_->GetTensorShape()->GetFormat();
   if (date_format_ == FORMAT_NCHW) {
     input_n_ = static_cast<int32_t>(input_tensor_->GetTensorShape()->GetDimSize(kDimSizeIndex0));
@@ -488,7 +488,7 @@ KernelStatus SpatialTransformerCpuKernel::GetInputAndCheckValid(const CpuKernelC
     return KERNEL_STATUS_PARAM_INVALID;
   }
 
-  // Check for zero dimensions (existing check)
+  // 检查零维度（现有检查）
   bool dims_error_flag = (input_n_ == 0 || input_c_ == 0 || input_h_ == 0 ||
                           input_w_ == 0 || output_h_ == 0 || output_w_ == 0);
   if (dims_error_flag) {
@@ -496,8 +496,8 @@ KernelStatus SpatialTransformerCpuKernel::GetInputAndCheckValid(const CpuKernelC
     return KERNEL_STATUS_PARAM_INVALID;
   }
 
-  // NEW: Check dimension upper bounds
-  constexpr int32_t MAX_DIM_SIZE = 100000;  // 100k max dimension
+  // 新增：检查维度上限
+  constexpr int32_t MAX_DIM_SIZE = 100000;  // 100k最大维度
   if (input_h_ > MAX_DIM_SIZE || input_w_ > MAX_DIM_SIZE ||
       output_h_ > MAX_DIM_SIZE || output_w_ > MAX_DIM_SIZE) {
     KERNEL_LOG_ERROR("Dimension size exceeds limit. Max allowed: %d, "
@@ -506,12 +506,12 @@ KernelStatus SpatialTransformerCpuKernel::GetInputAndCheckValid(const CpuKernelC
     return KERNEL_STATUS_PARAM_INVALID;
   }
 
-  // NEW: Check for integer overflow in allocation size calculation
-  // Using int64_t to detect overflow before allocation
+  // 新增：检查分配大小计算整数溢出
+  // 用int64_t在分配前检测溢出
   int64_t grid_allocation_size = static_cast<int64_t>(output_h_) * 
                                    static_cast<int64_t>(output_w_) * 2 * sizeof(float);
   
-  constexpr int64_t MAX_ALLOCATION_SIZE = 1024LL * 1024 * 1024;  // 1GB limit
+  constexpr int64_t MAX_ALLOCATION_SIZE = 1024LL * 1024 * 1024;  // 1GB限制
   if (grid_allocation_size > MAX_ALLOCATION_SIZE) {
     KERNEL_LOG_ERROR("Memory allocation size [%ld] exceeds maximum allowed [%ld]. "
                      "output_h=[%d], output_w=[%d]",
@@ -519,13 +519,13 @@ KernelStatus SpatialTransformerCpuKernel::GetInputAndCheckValid(const CpuKernelC
     return KERNEL_STATUS_PARAM_INVALID;
   }
 
-  // NEW: For DoCompute5D, also check input_c0_
+  // 新增：DoCompute5D也检查input_c0_
   if (date_format_ == FORMAT_NC1HWC0 && input_c0_ > MAX_DIM_SIZE) {
     KERNEL_LOG_ERROR("input_c0_ dimension [%d] exceeds limit [%d]", input_c0_, MAX_DIM_SIZE);
     return KERNEL_STATUS_PARAM_INVALID;
   }
 
-  // get and check data type
+  // 获取并检查数据类型
   input_data_type_ = static_cast<DataType>(input_tensor_->GetDataType());
   input_theta_type_ = static_cast<DataType>(input_theta_->GetDataType());
   output_data_type_ = static_cast<DataType>(output_tensor_->GetDataType());
@@ -540,15 +540,15 @@ KernelStatus SpatialTransformerCpuKernel::GetInputAndCheckValid(const CpuKernelC
 }
 ```
 
-### Additional Hardening for DoCompute Functions
+### DoCompute函数额外加固
 
 ```cpp
-// In each DoCompute function, add safety check before malloc:
+// 各DoCompute函数中，malloc前添加安全检查：
 template <typename T, typename T1>
 KernelStatus SpatialTransformerCpuKernel::DoCompute4D() {
   KERNEL_LOG_INFO("Enter SpatialTransformerCpuKernel::DoCompute4D.");
   
-  // NEW: Safety check (redundant but defense-in-depth)
+  // 新增：安全检查（冗余但深度防御）
   if (output_h_ <= 0 || output_w_ <= 0 || 
       output_h_ > 100000 || output_w_ > 100000) {
     KERNEL_LOG_ERROR("Invalid output dimensions: output_h=[%d], output_w=[%d]", 
@@ -556,10 +556,10 @@ KernelStatus SpatialTransformerCpuKernel::DoCompute4D() {
     return KERNEL_STATUS_INNER_ERROR;
   }
   
-  // NEW: Use safe allocation with overflow check
+  // 新增：带溢出检查的安全分配
   size_t allocation_size = static_cast<size_t>(output_h_) * 
                            static_cast<size_t>(output_w_) * 2 * sizeof(float);
-  if (allocation_size > 1024 * 1024 * 1024) {  // 1GB limit
+  if (allocation_size > 1024 * 1024 * 1024) {  // 1GB限制
     KERNEL_LOG_ERROR("Allocation size [%zu] exceeds limit", allocation_size);
     return KERNEL_STATUS_INNER_ERROR;
   }
@@ -567,132 +567,132 @@ KernelStatus SpatialTransformerCpuKernel::DoCompute4D() {
   float* input_grid = (float *)malloc(allocation_size);
   KERNEL_CHECK_NULLPTR(input_grid, KERNEL_STATUS_INNER_ERROR, "Can't malloc input_grid.");
   
-  // ... rest of function
+  // ... 函数其余部分
 }
 ```
 
-## Testing Recommendations
+## 测试建议
 
-### Unit Tests to Add
+### 需添加的单元测试
 
 ```cpp
-// In test_spatial_transformer.cpp
+// test_spatial_transformer.cpp
 
-// Test 1: Boundary check for large output dimensions
+// 测试1：大输出维度边界检查
 TEST_F(TEST_SPATIAL_TRANSFORMER_UT, REJECT_LARGE_OUTPUT_DIMENSIONS) {
   vector<DataType> data_types = {DT_FLOAT, DT_FLOAT, DT_FLOAT};
   
-  // Test with dimensions at the limit
+  // 测试边界维度
   vector<vector<int64_t>> shapes = {{1, 1, 32, 32}, {6}, {1, 1, 100001, 100}};
   
   vector<int64_t> use_default_theta = {1, 0, 1, 0, 1, 1};
   vector<float> default_theta = {1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f};
   
   CREATE_NODEDEF(shapes, data_types, datas, FORMAT_NCHW, 1, use_default_theta, default_theta);
-  RUN_KERNEL(node_def, HOST, KERNEL_STATUS_PARAM_INVALID);  // Should fail
+  RUN_KERNEL(node_def, HOST, KERNEL_STATUS_PARAM_INVALID);  // 应失败
 }
 
-// Test 2: Reject dimensions that cause integer overflow
+// 测试2：拒绝导致整数溢出的维度
 TEST_F(TEST_SPATIAL_TRANSFORMER_UT, REJECT_OVERFLOW_DIMENSIONS) {
   vector<DataType> data_types = {DT_FLOAT, DT_FLOAT, DT_FLOAT};
   
-  // 50000 * 50000 * 2 * 4 = 20GB, should be rejected
+  // 50000 * 50000 * 2 * 4 = 20GB，应被拒绝
   vector<vector<int64_t>> shapes = {{1, 1, 32, 32}, {6}, {1, 1, 50000, 50000}};
   
   CREATE_NODEDEF(shapes, data_types, datas, FORMAT_NCHW, 1, use_default_theta, default_theta);
-  RUN_KERNEL(node_def, HOST, KERNEL_STATUS_PARAM_INVALID);  // Should fail
+  RUN_KERNEL(node_def, HOST, KERNEL_STATUS_PARAM_INVALID);  // 应失败
 }
 
-// Test 3: Accept reasonable large dimensions
+// 测试3：接受合理大维度
 TEST_F(TEST_SPATIAL_TRANSFORMER_UT, ACCEPT_REASONABLE_LARGE_DIMENSIONS) {
   vector<DataType> data_types = {DT_FLOAT, DT_FLOAT, DT_FLOAT};
   
-  // 4096 * 4096 * 2 * 4 = 128MB, should be acceptable
+  // 4096 * 4096 * 2 * 4 = 128MB，应可接受
   vector<vector<int64_t>> shapes = {{1, 1, 4096, 4096}, {6}, {1, 1, 4096, 4096}};
   
-  // ... setup data
+  // ... setup数据
   CREATE_NODEDEF(shapes, data_types, datas, FORMAT_NCHW, 1, use_default_theta, default_theta);
-  RUN_KERNEL(node_def, HOST, KERNEL_STATUS_OK);  // Should succeed
+  RUN_KERNEL(node_def, HOST, KERNEL_STATUS_OK);  // 应成功
 }
 
-// Test 4: Test 5D format with large dimensions
+// 测试4：测试5D格式大维度
 TEST_F(TEST_SPATIAL_TRANSFORMER_UT, REJECT_5D_LARGE_DIMENSIONS) {
   vector<DataType> data_types = {DT_FLOAT16, DT_FLOAT16, DT_FLOAT16};
   
-  // Large dimensions in 5D format
+  // 5D格式大维度
   vector<vector<int64_t>> shapes = {{1, 1, 50000, 50000, 16}, {6}, {1, 1, 50000, 50000, 16}};
   
   CREATE_NODEDEF(shapes, data_types, datas, FORMAT_NC1HWC0, 16, use_default_theta, default_theta);
-  RUN_KERNEL(node_def, HOST, KERNEL_STATUS_PARAM_INVALID);  // Should fail
+  RUN_KERNEL(node_def, HOST, KERNEL_STATUS_PARAM_INVALID);  // 应失败
 }
 
-// Test 5: Edge case - maximum allowed dimensions
+// 测试5：边界情况 - 最大允许维度
 TEST_F(TEST_SPATIAL_TRANSFORMER_UT, MAX_ALLOWED_DIMENSIONS) {
   vector<DataType> data_types = {DT_FLOAT, DT_FLOAT, DT_FLOAT};
   
-  // Exactly at the limit (if MAX_DIM_SIZE = 100000)
+  // 正好在限制（如果MAX_DIM_SIZE = 100000）
   vector<vector<int64_t>> shapes = {{1, 1, 32, 32}, {6}, {1, 1, 100000, 100}};
   
   CREATE_NODEDEF(shapes, data_types, datas, FORMAT_NCHW, 1, use_default_theta, default_theta);
-  // May succeed or fail depending on available memory
+  // 可能成功或失败取决于可用内存
 }
 ```
 
-### Fuzz Testing
+### Fuzz测试
 
 ```cpp
-// Fuzz test to find boundary conditions
+// Fuzz测试找边界条件
 void FuzzSpatialTransformer(int32_t output_h, int32_t output_w) {
-  // Create test context with specified dimensions
-  // Execute kernel
-  // Check for crashes, hangs, or errors
+  // 用指定维度创建测试上下文
+  // 执行内核
+  // 检查崩溃、挂起或错误
 }
 
-// Run with various inputs:
+// 用各种输入运行：
 // - output_h = 0, -1, 1, 100, 10000, 46340, 46341, 65536, 100000, INT_MAX
 // - output_w = similar range
-// - Combinations of both
+// - 两者的组合
 ```
 
-## References
+## 参考文献
 
-### Related Code
-- Secure implementation reference: `image/upsample_nearest3d/op_host/upsample_nearest3d_tiling.cpp`
-- Framework check: `common/inc/external/aclnn_kernels/common/op_error_check.h`
-- Similar vulnerability: VULN-DF-MEM-001 (Non-Max Suppression V3)
+### 相关代码
+- 安全实现参考：`image/upsample_nearest3d/op_host/upsample_nearest3d_tiling.cpp`
+- 框架检查：`common/inc/external/aclnn_kernels/common/op_error_check.h`
+- 类似漏洞：VULN-DF-MEM-001 (Non-Max Suppression V3)
 
-### Standards
+### 标准
 - CWE-190: Integer Overflow or Wraparound
 - CWE-789: Memory Allocation with Excessive Size Value  
 - CWE-400: Uncontrolled Resource Consumption
 - CWE-770: Allocation of Resources Without Limits or Throttling
 
-### Secure Coding Guidelines
+### 安全编码指南
 - SEI CERT INT30-C: Ensure that unsigned integer operations do not wrap
 - SEI CERT MEM04-C: Beware of zero-length allocations
 - SEI CERT MEM02-C: Immediately cast the result of a memory allocation function call into a pointer to the allocated type
 
-## Classification
+## 分类
 
-- **Vulnerability Status**: CONFIRMED (Real Vulnerability)
-- **Fix Priority**: HIGH
-- **Fix Complexity**: MEDIUM (requires careful bounds analysis and testing)
-- **Deployment Risk**: LOW (backward compatible for all valid use cases)
-- **Exploitation Ease**: HIGH (no special conditions required)
-- **Impact Severity**: HIGH (DoS, potential heap overflow)
+- **漏洞状态**: 已确认（真实漏洞）
+- **修复优先级**: HIGH
+- **修复复杂度**: MEDIUM（需仔细边界分析和测试）
+- **部署风险**: LOW（对所有有效用例向后兼容）
+- **利用易度**: HIGH（无特殊条件要求）
+- **影响严重性**: HIGH（DoS，潜在堆溢出）
 
-## Timeline
+## 时间线
 
-| Event | Date |
-|-------|------|
-| Vulnerability Discovered | 2026-04-22 |
-| Report Created | 2026-04-22 |
-| Recommended Fix Deadline | Immediate |
-| Suggested Disclosure Date | 90 days after vendor notification |
+| 事件 | 日期 |
+|------|------|
+| 漏洞发现 | 2026-04-22 |
+| 报告创建 | 2026-04-22 |
+| 建议修复截止 | 立即 |
+| 建议披露日期 | 供应商通知后90天 |
 
 ---
 
-**Report Generated**: 2026-04-22  
-**Scanner**: OpenCode Vulnerability Scanner  
-**Confidence**: HIGH  
-**Analyst Note**: This vulnerability is similar to VULN-DF-MEM-001 but affects a different operator. The root cause pattern (user-controlled dimension without bounds checking) is a recurring issue that should be addressed systematically across the codebase.
+**报告生成**: 2026-04-22  
+**扫描器**: OpenCode漏洞扫描器  
+**置信度**: HIGH  
+**分析者备注**: 此漏洞类似VULN-DF-MEM-001但影响不同算子。根本原因模式（用户控制维度无边界检查）是反复出现的问题，应系统解决。

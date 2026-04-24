@@ -1,240 +1,240 @@
 # VULN-DF-INT-006：MoE算子整数溢出漏洞
 
-## Summary
+## 概要
 
-| Field | Value |
+| 字段 | 值 |
 |-------|-------|
-| **Vulnerability ID** | VULN-DF-INT-006 |
-| **Type** | Integer Overflow (CWE-190) |
-| **Severity** | High |
-| **Confidence** | 95 (Confirmed) |
-| **Location** | `attention/flash_attention_score/op_host/flash_attention_score_infershape.cpp:152,157` |
-| **Function** | `InferShapeFlashAttentionScore` |
-| **Affected Layouts** | BSH, SBH |
+| **漏洞编号** | VULN-DF-INT-006 |
+| **类型** | 整数溢出 (CWE-190) |
+| **严重级别** | 高 (High) |
+| **置信度** | 95 (已确认) |
+| **位置** | `attention/flash_attention_score/op_host/flash_attention_score_infershape.cpp:152,157` |
+| **函数** | `InferShapeFlashAttentionScore` |
+| **受影响布局** | BSH, SBH |
 
-## Vulnerability Description
+## 漏洞描述
 
-The `InferShapeFlashAttentionScore` function contains integer overflow vulnerabilities in the shape inference logic for BSH/SBH input layouts. The multiplication operations `N1 * D1` (line 152) and `N1 * D2` (line 157) can overflow when handling user-controlled parameters without proper bounds validation.
+`InferShapeFlashAttentionScore` 函数在 BSH/SBH 输入布局的形状推导逻辑中存在整数溢出漏洞。乘法操作 `N1 * D1`（第152行）和 `N1 * D2`（第157行）在处理用户可控参数时可能溢出，而未进行适当的边界验证。
 
-### Vulnerable Code
+### 漏洞代码
 
 ```cpp
-// File: flash_attention_score_infershape.cpp, lines 137-157
+// 文件: flash_attention_score_infershape.cpp, 第137-157行
 } else if (inputLayoutStr == "BSH" || inputLayoutStr == "SBH" ) {
-    auto N1 = *headNum;                         // SOURCE: User-controlled attribute
+    auto N1 = *headNum;                         // 源：用户可控属性
     if (N1 == 0) {
         attentionOutShape->SetDim(DIM_NUM_2, 0);
         return GRAPH_SUCCESS;
     }
-    auto h1 =  queryShape->GetDim(DIM_NUM_2);   // SOURCE: User-controlled tensor shape
-    auto D1 = h1 / N1;                          // PROPAGATION
+    auto h1 =  queryShape->GetDim(DIM_NUM_2);   // 源：用户可控tensor形状
+    auto D1 = h1 / N1;                          // 传播
     if (D1 == 0) {
         attentionOutShape->SetDim(DIM_NUM_2, 0);
         return GRAPH_SUCCESS;
     }
-    auto h2 =  keyShape->GetDim(DIM_NUM_2);     // SOURCE: User-controlled tensor shape
-    auto N2 = h2 / D1;                          // PROPAGATION
+    auto h2 =  keyShape->GetDim(DIM_NUM_2);     // 源：用户可控tensor形状
+    auto N2 = h2 / D1;                          // 传播
     if (N2 == 0) {
-        attentionOutShape->SetDim(DIM_NUM_2, N1 * D1);  // VULN POINT #1: Overflow!
+        attentionOutShape->SetDim(DIM_NUM_2, N1 * D1);  // 漏洞点#1：溢出！
         return GRAPH_SUCCESS;
     }
-    auto h3 =  valueShape->GetDim(DIM_NUM_2);   // SOURCE: User-controlled tensor shape
-    auto D2 = h3 / N2;                          // PROPAGATION
-    attentionOutShape->SetDim(DIM_NUM_2, N1 * D2);      // VULN POINT #2: Overflow!
+    auto h3 =  valueShape->GetDim(DIM_NUM_2);   // 源：用户可控tensor形状
+    auto D2 = h3 / N2;                          // 传播
+    attentionOutShape->SetDim(DIM_NUM_2, N1 * D2);      // 漏洞点#2：溢出！
 }
 ```
 
-## Data Flow Analysis
+## 数据流分析
 
-### Complete Data Flow Path
+### 完整数据流路径
 
 ```
 ACLNN API (aclnnFlashAttentionScoreGetWorkspaceSize)
     │
     ▼
-InferShapeFlashAttentionScore (Graph Compilation Phase)
+InferShapeFlashAttentionScore (图编译阶段)
     │
-    ├─► headNum (SOURCE) ──► N1 = *headNum
+    ├─► headNum (源) ──► N1 = *headNum
     │       │                    │
-    │       │                    ├─► N1 == 0 check (only zero check, NO bounds check)
+    │       │                    ├─► N1 == 0 检查（仅零检查，无边界检查）
     │       │                    │
-    ├─► queryShape->GetDim(2) ──► h1 (SOURCE)
+    ├─► queryShape->GetDim(2) ──► h1 (源)
     │                               │
     │                               ▼
-    │                           D1 = h1 / N1 (PROPAGATION)
+    │                           D1 = h1 / N1 (传播)
     │                               │
-    │                               ├─► D1 == 0 check
+    │                               ├─► D1 == 0 检查
     │                               │
-    ├─► keyShape->GetDim(2) ──► h2 (SOURCE)
-    │                               │
-    │                               ▼
-    │                           N2 = h2 / D1 (PROPAGATION)
-    │                               │
-    │                               ├─► N2 == 0 check ──► SetDim(N1 * D1) [OVERFLOW #1]
-    │                               │
-    ├─► valueShape->GetDim(2) ──► h3 (SOURCE)
+    ├─► keyShape->GetDim(2) ──► h2 (源)
     │                               │
     │                               ▼
-    │                           D2 = h3 / N2 (PROPAGATION)
+    │                           N2 = h2 / D1 (传播)
+    │                               │
+    │                               ├─► N2 == 0 检查 ──► SetDim(N1 * D1) [溢出#1]
+    │                               │
+    ├─► valueShape->GetDim(2) ──► h3 (源)
     │                               │
     │                               ▼
-    │                           SetDim(DIM_NUM_2, N1 * D2) [OVERFLOW #2 - PRIMARY VULN]
+    │                           D2 = h3 / N2 (传播)
+    │                               │
+    │                               ▼
+    │                           SetDim(DIM_NUM_2, N1 * D2) [溢出#2 - 主要漏洞]
 ```
 
-### Source Variables
+### 源变量
 
-| Variable | Source | Type | User Control |
+| 变量 | 源 | 类型 | 用户控制 |
 |----------|--------|------|--------------|
-| `headNum` | Attribute `head_num` (REQUIRED) | `int64_t` | Model graph definition |
-| `h1` | `queryShape->GetDim(2)` | `int64_t` | Tensor shape in graph |
-| `h2` | `keyShape->GetDim(2)` | `int64_t` | Tensor shape in graph |
-| `h3` | `valueShape->GetDim(2)` | `int64_t` | Tensor shape in graph |
+| `headNum` | 属性 `head_num` (必需) | `int64_t` | 模型图定义 |
+| `h1` | `queryShape->GetDim(2)` | `int64_t` | 图中的tensor形状 |
+| `h2` | `keyShape->GetDim(2)` | `int64_t` | 图中的tensor形状 |
+| `h3` | `valueShape->GetDim(2)` | `int64_t` | 图中的tensor形状 |
 
-### Propagation Variables
+### 传播变量
 
-| Variable | Computation | Bounds Control |
+| 变量 | 计算 | 边界控制 |
 |----------|-------------|----------------|
-| `N1` | `*headNum` | NO validation |
-| `D1` | `h1 / N1` | Depends on h1, N1 |
-| `N2` | `h2 / D1` | Can be small (trigger overflow path #1) |
-| `D2` | `h3 / N2` | Can be LARGE if N2 is small |
+| `N1` | `*headNum` | 无验证 |
+| `D1` | `h1 / N1` | 依赖 h1, N1 |
+| `N2` | `h2 / D1` | 可小（触发溢出路径#1） |
+| `D2` | `h3 / N2` | 如果 N2 小则可大 |
 
-## Missing Validation Analysis
+## 缺失验证分析
 
-### InferShape Layer (Vulnerable)
+### InferShape层（漏洞）
 
-| Check | Status | Expected |
+| 检查 | 状态 | 期望 |
 |-------|--------|----------|
-| `headNum <= 0` | **MISSING** | Should reject negative/zero values |
-| `headNum upper bound` | **MISSING** | Should limit to reasonable range (e.g., 1024) |
-| `N1 * D1 overflow` | **MISSING** | Should check before multiplication |
-| `N1 * D2 overflow` | **MISSING** | Should check before multiplication |
+| `headNum <= 0` | **缺失** | 应拒绝负/零值 |
+| `headNum 上限` | **缺失** | 应限制到合理范围（如1024） |
+| `N1 * D1 溢出` | **缺失** | 乘法前应检查 |
+| `N1 * D2 溢出` | **缺失** | 乘法前应检查 |
 
-### API Layer (Has Validation)
+### API层（有验证）
 
-The ACLNN API layer (`aclnn_flash_attention_score.cpp`) DOES have validation:
+ACLNN API层（`aclnn_flash_attention_score.cpp`）有验证：
 
 ```cpp
-// Line 528-529:
+// 第528-529行：
 if (headNum <= 0) {
     OP_LOGE(ACLNN_ERR_PARAM_INVALID, "head_num must > 0, but got %ld", headNum);
     return ACLNN_ERR_PARAM_INVALID;
 }
 
-// Line 535-537:
+// 第535-537行：
 if (shapeInfo.axes.d > HEAD_DIM_MAX) {  // HEAD_DIM_MAX = 768
     OP_LOGE(ACLNN_ERR_PARAM_INVALID, "Head dim must <= 768, but got %ld", shapeInfo.axes.d);
     return ACLNN_ERR_PARAM_INVALID;
 }
 ```
 
-**However**: InferShape runs during graph compilation, which may occur BEFORE or independently of API validation when:
-- Loading a pre-compiled model graph
-- Using graph mode execution
-- Processing ONNX/OM model files
+**然而**：InferShape在图编译期间运行，可能在API验证之前或独立运行，当：
+- 加载预编译模型图
+- 使用图模式执行
+- 处理ONNX/OM模型文件
 
-## Attack Scenario
+## 攻击场景
 
-### Attack Vector
+### 攻击向量
 
-An attacker can craft a malicious model definition file (ONNX, OM, or protobuf format) containing:
-1. Extremely large `head_num` attribute value
-2. Carefully constructed tensor shapes to maximize D2 value
+攻击者可构造恶意模型定义文件（ONNX、OM或protobuf格式），包含：
+1. 极大的 `head_num` 属性值
+2. 精心构造的tensor形状以最大化 D2 值
 
-### Concrete Attack Example
+### 具体攻击示例
 
 ```python
-# Malicious model parameters for BSH layout:
-head_num = 2147483647  # INT32_MAX (~2.1 billion)
+# BSH布局的恶意模型参数：
+head_num = 2147483647  # INT32_MAX（约21亿）
 
-# Tensor shapes:
+# Tensor形状：
 query_shape = (1, 1, 2147483647)  # B=1, S=1, H=2147483647
 key_shape = (1, 1, 1)             # B=1, S=1, H=1
 value_shape = (1, 1, 4294967296)  # B=1, S=1, H=4294967296
 
-# Computation flow:
+# 计算流程：
 # N1 = 2147483647
 # h1 = 2147483647 → D1 = 2147483647 / 2147483647 = 1
-# h2 = 1 → N2 = 1 / 1 = 1 (NOT zero, proceeds to line 157)
+# h2 = 1 → N2 = 1 / 1 = 1（不为零，继续到第157行）
 # h3 = 4294967296 → D2 = 4294967296 / 1 = 4294967296
 
-# OVERFLOW CALCULATION:
+# 溢出计算：
 # N1 * D2 = 2147483647 * 4294967296 = 9,223,372,036,854,775,808
-# This exceeds INT64_MAX (9,223,372,036,854,775,807) by 1!
-# Result wraps to -9,223,372,036,854,775,808 (negative)
+# 这超出 INT64_MAX（9,223,372,036,854,775,807）1！
+# 结果回绕为 -9,223,372,036,854,775,808（负值）
 ```
 
-### Attack for N2==0 Path (Overflow Point #1)
+### N2==0路径攻击（溢出点#1）
 
 ```python
 head_num = 2147483647
 query_shape = (1, 1, 2147483647)  # H = N1 * D1 = 2147483647 * 1
-key_shape = (1, 1, 0)             # H = 0 → triggers N2=0 early return
+key_shape = (1, 1, 0)             # H = 0 → 触发 N2=0 提前返回
 
-# Computation:
+# 计算：
 # N1 = 2147483647
 # D1 = 1
-# h2 = 0 → N2 = 0 / 1 = 0 (triggers early return)
-# At line 152: SetDim(DIM_NUM_2, N1 * D1) = 2147483647 * 1 = 2147483647 (safe in this case)
+# h2 = 0 → N2 = 0 / 1 = 0（触发提前返回）
+# 第152行：SetDim(DIM_NUM_2, N1 * D1) = 2147483647 * 1 = 2147483647（此情况安全）
 
-# But with different values:
+# 但用不同值：
 head_num = 4611686018427387903  # ~sqrt(INT64_MAX)
 query_shape = (1, 1, 4611686018427387904)
 key_shape = (1, 1, 0)
 
 # N1 = 4611686018427387903
 # D1 = 4611686018427387904 / 4611686018427387903 ≈ 1
-# N1 * D1 can overflow with larger values
+# N1 * D1 可用更大值溢出
 ```
 
-## Impact Assessment
+## 影响评估
 
-### Technical Impact
+### 技术影响
 
-| Impact Type | Description | Severity |
+| 影响类型 | 描述 | 严重级别 |
 |-------------|-------------|----------|
-| **Incorrect Shape Calculation** | Overflow produces negative or wrapped value | High |
-| **Memory Allocation Failure** | Invalid shape causes allocation errors | High |
-| **Denial of Service** | System crash during graph compilation | High |
-| **Memory Corruption** | If overflow wraps to small positive value, undersized buffer allocation | Critical |
+| **形状计算错误** | 溢出产生负值或回绕值 | 高 |
+| **内存分配失败** | 无效形状导致分配错误 | 高 |
+| **拒绝服务** | 图编译期间系统崩溃 | 高 |
+| **内存损坏** | 如果溢出回绕为小的正值，缓冲区分配过小 | 严重 |
 
-### Security Impact
+### 安全影响
 
-1. **Attack Surface**: Model loading pipeline (ONNX import, OM file loading, graph deserialization)
-2. **Attack Complexity**: Low - requires crafting malformed model file
-3. **Privileges Required**: None - any user providing a model file
-4. **User Interaction**: Required - victim must load malicious model
-5. **Scope**: Changed - affects NPU execution environment
+1. **攻击面**：模型加载管道（ONNX导入、OM文件加载、图反序列化）
+2. **攻击复杂度**：低 - 需要构造畸形模型文件
+3. **所需权限**：无 - 任何提供模型文件的用户
+4. **用户交互**：必需 - 受害者必须加载恶意模型
+5. **范围**：已改变 - 影响NPU执行环境
 
-### CVSS 3.1 Score Estimation
+### CVSS 3.1评分估算
 
-**Vector**: CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:C/C:N/I:N/A:H
+**向量**：CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:C/C:N/I:N/A:H
 
-**Score**: **6.8 (Medium-High)**
+**评分**：**6.8（中高）**
 
-## N2=0 Division Protection Analysis
+## N2=0除法保护分析
 
-The N2==0 protection (lines 151-154) is **INADEQUATE**:
+N2==0保护（第151-154行）**不充分**：
 
-1. **Doesn't prevent primary overflow**: The main vulnerability at line 157 still exists
-2. **Has its own overflow**: `N1 * D1` at line 152 can also overflow
-3. **False sense of security**: Early return doesn't validate the multiplication result
+1. **不防止主要溢出**：第157行的主要漏洞仍存在
+2. **自身有溢出**：第152行的 `N1 * D1` 也可能溢出
+3. **虚假安全感**：提前返回不验证乘法结果
 
-## Related Vulnerabilities
+## 相关漏洞
 
-Similar overflow patterns found in:
+在其他位置发现类似溢出模式：
 
-| File | Line | Pattern |
+| 文件 | 行号 | 模式 |
 |------|------|---------|
 | `mla_prolog_v2_infershape.cpp` | 36 | `shapeParam.B * shapeParam.S` |
 | `mla_prolog_v3_infershape.cpp` | 50,89 | `shapeParam.B * shapeParam.S` |
 | `nsa_compress_attention_infershape.cpp` | 70 | `shapeN2 * shapeG` |
 
-## Proof of Concept
+## 概念验证
 
 ```cpp
-// Test case for overflow verification
-// File: test_overflow.cpp
+// 溢出验证测试用例
+// 文件：test_overflow.cpp
 
 #include <cstdint>
 #include <iostream>
@@ -251,31 +251,31 @@ int main() {
     std::cout << "INT64_MAX = " << INT64_MAX << std::endl;
     
     if (result < 0 || result > INT64_MAX) {
-        std::cout << "OVERFLOW DETECTED!" << std::endl;
+        std::cout << "检测到溢出！" << std::endl;
     }
     
     return 0;
 }
 
-// Output:
+// 输出：
 // N1 = 2147483647
 // D2 = 4294967296
-// N1 * D2 = -9223372036854775808  (overflowed to negative!)
-// OVERFLOW DETECTED!
+// N1 * D2 = -9223372036854775808  （溢出为负值！）
+// 检测到溢出！
 ```
 
-## Remediation Recommendations
+## 修复建议
 
-### Immediate Fix
+### 立即修复
 
-Add overflow checks before multiplication operations:
+在乘法操作前添加溢出检查：
 
 ```cpp
 } else if (inputLayoutStr == "BSH" || inputLayoutStr == "SBH" ) {
     auto N1 = *headNum;
     
-    // FIX: Add bounds validation
-    if (N1 <= 0 || N1 > 1024) {  // Reasonable head_num upper bound
+    // 修复：添加边界验证
+    if (N1 <= 0 || N1 > 1024) {  // 合理的 head_num 上限
         OP_LOGE(context, "head_num must be in range [1, 1024], but got %ld.", N1);
         return GRAPH_FAILED;
     }
@@ -287,7 +287,7 @@ Add overflow checks before multiplication operations:
     
     auto h1 = queryShape->GetDim(DIM_NUM_2);
     
-    // FIX: Validate h1
+    // 修复：验证 h1
     if (h1 <= 0 || h1 > INT64_MAX / N1) {
         OP_LOGE(context, "Invalid query shape dimension.");
         return GRAPH_FAILED;
@@ -302,7 +302,7 @@ Add overflow checks before multiplication operations:
     auto h2 = keyShape->GetDim(DIM_NUM_2);
     auto N2 = h2 / D1;
     
-    // FIX: Safe multiplication for N2==0 path
+    // 修复：N2==0路径的安全乘法
     if (N2 == 0) {
         if (N1 > INT64_MAX / D1) {
             OP_LOGE(context, "Shape dimension overflow: N1 * D1");
@@ -315,7 +315,7 @@ Add overflow checks before multiplication operations:
     auto h3 = valueShape->GetDim(DIM_NUM_2);
     auto D2 = h3 / N2;
     
-    // FIX: Overflow check before final multiplication
+    // 修复：最终乘法前溢出检查
     if (N1 > INT64_MAX / D2) {
         OP_LOGE(context, "Shape dimension overflow: N1 * D2 exceeds INT64_MAX");
         return GRAPH_FAILED;
@@ -325,23 +325,23 @@ Add overflow checks before multiplication operations:
 }
 ```
 
-### Using Safe Arithmetic Helper
+### 使用安全算术辅助函数
 
 ```cpp
-// Define safe multiplication helper
+// 定义安全乘法辅助函数
 inline bool SafeInt64Mul(int64_t a, int64_t b, int64_t& result) {
     if (a == 0 || b == 0) {
         result = 0;
         return true;
     }
     if (a > INT64_MAX / b || a < INT64_MIN / b) {
-        return false;  // Overflow
+        return false;  // 溢出
     }
     result = a * b;
     return true;
 }
 
-// Usage in InferShape:
+// InferShape中使用：
 int64_t attentionDim;
 if (!SafeInt64Mul(N1, D2, attentionDim)) {
     OP_LOGE(context, "Integer overflow in attention output shape calculation");
@@ -350,24 +350,24 @@ if (!SafeInt64Mul(N1, D2, attentionDim)) {
 attentionOutShape->SetDim(DIM_NUM_2, attentionDim);
 ```
 
-## Conclusion
+## 结论
 
-**VERDICT: CONFIRMED REAL VULNERABILITY**
+**判定：已确认真实漏洞**
 
-This is a confirmed integer overflow vulnerability (CWE-190) that can be exploited through malicious model graph definitions. The vulnerability exists in the InferShape layer which lacks proper bounds validation, while the API layer has incomplete protection.
+这是已确认的整数溢出漏洞（CWE-190），可通过恶意模型图定义利用。漏洞存在于InferShape层，该层缺乏适当的边界验证，而API层保护不完整。
 
-### Classification
+### 分类
 
-| Aspect | Determination |
+| 方面 | 确定 |
 |--------|---------------|
-| **Vulnerability Type** | Integer Overflow (CWE-190) |
-| **Severity** | High |
-| **Exploitability** | Medium (requires malicious model file) |
-| **Impact** | High (DoS, potential memory corruption) |
-| **Confidence** | 95% (Verified through code analysis) |
+| **漏洞类型** | 整数溢出 (CWE-190) |
+| **严重级别** | 高 |
+| **可利用性** | 中（需要恶意模型文件） |
+| **影响** | 高（DoS，潜在内存损坏） |
+| **置信度** | 95%（通过代码分析验证） |
 
 ---
 
-**Report Generated**: 2026-04-21  
-**Scanner**: OpenCode Vulnerability Scanner  
-**Analyzer**: Data Flow Analysis Module
+**报告生成日期**：2026-04-21  
+**扫描器**：OpenCode漏洞扫描器  
+**分析器**：数据流分析模块

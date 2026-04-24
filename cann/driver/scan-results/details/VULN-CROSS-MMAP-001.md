@@ -1,4 +1,4 @@
-# VULN-CROSS-MMAP-001: 跨模块内核内存暴露漏洞
+# VULN-CROSS-MMAP-001：跨模块内核内存暴露漏洞
 
 ## 漏洞概述
 

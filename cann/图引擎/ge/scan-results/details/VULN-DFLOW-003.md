@@ -1,4 +1,4 @@
-# VULN-DFLOW-003: gRPC通信缺乏TLS加密保护
+# VULN-DFLOW-003：gRPC通信缺乏TLS加密保护漏洞
 
 ## 漏洞概述
 

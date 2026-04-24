@@ -1,4 +1,4 @@
-# VULN_QUEUE_002 - ioctl 参数上限检查缺陷
+# VULN_QUEUE_002：ioctl参数上限检查缺陷漏洞
 
 ## 基本信息
 

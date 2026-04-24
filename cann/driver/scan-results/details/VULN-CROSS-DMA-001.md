@@ -1,4 +1,4 @@
-# VULN-CROSS-DMA-001: 跨模块DMA地址验证缺失漏洞
+# VULN-CROSS-DMA-001：跨模块DMA地址验证缺失漏洞
 
 ## 漏洞概述
 

@@ -1,4 +1,4 @@
-# SDK-APMFOPS-001: APM模块缺失访问控制漏洞
+# SDK-APMFOPS-001：APM模块缺失访问控制漏洞
 
 ## 漏洞概述
 
