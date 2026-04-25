@@ -1,345 +1,369 @@
 {
-  "functions": {
-    "aclshmemx_init_attr@src/host/init/shmem_init.cpp": {
-      "defined_at": 443,
-      "calls": [
-        "aclshmemi_instance_ctx_create@src/host/init/shmem_init.cpp",
-        "aclshmemx_instance_ctx_set_impl@src/host/init/shmem_init.cpp",
-        "aclshmemx_init_status@src/host/init/shmem_init.cpp",
-        "check_attr@src/host/init/shmem_init.cpp",
-        "aclshmemi_bootstrap_init@src/host/bootstrap/shmemi_bootstrap.cpp",
-        "aclshmemi_state_init_attr@src/host/init/shmem_init.cpp",
-        "memory_manager_initialize@src/host/mem/shmem_mm.cpp",
-        "aclshmemi_signal_init@src/host/init/shmem_init.cpp",
-        "aclshmemi_team_init@src/host/team/shmem_team.cpp",
-        "aclshmemi_sync_init@src/host/sync/shmemi_sync.cpp",
-        "prof_util_init@src/host/utils/prof/prof_util.cpp"
-      ],
-      "called_by": [
-        "aclshmem_initialize@src/host/python_wrapper/pyshmem.cpp"
-      ],
-      "receives_external_input": true,
-      "risk": "High"
+  "call_graph": {
+    "metadata": {
+      "project": "shmem",
+      "generated_date": "2026-04-25",
+      "language": "C++/Python"
     },
-    "aclshmemx_set_conf_store_tls@src/host/init/shmem_init.cpp": {
-      "defined_at": 605,
-      "calls": [],
-      "called_by": [
-        "aclshmem_set_conf_store_tls_info@src/host/python_wrapper/pyshmem.cpp"
-      ],
-      "receives_external_input": true,
-      "risk": "Medium"
-    },
-    "TcpConfigStore::Startup@src/host/bootstrap/config_store/store_tcp_config.cpp": {
-      "defined_at": 152,
-      "calls": [
-        "TcpConfigStore::Shutdown@src/host/bootstrap/config_store/store_tcp_config.cpp",
-        "AccStoreServer::Startup@src/host/bootstrap/config_store/acc_links/csrc/acc_tcp_server_default.cpp",
-        "TcpConfigStore::AccClientStart@src/host/bootstrap/config_store/store_tcp_config.cpp",
-        "AccTcpServer::ConnectToPeerServer@src/host/bootstrap/config_store/acc_links/csrc/acc_tcp_link_complex_default.cpp"
-      ],
-      "called_by": [
-        "store_factory_create@src/host/bootstrap/config_store/store_factory.cpp"
-      ],
-      "receives_external_input": true,
-      "risk": "Critical"
-    },
-    "AccTcpSslHelper::InitSSL@src/host/bootstrap/config_store/acc_links/csrc/security/acc_tcp_ssl_helper.cpp": {
-      "defined_at": 76,
-      "calls": [
-        "OpenSslApiWrapper::OpensslInitSsl@src/host/bootstrap/config_store/acc_links/csrc/under_api/openssl/openssl_api_dl.cpp",
-        "OpenSslApiWrapper::SslCtxCtrl@src/host/bootstrap/config_store/acc_links/csrc/under_api/openssl/openssl_api_dl.cpp",
-        "OpenSslApiWrapper::SslCtxSetCipherSuites@src/host/bootstrap/config_store/acc_links/csrc/under_api/openssl/openssl_api_dl.cpp",
-        "AccTcpSslHelper::LoadCaCert@src/host/bootstrap/config_store/acc_links/csrc/security/acc_tcp_ssl_helper.cpp",
-        "AccTcpSslHelper::LoadServerCert@src/host/bootstrap/config_store/acc_links/csrc/security/acc_tcp_ssl_helper.cpp",
-        "AccTcpSslHelper::LoadPrivateKey@src/host/bootstrap/config_store/acc_links/csrc/security/acc_tcp_ssl_helper.cpp"
-      ],
-      "called_by": [
-        "AccTcpSslHelper::Start@src/host/bootstrap/config_store/acc_links/csrc/security/acc_tcp_ssl_helper.cpp"
-      ],
-      "receives_external_input": true,
-      "risk": "Critical"
-    },
-    "AccTcpSslHelper::LoadCaCert@src/host/bootstrap/config_store/acc_links/csrc/security/acc_tcp_ssl_helper.cpp": {
-      "defined_at": 122,
-      "calls": [
-        "shm::utils::FileUtil::Realpath@src/host/bootstrap/config_store/acc_links/csrc/common/acc_file_validator.cpp",
-        "OpenSslApiWrapper::PemReadX509@src/host/bootstrap/config_store/acc_links/csrc/under_api/openssl/openssl_api_dl.cpp",
-        "AccTcpSslHelper::CertVerify@src/host/bootstrap/config_store/acc_links/csrc/security/acc_tcp_ssl_helper.cpp"
-      ],
-      "called_by": [
-        "AccTcpSslHelper::InitSSL@src/host/bootstrap/config_store/acc_links/csrc/security/acc_tcp_ssl_helper.cpp"
-      ],
-      "receives_external_input": true,
-      "risk": "Critical"
-    },
-    "AccTcpSslHelper::LoadPrivateKey@src/host/bootstrap/config_store/acc_links/csrc/security/acc_tcp_ssl_helper.cpp": {
-      "defined_at": 214,
-      "calls": [
-        "AccTcpSslHelper::GetPkPass@src/host/bootstrap/config_store/acc_links/csrc/security/acc_tcp_ssl_helper.cpp",
-        "OpenSslApiWrapper::BioNewMemBuf@src/host/bootstrap/config_store/acc_links/csrc/under_api/openssl/openssl_api_dl.cpp",
-        "OpenSslApiWrapper::PemReadBioPk@src/host/bootstrap/config_store/acc_links/csrc/under_api/openssl/openssl_api_dl.cpp",
-        "OpenSslApiWrapper::SslCtxUsePrivateKey@src/host/bootstrap/config_store/acc_links/csrc/under_api/openssl/openssl_api_dl.cpp"
-      ],
-      "called_by": [
-        "AccTcpSslHelper::InitSSL@src/host/bootstrap/config_store/acc_links/csrc/security/acc_tcp_ssl_helper.cpp"
-      ],
-      "receives_external_input": true,
-      "risk": "Critical"
-    },
-    "RdmaTransportManager::OpenDevice@src/host/transport/device_rdma/device_rdma_transport_manager.cpp": {
-      "defined_at": 52,
-      "calls": [
-        "DlAclApi::AclrtGetDevice@src/host/utils/under_api/dl_acl_api.cpp",
-        "DlAclApi::RtGetLogicDevIdByUserDevId@src/host/utils/under_api/dl_acl_api.cpp",
-        "RdmaTransportManager::ParseDeviceNic@src/host/transport/device_rdma/device_rdma_transport_manager.cpp",
-        "RdmaTransportManager::PrepareOpenDevice@src/host/transport/device_rdma/device_rdma_transport_manager.cpp"
-      ],
-      "called_by": [
-        "hybm_init_backend@src/host/entity/mem_entity_entry.cpp"
-      ],
-      "receives_external_input": true,
-      "risk": "High"
-    },
-    "RdmaTransportManager::PrepareOpenDevice@src/host/transport/device_rdma/device_rdma_transport_manager.cpp": {
-      "defined_at": 314,
-      "calls": [
-        "RdmaTransportManager::OpenTsd@src/host/transport/device_rdma/device_rdma_transport_manager.cpp",
-        "RdmaTransportManager::RaInit@src/host/transport/device_rdma/device_rdma_transport_manager.cpp",
-        "RdmaTransportManager::RetireDeviceIp@src/host/transport/device_rdma/device_rdma_transport_manager.cpp",
-        "RdmaTransportManager::RaRdevInit@src/host/transport/device_rdma/device_rdma_transport_manager.cpp"
-      ],
-      "called_by": [
-        "RdmaTransportManager::OpenDevice@src/host/transport/device_rdma/device_rdma_transport_manager.cpp"
-      ],
-      "receives_external_input": true,
-      "risk": "High"
-    },
-    "aclshmemi_instance_port_selection@src/host/init/shmem_init.cpp": {
-      "defined_at": 247,
-      "calls": [],
-      "called_by": [
-        "aclshmemi_instance_ctx_create@src/host/init/shmem_init.cpp"
-      ],
-      "receives_external_input": true,
-      "risk": "Medium"
-    },
-    "aclshmemx_set_log_level@src/host/init/shmem_init.cpp": {
-      "defined_at": 583,
-      "calls": [],
-      "called_by": [
-        "aclshmemx_init_attr@src/host/init/shmem_init.cpp",
-        "aclshmemx_get_uniqueid@src/host/init/shmem_init.cpp"
-      ],
-      "receives_external_input": true,
-      "risk": "Low"
-    },
-    "aclshmemx_get_uniqueid@src/host/init/shmem_init.cpp": {
-      "defined_at": 565,
-      "calls": [
-        "aclshmemx_set_log_level@src/host/init/shmem_init.cpp",
-        "aclshmemi_bootstrap_pre_init@src/host/bootstrap/shmemi_bootstrap.cpp"
-      ],
-      "called_by": [
-        "aclshmem_get_unique_id@src/host/python_wrapper/pyshmem.cpp"
-      ],
-      "receives_external_input": false,
-      "risk": "Medium"
-    },
-    "socket_get_uid_info_from_server@src/host/bootstrap/shmemi_bootstrap_uid.cpp": {
-      "defined_at": 1165,
-      "calls": [
-        "socket_client_init@src/host/bootstrap/socket/uid_socket.cpp"
-      ],
-      "called_by": [
-        "uid_bootstrap_exchange@src/host/bootstrap/shmemi_bootstrap_uid.cpp"
-      ],
-      "receives_external_input": true,
-      "risk": "High"
-    },
-    "aclshmem_malloc@src/host/mem/shmem_mm.cpp": {
-      "defined_at": 50,
-      "calls": [
-        "aclshmemi_memory_manager->malloc@src/host/mem/shmem_mgr.cpp"
-      ],
-      "called_by": [
-        "aclshmemi_signal_init@src/host/init/shmem_init.cpp",
-        "Python wrapper@src/host/python_wrapper/pyshmem.cpp"
-      ],
-      "receives_external_input": true,
-      "risk": "Medium"
-    },
-    "aclshmem_putmem@src/host/data_plane/shmem_host_rma.cpp": {
-      "defined_at": 30,
-      "calls": [
-        "aclshmemi_transport_put@src/host/transport/transport_manager.cpp"
-      ],
-      "called_by": [
-        "Python wrapper@src/host/python_wrapper/pyshmem.cpp"
-      ],
-      "receives_external_input": true,
-      "risk": "Medium"
-    },
-    "aclshmem_getmem@src/host/data_plane/shmem_host_rma.cpp": {
-      "defined_at": 60,
-      "calls": [
-        "aclshmemi_transport_get@src/host/transport/transport_manager.cpp"
-      ],
-      "called_by": [
-        "Python wrapper@src/host/python_wrapper/pyshmem.cpp"
-      ],
-      "receives_external_input": true,
-      "risk": "Medium"
-    },
-    "aclshmem_finalize@src/host/init/shmem_init.cpp": {
-      "defined_at": 497,
-      "calls": [
-        "aclshmemx_instance_ctx_set_impl@src/host/init/shmem_init.cpp",
-        "aclshmemi_team_finalize@src/host/team/shmem_team.cpp",
-        "aclshmemi_signal_finalize@src/host/init/shmem_init.cpp",
-        "memory_manager_destroy@src/host/mem/shmem_mm.cpp",
-        "aclshmemi_bootstrap_finalize@src/host/bootstrap/shmemi_bootstrap.cpp",
-        "aclshmemi_instance_ctx_destroy@src/host/init/shmem_init.cpp"
-      ],
-      "called_by": [
-        "Python wrapper@src/host/python_wrapper/pyshmem.cpp"
-      ],
-      "receives_external_input": false,
-      "risk": "Medium"
-    },
-    "AccTcpSslHelper::CertVerify@src/host/bootstrap/config_store/acc_links/csrc/security/acc_tcp_ssl_helper.cpp": {
-      "defined_at": 441,
-      "calls": [
-        "OpenSslApiWrapper::X509GetNotAfter@src/host/bootstrap/config_store/acc_links/csrc/under_api/openssl/openssl_api_dl.cpp",
-        "OpenSslApiWrapper::X509GetNotBefore@src/host/bootstrap/config_store/acc_links/csrc/under_api/openssl/openssl_api_dl.cpp",
-        "OpenSslApiWrapper::X509GetPubkey@src/host/bootstrap/config_store/acc_links/csrc/under_api/openssl/openssl_api_dl.cpp"
-      ],
-      "called_by": [
-        "AccTcpSslHelper::LoadCaCert@src/host/bootstrap/config_store/acc_links/csrc/security/acc_tcp_ssl_helper.cpp",
-        "AccTcpSslHelper::LoadServerCert@src/host/bootstrap/config_store/acc_links/csrc/security/acc_tcp_ssl_helper.cpp"
-      ],
-      "receives_external_input": true,
-      "risk": "High"
-    },
-    "TcpConfigStore::Set@src/host/bootstrap/config_store/store_tcp_config.cpp": {
-      "defined_at": 233,
-      "calls": [
-        "SmemMessagePacker::Pack@src/host/bootstrap/config_store/store_message_packer.cpp",
-        "TcpConfigStore::SendMessageBlocked@src/host/bootstrap/config_store/store_tcp_config.cpp"
-      ],
-      "called_by": [
-        "External caller (bootstrap)"
-      ],
-      "receives_external_input": true,
-      "risk": "Medium"
-    },
-    "TcpConfigStore::GetReal@src/host/bootstrap/config_store/store_tcp_config.cpp": {
-      "defined_at": 259,
-      "calls": [
-        "SmemMessagePacker::Pack@src/host/bootstrap/config_store/store_message_packer.cpp",
-        "TcpConfigStore::SendMessageBlocked@src/host/bootstrap/config_store/store_tcp_config.cpp",
-        "SmemMessagePacker::Unpack@src/host/bootstrap/config_store/store_message_packer.cpp"
-      ],
-      "called_by": [
-        "External caller (bootstrap)"
-      ],
-      "receives_external_input": true,
-      "risk": "Medium"
-    }
-  },
-  "data_flows": [
-    {
-      "source": "std::getenv(\"SHMEM_INSTANCE_PORT_RANGE\")@src/host/init/shmem_init.cpp:250",
-      "path": [
-        "aclshmemi_instance_port_selection@src/host/init/shmem_init.cpp:247",
-        "aclshmemi_instance_ctx_create@src/host/init/shmem_init.cpp:326",
-        "aclshmemx_init_attr@src/host/init/shmem_init.cpp:443"
-      ],
-      "sink": "attributes->ip_port@src/host/init/shmem_init.cpp:320",
-      "sink_type": "configuration"
-    },
-    {
-      "source": "std::getenv(\"SHMEM_LOG_LEVEL\")@src/host/init/shmem_init.cpp:586",
-      "path": [
-        "aclshmemx_set_log_level@src/host/init/shmem_init.cpp:583",
-        "aclshmem_out_logger::set_log_level@src/host/utils/log/shmemi_logger.cpp"
-      ],
-      "sink": "log level setting@src/host/utils/log/shmemi_logger.cpp",
-      "sink_type": "configuration"
-    },
-    {
-      "source": "tls_info parameter@src/host/init/shmem_init.cpp:605",
-      "path": [
-        "aclshmemx_set_conf_store_tls@src/host/init/shmem_init.cpp:605",
-        "g_boot_handle.tls_info@src/host/init/shmem_init.cpp:608"
-      ],
-      "sink": "AccTcpSslHelper::InitTlsPath@src/host/bootstrap/config_store/acc_links/csrc/security/acc_tcp_ssl_helper.cpp:58",
-      "sink_type": "file_path"
-    },
-    {
-      "source": "tlsCert file read@src/host/bootstrap/config_store/acc_links/csrc/security/acc_tcp_ssl_helper.cpp:154",
-      "path": [
-        "AccTcpSslHelper::LoadCaCert@src/host/bootstrap/config_store/acc_links/csrc/security/acc_tcp_ssl_helper.cpp:122",
-        "OpenSslApiWrapper::PemReadX509@src/host/bootstrap/config_store/acc_links/csrc/under_api/openssl/openssl_api_dl.cpp"
-      ],
-      "sink": "SSL_CTX load verify locations@src/host/bootstrap/config_store/acc_links/csrc/security/acc_tcp_ssl_helper.cpp:164",
-      "sink_type": "ssl_operation"
-    },
-    {
-      "source": "tlsPk (private key) content@src/host/bootstrap/config_store/acc_links/csrc/security/acc_tcp_ssl_helper.cpp:227",
-      "path": [
-        "AccTcpSslHelper::LoadPrivateKey@src/host/bootstrap/config_store/acc_links/csrc/security/acc_tcp_ssl_helper.cpp:214",
-        "OpenSslApiWrapper::BioNewMemBuf@src/host/bootstrap/config_store/acc_links/csrc/under_api/openssl/openssl_api_dl.cpp:227"
-      ],
-      "sink": "SSL_CTX use private key@src/host/bootstrap/config_store/acc_links/csrc/security/acc_tcp_ssl_helper.cpp:243",
-      "sink_type": "ssl_operation"
-    },
-    {
-      "source": "TCP socket accept@src/host/bootstrap/config_store/acc_links/csrc/acc_tcp_listener.cpp",
-      "path": [
-        "AccTcpListener::Accept@src/host/bootstrap/config_store/acc_links/csrc/acc_tcp_listener.cpp",
-        "AccTcpLinkDefault::OnAccept@src/host/bootstrap/config_store/acc_links/csrc/acc_tcp_link_default.cpp"
-      ],
-      "sink": "Message handler@src/host/bootstrap/config_store/store_tcp_config.cpp:190",
-      "sink_type": "network_input"
-    },
-    {
-      "source": "attributes parameter@src/host/init/shmem_init.cpp:443",
-      "path": [
-        "aclshmemx_init_attr@src/host/init/shmem_init.cpp:443",
-        "aclshmemi_state_init_attr@src/host/init/shmem_init.cpp:118",
-        "g_state.mype/npes/heap_size@src/host/init/shmem_init.cpp:121"
-      ],
-      "sink": "Device state update@src/host/init/shmem_init.cpp:491",
-      "sink_type": "memory_operation"
-    },
-    {
-      "source": "RDMA device IP@src/host/transport/device_rdma/device_rdma_transport_manager.cpp:412",
-      "path": [
-        "RdmaTransportManager::RetireDeviceIp@src/host/transport/device_rdma/device_rdma_transport_manager.cpp:412",
-        "DlHccpApi::RaGetIfAddrs@src/host/utils/under_api/dl_hccp_api.cpp"
-      ],
-      "sink": "HccpRdevInitV2@src/host/transport/device_rdma/device_rdma_transport_manager.cpp:487",
-      "sink_type": "network_operation"
-    },
-    {
-      "source": "Python API call@src/host/python_wrapper/pyshmem.cpp:30",
-      "path": [
-        "aclshmem_initialize@src/host/python_wrapper/pyshmem.cpp:30",
-        "aclshmemx_init_attr@src/host/init/shmem_init.cpp:443"
-      ],
-      "sink": "Full initialization chain",
-      "sink_type": "library_init"
-    },
-    {
-      "source": "Memory size parameter@src/host/python_wrapper/pyshmem.cpp:52",
-      "path": [
-        "aclshmem_initialize_unique_id@src/host/python_wrapper/pyshmem.cpp:52",
-        "aclshmemx_set_attr_uniqueid_args@src/host/init/shmem_init.cpp:187",
-        "aclshmemx_init_attr@src/host/init/shmem_init.cpp:443"
-      ],
-      "sink": "Heap allocation@src/host/mem/shmem_mm.cpp",
-      "sink_type": "memory_operation"
-    }
-  ]
+    "entry_points": [
+      {
+        "name": "aclshmemx_init_attr",
+        "file": "src/host/init/shmem_init.cpp",
+        "calls": [
+          "check_attr",
+          "aclshmemi_state_init_attr",
+          "aclrtCreateStream",
+          "init_manager->aclshmemi_control_barrier_all",
+          "aclshmemi_memory_manager->init"
+        ],
+        "data_sources": [
+          "attributes->my_pe",
+          "attributes->n_pes",
+          "attributes->local_mem_size",
+          "attributes->option_attr"
+        ]
+      },
+      {
+        "name": "aclshmemx_set_config_store_tls_key",
+        "file": "src/host/init/shmem_host_init.h",
+        "calls": [
+          "AccTcpSslHelper::RegisterDecryptHandler",
+          "AccTcpSslHelper::LoadPrivateKey"
+        ],
+        "data_sources": [
+          "tls_pk",
+          "tls_pk_pw",
+          "decrypt_handler"
+        ]
+      },
+      {
+        "name": "socket_connect",
+        "file": "src/host/bootstrap/socket/uid_socket.cpp",
+        "calls": [
+          "setsockopt",
+          "socket_progress_state",
+          "socket_start_connect",
+          "socket_finalize_connect",
+          "socket_wait",
+          "socket_progress"
+        ],
+        "data_sources": [
+          "sock->addr",
+          "sock->magic",
+          "sock->type"
+        ]
+      },
+      {
+        "name": "socket_recv",
+        "file": "src/host/bootstrap/socket/uid_socket.cpp",
+        "calls": [
+          "socket_wait",
+          "socket_progress",
+          "recv"
+        ],
+        "data_sources": [
+          "sock->fd",
+          "ptr",
+          "size"
+        ]
+      },
+      {
+        "name": "AccTcpSslHelper::Start",
+        "file": "src/host/bootstrap/config_store/acc_links/csrc/security/acc_tcp_ssl_helper.cpp",
+        "calls": [
+          "InitTlsPath",
+          "ReadCheckCertParams",
+          "StartCheckCertExpired",
+          "InitSSL"
+        ],
+        "data_sources": [
+          "param.tlsTopPath",
+          "param.tlsCaPath",
+          "param.tlsCert",
+          "param.tlsPk",
+          "param.tlsPkPwd"
+        ]
+      },
+      {
+        "name": "AccTcpSslHelper::InitSSL",
+        "file": "src/host/bootstrap/config_store/acc_links/csrc/security/acc_tcp_ssl_helper.cpp",
+        "calls": [
+          "OpenSslApiWrapper::OpensslInitSsl",
+          "OpenSslApiWrapper::SslCtxCtrl",
+          "OpenSslApiWrapper::SslCtxSetCipherSuites",
+          "LoadCaCert",
+          "LoadServerCert",
+          "LoadPrivateKey"
+        ],
+        "data_sources": [
+          "sslCtx"
+        ]
+      },
+      {
+        "name": "AccTcpSslHelper::LoadPrivateKey",
+        "file": "src/host/bootstrap/config_store/acc_links/csrc/security/acc_tcp_ssl_helper.cpp",
+        "calls": [
+          "GetPkPass",
+          "OpenSslApiWrapper::SslCtxSetDefaultPasswdCbUserdata",
+          "OpenSslApiWrapper::BioNewMemBuf",
+          "OpenSslApiWrapper::PemReadBioPk",
+          "OpenSslApiWrapper::SslCtxUsePrivateKey",
+          "OpenSslApiWrapper::SslCtxCheckPrivateKey",
+          "EraseDecryptData"
+        ],
+        "data_sources": [
+          "tlsPk",
+          "tlsPkPwd",
+          "mDecryptHandler_"
+        ]
+      },
+      {
+        "name": "AccTcpSslHelper::GetPkPass",
+        "file": "src/host/bootstrap/config_store/acc_links/csrc/security/acc_tcp_ssl_helper.cpp",
+        "calls": [
+          "mDecryptHandler_"
+        ],
+        "data_sources": [
+          "tlsPkPwd",
+          "encryptedText"
+        ],
+        "sink": "password_decryption"
+      },
+      {
+        "name": "aclshmem_malloc",
+        "file": "src/host/mem/shmem_host_heap.h",
+        "calls": [
+          "aclshmemi_memory_manager->malloc",
+          "hybm_mem_segment->allocate"
+        ],
+        "data_sources": [
+          "size"
+        ],
+        "sink": "memory_allocation"
+      },
+      {
+        "name": "aclshmem_putmem",
+        "file": "src/host/data_plane/shmem_host_rma.h",
+        "calls": [
+          "aclshmemx_putmem_on_stream",
+          "aclrtStream"
+        ],
+        "data_sources": [
+          "dst",
+          "src",
+          "elem_size",
+          "pe"
+        ],
+        "sink": "remote_memory_write"
+      },
+      {
+        "name": "aclshmem_getmem",
+        "file": "src/host/data_plane/shmem_host_rma.h",
+        "calls": [
+          "aclshmemx_getmem_on_stream",
+          "aclrtStream"
+        ],
+        "data_sources": [
+          "dst",
+          "src",
+          "elem_size",
+          "pe"
+        ],
+        "sink": "remote_memory_read"
+      },
+      {
+        "name": "ParseDeviceNic",
+        "file": "src/host/transport/device_rdma/device_rdma_helper.cpp",
+        "calls": [
+          "inet_pton",
+          "inet_aton",
+          "utils::StringUtil::String2Uint"
+        ],
+        "data_sources": [
+          "nic"
+        ],
+        "sink": "address_parsing"
+      },
+      {
+        "name": "py_decrypt_handler_wrapper",
+        "file": "src/host/python_wrapper/pyshmem.cpp",
+        "calls": [
+          "g_py_decrypt_func",
+          "py::cast",
+          "std::copy"
+        ],
+        "data_sources": [
+          "cipherText",
+          "cipherTextLen"
+        ],
+        "sink": "python_callback"
+      },
+      {
+        "name": "aclshmem_initialize_unique_id",
+        "file": "src/host/python_wrapper/pyshmem.cpp",
+        "calls": [
+          "aclshmemx_set_attr_uniqueid_args",
+          "aclshmemx_init_attr"
+        ],
+        "data_sources": [
+          "rank",
+          "world_size",
+          "mem_size",
+          "bytes (uid)"
+        ]
+      }
+    ],
+    "taint_flows": [
+      {
+        "source": "attributes->my_pe",
+        "path": [
+          "aclshmemx_init_attr -> check_attr -> g_state.mype"
+        ],
+        "sink": "global_state",
+        "type": "integer_validation"
+      },
+      {
+        "source": "attributes->local_mem_size",
+        "path": [
+          "aclshmemx_init_attr -> check_attr -> g_state.heap_size"
+        ],
+        "sink": "memory_allocation",
+        "type": "integer_overflow"
+      },
+      {
+        "source": "tlsPkPwd",
+        "path": [
+          "aclshmemx_set_config_store_tls_key -> GetPkPass -> mDecryptHandler_ -> mKeyPass"
+        ],
+        "sink": "private_key_password",
+        "type": "cryptographic"
+      },
+      {
+        "source": "socket_recv -> ptr",
+        "path": [
+          "socket_recv -> recv -> data buffer"
+        ],
+        "sink": "network_data",
+        "type": "network_input"
+      },
+      {
+        "source": "nic (network address string)",
+        "path": [
+          "ParseDeviceNic -> inet_pton/inet_aton -> address"
+        ],
+        "sink": "rdma_address",
+        "type": "input_validation"
+      },
+      {
+        "source": "size (malloc)",
+        "path": [
+          "aclshmem_malloc -> aclshmemi_memory_manager->malloc -> hybm_mem_segment->allocate"
+        ],
+        "sink": "memory_allocation",
+        "type": "integer_overflow"
+      },
+      {
+        "source": "elem_size (putmem/getmem)",
+        "path": [
+          "aclshmem_putmem -> aclshmemx_putmem_on_stream -> RDMA/MTE transfer"
+        ],
+        "sink": "remote_memory_operation",
+        "type": "memory_bounds"
+      },
+      {
+        "source": "Python bytes (uid)",
+        "path": [
+          "aclshmem_initialize_unique_id -> std::copy_n -> uid"
+        ],
+        "sink": "bootstrap_uid",
+        "type": "python_binding"
+      },
+      {
+        "source": "cipherText (Python decrypt)",
+        "path": [
+          "py_decrypt_handler_wrapper -> g_py_decrypt_func -> plainText"
+        ],
+        "sink": "decrypted_password",
+        "type": "python_callback"
+      }
+    ],
+    "cross_module_calls": [
+      {
+        "from": "host_python_wrapper",
+        "to": "host_init",
+        "functions": [
+          "aclshmemx_init_attr",
+          "aclshmemx_set_config_store_tls_key",
+          "aclshmemx_set_conf_store_tls"
+        ]
+      },
+      {
+        "from": "host_python_wrapper",
+        "to": "host_mem",
+        "functions": [
+          "aclshmem_malloc",
+          "aclshmem_calloc",
+          "aclshmem_align",
+          "aclshmem_free"
+        ]
+      },
+      {
+        "from": "host_python_wrapper",
+        "to": "host_data_plane",
+        "functions": [
+          "aclshmem_putmem",
+          "aclshmem_getmem",
+          "aclshmem_putmem_nbi",
+          "aclshmem_getmem_nbi"
+        ]
+      },
+      {
+        "from": "host_init",
+        "to": "host_bootstrap",
+        "functions": [
+          "aclshmemi_bootstrap_handle_t",
+          "aclshmemi_control_barrier_all"
+        ]
+      },
+      {
+        "from": "host_bootstrap/config_store",
+        "to": "host_bootstrap/socket",
+        "functions": [
+          "socket_init",
+          "socket_connect",
+          "socket_accept"
+        ]
+      },
+      {
+        "from": "host_bootstrap/config_store",
+        "to": "external/OpenSSL",
+        "functions": [
+          "SSL_CTX_new",
+          "SSL_new",
+          "SSL_accept",
+          "SSL_connect",
+          "X509_verify_cert",
+          "PEM_read_X509",
+          "PEM_read_bio_PrivateKey"
+        ]
+      },
+      {
+        "from": "host_transport",
+        "to": "host_init",
+        "functions": [
+          "g_state.qp_info",
+          "g_state.mte_config",
+          "g_state.sdma_config"
+        ]
+      },
+      {
+        "from": "host_data_plane",
+        "to": "host_transport",
+        "functions": [
+          "aclshmemx_putmem_on_stream",
+          "aclshmemx_getmem_on_stream"
+        ]
+      }
+    ]
+  }
 }

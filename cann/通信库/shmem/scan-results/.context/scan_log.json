@@ -1,88 +1,83 @@
 {
-  "scan_id": "scan_shmem_20260421",
-  "start_time": "2026-04-21T21:52:00Z",
-  "end_time": "2026-04-21T22:51:00Z",
-  "duration_seconds": 3540,
-  "project_root": "/home/pwn20tty/Desktop/opencode_project/cann/2/shmem",
+  "scan_id": "scan_shmem_001",
+  "start_time": "2026-04-25T00:00:00Z",
+  "end_time": "2026-04-25T01:12:00Z",
+  "duration_seconds": 4320,
   "project_name": "shmem",
+  "project_root": "/home/pwn20tty/Desktop/opencode_project/cann/2/shmem",
   "status": "success",
   "agents": [
     {
       "name": "architecture",
-      "start_time": "2026-04-21T21:55:00Z",
-      "end_time": "2026-04-21T22:01:46Z",
-      "duration_seconds": 406,
+      "start_time": "2026-04-25T00:30:00Z",
+      "end_time": "2026-04-25T00:37:00Z",
+      "duration_seconds": 420,
       "status": "success",
-      "output_files": [
+      "outputs": [
         "project_model.json",
         "call_graph.json",
         "threat_analysis_report.md"
       ],
-      "modules_count": 21,
-      "high_risk_files_count": 17,
-      "entry_points_count": 11
+      "summary": "识别7个高风险模块和5个主要攻击面"
     },
     {
       "name": "dataflow-scanner",
-      "start_time": "2026-04-21T22:03:00Z",
-      "end_time": "2026-04-21T22:11:13Z",
-      "duration_seconds": 493,
+      "start_time": "2026-04-25T00:38:00Z",
+      "end_time": "2026-04-25T00:45:00Z",
+      "duration_seconds": 411,
       "status": "success",
-      "modules_scanned": 19,
-      "candidates_count": 43
+      "outputs": [],
+      "summary": "发现14个数据流漏洞(Critical:4, High:7, Medium:3)"
     },
     {
       "name": "security-auditor",
-      "start_time": "2026-04-21T22:03:00Z",
-      "end_time": "2026-04-21T22:09:36Z",
-      "duration_seconds": 396,
+      "start_time": "2026-04-25T00:38:00Z",
+      "end_time": "2026-04-25T00:48:00Z",
+      "duration_seconds": 603,
       "status": "success",
-      "modules_scanned": 20,
-      "candidates_count": 39
+      "outputs": [],
+      "summary": "发现33个安全逻辑漏洞(Critical:5, High:9, Medium:18, Low:1)"
     },
     {
       "name": "verification",
-      "start_time": "2026-04-21T22:13:00Z",
-      "end_time": "2026-04-21T22:20:44Z",
-      "duration_seconds": 454,
+      "start_time": "2026-04-25T00:50:00Z",
+      "end_time": "2026-04-25T00:58:00Z",
+      "duration_seconds": 464,
       "status": "success",
-      "vulnerabilities_verified": 76,
-      "confirmed_count": 0,
-      "likely_count": 7,
-      "possible_count": 69,
-      "false_positive_count": 0
+      "outputs": [],
+      "summary": "验证49个候选漏洞，确认7个CONFIRMED,10个LIKELY,12个POSSIBLE,20个FALSE_POSITIVE"
     },
     {
       "name": "details-analyzer",
-      "start_time": null,
-      "end_time": null,
-      "duration_seconds": 0,
-      "status": "skipped",
-      "reason": "No CONFIRMED vulnerabilities found"
+      "start_time": "2026-04-25T01:00:00Z",
+      "end_time": "2026-04-25T01:02:00Z",
+      "duration_seconds": 85,
+      "status": "success",
+      "outputs": [],
+      "summary": "调度7个details-worker进行深度利用分析(后台运行)"
     },
     {
       "name": "reporter",
-      "start_time": "2026-04-21T22:45:00Z",
-      "end_time": "2026-04-21T22:51:00Z",
-      "duration_seconds": 360,
+      "start_time": "2026-04-25T01:05:00Z",
+      "end_time": "2026-04-25T01:09:00Z",
+      "duration_seconds": 235,
       "status": "success",
-      "output_files": [
+      "outputs": [
         "report_confirmed.md",
         "report_unconfirmed.md"
       ],
-      "total_vulnerabilities": 76
+      "summary": "生成漏洞报告: confirmed(733行,7个漏洞) + unconfirmed(573行,18个漏洞)"
     }
   ],
   "summary": {
-    "total_files_scanned": 382,
-    "total_vulnerabilities": 76,
-    "confirmed": 0,
-    "likely": 7,
-    "possible": 69,
-    "false_positive": 0,
-    "high_severity": 5,
-    "medium_severity": 29,
-    "low_severity": 42,
-    "top_modules": ["python_core", "config_store", "transport_udma", "security_ssl", "python_wrapper"]
+    "total_candidates": 50,
+    "confirmed": 7,
+    "likely": 10,
+    "possible": 12,
+    "false_positive": 20,
+    "critical_severity": 5,
+    "high_severity": 9,
+    "medium_severity": 11,
+    "low_severity": 24
   }
 }
