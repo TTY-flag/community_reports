@@ -1,0 +1,77 @@
+{
+  "scan_id": "scan-pytorch-20250423-001",
+  "start_time": "2025-04-23T23:49:00+08:00",
+  "end_time": "2025-04-24T00:16:00+08:00",
+  "duration_seconds": 1620,
+  "status": "completed",
+  "project_name": "torch_npu",
+  "project_path": "/home/pwn20tty/Desktop/opencode_project/shenteng/pytorch",
+  "agents": [
+    {
+      "name": "architecture",
+      "start_time": "2025-04-23T23:49:00+08:00",
+      "end_time": "2025-04-23T23:56:33+08:00",
+      "duration_seconds": 453,
+      "status": "success",
+      "outputs": [
+        "scan-results/.context/project_model.json",
+        "scan-results/.context/call_graph.json",
+        "scan-results/threat_analysis_report.md"
+      ],
+      "error": null
+    },
+    {
+      "name": "dataflow-scanner",
+      "start_time": "2025-04-23T23:57:00+08:00",
+      "end_time": "2025-04-24T00:00:57+08:00",
+      "duration_seconds": 237,
+      "status": "success",
+      "outputs": [],
+      "item_count": 9,
+      "error": null
+    },
+    {
+      "name": "security-auditor",
+      "start_time": "2025-04-23T23:57:00+08:00",
+      "end_time": "2025-04-24T00:02:06+08:00",
+      "duration_seconds": 306,
+      "status": "success",
+      "outputs": [],
+      "item_count": 10,
+      "error": null
+    },
+    {
+      "name": "verification",
+      "start_time": "2025-04-24T00:02:10+08:00",
+      "end_time": "2025-04-24T00:07:01+08:00",
+      "duration_seconds": 291,
+      "status": "success",
+      "outputs": [],
+      "item_count": 16,
+      "error": null
+    },
+    {
+      "name": "reporter",
+      "start_time": "2025-04-24T00:07:05+08:00",
+      "end_time": "2025-04-24T00:16:15+08:00",
+      "duration_seconds": 550,
+      "status": "success",
+      "outputs": [
+        "scan-results/report_confirmed.md",
+        "scan-results/report_unconfirmed.md"
+      ],
+      "error": null
+    }
+  ],
+  "summary": {
+    "project_type": "library",
+    "total_files_scanned": 684,
+    "candidates_found": 19,
+    "verified_vulnerabilities": 16,
+    "confirmed_vulnerabilities": 0,
+    "likely_vulnerabilities": 4,
+    "possible_vulnerabilities": 6,
+    "false_positives": 6,
+    "lsp_available": false
+  }
+}

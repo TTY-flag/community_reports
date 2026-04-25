@@ -1,0 +1,432 @@
+{
+  "project_name": "torch_npu",
+  "description": "Security-relevant function call graph for torch_npu project",
+  "call_graphs": [
+    {
+      "module": "distributed",
+      "description": "分布式通信模块调用图",
+      "security_relevant_calls": [
+        {
+          "caller": "ParallelTcpServer::Start",
+          "callee": "ParallelTcpServer::CreateSocket",
+          "risk": "network",
+          "description": "创建 TCP 监听 socket"
+        },
+        {
+          "caller": "ParallelTcpServer::CreateSocket",
+          "callee": "ParallelTcpServer::CreateSocketWithFamily",
+          "risk": "network",
+          "description": "根据地址族创建 socket (IPv4/IPv6)"
+        },
+        {
+          "caller": "ParallelTcpServer::CreateSocketWithFamily",
+          "callee": "::getaddrinfo",
+          "risk": "network",
+          "description": "解析主机名和端口"
+        },
+        {
+          "caller": "ParallelTcpServer::CreateSocketAndListen",
+          "callee": "::socket",
+          "risk": "network",
+          "description": "创建 socket 文件描述符"
+        },
+        {
+          "caller": "ParallelTcpServer::CreateSocketAndListen",
+          "callee": "::bind",
+          "risk": "network",
+          "description": "绑定 socket 到地址"
+        },
+        {
+          "caller": "ParallelTcpServer::CreateSocketAndListen",
+          "callee": "::listen",
+          "risk": "network",
+          "description": "开始监听连接"
+        },
+        {
+          "caller": "ParallelTcpServer::CreateLocalSocket",
+          "callee": "::socket(AF_UNIX)",
+          "risk": "ipc",
+          "description": "创建 Unix Domain Socket"
+        },
+        {
+          "caller": "ParallelTcpServer::CreateLocalSocket",
+          "callee": "strncpy",
+          "risk": "buffer_overflow",
+          "description": "复制 socket 路径到 sun_path"
+        },
+        {
+          "caller": "ParallelTcpServer::ProcessListenEvent",
+          "callee": "::accept",
+          "risk": "network",
+          "description": "接受新连接"
+        },
+        {
+          "caller": "Client::TryConnectCore",
+          "callee": "::socket",
+          "risk": "network",
+          "description": "创建客户端 socket"
+        },
+        {
+          "caller": "Client::TryConnectCore",
+          "callee": "::connect",
+          "risk": "network",
+          "description": "连接到服务器"
+        },
+        {
+          "caller": "Client::SyncCall",
+          "callee": "::write",
+          "risk": "network",
+          "description": "发送请求数据"
+        },
+        {
+          "caller": "Client::SyncCall",
+          "callee": "::read",
+          "risk": "network",
+          "description": "读取响应数据"
+        },
+        {
+          "caller": "Client::SyncCall",
+          "callee": "StoreMessagePacker::Unpack",
+          "risk": "data_parsing",
+          "description": "解析响应消息"
+        },
+        {
+          "caller": "ClientIoContext::ReceiveData",
+          "callee": "::read",
+          "risk": "network",
+          "description": "从 socket 读取数据"
+        },
+        {
+          "caller": "ClientIoContext::ReceiveData",
+          "callee": "StoreMessagePacker::Unpack",
+          "risk": "data_parsing",
+          "description": "解析接收的消息"
+        },
+        {
+          "caller": "ProcessGroupHCCL::ProcessGroupHCCL",
+          "callee": "std::getenv",
+          "risk": "environment",
+          "description": "读取环境变量配置"
+        },
+        {
+          "caller": "ProcessGroupHCCL::broadcastMasterID",
+          "callee": "store_->set",
+          "risk": "store",
+          "description": "通过 Store 广播 HCCL Master ID"
+        },
+        {
+          "caller": "DumpPipe::DumpPipe",
+          "callee": "::mkfifo",
+          "risk": "file",
+          "description": "创建命名管道"
+        },
+        {
+          "caller": "DumpPipe::DumpPipe",
+          "callee": "::open",
+          "risk": "file",
+          "description": "打开命名管道"
+        },
+        {
+          "caller": "DumpPipe::DumpPipe",
+          "callee": "::unlink",
+          "risk": "file",
+          "description": "删除现有管道文件"
+        },
+        {
+          "caller": "ProcessGroupHCCL::dumpDebuggingInfo",
+          "callee": "DumpPipe",
+          "risk": "file",
+          "description": "使用 DumpPipe 触发调试信息导出"
+        },
+        {
+          "caller": "TensorPipeAgent::send",
+          "callee": "pipeWrite",
+          "risk": "network",
+          "description": "通过 TensorPipe 发送 RPC 消息"
+        },
+        {
+          "caller": "TensorPipeAgent::pipeRead",
+          "callee": "Pipe::read",
+          "risk": "network",
+          "description": "从 TensorPipe Pipe 读取消息"
+        },
+        {
+          "caller": "TensorPipeAgent::startImpl",
+          "callee": "listener_->accept",
+          "risk": "network",
+          "description": "TensorPipe Listener 接受连接"
+        }
+      ]
+    },
+    {
+      "module": "ipc",
+      "description": "IPC 通信模块调用图",
+      "security_relevant_calls": [
+        {
+          "caller": "THNPStorage_shareNpu",
+          "callee": "NPUCachingAllocator::shareIpcHandle",
+          "risk": "ipc",
+          "description": "获取 NPU IPC Handle 用于共享"
+        },
+        {
+          "caller": "THNPStorage_shareNpu",
+          "callee": "PyBytes_FromStringAndSize",
+          "risk": "serialization",
+          "description": "序列化 IPC Handle 为 Python bytes"
+        },
+        {
+          "caller": "THNPStorage_shareNpu",
+          "callee": "aclrtIpcEventHandle",
+          "risk": "ipc",
+          "description": "获取 IPC 事件句柄"
+        },
+        {
+          "caller": "THNPStorage_releaseIPCCounter",
+          "callee": "at::RefcountedMapAllocator::makeDataPtr",
+          "risk": "file",
+          "description": "打开引用计数共享内存文件"
+        },
+        {
+          "caller": "THNPStorage_newSharedNpu",
+          "callee": "NPUCachingAllocator::getIpcDevPtr",
+          "risk": "ipc",
+          "description": "从 IPC Handle 获取设备指针"
+        },
+        {
+          "caller": "THNPStorage_newSharedNpu",
+          "callee": "NPUEvent::block",
+          "risk": "synchronization",
+          "description": "等待 IPC 事件同步"
+        },
+        {
+          "caller": "THNPStorage_newSharedNpu",
+          "callee": "at::RefcountedMapAllocator::makeDataPtr",
+          "risk": "file",
+          "description": "访问引用计数文件"
+        }
+      ]
+    },
+    {
+      "module": "core/npu/register",
+      "description": "动态库加载调用图",
+      "security_relevant_calls": [
+        {
+          "caller": "FunctionLoader::Get",
+          "callee": "::dlopen",
+          "risk": "library_loading",
+          "description": "动态加载共享库 (.so)"
+        },
+        {
+          "caller": "FunctionLoader::Get",
+          "callee": "::dlsym",
+          "risk": "library_loading",
+          "description": "查找库中的符号"
+        },
+        {
+          "caller": "FunctionLoader::~FunctionLoader",
+          "callee": "::dlclose",
+          "risk": "library_loading",
+          "description": "关闭动态库"
+        }
+      ]
+    },
+    {
+      "module": "toolkit/profiler",
+      "description": "性能分析器文件操作调用图",
+      "security_relevant_calls": [
+        {
+          "caller": "DataDumper::Dump",
+          "callee": "Utils::IsFileExist",
+          "risk": "file",
+          "description": "检查文件是否存在"
+        },
+        {
+          "caller": "DataDumper::Dump",
+          "callee": "Utils::CreateFile",
+          "risk": "file",
+          "description": "创建文件"
+        },
+        {
+          "caller": "DataDumper::Dump",
+          "callee": "::fopen",
+          "risk": "file",
+          "description": "打开文件用于写入"
+        },
+        {
+          "caller": "DataDumper::Dump",
+          "callee": "::fwrite",
+          "risk": "file",
+          "description": "写入数据到文件"
+        },
+        {
+          "caller": "DataDumper::GatherAndDumpData",
+          "callee": "Utils::CreateDir",
+          "risk": "file",
+          "description": "创建导出目录"
+        },
+        {
+          "caller": "TraceDataDumper::Dump",
+          "callee": "::fopen",
+          "risk": "file",
+          "description": "打开 trace 文件"
+        },
+        {
+          "caller": "TraceDataDumper::Dump",
+          "callee": "::fwrite",
+          "risk": "file",
+          "description": "写入 trace 数据"
+        }
+      ]
+    },
+    {
+      "module": "core",
+      "description": "核心模块调用图",
+      "security_relevant_calls": [
+        {
+          "caller": "npu_info_deserialization",
+          "callee": "NPUNativeFunctions::npu_format_cast_",
+          "risk": "data_handling",
+          "description": "反序列化时执行格式转换"
+        },
+        {
+          "caller": "NPUCachingAllocator::shareIpcHandle",
+          "callee": "aclrtGetIpcHandle",
+          "risk": "ipc",
+          "description": "获取 ACL IPC Handle"
+        },
+        {
+          "caller": "NPUCachingAllocator::getIpcDevPtr",
+          "callee": "aclrtIpcOpenMemHandle",
+          "risk": "ipc",
+          "description": "打开 IPC 内存句柄"
+        }
+      ]
+    },
+    {
+      "module": "framework",
+      "description": "框架层调用图",
+      "security_relevant_calls": [
+        {
+          "caller": "REGISTER_OPTION_INIT_BY_ENV",
+          "callee": "std::getenv",
+          "risk": "environment",
+          "description": "读取环境变量初始化选项"
+        },
+        {
+          "caller": "LazyInitAclops",
+          "callee": "FunctionLoader::Get",
+          "risk": "library_loading",
+          "description": "延迟加载 ACLOps 库"
+        }
+      ]
+    },
+    {
+      "module": "logging",
+      "description": "日志模块调用图",
+      "security_relevant_calls": [
+        {
+          "caller": "LogContext::init",
+          "callee": "std::getenv",
+          "risk": "environment",
+          "description": "读取 TORCH_NPU_LOGS_FILTER 环境变量"
+        }
+      ]
+    }
+  ],
+  "cross_module_calls": [
+    {
+      "caller_module": "distributed",
+      "caller_function": "ProcessGroupHCCL::ProcessGroupHCCL",
+      "callee_module": "core",
+      "callee_function": "NPUCachingAllocator",
+      "risk": "memory",
+      "description": "分布式通信使用 NPU 内存分配器"
+    },
+    {
+      "caller_module": "distributed",
+      "caller_function": "Init.cpp",
+      "callee_module": "ipc",
+      "callee_function": "StorageSharing",
+      "risk": "ipc",
+      "description": "分布式模块绑定 IPC 存储共享功能"
+    },
+    {
+      "caller_module": "distributed",
+      "caller_function": "reducer.cpp",
+      "callee_module": "aten",
+      "callee_function": "NPUNativeFunctions",
+      "risk": "tensor_operation",
+      "description": "DDP reducer 使用 ATen 操作"
+    },
+    {
+      "caller_module": "ipc",
+      "caller_function": "StorageSharing.cpp",
+      "callee_module": "core",
+      "callee_function": "NPUCachingAllocator::shareIpcHandle",
+      "risk": "ipc",
+      "description": "IPC 存储共享使用缓存分配器的 IPC 功能"
+    },
+    {
+      "caller_module": "npu",
+      "caller_function": "Module.cpp",
+      "callee_module": "distributed",
+      "callee_function": "Init",
+      "risk": "initialization",
+      "description": "NPU 模块初始化分布式绑定"
+    },
+    {
+      "caller_module": "toolkit/profiler",
+      "caller_function": "data_dumper.cpp",
+      "callee_module": "core",
+      "callee_function": "npu_log",
+      "risk": "logging",
+      "description": "性能分析器使用 NPU 日志"
+    }
+  ],
+  "external_library_calls": [
+    {
+      "library": "acl (Ascend Computing Language)",
+      "calls": [
+        {"function": "aclInit", "risk": "initialization", "description": "初始化 ACL 库"},
+        {"function": "aclrtGetIpcHandle", "risk": "ipc", "description": "获取 IPC Handle"},
+        {"function": "aclrtIpcOpenMemHandle", "risk": "ipc", "description": "打开 IPC 内存句柄"},
+        {"function": "aclrtIpcMemHandle", "risk": "ipc", "description": "IPC 内存句柄操作"},
+        {"function": "HcclCommInitRootInfo", "risk": "distributed", "description": "初始化 HCCL 通信器"},
+        {"function": "HcclAllReduce", "risk": "distributed", "description": "HCCL AllReduce 操作"},
+        {"function": "HcclBroadcast", "risk": "distributed", "description": "HCCL Broadcast 操作"}
+      ]
+    },
+    {
+      "library": "tensorpipe",
+      "calls": [
+        {"function": "Context::create", "risk": "network", "description": "创建 TensorPipe 上下文"},
+        {"function": "Listener::accept", "risk": "network", "description": "接受 TensorPipe 连接"},
+        {"function": "Pipe::read", "risk": "network", "description": "从 Pipe 读取数据"},
+        {"function": "Pipe::write", "risk": "network", "description": "向 Pipe 写入数据"}
+      ]
+    },
+    {
+      "library": "Python/C API",
+      "calls": [
+        {"function": "PyImport_ImportModule", "risk": "python_import", "description": "导入 Python 模块"},
+        {"function": "PyBytes_FromStringAndSize", "risk": "serialization", "description": "创建 Python bytes 对象"},
+        {"function": "PyBytes_AS_STRING", "risk": "serialization", "description": "获取 Python bytes 内容"},
+        {"function": "THPUtils_unpackLong", "risk": "data_conversion", "description": "解析 Python 整数"}
+      ]
+    },
+    {
+      "library": "c10d (PyTorch Distributed)",
+      "calls": [
+        {"function": "Store::set", "risk": "store", "description": "设置 Store 键值"},
+        {"function": "Store::get", "risk": "store", "description": "获取 Store 键值"},
+        {"function": "Store::wait", "risk": "synchronization", "description": "等待 Store 键可用"}
+      ]
+    }
+  ],
+  "analysis_metadata": {
+    "analyzed_at": "2026-04-23",
+    "analyzer": "architecture_analysis_agent",
+    "version": "1.0",
+    "call_count": 48
+  }
+}

@@ -1,0 +1,546 @@
+{
+  "project_name": "torch_npu",
+  "project_type": "PyTorch NPU Extension (Huawei)",
+  "language": "C++/Python Mixed",
+  "description": "华为 PyTorch NPU 扩展库，为华为昇腾 NPU 设备提供 PyTorch 支持，包含分布式训练、性能分析、IPC通信等功能",
+  "root_directory": "/home/pwn20tty/Desktop/opencode_project/shenteng/pytorch",
+  "source_directories": [
+    "torch_npu/csrc",
+    "torch_npu"
+  ],
+  "excluded_directories": [
+    "third_party",
+    "test",
+    "tests",
+    "templates",
+    ".ci",
+    "ci",
+    "examples",
+    "docs"
+  ],
+  "file_counts": {
+    "cpp": 353,
+    "python": 331,
+    "total": 684
+  },
+  "modules": [
+    {
+      "name": "distributed",
+      "path": "torch_npu/csrc/distributed",
+      "language": "C++",
+      "priority": 9,
+      "description": "分布式通信模块，包含 HCCL/LCCL 进程组、TCP Store、RPC Agent",
+      "attack_surfaces": [
+        {
+          "type": "network",
+          "description": "TCP/Unix Socket 服务器和客户端实现，用于分布式训练协调",
+          "entry_points": [
+            "ParallelTcpServer::CreateSocket",
+            "ParallelTcpServer::CreateLocalSocket",
+            "Client::TryConnect",
+            "Client::LocalConnect",
+            "ProcessGroupHCCL::broadcastMasterID"
+          ]
+        },
+        {
+          "type": "ipc",
+          "description": "进程间通信，包括 Store 消息传递",
+          "entry_points": [
+            "StoreMessagePacker::Pack",
+            "StoreMessagePacker::Unpack",
+            "Client::SyncCall"
+          ]
+        },
+        {
+          "type": "file",
+          "description": "命名管道用于调试信息触发",
+          "entry_points": [
+            "DumpPipe::DumpPipe (mkfifo, open)",
+            "ProcessGroupHCCL::dumpDebuggingInfo"
+          ]
+        }
+      ],
+      "high_risk_files": [
+        {
+          "file": "ProcessGroupHCCL.cpp",
+          "priority": 9,
+          "risk_factors": ["network_communication", "environment_variable_handling", "file_operations", "ipc_handle_management", "hccl_comm_management"]
+        },
+        {
+          "file": "ProcessGroupHCCL.hpp",
+          "priority": 9,
+          "risk_factors": ["hccl_comm_structures", "watchdog_thread", "debug_pipe"]
+        },
+        {
+          "file": "ParallelTcpServer.cpp",
+          "priority": 9,
+          "risk_factors": ["tcp_server", "epoll_event_handling", "socket_operations", "message_parsing"]
+        },
+        {
+          "file": "ParallelTcpStore.cpp",
+          "priority": 8,
+          "risk_factors": ["tcp_store", "store_operations", "connection_handling"]
+        },
+        {
+          "file": "StoreClient.cpp",
+          "priority": 8,
+          "risk_factors": ["tcp_client", "socket_connect", "message_transmission"]
+        },
+        {
+          "file": "tensorpipe_agent.cpp",
+          "priority": 8,
+          "risk_factors": ["rpc_agent", "tensorpipe_communication", "network_transports"]
+        },
+        {
+          "file": "reducer.cpp",
+          "priority": 7,
+          "risk_factors": ["gradient_synchronization", "tensor_bucketing", "ddp_implementation"]
+        },
+        {
+          "file": "HCCLUtils.cpp",
+          "priority": 7,
+          "risk_factors": ["hccl_utilities", "debug_info_writer"]
+        },
+        {
+          "file": "Init.cpp",
+          "priority": 6,
+          "risk_factors": ["pybind_bindings", "process_group_initialization"]
+        }
+      ]
+    },
+    {
+      "name": "ipc",
+      "path": "torch_npu/csrc/ipc",
+      "language": "C++",
+      "priority": 9,
+      "description": "NPU IPC 通信模块，用于跨进程共享 NPU 内存",
+      "attack_surfaces": [
+        {
+          "type": "ipc",
+          "description": "共享内存 IPC 机制，通过共享文件系统传递 NPU tensor",
+          "entry_points": [
+            "THNPStorage_shareNpu",
+            "THNPStorage_newSharedNpu",
+            "THNPStorage_releaseIPCCounter"
+          ]
+        },
+        {
+          "type": "file",
+          "description": "IPC 引用计数文件操作",
+          "entry_points": [
+            "at::RefcountedMapAllocator::makeDataPtr"
+          ]
+        }
+      ],
+      "high_risk_files": [
+        {
+          "file": "StorageSharing.cpp",
+          "priority": 9,
+          "risk_factors": ["ipc_handle_serialization", "shared_memory_management", "ref_counter_file_operations", "npu_ipc_event_handle"]
+        },
+        {
+          "file": "NPUIPCTypes.cpp",
+          "priority": 8,
+          "risk_factors": ["ipc_type_definitions", "sent_data_tracking"]
+        }
+      ]
+    },
+    {
+      "name": "core",
+      "path": "torch_npu/csrc/core",
+      "language": "C++",
+      "priority": 7,
+      "description": "核心 NPU 功能模块，包含内存管理、设备管理、异常处理",
+      "attack_surfaces": [
+        {
+          "type": "library_loading",
+          "description": "动态库加载机制",
+          "entry_points": [
+            "FunctionLoader::Get (dlopen, dlsym)"
+          ]
+        },
+        {
+          "type": "serialization",
+          "description": "Tensor 序列化/反序列化",
+          "entry_points": [
+            "npu_info_serialization",
+            "npu_info_deserialization"
+          ]
+        }
+      ],
+      "high_risk_files": [
+        {
+          "file": "npu/register/FunctionLoader.cpp",
+          "priority": 8,
+          "risk_factors": ["dlopen", "dlsym", "dynamic_library_loading", "library_path_handling"]
+        },
+        {
+          "file": "NPUCachingAllocator.cpp",
+          "priority": 7,
+          "risk_factors": ["memory_allocation", "ipc_handle_sharing", "device_memory_management"]
+        },
+        {
+          "file": "NPUSerialization.cpp",
+          "priority": 6,
+          "risk_factors": ["tensor_serialization", "format_casting"]
+        },
+        {
+          "file": "NPUQueue.cpp",
+          "priority": 6,
+          "risk_factors": ["async_task_queue", "callback_handling"]
+        },
+        {
+          "file": "NPUFunctions.cpp",
+          "priority": 6,
+          "risk_factors": ["npu_function_calls", "acl_interface"]
+        }
+      ]
+    },
+    {
+      "name": "framework",
+      "path": "torch_npu/csrc/framework",
+      "language": "C++",
+      "priority": 6,
+      "description": "框架层，包含操作命令处理、格式转换、参数处理",
+      "attack_surfaces": [
+        {
+          "type": "environment_variable",
+          "description": "环境变量读取和配置",
+          "entry_points": [
+            "EnvVariables.cpp"
+          ]
+        }
+      ],
+      "high_risk_files": [
+        {
+          "file": "interface/EnvVariables.cpp",
+          "priority": 6,
+          "risk_factors": ["environment_variable_handling", "configuration_options"]
+        },
+        {
+          "file": "OpCommand.cpp",
+          "priority": 5,
+          "risk_factors": ["operation_command_execution", "acl_call_interface"]
+        },
+        {
+          "file": "FormatHelper.cpp",
+          "priority": 5,
+          "risk_factors": ["format_conversion", "tensor_format_handling"]
+        }
+      ]
+    },
+    {
+      "name": "profiler",
+      "path": "torch_npu/csrc/profiler",
+      "language": "C++",
+      "priority": 6,
+      "description": "性能分析模块，包含数据导出、追踪功能",
+      "attack_surfaces": [
+        {
+          "type": "file",
+          "description": "性能数据文件写入",
+          "entry_points": [
+            "DataDumper::Dump",
+            "TraceDataDumper::Dump"
+          ]
+        }
+      ],
+      "high_risk_files": [
+        {
+          "file": "profiler_mgr.cpp",
+          "priority": 6,
+          "risk_factors": ["profiler_management", "configuration_handling"]
+        },
+        {
+          "file": "npu_profiler.cpp",
+          "priority": 6,
+          "risk_factors": ["profiling_operations", "acl_prof_interface"]
+        },
+        {
+          "file": "profiler_python.cpp",
+          "priority": 5,
+          "risk_factors": ["python_tracer", "module_import"]
+        }
+      ]
+    },
+    {
+      "name": "toolkit/profiler",
+      "path": "torch_npu/csrc/toolkit/profiler",
+      "language": "C++",
+      "priority": 7,
+      "description": "工具包性能分析，包含数据导出功能",
+      "attack_surfaces": [
+        {
+          "type": "file",
+          "description": "性能数据文件写入，使用 fopen/fwrite",
+          "entry_points": [
+            "DataDumper::Dump",
+            "TraceDataDumper::Dump",
+            "Utils::CreateFile",
+            "Utils::CreateDir"
+          ]
+        }
+      ],
+      "high_risk_files": [
+        {
+          "file": "src/data_dumper.cpp",
+          "priority": 7,
+          "risk_factors": ["file_operations", "fopen", "fwrite", "path_concatenation", "data_dumping"]
+        },
+        {
+          "file": "src/data_reporter.cpp",
+          "priority": 6,
+          "risk_factors": ["data_reporting", "ring_buffer"]
+        },
+        {
+          "file": "common/utils.cpp",
+          "priority": 6,
+          "risk_factors": ["file_creation", "directory_creation", "path_utils"]
+        }
+      ]
+    },
+    {
+      "name": "aten",
+      "path": "torch_npu/csrc/aten",
+      "language": "C++",
+      "priority": 5,
+      "description": "ATen 操作实现，包含 NPU 原生函数和自定义操作",
+      "attack_surfaces": [
+        {
+          "type": "tensor_operation",
+          "description": "Tensor 操作入口，用户数据处理的直接入口",
+          "entry_points": [
+            "NPUNativeFunctions",
+            "CustomFunctions"
+          ]
+        }
+      ],
+      "high_risk_files": [
+        {
+          "file": "ops/*",
+          "priority": 5,
+          "risk_factors": ["tensor_operations", "acl_kernel_calls", "input_validation"]
+        },
+        {
+          "file": "NPUGeneratorImpl.cpp",
+          "priority": 5,
+          "risk_factors": ["random_number_generation", "seed_handling"]
+        }
+      ]
+    },
+    {
+      "name": "npu",
+      "path": "torch_npu/csrc/npu",
+      "language": "C++",
+      "priority": 6,
+      "description": "NPU 设备模块，包含设备管理、内存池、图执行",
+      "attack_surfaces": [
+        {
+          "type": "device_control",
+          "description": "NPU 设备控制和内存管理",
+          "entry_points": [
+            "Module.cpp",
+            "Graph.cpp",
+            "NPUPluggableAllocator.cpp"
+          ]
+        }
+      ],
+      "high_risk_files": [
+        {
+          "file": "Module.cpp",
+          "priority": 6,
+          "risk_factors": ["pybind_bindings", "module_initialization", "python_import"]
+        },
+        {
+          "file": "Graph.cpp",
+          "priority": 6,
+          "risk_factors": ["graph_execution", "acl_graph_interface"]
+        },
+        {
+          "file": "NPUPluggableAllocator.cpp",
+          "priority": 6,
+          "risk_factors": ["custom_allocator", "memory_management"]
+        },
+        {
+          "file": "DataParallelComm.cpp",
+          "priority": 6,
+          "risk_factors": ["data_parallel_communication", "hccl_integration"]
+        }
+      ]
+    },
+    {
+      "name": "distributed (Python)",
+      "path": "torch_npu/distributed",
+      "language": "Python",
+      "priority": 7,
+      "description": "Python 分布式模块绑定",
+      "attack_surfaces": [
+        {
+          "type": "python_api",
+          "description": "Python API 入口点",
+          "entry_points": [
+            "distributed_c10d.py",
+            "rendezvous.py",
+            "run.py"
+          ]
+        }
+      ],
+      "high_risk_files": [
+        {
+          "file": "distributed_c10d.py",
+          "priority": 7,
+          "risk_factors": ["process_group_creation", "hccl_backend", "store_configuration"]
+        },
+        {
+          "file": "rendezvous.py",
+          "priority": 6,
+          "risk_factors": ["rendezvous_handler", "distributed_initialization"]
+        },
+        {
+          "file": "rpc/__init__.py",
+          "priority": 6,
+          "risk_factors": ["rpc_initialization", "rpc_agent"]
+        }
+      ]
+    },
+    {
+      "name": "__init__",
+      "path": "torch_npu/__init__.py",
+      "language": "Python",
+      "priority": 6,
+      "description": "主模块初始化",
+      "attack_surfaces": [
+        {
+          "type": "module_initialization",
+          "description": "模块初始化入口",
+          "entry_points": [
+            "__init__.py"
+          ]
+        }
+      ],
+      "high_risk_files": [
+        {
+          "file": "__init__.py",
+          "priority": 6,
+          "risk_factors": ["module_initialization", "c_extension_loading", "configuration_setup"]
+        }
+      ]
+    },
+    {
+      "name": "logging",
+      "path": "torch_npu/csrc/logging",
+      "language": "C++",
+      "priority": 5,
+      "description": "日志模块",
+      "attack_surfaces": [
+        {
+          "type": "environment_variable",
+          "description": "日志过滤环境变量",
+          "entry_points": [
+            "LogContext.cpp"
+          ]
+        }
+      ],
+      "high_risk_files": [
+        {
+          "file": "LogContext.cpp",
+          "priority": 5,
+          "risk_factors": ["environment_variable_reading", "log_filter_configuration"]
+        }
+      ]
+    }
+  ],
+  "entry_points": [
+    {
+      "type": "network",
+      "description": "TCP Socket 通信 - 分布式训练网络接口",
+      "modules": ["distributed"],
+      "protocols": ["TCP", "Unix Domain Socket"],
+      "data_types": ["StoreMessage", "HCCL Comm", "RPC Message"],
+      "risk_level": "critical"
+    },
+    {
+      "type": "ipc",
+      "description": "共享内存 IPC - 跨进程 NPU Tensor 共享",
+      "modules": ["ipc", "distributed"],
+      "protocols": ["Shared Memory", "IPC Event Handle"],
+      "data_types": ["NPU Tensor", "IPC Handle", "Reference Counter"],
+      "risk_level": "critical"
+    },
+    {
+      "type": "file",
+      "description": "文件操作 - 性能数据导出、调试信息写入",
+      "modules": ["toolkit/profiler", "distributed"],
+      "operations": ["create", "write", "read", "mkfifo"],
+      "data_types": ["Profile Data", "Debug Info", "Trace Data"],
+      "risk_level": "high"
+    },
+    {
+      "type": "library_loading",
+      "description": "动态库加载 - NPU 功能扩展加载",
+      "modules": ["core"],
+      "operations": ["dlopen", "dlsym"],
+      "risk_level": "high"
+    },
+    {
+      "type": "environment_variable",
+      "description": "环境变量 - 配置参数读取",
+      "modules": ["distributed", "framework", "logging"],
+      "variables": ["HCCL_BLOCKING_WAIT", "MASTER_ADDR", "RANK", "LOCAL_RANK", "TORCH_NPU_LOGS_FILTER"],
+      "risk_level": "medium"
+    },
+    {
+      "type": "serialization",
+      "description": "Tensor 序列化/反序列化",
+      "modules": ["core"],
+      "operations": ["serialize", "deserialize"],
+      "data_types": ["Tensor Format Info"],
+      "risk_level": "medium"
+    },
+    {
+      "type": "python_api",
+      "description": "Python API - 用户调用入口",
+      "modules": ["distributed (Python)", "__init__"],
+      "apis": ["ProcessGroupHCCL", "ParallelStore", "RPC Agent"],
+      "risk_level": "medium"
+    }
+  ],
+  "attack_surface_summary": {
+    "network_attack_surface": {
+      "description": "分布式训练使用 TCP 和 Unix Domain Socket 进行进程间通信。网络接口暴露于潜在的攻击者，特别是在多节点训练场景中。",
+      "protocols": ["TCP (IPv4/IPv6)", "Unix Domain Socket"],
+      "key_files": ["ParallelTcpServer.cpp", "StoreClient.cpp", "tensorpipe_agent.cpp"],
+      "potential_attacks": ["Man-in-the-middle", "Connection hijacking", "Message tampering", "Denial of Service"]
+    },
+    "ipc_attack_surface": {
+      "description": "IPC 机制通过共享内存传递 NPU Tensor，涉及引用计数文件和 IPC 事件句柄。恶意进程可能访问或篡改共享数据。",
+      "mechanisms": ["Shared Memory IPC", "Reference Counter Files", "IPC Event Handles"],
+      "key_files": ["StorageSharing.cpp", "NPUIPCTypes.cpp"],
+      "potential_attacks": ["Memory disclosure", "Memory corruption", "Reference counter manipulation"]
+    },
+    "file_attack_surface": {
+      "description": "性能分析器将数据写入文件系统，路径可能受用户控制或环境变量影响。",
+      "operations": ["File creation", "Directory creation", "Data dumping", "Named pipe creation"],
+      "key_files": ["data_dumper.cpp", "ProcessGroupHCCL.cpp (DumpPipe)"],
+      "potential_attacks": ["Path traversal", "Arbitrary file write", "Symlink attacks"]
+    },
+    "library_loading_attack_surface": {
+      "description": "动态库加载机制使用 dlopen 加载共享库，库名称可能受配置影响。",
+      "mechanisms": ["dlopen", "dlsym"],
+      "key_files": ["FunctionLoader.cpp"],
+      "potential_attacks": ["Library injection", "Arbitrary code execution"]
+    }
+  },
+  "security_notes": [
+    "分布式训练模块 (distributed/) 是最高风险区域，涉及网络通信和进程间协调",
+    "IPC 模块涉及共享内存和引用计数文件，存在内存安全风险",
+    "性能分析器使用文件写入操作，路径处理需要验证",
+    "动态库加载使用 dlopen，需要确保库名称安全",
+    "环境变量广泛用于配置，可能被恶意篡改"
+  ],
+  "analysis_metadata": {
+    "analyzed_at": "2026-04-23",
+    "analyzer": "architecture_analysis_agent",
+    "version": "1.0"
+  }
+}
