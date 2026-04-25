@@ -1,354 +1,160 @@
 {
-  "metadata": {
-    "project": "CANN Runtime",
-    "version": "8.5.0",
-    "generated_date": "2026-04-22",
-    "analysis_type": "static_analysis",
-    "note": "Simplified call graph focusing on API entry points and high-risk paths"
-  },
-  "entry_points": [
-    {
-      "name": "aclInit",
-      "file": "include/external/acl/acl_rt.h",
-      "line": 996,
-      "category": "public_api",
-      "calls": [
-        {"name": "aclInitImpl", "file": "src/acl/aclrt_impl/src/acl_init.cpp"},
-        {"name": "ConfigParser::Parse", "file": "src/acl/common/json_parser.cpp"},
-        {"name": "aclInitInner", "file": "src/acl/aclrt_impl/src/acl_init.cpp"}
-      ]
+  "functions": {
+    "aclInit@include/external/acl/acl_rt.h": {
+      "defined_at": 996,
+      "calls": ["aclFinalize", "aclrtSetDevice", "aclrtMalloc"],
+      "called_by": ["user_application"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "ACL初始化入口，接受配置文件路径参数"
     },
-    {
-      "name": "aclrtSetDevice",
-      "file": "include/external/acl/acl_rt.h",
-      "line": 1422,
-      "category": "public_api",
-      "calls": [
-        {"name": "rtSetDevice", "file": "pkg_inc/runtime/runtime/dev.h"},
-        {"name": "halDeviceOpen", "file": "include/driver/ascend_hal_base.h"},
-        {"name": "drvDeviceOpen", "file": "src/runtime/driver/npu_driver.cc"}
-      ]
+    "aclrtMalloc@include/external/acl/acl_rt.h": {
+      "defined_at": 1764,
+      "calls": ["halMemAlloc@cmodel_driver/driver_api.c", "npu_driver_mem.cc:MemAlloc", "aclrtFree"],
+      "called_by": ["aclInit", "aclrtLaunchKernel", "user_application"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "设备内存分配，size参数由用户控制"
     },
-    {
-      "name": "aclrtMalloc",
-      "file": "include/external/acl/acl_rt.h",
-      "category": "public_api",
-      "calls": [
-        {"name": "rtMalloc", "file": "pkg_inc/runtime/runtime/mem.h"},
-        {"name": "NpuDriver::AllocMem", "file": "src/runtime/driver/npu_driver_mem.cc"},
-        {"name": "ioctl(RT_MEM_ALLOC)", "file": "src/runtime/core/src/common/ioctl/v201/ioctl_utils.cc"}
-      ]
+    "aclrtMemcpy@include/external/acl/acl_rt.h": {
+      "defined_at": 2138,
+      "calls": ["memcpy@stdlib", "npu_driver_mem.cc:MemCopy", "aclrtMemcpyAsync"],
+      "called_by": ["user_application", "aclrtLaunchKernel"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "内存拷贝，src/dst/count参数由用户控制"
     },
-    {
-      "name": "aclrtMemcpy",
-      "file": "include/external/acl/acl_rt.h",
-      "category": "public_api",
-      "calls": [
-        {"name": "rtMemcpy", "file": "pkg_inc/runtime/runtime/mem.h"},
-        {"name": "MemoryTask::Execute", "file": "src/runtime/core/src/task/task_info/memory/memory_task.cc"},
-        {"name": "memcpy_s", "file": "src/runtime/core/src/task/task_info/memory/memory_task.cc"}
-      ]
+    "aclrtLaunchKernel@include/external/acl/acl_rt.h": {
+      "defined_at": 3041,
+      "calls": ["aclrtMalloc", "npu_driver_queue.cc:LaunchKernel", "aclrtMemcpy"],
+      "called_by": ["user_application"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "内核启动，参数和args由用户控制"
     },
-    {
-      "name": "aclrtLaunchKernel",
-      "file": "include/external/acl/acl_rt.h",
-      "category": "public_api",
-      "calls": [
-        {"name": "rtLaunchKernel", "file": "pkg_inc/runtime/runtime/kernel.h"},
-        {"name": "KernelTask::Execute", "file": "src/runtime/core/src/task/task_info/davinci_kernel_task.cc"},
-        {"name": "SubmitTask", "file": "src/runtime/core/src/task/task_submit/v200/task_submit.cc"}
-      ]
+    "aclrtFree@include/external/acl/acl_rt.h": {
+      "defined_at": 2038,
+      "calls": ["halMemFree@cmodel_driver/driver_api.c", "npu_driver_mem.cc:MemFree"],
+      "called_by": ["aclrtMalloc", "user_application"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "内存释放，devPtr参数由用户控制"
     },
-    {
-      "name": "halDeviceOpen",
-      "file": "include/driver/ascend_hal_base.h",
-      "line": 742,
-      "category": "driver_api",
-      "calls": [
-        {"name": "drvDeviceOpen", "file": "src/runtime/driver/npu_driver.cc"},
-        {"name": "open(\"/dev/stars\")", "file": "src/runtime/core/src/common/ioctl/v201/ioctl_utils.cc"},
-        {"name": "ioctl", "file": "src/runtime/core/src/common/ioctl/v201/ioctl_utils.cc"}
-      ]
+    "halMemAlloc@cmodel_driver/driver_api.c": {
+      "defined_at": 111,
+      "calls": ["malloc@stdlib", "drvMemAlloc@cmodel_driver/driver_mem.c"],
+      "called_by": ["aclrtMalloc", "npu_driver_mem.cc"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "HAL层内存分配，size参数来自上层"
     },
-    {
-      "name": "drvDeviceOpen",
-      "file": "src/runtime/driver/npu_driver.cc",
-      "category": "internal_api",
-      "calls": [
-        {"name": "InitDevice", "file": "src/runtime/driver/npu_driver.cc"},
-        {"name": "OpenDeviceNode", "file": "src/runtime/core/src/common/ioctl/v201/ioctl_utils.cc"},
-        {"name": "starsFile_ = \"/dev/stars\"", "file": "src/runtime/core/src/common/ioctl/v201/ioctl_utils.cc"}
-      ]
-    }
-  ],
-  "high_risk_paths": [
-    {
-      "path_id": "HR001",
-      "description": "Command Execution via system()",
-      "severity": "CRITICAL",
-      "source": {"function": "bind_cpu_utils.cpp::BindCpu", "file": "src/queue_schedule/server/bind_cpu_utils.cpp", "line": 150},
-      "sink": {"function": "system()", "file": "src/queue_schedule/server/bind_cpu_utils.cpp", "line": 150},
-      "data_flow": [
-        {"step": 1, "function": "BqsServer::Init", "file": "src/queue_schedule/server/bqs_server.cpp"},
-        {"step": 2, "function": "BindCpuUtils::BindCpu", "file": "src/queue_schedule/server/bind_cpu_utils.cpp"},
-        {"step": 3, "function": "getenv(\"PROCMGR_AICPU_CPUSET\")", "file": "src/queue_schedule/server/bind_cpu_utils.cpp", "line": 241},
-        {"step": 4, "function": "system(cmd.c_str())", "file": "src/queue_schedule/server/bind_cpu_utils.cpp", "line": 150}
-      ],
-      "vulnerability_type": "Command Injection",
-      "cwe": "CWE-78"
+    "drvMemAlloc@cmodel_driver/driver_mem.c": {
+      "defined_at": 1,
+      "calls": ["ioctl@syscall", "mmap@syscall"],
+      "called_by": ["halMemAlloc", "npu_driver_mem.cc"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "驱动层内存分配，通过ioctl与内核通信"
     },
-    {
-      "path_id": "HR002",
-      "description": "Library Injection via dlopen with environment variable",
-      "severity": "HIGH",
-      "source": {"function": "ae_so_manager.cc::GetSoAbsolutePath", "file": "src/aicpu_sched/aicpu_processer/ae_so_manager.cc", "line": 311},
-      "sink": {"function": "dlopen()", "file": "src/aicpu_sched/aicpu_processer/ae_so_manager.cc", "line": 189},
-      "data_flow": [
-        {"step": 1, "function": "main(argc, argv)", "file": "src/aicpu_sched/aicpu_schedule/execute/main.cpp"},
-        {"step": 2, "function": "LoadCustomSo", "file": "src/aicpu_sched/aicpu_processer/ae_so_manager.cc"},
-        {"step": 3, "function": "getenv(AICPU_CUSTOM_SO_PATH_ENV_VAR)", "file": "src/aicpu_sched/aicpu_processer/ae_so_manager.cc", "line": 311},
-        {"step": 4, "function": "dlopen(so_path)", "file": "src/aicpu_sched/aicpu_processer/ae_so_manager.cc", "line": 189}
-      ],
-      "vulnerability_type": "Library Injection",
-      "cwe": "CWE-94"
+    "RecvMsg@tsd/common/src/hdc_client.cpp": {
+      "defined_at": 143,
+      "calls": ["recv@syscall", "recvfrom@syscall", "read@syscall"],
+      "called_by": ["process_mode_manager.cpp:WaitRsp"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "IPC消息接收，接收来自tsdaemon的消息"
     },
-    {
-      "path_id": "HR003",
-      "description": "Process Creation via execl",
-      "severity": "HIGH",
-      "source": {"function": "aicpusd_util.h::ShellExec", "file": "src/aicpu_sched/aicpu_schedule/common/aicpusd_util.h", "line": 351},
-      "sink": {"function": "execl(\"/bin/sh\")", "file": "src/aicpu_sched/aicpu_schedule/common/aicpusd_util.h", "line": 351},
-      "data_flow": [
-        {"step": 1, "function": "AicpuProcess", "file": "src/aicpu_sched/aicpu_schedule/core/aicpusd_worker.cpp"},
-        {"step": 2, "function": "ShellExec(cmd)", "file": "src/aicpu_sched/aicpu_schedule/common/aicpusd_util.h"},
-        {"step": 3, "function": "execl(\"/bin/sh\", \"sh\", \"-c\", cmd)", "file": "src/aicpu_sched/aicpu_schedule/common/aicpusd_util.h", "line": 351}
-      ],
-      "vulnerability_type": "Command Injection",
-      "cwe": "CWE-78"
+    "SendOpenMsg@tsd/tsdclient/src/process_mode_manager.cpp": {
+      "defined_at": 119,
+      "calls": ["send@syscall", "sendto@syscall", "write@syscall"],
+      "called_by": ["process_mode_manager.cpp:OpenProcess"],
+      "receives_external_input": false,
+      "risk": "Medium",
+      "description": "发送打开消息到设备守护进程"
     },
-    {
-      "path_id": "HR004",
-      "description": "Memory Allocation with potential integer overflow",
-      "severity": "HIGH",
-      "source": {"function": "arg_manage_xpu.cc::CreateArgsPool", "file": "src/runtime/feature/xpu/arg_manage_xpu.cc", "line": 59},
-      "sink": {"function": "malloc(size)", "file": "src/runtime/feature/xpu/arg_manage_xpu.cc", "line": 59},
-      "data_flow": [
-        {"step": 1, "function": "rtLaunchKernel", "file": "pkg_inc/runtime/runtime/kernel.h"},
-        {"step": 2, "function": "KernelTask::CreateArgsPool", "file": "src/runtime/core/src/task/task_info/davinci_kernel_task.cc"},
-        {"step": 3, "function": "ArgManageXpu::CreateArgsPool", "file": "src/runtime/feature/xpu/arg_manage_xpu.cc"},
-        {"step": 4, "function": "malloc(argPoolSize_)", "file": "src/runtime/feature/xpu/arg_manage_xpu.cc", "line": 59}
-      ],
-      "vulnerability_type": "Integer Overflow",
-      "cwe": "CWE-190"
+    "npu_driver_mem.cc:MemAlloc": {
+      "defined_at": 1,
+      "calls": ["halMemAlloc@cmodel_driver/driver_api.c", "ioctl@syscall", "mmap@syscall"],
+      "called_by": ["aclrtMalloc", "aclrtMallocHost"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "NPU驱动内存分配实现"
     },
-    {
-      "path_id": "HR005",
-      "description": "Shared Memory mmap",
-      "severity": "MEDIUM",
-      "source": {"function": "npu_driver_mem.cc::AllocMem", "file": "src/runtime/driver/npu_driver_mem.cc", "line": 52},
-      "sink": {"function": "mmap()", "file": "src/runtime/driver/npu_driver_mem.cc", "line": 75},
-      "data_flow": [
-        {"step": 1, "function": "aclrtMalloc", "file": "include/external/acl/acl_rt.h"},
-        {"step": 2, "function": "rtMalloc", "file": "pkg_inc/runtime/runtime/mem.h"},
-        {"step": 3, "function": "NpuDriver::AllocMem", "file": "src/runtime/driver/npu_driver_mem.cc"},
-        {"step": 4, "function": "shm_open(name)", "file": "src/runtime/driver/npu_driver_mem.cc", "line": 52},
-        {"step": 5, "function": "mmap(fd, size)", "file": "src/runtime/driver/npu_driver_mem.cc", "line": 75}
-      ],
-      "vulnerability_type": "Shared Memory Overflow",
-      "cwe": "CWE-119"
+    "npu_driver_mem.cc:MemCopy": {
+      "defined_at": 2552,
+      "calls": ["memcpy@stdlib", "ioctl@syscall", "SDMA_copy"],
+      "called_by": ["aclrtMemcpy", "aclrtMemcpyAsync"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "NPU驱动内存拷贝实现"
     },
-    {
-      "path_id": "HR006",
-      "description": "ptrace for stacktrace",
-      "severity": "HIGH",
-      "source": {"function": "stacktrace_dumper::DumpThread", "file": "src/dfx/trace/atrace/utrace/stacktrace/stacktrace_dumper/scd_ptrace.c"},
-      "sink": {"function": "ptrace(PTRACE_ATTACH)", "file": "src/dfx/trace/atrace/utrace/stacktrace/stacktrace_dumper/scd_ptrace.c", "line": 21},
-      "data_flow": [
-        {"step": 1, "function": "TraceRequest", "file": "src/dfx/trace/atrace/trace_server/utrace_server/trace_server_socket.c"},
-        {"step": 2, "function": "StacktraceDump", "file": "src/dfx/trace/atrace/utrace/stacktrace/stacktrace_dumper.c"},
-        {"step": 3, "function": "ptrace(PTRACE_ATTACH, pid)", "file": "src/dfx/trace/atrace/utrace/stacktrace/stacktrace_dumper/scd_ptrace.c", "line": 21}
-      ],
-      "vulnerability_type": "Process Memory Access",
-      "cwe": "CWE-250"
+    "npu_driver_queue.cc:LaunchKernel": {
+      "defined_at": 1,
+      "calls": ["ioctl@syscall", "task_submit"],
+      "called_by": ["aclrtLaunchKernel", "aclrtLaunchCallback"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "NPU驱动内核启动实现"
     },
-    {
-      "path_id": "HR007",
-      "description": "Network socket recv",
-      "severity": "MEDIUM",
-      "source": {"function": "mmpa_recv", "file": "src/mmpa/src/mmpa_linux.c", "line": 850},
-      "sink": {"function": "recv(socket, buf, len)", "file": "src/mmpa/src/mmpa_linux.c", "line": 850},
-      "data_flow": [
-        {"step": 1, "function": "socket(AF_INET, SOCK_STREAM)", "file": "src/mmpa/src/mmpa_linux.c", "line": 273},
-        {"step": 2, "function": "bind/listen/accept", "file": "src/mmpa/src/mmpa_linux.c"},
-        {"step": 3, "function": "recv(sock, buf, len)", "file": "src/mmpa/src/mmpa_linux.c", "line": 850}
-      ],
-      "vulnerability_type": "Network Input",
-      "cwe": "CWE-20"
+    "api_impl.cc:rtMalloc": {
+      "defined_at": 1,
+      "calls": ["aclrtMalloc", "npu_driver_mem.cc:MemAlloc", "pool_allocator"],
+      "called_by": ["acl_api_layer"],
+      "receives_external_input": true,
+      "risk": "Critical",
+      "description": "API实现层的内存分配"
     },
-    {
-      "path_id": "HR008",
-      "description": "File path from configuration",
-      "severity": "MEDIUM",
-      "source": {"function": "json_parser.cpp::Parse", "file": "src/acl/common/json_parser.cpp"},
-      "sink": {"function": "ifstream::open(path)", "file": "src/acl/common/json_parser.cpp"},
-      "data_flow": [
-        {"step": 1, "function": "aclInit(configPath)", "file": "include/external/acl/acl_rt.h"},
-        {"step": 2, "function": "JsonParser::Parse", "file": "src/acl/common/json_parser.cpp"},
-        {"step": 3, "function": "ifstream::read()", "file": "src/acl/common/json_parser.cpp", "line": 79}
-      ],
-      "vulnerability_type": "Path Traversal",
-      "cwe": "CWE-22"
-    },
-    {
-      "path_id": "HR009",
-      "description": "Package verification bypass",
-      "severity": "MEDIUM",
-      "source": {"function": "package_verify.cpp::VerifyPackage", "file": "src/tsd/common/src/package_verify.cpp"},
-      "sink": {"function": "fopen(path)", "file": "src/tsd/common/src/package_verify.cpp", "line": 183},
-      "data_flow": [
-        {"step": 1, "function": "TsdMainProcess", "file": "src/tsd/tsdclient/src/thread_mode_manager.cpp"},
-        {"step": 2, "function": "VerifyPackage", "file": "src/tsd/common/src/package_verify.cpp"},
-        {"step": 3, "function": "fopen(package_path)", "file": "src/tsd/common/src/package_verify.cpp", "line": 183}
-      ],
-      "vulnerability_type": "Arbitrary File Access",
-      "cwe": "CWE-22"
-    },
-    {
-      "path_id": "HR010",
-      "description": "LD_LIBRARY_PATH injection",
-      "severity": "HIGH",
-      "source": {"function": "aicpusd_interface_process.cpp::GetLibraryPath", "file": "src/aicpu_sched/aicpu_cust_schedule/core/aicpusd_interface_process.cpp", "line": 412},
-      "sink": {"function": "dlopen(path)", "file": "src/aicpu_sched/aicpu_cust_schedule/core/aicpusd_interface_process.cpp"},
-      "data_flow": [
-        {"step": 1, "function": "ProcessInterface", "file": "src/aicpu_sched/aicpu_cust_schedule/core/aicpusd_interface_process.cpp"},
-        {"step": 2, "function": "getenv(\"LD_LIBRARY_PATH\")", "file": "src/aicpu_sched/aicpu_cust_schedule/core/aicpusd_interface_process.cpp", "line": 412},
-        {"step": 3, "function": "dlopen(library_path)", "file": "src/aicpu_sched/aicpu_cust_schedule/core/aicpusd_interface_process.cpp"}
-      ],
-      "vulnerability_type": "Library Path Injection",
-      "cwe": "CWE-94"
-    }
-  ],
-  "module_call_graph": {
-    "acl": {
-      "calls": ["runtime", "tsd", "platform", "mmpa"],
-      "called_by": ["external_application"]
-    },
-    "runtime": {
-      "calls": ["mmpa", "driver", "tprt", "platform"],
-      "called_by": ["acl", "aicpu_sched"]
-    },
-    "aicpu_sched": {
-      "calls": ["tsd", "mmpa", "runtime"],
-      "called_by": ["acl"]
-    },
-    "tsd": {
-      "calls": ["mmpa"],
-      "called_by": ["acl", "aicpu_sched", "queue_schedule"]
-    },
-    "queue_schedule": {
-      "calls": ["mmpa", "tsd"],
-      "called_by": ["acl"]
-    },
-    "mmpa": {
-      "calls": ["system"],
-      "called_by": ["runtime", "aicpu_sched", "tsd", "queue_schedule", "dfx"]
-    },
-    "dfx": {
-      "calls": ["mmpa"],
-      "called_by": ["runtime", "acl"]
-    },
-    "platform": {
+    "BQSBindQueueMsg@queue_schedule/proto/easycom_message.proto": {
+      "defined_at": 14,
       "calls": [],
-      "called_by": ["runtime", "acl"]
-    },
-    "tprt": {
-      "calls": ["driver"],
-      "called_by": ["runtime"]
-    },
-    "driver": {
-      "calls": ["ioctl", "mmap"],
-      "called_by": ["runtime", "tprt"]
+      "called_by": ["bqs_client.cpp:BindQueue", "queue_schedule_server.cpp"],
+      "receives_external_input": true,
+      "risk": "High",
+      "description": "队列绑定消息，queue_id参数来自客户端"
     }
   },
-  "critical_function_clusters": [
+  "data_flows": [
     {
-      "cluster_id": "CFC001",
-      "name": "Memory Management",
-      "functions": [
-        "aclrtMalloc", "aclrtFree", "aclrtMemcpy", "aclrtMemset",
-        "rtMalloc", "rtFree", "rtMemcpy",
-        "NpuDriver::AllocMem", "NpuDriver::FreeMem",
-        "malloc", "memcpy_s", "memset_s"
-      ],
-      "risk_summary": "Integer overflow in size calculations, buffer overflow in copy operations"
+      "source": "aclInit(configPath)@acl_rt.h:996",
+      "path": ["aclInit", "LoadConfig@runtime.cc", "ParseConfigFile@config"],
+      "sink": "fopen@config_parser",
+      "sink_type": "file_operation",
+      "description": "配置文件路径可能导致路径遍历"
     },
     {
-      "cluster_id": "CFC002",
-      "name": "Device Management",
-      "functions": [
-        "aclrtSetDevice", "aclrtResetDevice", "aclrtGetDevice",
-        "halDeviceOpen", "halDeviceClose", "halGetDeviceInfo",
-        "drvDeviceOpen", "drvDeviceClose",
-        "ioctl", "open", "close"
-      ],
-      "risk_summary": "ioctl parameter manipulation, device node path injection"
+      "source": "aclrtMalloc(size)@acl_rt.h:1764",
+      "path": ["aclrtMalloc", "halMemAlloc@driver_api.c:111", "drvMemAlloc@driver_mem.c"],
+      "sink": "malloc@stdlib",
+      "sink_type": "memory_operation",
+      "description": "用户控制的size参数可能导致整数溢出"
     },
     {
-      "cluster_id": "CFC003",
-      "name": "Process Management",
-      "functions": [
-        "execl", "execlp", "vfork", "fork",
-        "system", "popen", "shell_exec",
-        "ptrace", "PTRACE_ATTACH", "PTRACE_DETACH"
-      ],
-      "risk_summary": "Command injection, process race conditions, unauthorized memory access"
+      "source": "aclrtMemcpy(src, dst, count)@acl_rt.h:2138",
+      "path": ["aclrtMemcpy", "npu_driver_mem.cc:MemCopy"],
+      "sink": "memcpy@stdlib",
+      "sink_type": "memory_operation",
+      "description": "用户控制的源/目标/长度可能导致缓冲区溢出"
     },
     {
-      "cluster_id": "CFC004",
-      "name": "Library Loading",
-      "functions": [
-        "dlopen", "dlsym", "dlclose",
-        "mmDlopen", "mmDlsym", "mmDlclose",
-        "LoadSo", "GetSoAbsolutePath"
-      ],
-      "risk_summary": "Library injection via environment variables, path traversal"
+      "source": "aclrtLaunchKernel(args)@acl_rt.h:3041",
+      "path": ["aclrtLaunchKernel", "npu_driver_queue.cc:LaunchKernel", "task_submit"],
+      "sink": "ioctl@syscall",
+      "sink_type": "driver_operation",
+      "description": "内核参数可能触发代码注入或权限提升"
     },
     {
-      "cluster_id": "CFC005",
-      "name": "Configuration Parsing",
-      "functions": [
-        "JsonParser::Parse", "nlohmann::json::parse",
-        "ParseFromArray", "ParseFromString",
-        "ifstream::open", "fopen", "fread"
-      ],
-      "risk_summary": "JSON injection, path traversal in config files"
+      "source": "RecvMsg(sessionId)@hdc_client.cpp:143",
+      "path": ["RecvMsg", "recv@syscall"],
+      "sink": "ParseMessage@message_parse_client.cpp",
+      "sink_type": "ipc_message",
+      "description": "IPC消息内容来自守护进程，可能被篡改"
     },
     {
-      "cluster_id": "CFC006",
-      "name": "Network Communication",
-      "functions": [
-        "socket", "bind", "listen", "accept", "connect",
-        "recv", "recvfrom", "send", "sendto",
-        "read", "write"
-      ],
-      "risk_summary": "Network data injection, DoS, untrusted input"
+      "source": "BQSBindQueueMsg(queue_id)@easycom_message.proto:14",
+      "path": ["BQSBindQueueMsg", "bqs_client.cpp:BindQueue", "queue_schedule_server.cpp"],
+      "sink": "BindQueueInternal@queue_schedule_interface.cpp",
+      "sink_type": "queue_operation",
+      "description": "客户端控制的queue_id可能触发权限绕过"
     }
-  ],
-  "api_to_internal_mapping": {
-    "aclInit": ["rtInit", "TsdInit", "ConfigParser::Parse"],
-    "aclFinalize": ["rtFinalize", "TsdFinalize"],
-    "aclrtSetDevice": ["rtSetDevice", "halDeviceOpen", "drvDeviceOpen", "ioctl"],
-    "aclrtResetDevice": ["rtResetDevice", "halDeviceClose", "drvDeviceClose"],
-    "aclrtCreateStream": ["rtCreateStream", "Stream::Create"],
-    "aclrtDestroyStream": ["rtDestroyStream", "Stream::Destroy"],
-    "aclrtCreateEvent": ["rtCreateEvent", "Event::Create"],
-    "aclrtDestroyEvent": ["rtDestroyEvent", "Event::Destroy"],
-    "aclrtMalloc": ["rtMalloc", "NpuDriver::AllocMem", "shm_open", "mmap"],
-    "aclrtFree": ["rtFree", "NpuDriver::FreeMem", "shm_unlink", "munmap"],
-    "aclrtMemcpy": ["rtMemcpy", "MemoryTask::Execute", "memcpy_s"],
-    "aclrtLaunchKernel": ["rtLaunchKernel", "KernelTask::Execute", "SubmitTask"],
-    "aclprofInit": ["ProfInit", "ProfCollector::Init"],
-    "aclprofFinalize": ["ProfFinalize", "ProfCollector::Finalize"],
-    "acltdtCreateChannel": ["CreateChannel", "TdtChannel::Create"]
-  }
+  ]
 }

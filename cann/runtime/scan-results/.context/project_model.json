@@ -1,460 +1,315 @@
 {
-  "project_info": {
-    "name": "CANN Runtime",
-    "version": "8.5.0",
-    "type": "NPU Runtime Library",
-    "language": "C/C++",
-    "description": "Ascend NPU运行时组件，提供设备管理、流管理、Event管理、内存管理、任务调度等功能",
-    "vendor": "Huawei Technologies Co., Ltd."
-  },
-  "statistics": {
-    "source_files": 914,
-    "header_files": 1016,
-    "total_lines_estimate": 500000,
-    "modules_count": 11,
-    "public_api_count": 150
+  "project_name": "CANN Runtime",
+  "scan_time": "2026-04-24T23:45:00Z",
+  "lsp_available": false,
+  "total_files": 3481,
+  "total_lines": 150000,
+  "project_profile": {
+    "project_type": "network_service",
+    "deployment_model": "Linux服务器上的AI NPU运行时守护进程服务，通过Unix domain socket和驱动接口与客户端应用通信",
+    "trust_boundaries": [
+      {
+        "boundary": "User Application",
+        "trusted_side": "Application logic (User controlled)",
+        "untrusted_side": "ACL API parameters",
+        "risk": "Critical"
+      },
+      {
+        "boundary": "IPC Daemon",
+        "trusted_side": "tsdaemon service (System controlled)",
+        "untrusted_side": "Client requests via /var/tsdaemon Unix socket",
+        "risk": "High"
+      },
+      {
+        "boundary": "NPU Driver",
+        "trusted_side": "Runtime kernel (System controlled)",
+        "untrusted_side": "Driver commands and memory operations",
+        "risk": "High"
+      },
+      {
+        "boundary": "Queue Schedule Service",
+        "trusted_side": "queue_schedule server",
+        "untrusted_side": "Client queue bind/unbind requests via protobuf",
+        "risk": "Medium"
+      },
+      {
+        "boundary": "Configuration File",
+        "trusted_side": "Admin controlled",
+        "untrusted_side": "File content could be tampered by local attacker",
+        "risk": "Medium"
+      }
+    ]
   },
   "modules": [
     {
       "name": "acl",
       "path": "src/acl",
-      "responsibility": "AscendCL公共API层，提供用户编程接口",
-      "risk_level": "HIGH",
-      "submodules": [
-        {"name": "aclrt", "path": "src/acl/aclrt", "description": "Runtime API实现"},
-        {"name": "aclrt_impl", "path": "src/acl/aclrt_impl", "description": "Runtime内部实现"},
-        {"name": "aclrt_c", "path": "src/acl/aclrt_c", "description": "C wrapper"},
-        {"name": "acl_tdt_channel", "path": "src/acl/acl_tdt_channel", "description": "Tensor数据传输通道"},
-        {"name": "acl_tdt_queue", "path": "src/acl/acl_tdt_queue", "description": "队列数据传输"}
-      ],
-      "entry_points": [
-        {"function": "aclInit", "file": "include/external/acl/acl_rt.h", "line": 996, "description": "ACL初始化"},
-        {"function": "aclFinalize", "file": "include/external/acl/acl_rt.h", "line": 1008, "description": "ACL终止"},
-        {"function": "aclrtSetDevice", "file": "include/external/acl/acl_rt.h", "line": 1422, "description": "设置设备"},
-        {"function": "aclrtCreateStream", "file": "include/external/acl/acl_rt.h", "description": "创建流"},
-        {"function": "aclrtMalloc", "file": "include/external/acl/acl_rt.h", "description": "内存分配"}
-      ]
+      "language": "c_cpp",
+      "components": ["aclrt_impl/memory.cpp", "acl/aclrt_c", "acl/config", "acl/common"],
+      "risk": "Critical"
     },
     {
-      "name": "runtime",
-      "path": "src/runtime",
-      "responsibility": "核心运行时实现，任务调度、内存管理、内核执行",
-      "risk_level": "CRITICAL",
-      "submodules": [
-        {"name": "api", "path": "src/runtime/api", "description": "Runtime API层"},
-        {"name": "core", "path": "src/runtime/core", "description": "核心逻辑(设备/上下文/流/事件)"},
-        {"name": "driver", "path": "src/runtime/driver", "description": "驱动抽象层"},
-        {"name": "feature", "path": "src/runtime/feature", "description": "特性模块"}
-      ],
-      "entry_points": [
-        {"function": "rtSetDevice", "file": "pkg_inc/runtime/runtime/dev.h", "description": "Runtime设备设置"},
-        {"function": "rtCreateStream", "file": "pkg_inc/runtime/runtime/stream.h", "description": "创建流"},
-        {"function": "rtMalloc", "file": "pkg_inc/runtime/runtime/mem.h", "description": "内存分配"}
-      ],
-      "high_risk_files": [
-        {"file": "src/runtime/driver/npu_driver_mem.cc", "risks": ["mmap", "shm_open", "shared_memory"]},
-        {"file": "src/runtime/core/src/task/task_info/memory/memory_task.cc", "risks": ["malloc", "memcpy", "buffer_overflow"]}
-      ]
+      "name": "runtime_core",
+      "path": "src/runtime/core",
+      "language": "c_cpp",
+      "components": ["api_impl/api_impl.cc", "runtime.cc", "stream/stream.cc", "context/context.cc", "device/raw_device.cc", "memory", "kernel", "task"],
+      "risk": "Critical"
     },
     {
-      "name": "aicpu_sched",
-      "path": "src/aicpu_sched",
-      "responsibility": "AI-CPU任务调度和内核执行",
-      "risk_level": "HIGH",
-      "submodules": [
-        {"name": "aicpu_schedule", "path": "src/aicpu_sched/aicpu_schedule", "description": "主调度器"},
-        {"name": "aicpu_cust_schedule", "path": "src/aicpu_sched/aicpu_cust_schedule", "description": "自定义调度器"},
-        {"name": "aicpu_kernel", "path": "src/aicpu_sched/aicpu_kernel", "description": "内核实现"},
-        {"name": "aicpu_processer", "path": "src/aicpu_sched/aicpu_processer", "description": "处理器"},
-        {"name": "aicpu_sharder", "path": "src/aicpu_sched/aicpu_sharder", "description": "工作分发"}
-      ],
-      "high_risk_files": [
-        {"file": "src/aicpu_sched/aicpu_schedule/common/aicpusd_util.h", "risks": ["execl", "vfork", "command_injection"]},
-        {"file": "src/aicpu_sched/aicpu_processer/ae_so_manager.cc", "risks": ["dlopen", "getenv", "library_injection"]},
-        {"file": "src/aicpu_sched/aicpu_cust_schedule/core/aicpusd_interface_process.cpp", "risks": ["getenv", "LD_LIBRARY_PATH"]}
-      ]
+      "name": "runtime_driver",
+      "path": "src/runtime/driver",
+      "language": "c_cpp",
+      "components": ["npu_driver.cc", "npu_driver_mem.cc", "npu_driver_queue.cc", "npu_driver_res.cc", "npu_driver_standard_soc.cc"],
+      "risk": "Critical"
     },
     {
-      "name": "tsd",
-      "path": "src/tsd",
-      "responsibility": "TSD客户端和守护进程管理",
-      "risk_level": "HIGH",
-      "submodules": [
-        {"name": "tsdclient", "path": "src/tsd/tsdclient", "description": "TSD客户端"},
-        {"name": "common", "path": "src/tsd/common", "description": "公共工具"},
-        {"name": "pub_facility", "path": "src/tsd/pub_facility", "description": "公共设施"}
-      ],
-      "high_risk_files": [
-        {"file": "src/tsd/pub_facility/util_func/tsd_util_func.cpp", "risks": ["execl", "vfork", "command_injection"]},
-        {"file": "src/tsd/common/src/package_verify.cpp", "risks": ["fopen", "fread", "arbitrary_file_access"]}
-      ]
-    },
-    {
-      "name": "dfx",
-      "path": "src/dfx",
-      "responsibility": "诊断、故障管理和调试功能",
-      "risk_level": "MEDIUM",
-      "submodules": [
-        {"name": "msprof", "path": "src/dfx/msprof", "description": "性能分析"},
-        {"name": "adump", "path": "src/dfx/adump", "description": "数据转储"},
-        {"name": "log", "path": "src/dfx/log", "description": "日志"},
-        {"name": "trace", "path": "src/dfx/trace", "description": "追踪"},
-        {"name": "error_manager", "path": "src/dfx/error_manager", "description": "错误管理"}
-      ],
-      "high_risk_files": [
-        {"file": "src/dfx/trace/atrace/utrace/stacktrace/stacktrace_dumper/scd_process.c", "risks": ["popen", "command_injection"]},
-        {"file": "src/dfx/trace/atrace/utrace/stacktrace/stacktrace_parse.c", "risks": ["popen", "command_injection"]}
-      ]
+      "name": "tsd_client",
+      "path": "src/tsd/tsdclient",
+      "language": "c_cpp",
+      "components": ["process_mode_manager.cpp", "thread_mode_manager.cpp", "client_manager.cpp", "hdc_client.cpp"],
+      "risk": "High"
     },
     {
       "name": "queue_schedule",
       "path": "src/queue_schedule",
-      "responsibility": "基于队列的任务调度",
-      "risk_level": "HIGH",
-      "submodules": [
-        {"name": "client", "path": "src/queue_schedule/client", "description": "客户端"},
-        {"name": "server", "path": "src/queue_schedule/server", "description": "服务器"},
-        {"name": "common", "path": "src/queue_schedule/common", "description": "公共组件"}
-      ],
-      "high_risk_files": [
-        {"file": "src/queue_schedule/server/bind_cpu_utils.cpp", "risks": ["system", "command_injection", "getenv"]}
-      ]
-    },
-    {
-      "name": "mmpa",
-      "path": "src/mmpa",
-      "responsibility": "多平台抽象层",
-      "risk_level": "CRITICAL",
-      "submodules": [
-        {"name": "src", "path": "src/mmpa/src", "description": "源文件"}
-      ],
-      "high_risk_files": [
-        {"file": "src/mmpa/src/mmpa_linux.c", "risks": ["socket", "recv", "popen", "ioctl", "network_injection"]},
-        {"file": "src/mmpa/src/mmpa_linux_file.c", "risks": ["unlink", "chmod", "open", "mmap", "path_traversal"]}
-      ]
-    },
-    {
-      "name": "platform",
-      "path": "src/platform",
-      "responsibility": "平台/SOC信息管理",
-      "risk_level": "LOW",
-      "submodules": [
-        {"name": "platform_config", "path": "src/platform/platform_config", "description": "配置文件"}
-      ]
-    },
-    {
-      "name": "tprt",
-      "path": "src/tprt",
-      "responsibility": "传输层，任务提交和完成",
-      "risk_level": "MEDIUM",
-      "entry_points": [
-        {"function": "TprtDeviceOpen", "file": "src/tprt/inc/external/tprt_api.h", "description": "设备打开"},
-        {"function": "TprtSqPushTask", "file": "src/tprt/inc/external/tprt_api.h", "description": "任务提交"}
-      ]
-    },
-    {
-      "name": "runtime_compact",
-      "path": "src/runtime_compact",
-      "responsibility": "紧凑/轻量运行时",
-      "risk_level": "MEDIUM",
-      "submodules": [
-        {"name": "c_base", "path": "src/runtime_compact/c_base", "description": "紧凑基础实现"},
-        {"name": "c_mmpa", "path": "src/runtime_compact/c_mmpa", "description": "紧凑MMPA"}
-      ]
+      "language": "c_cpp",
+      "components": ["server/main.cpp", "router_server.cpp", "queue_schedule_interface.cpp", "client/bqs_client.cpp", "dgwclient/dgw_client.cpp", "proto/easycom_message.proto", "proto/dynamic_sched_message.proto"],
+      "risk": "High"
     },
     {
       "name": "cmodel_driver",
       "path": "src/cmodel_driver",
-      "responsibility": "模拟器驱动",
-      "risk_level": "LOW"
+      "language": "c_cpp",
+      "components": ["driver_api.c", "driver_impl.c", "driver_mem.c", "driver_queue.c"],
+      "risk": "High"
+    },
+    {
+      "name": "platform",
+      "path": "src/platform",
+      "language": "c_cpp",
+      "components": ["platform_info.cpp", "platform_manager_v2.cpp", "platform_config"],
+      "risk": "Medium"
+    },
+    {
+      "name": "dfx",
+      "path": "src/dfx",
+      "language": "c_cpp",
+      "components": ["msprof", "adump", "log", "trace", "error_manager"],
+      "risk": "Medium"
+    },
+    {
+      "name": "mmpa",
+      "path": "src/mmpa",
+      "language": "c_cpp",
+      "components": ["mmpa_linux.c", "mmpa_linux_thread.c"],
+      "risk": "Low"
     }
   ],
-  "entry_points": {
-    "public_api": [
-      {
-        "category": "Initialization",
-        "functions": [
-          {"name": "aclInit", "header": "acl_rt.h", "line": 996},
-          {"name": "aclFinalize", "header": "acl_rt.h", "line": 1008}
-        ]
-      },
-      {
-        "category": "Device Management",
-        "functions": [
-          {"name": "aclrtSetDevice", "header": "acl_rt.h", "line": 1422},
-          {"name": "aclrtResetDevice", "header": "acl_rt.h", "line": 1449},
-          {"name": "aclrtGetDevice", "header": "acl_rt.h", "line": 1491},
-          {"name": "aclrtGetDeviceCount", "header": "acl_rt.h", "line": 1565}
-        ]
-      },
-      {
-        "category": "Context Management",
-        "functions": [
-          {"name": "aclrtCreateContext", "header": "acl_rt.h", "line": 1280},
-          {"name": "aclrtDestroyContext", "header": "acl_rt.h", "line": 1296},
-          {"name": "aclrtSetCurrentContext", "header": "acl_rt.h", "line": 1332}
-        ]
-      },
-      {
-        "category": "Stream Management",
-        "functions": [
-          {"name": "aclrtCreateStream", "header": "acl_rt.h"},
-          {"name": "aclrtDestroyStream", "header": "acl_rt.h"},
-          {"name": "aclrtSynchronizeStream", "header": "acl_rt.h"}
-        ]
-      },
-      {
-        "category": "Memory Management",
-        "functions": [
-          {"name": "aclrtMalloc", "header": "acl_rt.h"},
-          {"name": "aclrtFree", "header": "acl_rt.h"},
-          {"name": "aclrtMemcpy", "header": "acl_rt.h"},
-          {"name": "aclrtMemset", "header": "acl_rt.h"}
-        ]
-      },
-      {
-        "category": "Event Management",
-        "functions": [
-          {"name": "aclrtCreateEvent", "header": "acl_rt.h", "line": 1576},
-          {"name": "aclrtDestroyEvent", "header": "acl_rt.h", "line": 1620},
-          {"name": "aclrtRecordEvent", "header": "acl_rt.h", "line": 1632}
-        ]
-      },
-      {
-        "category": "Kernel Execution",
-        "functions": [
-          {"name": "aclrtLoadBinary", "header": "acl_rt.h"},
-          {"name": "aclrtGetFuncHandle", "header": "acl_rt.h"},
-          {"name": "aclrtLaunchKernel", "header": "acl_rt.h"}
-        ]
-      },
-      {
-        "category": "HAL Driver",
-        "functions": [
-          {"name": "halDeviceOpen", "header": "ascend_hal_base.h", "line": 742},
-          {"name": "halDeviceClose", "header": "ascend_hal_base.h", "line": 754},
-          {"name": "halGetDeviceInfo", "header": "ascend_hal_base.h", "line": 1161}
-        ]
-      }
-    ],
-    "device_interfaces": [
-      {"device": "/dev/stars", "module": "runtime", "operations": ["ioctl", "mmap"], "file": "src/runtime/core/src/common/ioctl/v201/ioctl_utils.cc"},
-      {"device": "/dev/qos", "module": "aicpu_sched", "operations": ["ioctl", "open"], "file": "src/aicpu_sched/aicpu_schedule/execute/main.cpp"},
-      {"device": "/dev/shm", "module": "runtime", "operations": ["shm_open", "mmap"], "file": "src/runtime/driver/npu_driver_mem.cc"}
-    ],
-    "network_interfaces": [
-      {"type": "socket", "module": "mmpa", "operations": ["socket", "bind", "listen", "accept", "recv", "send"], "file": "src/mmpa/src/mmpa_linux.c"}
-    ],
-    "ipc_interfaces": [
-      {"type": "shared_memory", "module": "runtime", "operations": ["shm_open", "mmap"], "file": "src/runtime/driver/npu_driver_mem.cc"},
-      {"type": "pipes", "module": "dfx", "operations": ["pipe", "mkfifo"], "file": "src/mmpa/src/mmpa_linux.c"},
-      {"type": "message_queue", "module": "mmpa", "operations": ["msgsnd", "msgrcv"], "file": "src/mmpa/src/mmpa_linux_message.c"}
-    ]
-  },
-  "taint_sources": [
+  "files": [
     {
-      "category": "Network Input",
-      "severity": "HIGH",
-      "sources": [
-        {"function": "recv", "file": "src/mmpa/src/mmpa_linux.c", "line": 850},
-        {"function": "recvfrom", "file": "src/mmpa/src/mmpa_linux.c", "line": 857},
-        {"function": "read", "file": "src/dfx/trace/atrace/trace_server/utrace_server/trace_server_socket.c", "line": 210}
-      ]
+      "path": "src/runtime/core/src/api_impl/api_impl.cc",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "runtime_core",
+      "lines": 9043,
+      "priority": 1
     },
     {
-      "category": "Device Input",
-      "severity": "HIGH",
-      "sources": [
-        {"function": "ioctl", "file": "src/runtime/core/src/common/ioctl/v201/ioctl_utils.cc", "line": 37},
-        {"function": "mmap", "file": "src/runtime/driver/npu_driver_mem.cc", "line": 75}
-      ]
+      "path": "src/runtime/core/src/runtime.cc",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "runtime_core",
+      "lines": 6129,
+      "priority": 1
     },
     {
-      "category": "File Input",
-      "severity": "MEDIUM",
-      "sources": [
-        {"function": "fopen/fread", "file": "src/tsd/common/src/package_verify.cpp", "line": 183},
-        {"function": "ifstream::read", "file": "src/acl/common/json_parser.cpp", "line": 79},
-        {"function": "read", "file": "src/mmpa/src/mmpa_linux_file.c", "line": 52}
-      ]
+      "path": "src/runtime/driver/npu_driver_mem.cc",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "runtime_driver",
+      "lines": 2552,
+      "priority": 1
     },
     {
-      "category": "Environment Variables",
-      "severity": "HIGH",
-      "sources": [
-        {"function": "getenv", "file": "src/aicpu_sched/aicpu_processer/ae_so_manager.cc", "line": 311},
-        {"function": "getenv(\"LD_LIBRARY_PATH\")", "file": "src/aicpu_sched/aicpu_cust_schedule/core/aicpusd_interface_process.cpp", "line": 412}
-      ]
+      "path": "src/runtime/driver/npu_driver_res.cc",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "runtime_driver",
+      "lines": 2344,
+      "priority": 1
     },
     {
-      "category": "Command Line",
-      "severity": "MEDIUM",
-      "sources": [
-        {"function": "main(argc, argv)", "file": "src/aicpu_sched/aicpu_schedule/execute/main.cpp", "line": 320},
-        {"function": "main(argc, argv)", "file": "src/queue_schedule/server/main.cpp", "line": 247}
-      ]
+      "path": "src/runtime/driver/npu_driver.cc",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "runtime_driver",
+      "lines": 1594,
+      "priority": 1
     },
     {
-      "category": "Dynamic Library",
-      "severity": "HIGH",
-      "sources": [
-        {"function": "dlopen", "file": "src/aicpu_sched/aicpu_processer/ae_so_manager.cc", "line": 189},
-        {"function": "dlopen", "file": "src/queue_schedule/server/main.cpp", "line": 93}
-      ]
+      "path": "src/tsd/tsdclient/src/process_mode_manager.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "tsd_client",
+      "lines": 2345,
+      "priority": 2
     },
     {
-      "category": "Command Execution",
-      "severity": "CRITICAL",
-      "sources": [
-        {"function": "system", "file": "src/queue_schedule/server/bind_cpu_utils.cpp", "line": 150},
-        {"function": "execl", "file": "src/aicpu_sched/aicpu_schedule/common/aicpusd_util.h", "line": 351},
-        {"function": "popen", "file": "src/mmpa/src/mmpa_linux.c", "line": 230}
-      ]
+      "path": "src/tsd/common/src/hdc_client.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "tsd_client",
+      "lines": 500,
+      "priority": 2
     },
     {
-      "category": "Process Tracing",
-      "severity": "HIGH",
-      "sources": [
-        {"function": "ptrace", "file": "src/dfx/trace/atrace/utrace/stacktrace/stacktrace_dumper/scd_ptrace.c", "line": 21}
-      ]
+      "path": "src/queue_schedule/server/main.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "queue_schedule",
+      "lines": 500,
+      "priority": 2
+    },
+    {
+      "path": "src/queue_schedule/client/bqs_client.cpp",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "queue_schedule",
+      "lines": 11919,
+      "priority": 2
+    },
+    {
+      "path": "src/cmodel_driver/driver_api.c",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "cmodel_driver",
+      "lines": 964,
+      "priority": 2
+    },
+    {
+      "path": "src/cmodel_driver/driver_mem.c",
+      "language": "c_cpp",
+      "risk": "High",
+      "module": "cmodel_driver",
+      "lines": 15397,
+      "priority": 2
+    },
+    {
+      "path": "src/mmpa/src/mmpa_linux.c",
+      "language": "c_cpp",
+      "risk": "Low",
+      "module": "mmpa",
+      "lines": 1530,
+      "priority": 4
+    },
+    {
+      "path": "include/external/acl/acl_rt.h",
+      "language": "c_cpp",
+      "risk": "Critical",
+      "module": "acl",
+      "lines": 5377,
+      "priority": 1
     }
   ],
-  "dangerous_sinks": [
+  "entry_points": [
     {
-      "category": "Command Execution",
-      "severity": "CRITICAL",
-      "sinks": [
-        {"function": "system()", "file": "src/queue_schedule/server/bind_cpu_utils.cpp", "line": 150, "risk": "Command Injection"},
-        {"function": "execl()", "file": "src/aicpu_sched/aicpu_schedule/common/aicpusd_util.h", "line": 351, "risk": "Command Injection"},
-        {"function": "popen()", "file": "src/mmpa/src/mmpa_linux.c", "line": 230, "risk": "Command Injection"}
-      ]
+      "file": "include/external/acl/acl_rt.h",
+      "line": 996,
+      "function": "aclInit",
+      "type": "api",
+      "trust_level": "untrusted_local",
+      "justification": "用户应用调用的初始化入口，接受配置文件路径参数",
+      "description": "ACL初始化API，用户可通过配置文件路径控制初始化参数"
     },
     {
-      "category": "Library Loading",
-      "severity": "HIGH",
-      "sinks": [
-        {"function": "dlopen()", "file": "src/aicpu_sched/aicpu_processer/ae_so_manager.cc", "line": 189, "risk": "Library Injection"},
-        {"function": "dlopen()", "file": "src/queue_schedule/server/hccl/hccl_so_manager.cpp", "line": 31, "risk": "Library Injection"},
-        {"function": "mmDlopen()", "file": "src/tsd/tsdclient/src/thread_mode_manager.cpp", "line": 60, "risk": "Library Injection"}
-      ]
+      "file": "include/external/acl/acl_rt.h",
+      "line": 1764,
+      "function": "aclrtMalloc",
+      "type": "api",
+      "trust_level": "untrusted_local",
+      "justification": "用户应用调用，传入size参数可能触发整数溢出或堆溢出",
+      "description": "设备内存分配API，size参数由用户控制"
     },
     {
-      "category": "Memory Operations",
-      "severity": "HIGH",
-      "sinks": [
-        {"function": "malloc()", "file": "src/runtime/feature/xpu/arg_manage_xpu.cc", "line": 59, "risk": "Integer Overflow"},
-        {"function": "memcpy()", "file": "src/runtime/core/src/task/task_info/memory/memory_task.cc", "line": 105, "risk": "Buffer Overflow"},
-        {"function": "mmap()", "file": "src/runtime/driver/npu_driver_mem.cc", "line": 75, "risk": "Memory Corruption"}
-      ]
+      "file": "include/external/acl/acl_rt.h",
+      "line": 2138,
+      "function": "aclrtMemcpy",
+      "type": "api",
+      "trust_level": "untrusted_local",
+      "justification": "用户控制源地址、目标地址和长度，可能触发缓冲区溢出",
+      "description": "内存拷贝API，src/dst/count参数均由用户控制"
     },
     {
-      "category": "File Operations",
-      "severity": "MEDIUM",
-      "sinks": [
-        {"function": "unlink()", "file": "src/mmpa/src/mmpa_linux_file.c", "line": 211, "risk": "Path Traversal"},
-        {"function": "chmod()", "file": "src/tsd/common/src/package_worker_utils.cpp", "line": 60, "risk": "Privilege Escalation"},
-        {"function": "rename()", "file": "src/tsd/common/src/aicpu_package_process.cpp", "line": 160, "risk": "Race Condition"}
-      ]
+      "file": "include/external/acl/acl_rt.h",
+      "line": 3041,
+      "function": "aclrtLaunchKernel",
+      "type": "api",
+      "trust_level": "untrusted_local",
+      "justification": "用户传入内核参数和参数缓冲区，可能触发代码注入或内存破坏",
+      "description": "内核启动API，funcHandle和args参数由用户控制"
     },
     {
-      "category": "Format String",
-      "severity": "MEDIUM",
-      "sinks": [
-        {"function": "printf()", "file": "src/runtime/core/src/dfx/printf.cc", "line": 328, "risk": "Format String Bug"}
-      ]
+      "file": "src/tsd/tsdclient/src/process_mode_manager.cpp",
+      "line": 37,
+      "function": "TSDAEMON_HOST_NAME",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "Unix domain socket: /var/tsdaemon，本地进程可通过socket发送恶意消息",
+      "description": "TSD守护进程IPC通信接口"
+    },
+    {
+      "file": "src/tsd/common/src/hdc_client.cpp",
+      "line": 143,
+      "function": "RecvMsg",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "接收来自守护进程的IPC消息，消息内容可能被篡改",
+      "description": "HDC客户端消息接收函数"
+    },
+    {
+      "file": "src/queue_schedule/proto/easycom_message.proto",
+      "line": 14,
+      "function": "BQSBindQueueMsg",
+      "type": "rpc",
+      "trust_level": "untrusted_local",
+      "justification": "客户端通过protobuf发送队列绑定请求，queue_id参数可能触发权限绕过",
+      "description": "队列调度服务的RPC消息格式"
+    },
+    {
+      "file": "src/queue_schedule/server/main.cpp",
+      "line": 1,
+      "function": "main",
+      "type": "network",
+      "trust_level": "untrusted_network",
+      "justification": "队列调度服务监听客户端请求，接收队列绑定/查询操作",
+      "description": "队列调度服务进程入口"
+    },
+    {
+      "file": "src/cmodel_driver/driver_api.c",
+      "line": 111,
+      "function": "halMemAlloc",
+      "type": "driver",
+      "trust_level": "semi_trusted",
+      "justification": "驱动层内存分配，size参数来自上层ACL API，可能触发整数溢出",
+      "description": "HAL层内存分配接口"
+    },
+    {
+      "file": "src/runtime/driver/npu_driver_mem.cc",
+      "line": 1,
+      "function": "npu_driver_mem",
+      "type": "driver",
+      "trust_level": "semi_trusted",
+      "justification": "NPU驱动内存管理模块，处理设备内存分配和映射操作",
+      "description": "NPU驱动内存操作"
     }
   ],
-  "attack_surface": {
-    "external_interfaces": [
-      {
-        "name": "ACL API",
-        "type": "Library Interface",
-        "exposure": "PUBLIC",
-        "risk": "Memory management, device control, kernel execution",
-        "entry_functions": ["aclInit", "aclrtSetDevice", "aclrtMalloc", "aclrtLaunchKernel"]
-      },
-      {
-        "name": "HAL Driver Interface",
-        "type": "Driver Interface",
-        "exposure": "KERNEL",
-        "risk": "Device control, memory mapping, ioctl",
-        "entry_functions": ["halDeviceOpen", "halGetDeviceInfo"]
-      },
-      {
-        "name": "Device Files",
-        "type": "Device Interface",
-        "exposure": "KERNEL",
-        "risk": "Hardware control via ioctl",
-        "devices": ["/dev/stars", "/dev/qos", "/dev/shm"]
-      },
-      {
-        "name": "Configuration Files",
-        "type": "File Input",
-        "exposure": "LOCAL",
-        "risk": "JSON parsing, path traversal",
-        "formats": ["JSON", "Protobuf"]
-      },
-      {
-        "name": "Environment Variables",
-        "type": "Configuration",
-        "exposure": "PROCESS",
-        "risk": "Library path injection, CPU configuration",
-        "variables": ["LD_LIBRARY_PATH", "PROCMGR_AICPU_CPUSET", "AICPU_INNER_SO_PATH_ENV_VAR_NAME"]
-      },
-      {
-        "name": "Network Socket",
-        "type": "Network Interface",
-        "exposure": "NETWORK",
-        "risk": "Data injection, DoS",
-        "module": "mmpa"
-      }
-    ],
-    "high_risk_components": [
-      {
-        "name": "Memory Management",
-        "module": "runtime",
-        "risks": ["Buffer overflow", "Integer overflow", "Memory corruption", "Use after free"]
-      },
-      {
-        "name": "Device Driver",
-        "module": "runtime/driver",
-        "risks": ["ioctl exploitation", "mmap attacks", "Shared memory race"]
-      },
-      {
-        "name": "Task Scheduler",
-        "module": "aicpu_sched",
-        "risks": ["Command injection", "Library injection", "Process race"]
-      },
-      {
-        "name": "Process Management",
-        "module": "tsd",
-        "risks": ["Process spawning", "Package verification bypass"]
-      },
-      {
-        "name": "Platform Abstraction",
-        "module": "mmpa",
-        "risks": ["Network injection", "File system attacks", "Command execution"]
-      }
-    ]
-  },
-  "dependencies": {
-    "external": [
-      {"name": "libboundscheck", "version": "1.1.16", "purpose": "Secure memory operations"},
-      {"name": "protobuf", "version": "25.1", "purpose": "Serialization"},
-      {"name": "abseil-cpp", "version": "20230802.1", "purpose": "C++ utilities"},
-      {"name": "openssl", "version": "3.0.9", "purpose": "Crypto"},
-      {"name": "boost", "version": "1.87.0", "purpose": "C++ libraries"},
-      {"name": "googletest", "version": "1.14.0", "purpose": "Testing"}
-    ],
-    "internal": [
-      {"from": "acl", "to": "runtime"},
-      {"from": "acl", "to": "tsd"},
-      {"from": "runtime", "to": "mmpa"},
-      {"from": "runtime", "to": "driver"},
-      {"from": "aicpu_sched", "to": "tsd"},
-      {"from": "aicpu_sched", "to": "mmpa"},
-      {"from": "queue_schedule", "to": "mmpa"},
-      {"from": "dfx", "to": "mmpa"}
-    ]
-  }
+  "attack_surfaces": [
+    "ACL API Interface: 337个公开函数，用户应用可调用所有API",
+    "IPC Daemon: Unix domain socket /var/tsdaemon，本地进程可发送恶意消息",
+    "Queue Schedule Service: protobuf RPC接口，客户端可发送队列操作请求",
+    "NPU Driver Interface: ioctl和内存映射操作，可能触发内核漏洞",
+    "Configuration File: aclInit()接受的配置文件路径，可能触发路径遍历",
+    "HDC Communication: hdc_client与tsdaemon的消息通信协议",
+    "Memory Operations: aclrtMalloc/aclrtMemcpy/aclrtFree等内存操作API"
+  ]
 }
